@@ -1,3 +1,3 @@
-module github.com/nttlong/igor
+module github.com/nttlong/igorm
 
 go 1.23.4
