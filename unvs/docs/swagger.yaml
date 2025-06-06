@@ -1,0 +1,31 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Đây là một API ví dụ đơn giản với Echo và Swagger.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Echo Hello World API
+  version: "1.0"
+paths:
+  /hz:
+    get:
+      consumes:
+      - application/json
+      description: Trả về chuỗi "Hello World!"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hello World!
+          schema:
+            type: string
+      summary: Lấy một lời chào đơn giản
+      tags:
+      - heathz
+swagger: "2.0"
