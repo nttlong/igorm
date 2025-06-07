@@ -1,18 +1,144 @@
-basePath: /
+basePath: /api/v1
+definitions:
+  internal_app_handler_account.CreateAccountRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  internal_app_handler_account.CreateAccountResponse:
+    properties:
+      message:
+        type: string
+      user:
+        $ref: '#/definitions/unvs_internal_model_auth.User'
+    type: object
+  internal_app_handler_account.ErrorResponse:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  internal_app_handler_account.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  internal_app_handler_account.LoginResponse:
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/unvs_internal_model_auth.User'
+        description: Có thể bao gồm thêm thông tin người dùng nếu cần, nhưng không
+          phải mật khẩu hash
+    type: object
+  unvs_internal_model_auth.User:
+    properties:
+      createdAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      updatedAt:
+        type: string
+      updatedBy:
+        type: string
+      userId:
+        type: string
+      username:
+        type: string
+    type: object
 host: localhost:8080
 info:
-  contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
-  description: Đây là một API ví dụ đơn giản với Echo và Swagger.
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Echo Hello World API
+  contact: {}
+  description: Mô tả về API của bạn
+  title: 'Tên API của bạn (ví dụ: Go Account API)'
   version: "1.0"
 paths:
+  /accounts/create:
+    post:
+      consumes:
+      - application/json
+      description: Tạo một tài khoản người dùng mới với username, email và mật khẩu.
+      parameters:
+      - description: Thông tin tài khoản cần tạo
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_app_handler_account.CreateAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Tạo tài khoản thành công
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.CreateAccountResponse'
+        "400":
+          description: Yêu cầu không hợp lệ (validation errors)
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
+        "409":
+          description: Email đã tồn tại
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
+        "500":
+          description: Lỗi nội bộ server
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Tạo một tài khoản người dùng mới
+      tags:
+      - Accounts
+  /accounts/login:
+    post:
+      consumes:
+      - application/json
+      description: Xác thực thông tin đăng nhập của người dùng và trả về JWT token
+        nếu thành công.
+      parameters:
+      - description: Thông tin đăng nhập (email và mật khẩu)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_app_handler_account.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Đăng nhập thành công, trả về JWT token
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.LoginResponse'
+        "400":
+          description: Yêu cầu không hợp lệ (validation errors)
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
+        "401":
+          description: Thông tin đăng nhập không hợp lệ
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
+        "500":
+          description: Lỗi nội bộ server
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
+      summary: Đăng nhập người dùng và nhận JWT token
+      tags:
+      - Accounts
   /hz:
     get:
       consumes:
@@ -28,4 +154,16 @@ paths:
       summary: Lấy một lời chào đơn giản
       tags:
       - heathz
+securityDefinitions:
+  ApiKeyAuth:
+    description: '"Nhập token JWT của bạn vào đây (tiền tố ''Bearer ''). Ví dụ: ''Bearer
+      eyJhbGciOiJIUzI1Ni...'' "'
+    in: header
+    name: Authorization
+    type: apiKey
+  OAuth2Password:
+    description: '"OAuth2 Password Flow - Lấy token từ endpoint /oauth/token"'
+    flow: password
+    tokenUrl: /oauth/token
+    type: oauth2
 swagger: "2.0"

@@ -688,8 +688,75 @@ func getOneByCondition[T any](dbx *DBXTenant, where string, args ...interface{})
 	}
 	return &ret.([]T)[0], nil
 }
-func Query[T any](dbx *DBXTenant, args ...interface{}) ([]T, error) {
-	return Find[T](args...)(dbx)
+
+type QrBuilder[T any] struct {
+	dbx      *DBXTenant
+	selector string
+	where    string
+	from     string
+	args     []interface{}
+}
+
+func (q QrBuilder[T]) Where(where string, args ...interface{}) QrBuilder[T] {
+	q.where = where
+	q.args = args
+	return q
+}
+func (q QrBuilder[T]) Delete() error {
+	if q.where == "" {
+		return fmt.Errorf("where clause is required")
+	}
+	entityType, err := newEntityType(reflect.TypeFor[T]())
+	if err != nil {
+		return err
+	}
+	sqlDelete := "DELETE FROM " + entityType.TableName + " WHERE " + q.where
+	_, err = q.dbx.Exec(sqlDelete)
+	return err
+}
+
+func (q QrBuilder[T]) First() (*T, error) {
+	var zero T
+	et := reflect.TypeOf(zero)
+	entityType, err := newEntityType(et)
+	if err != nil {
+		return nil, err
+	}
+	sqlSelect := ""
+	if q.where == "" {
+		sqlSelect = "SELECT * FROM " + entityType.TableName + " LIMIT 1"
+	} else {
+		sqlSelect = "SELECT * FROM " + entityType.TableName + " WHERE " + q.where + " LIMIT 1"
+	}
+	rows, err := q.dbx.Query(sqlSelect, q.args...)
+	if err != nil {
+		return nil, err
+	}
+	if rows == nil {
+		return nil, nil
+	}
+	ret, err := fetchAllRows(rows.Rows, et)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ret.([]T)) == 0 {
+		return nil, nil
+	}
+	retItem := ret.([]T)[0]
+	return &retItem, nil
+}
+func Query[T any](dbx *DBXTenant) QrBuilder[T] {
+	entityType, err := newEntityType(reflect.TypeFor[T]())
+	if err != nil {
+		panic(err)
+	}
+	return QrBuilder[T]{
+		dbx:      dbx,
+		selector: "*",
+		from:     entityType.TableName,
+	}
+
 }
 func Select[T any](dbx *DBXTenant, sql string, args ...interface{}) ([]T, error) {
 	//fx := Select

@@ -34,12 +34,18 @@ func (e DBXErrorCode) String() string {
 }
 
 type DBXError struct {
-	Code           DBXErrorCode `json:"code"`
-	Message        string       `json:"message"`
-	TableName      string       `json:"tableName"`
-	ConstraintName string       `json:"constraintName"`
-	Fields         []string     `json:"fields"`
-	Values         []string     `json:"values"`
+	// Error code the value is one of DBXErrorCode
+	Code DBXErrorCode `json:"code"`
+	// Error message
+	Message string `json:"message"`
+	// table name
+	TableName string `json:"tableName"`
+	//constraint name
+	ConstraintName string `json:"constraintName"`
+	// list of column names caused the error
+	Fields []string `json:"fields"`
+	// values of columns caused the error
+	Values []string `json:"values"`
 }
 type DBXMigrationError struct {
 	Message   string `json:"message"`

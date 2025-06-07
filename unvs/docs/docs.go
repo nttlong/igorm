@@ -9,21 +9,121 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/accounts/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Tạo một tài khoản người dùng mới với username, email và mật khẩu.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Tạo một tài khoản người dùng mới",
+                "parameters": [
+                    {
+                        "description": "Thông tin tài khoản cần tạo",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.CreateAccountRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Tạo tài khoản thành công",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.CreateAccountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Yêu cầu không hợp lệ (validation errors)",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Email đã tồn tại",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Lỗi nội bộ server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/accounts/login": {
+            "post": {
+                "description": "Xác thực thông tin đăng nhập của người dùng và trả về JWT token nếu thành công.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Đăng nhập người dùng và nhận JWT token",
+                "parameters": [
+                    {
+                        "description": "Thông tin đăng nhập (email và mật khẩu)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Đăng nhập thành công, trả về JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Yêu cầu không hợp lệ (validation errors)",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Thông tin đăng nhập không hợp lệ",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Lỗi nội bộ server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/hz": {
             "get": {
                 "description": "Trả về chuỗi \"Hello World!\"",
@@ -47,6 +147,117 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "definitions": {
+        "internal_app_handler_account.CreateAccountRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_app_handler_account.CreateAccountResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/unvs_internal_model_auth.User"
+                }
+            }
+        },
+        "internal_app_handler_account.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_app_handler_account.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_app_handler_account.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "description": "Có thể bao gồm thêm thông tin người dùng nếu cần, nhưng không phải mật khẩu hash",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/unvs_internal_model_auth.User"
+                        }
+                    ]
+                }
+            }
+        },
+        "unvs_internal_model_auth.User": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "\"Nhập token JWT của bạn vào đây (tiền tố 'Bearer '). Ví dụ: 'Bearer eyJhbGciOiJIUzI1Ni...' \"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "OAuth2Password": {
+            "description": "\"OAuth2 Password Flow - Lấy token từ endpoint /oauth/token\"",
+            "type": "oauth2",
+            "flow": "password",
+            "tokenUrl": "/oauth/token"
+        }
     }
 }`
 
@@ -54,10 +265,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Echo Hello World API",
-	Description:      "Đây là một API ví dụ đơn giản với Echo và Swagger.",
+	Title:            "Tên API của bạn (ví dụ: Go Account API)",
+	Description:      "Mô tả về API của bạn",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
