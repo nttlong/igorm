@@ -91,7 +91,8 @@ func createUserRepo(tenantDB *dbx.DBXTenant) user_repo.UserRepository {
 }
 func createAccService(tenantDB *dbx.DBXTenant) *account.AccountService {
 	return account.NewAccountService(
-		createUserRepo(tenantDB), getMemcachedServer(), //getBadgerCache(),
+		createUserRepo(tenantDB),
+		getBadgerCache(),
 	)
 }
 func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
