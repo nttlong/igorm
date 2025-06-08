@@ -92,35 +92,8 @@ func parseErrorByMssqlErrorDuplicate(ctx context.Context, db *sql.DB, err mssql.
 			return ret
 		}
 	}
+	ret.Fields = dbxEntityCache.get_uk(constraintName)
 
-	sqlGetColByConstraintName := `select COLUMN_NAME from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE where INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME= ? and INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.TABLE_NAME=?`
-	var rows *sql.Rows
-	var qrErr error
-
-	if ctx != nil {
-		rows, qrErr = db.Query(sqlGetColByConstraintName, constraintName, tableName)
-		if qrErr != nil {
-			return ret
-		}
-	} else {
-		rows, qrErr = db.QueryContext(ctx, sqlGetColByConstraintName, constraintName, tableName)
-		if qrErr != nil {
-			return ret
-		}
-	}
-
-	for rows.Next() {
-		var colName string
-		qrErr = rows.Scan(&colName)
-		if qrErr != nil {
-			return ret
-		}
-		ret.Fields = append(ret.Fields, colName)
-	}
-	//set cache
-	if len(ret.Fields) > 0 {
-		errorMssqlErrorDuplicateCache.Store(cacheKey, strings.Join(ret.Fields, ","))
-	}
 	return ret
 }
 

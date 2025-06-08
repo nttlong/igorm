@@ -2,6 +2,7 @@ package dbx
 
 import (
 	"database/sql"
+	"dbx"
 	"fmt"
 	"reflect"
 	"strings"
@@ -9,7 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nttlong/dbx"
+
 	"github.com/stretchr/testify/assert"
 )
 

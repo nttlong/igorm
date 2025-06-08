@@ -6,7 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nttlong/dbx"
+	"dbx"
+
 	"github.com/stretchr/testify/assert"
 )
 

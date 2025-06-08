@@ -3,10 +3,12 @@ package account
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"testing"
 	"time"
 
 	"dbx"
+	"unvs/internal/app/cache"
 	userRepo "unvs/internal/app/repository/user"
 
 	"github.com/stretchr/testify/assert"
@@ -33,13 +35,20 @@ func TestCreateDbxTenant(t *testing.T) {
 
 	DbTenant = *dbTenant
 }
+func CreateCache(ownerType reflect.Type) cache.Cache {
+	return cache.NewInMemoryCache(
+		ownerType,
+		5*time.Minute,
+		10*time.Minute,
+	)
+}
 func TestCreateAccount(t *testing.T) {
 	TestCreateDbxTenant(t)
 	DbTenant.Open()
 	defer DbTenant.Close()
 	repo := userRepo.NewUserRepo(DbTenant)
 	// Test case 1: Create account successfully
-	account := NewAccountService(repo)
+	account := NewAccountService(repo, CreateCache(reflect.TypeOf(repo)))
 	for i := 0; i < 1000; i++ {
 		start := time.Now()
 		user, err := account.CreateAccount(context.Background(), "user3", "user1@example.com", "password1")

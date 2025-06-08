@@ -25,12 +25,12 @@ type UserRepository interface {
 	// GetAllUsers(ctx context.Context, limit, offset int) ([]*auth.User, error)
 }
 type dbxUserRepository struct {
-	dbxClient dbx.DBXTenant // Client kết nối cơ sở dữ liệu
+	dbxClient *dbx.DBXTenant // Client kết nối cơ sở dữ liệu
 }
 
 // NewUserRepository tạo một instance mới của UserRepository.
 // Nó nhận một client DBXTenant và trả về một triển khai của UserRepository interface.
-func NewUserRepo(dbxClient dbx.DBXTenant) UserRepository {
+func NewUserRepo(dbxClient *dbx.DBXTenant) UserRepository {
 
 	return &dbxUserRepository{dbxClient: dbxClient}
 }
@@ -39,13 +39,13 @@ func NewUserRepo(dbxClient dbx.DBXTenant) UserRepository {
 // CreateUser thêm một người dùng mới vào cơ sở dữ liệu.
 func (r *dbxUserRepository) CreateUser(ctx context.Context, user *auth.User) error {
 
-	return dbx.InsertWithContext(ctx, &r.dbxClient, user)
+	return dbx.InsertWithContext(ctx, r.dbxClient, user)
 }
 
 // GetUserByID lấy thông tin người dùng từ cơ sở dữ liệu bằng ID.
 func (r *dbxUserRepository) GetUserByID(ctx context.Context, userID string) (*auth.User, error) {
 
-	user, err := dbx.Query[auth.User](&r.dbxClient).Where("UserId = ?", userID).First()
+	user, err := dbx.Query[auth.User](r.dbxClient, ctx).Where("UserId = ?", userID).First()
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (r *dbxUserRepository) GetUserByID(ctx context.Context, userID string) (*au
 
 // GetUserByEmail lấy thông tin người dùng từ cơ sở dữ liệu bằng email.
 func (r *dbxUserRepository) GetUserByEmail(ctx context.Context, email string) (*auth.User, error) {
-	user, err := dbx.Query[auth.User](&r.dbxClient).Where("Email = ?", email).First()
+	user, err := dbx.Query[auth.User](r.dbxClient, ctx).Where("Email = ?", email).First()
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (r *dbxUserRepository) GetUserByEmail(ctx context.Context, email string) (*
 
 // GetUserByEmail lấy thông tin người dùng từ cơ sở dữ liệu bằng email.
 func (r *dbxUserRepository) GetUserByUsername(ctx context.Context, username string) (*auth.User, error) {
-	user, err := dbx.Query[auth.User](&r.dbxClient).Where("Username = ?", username).First()
+	user, err := dbx.Query[auth.User](r.dbxClient, ctx).Where("Username = ?", username).First()
 	if err != nil {
 		return nil, err
 	}
@@ -77,5 +77,5 @@ func (r *dbxUserRepository) UpdateUser(ctx context.Context, user *auth.User) err
 
 // DeleteUser xóa người dùng khỏi cơ sở dữ liệu bằng ID.
 func (r *dbxUserRepository) DeleteUser(ctx context.Context, userID string) error {
-	return dbx.Query[auth.User](&r.dbxClient).Where("UserId = ?", userID).Delete()
+	return dbx.Query[auth.User](r.dbxClient, ctx).Where("UserId = ?", userID).Delete()
 }

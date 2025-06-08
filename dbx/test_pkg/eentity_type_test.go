@@ -7,9 +7,11 @@ import (
 	"testing"
 	"time"
 
+	"dbx"
+
+	_ "dbx"
+
 	_ "github.com/lib/pq"
-	"github.com/nttlong/dbx"
-	_ "github.com/nttlong/dbx"
 	"github.com/stretchr/testify/assert"
 )
 

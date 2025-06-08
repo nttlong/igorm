@@ -5,8 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"dbx"
+
 	_ "github.com/microsoft/go-mssqldb"
-	"github.com/nttlong/dbx"
 	"github.com/stretchr/testify/assert"
 )
 

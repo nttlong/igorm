@@ -566,6 +566,20 @@ func CreateEntityType(entity interface{}) (*EntityType, error) {
 	}
 	//save to cache
 	cacheCreateEntityType.Store(key, ret)
+	uk := map[string][]string{}
+	for _, f := range ret.EntityFields {
+		if f.UkName != "" {
+			if _, ok := uk[f.UkName]; !ok {
+				uk[f.UkName] = []string{f.Name}
+			} else {
+				uk[f.UkName] = append(uk[f.UkName], f.Name)
+			}
+
+		}
+	}
+	for k, v := range uk {
+		dbxEntityCache.set_uk(ret.TableName+"_"+k, v)
+	}
 	return ret, nil
 }
 

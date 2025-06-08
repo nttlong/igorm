@@ -26,7 +26,7 @@ func createMssqlConfig() dbx.Cfg {
 
 }
 
-var DbTenant dbx.DBXTenant
+var DbTenant *dbx.DBXTenant
 
 func TestCreateDbxTenant(t *testing.T) {
 	db := dbx.NewDBX(createMssqlConfig())
@@ -34,7 +34,7 @@ func TestCreateDbxTenant(t *testing.T) {
 	dbTenant, err := db.GetTenant("tenant1")
 	assert.NoError(t, err, "Error creating tenant")
 
-	DbTenant = *dbTenant
+	DbTenant = dbTenant
 }
 func TestUserRepo_Create(t *testing.T) {
 	TestCreateDbxTenant(t)
