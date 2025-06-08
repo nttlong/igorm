@@ -1,10 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"time"
 
-	"github.com/nttlong/dbx"
+	"dbx"
 )
 
 type BaseInfo struct {
@@ -161,7 +162,9 @@ func loadData(TenantDb *dbx.DBXTenant) {
 	avg := int64(0)
 	for i := 0; i < 10000; i++ {
 		start := time.Now()
-		usr, err := dbx.Query[Employees](TenantDb, "len(code)>=?", 2)
+
+		qr := dbx.Query[Employees](TenantDb, context.Background()).Where("len(code)>=?", 2)
+		usr, err := qr.Items()
 		n := time.Since(start).Milliseconds()
 		avg += n
 		fmt.Println("Elapse time in ms ", n)
