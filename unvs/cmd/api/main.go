@@ -72,7 +72,7 @@ func getMemcachedServer() cache.Cache {
 }
 
 func createTenantDb(tenant string) (*dbx.DBXTenant, error) {
-	cfg := getMysqlConfig() //getMssqlConfig()
+	cfg := getMssqlConfig()
 	db := dbx.NewDBX(cfg)
 	db.Open()
 	defer db.Close()
