@@ -11,7 +11,7 @@ import (
 // @Summary Đăng nhập người dùng bằng Form Submit (Username/Password)
 // @Description Xác thực thông tin đăng nhập từ form data (username và mật khẩu) và trả về JWT token nếu thành công.
 // @Tags Accounts
-// @Accept x-www-form-urlencoded // <<< CHỈ CHẤP NHẬN FORM DATA
+// @Accept x-www-form-urlencoded
 // @Produce json
 // @Param username formData string true "Tên người dùng (không phải email)" // <<< Sử dụng formData cho Swagger
 // @Param password formData string true "Mật khẩu"

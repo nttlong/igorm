@@ -77,3 +77,9 @@ func TestUserRepo_Create(t *testing.T) {
 	}
 
 }
+func TestUserRepoLogin(t *testing.T) {
+	TestCreateDbxTenant(t)
+	DbTenant.Open()
+	defer DbTenant.Close()
+
+}

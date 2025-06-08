@@ -14,6 +14,8 @@ import (
 
 	_ "unvs/internal/app/middleware/auth"
 
+	middlewareAuth "unvs/internal/app/middleware/auth"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
@@ -100,15 +102,15 @@ func createTenantDb(tenant string) (*dbx.DBXTenant, error) {
 
 }
 func createUserRepo(tenantDB *dbx.DBXTenant) user_repo.UserRepository {
-	return user_repo.NewUserRepo(*tenantDB)
+	return user_repo.NewUserRepo(tenantDB)
 }
 func createAccService(tenantDB *dbx.DBXTenant) *account.AccountService {
 	return account.NewAccountService(
 		createUserRepo(tenantDB),
 		//getBadgerCache(reflect.TypeOf(account.AccountService{})),
-		//getMemoryCache(reflect.TypeOf(account.AccountService{})),
+		getMemoryCache(reflect.TypeOf(account.AccountService{})),
 		//getMemcachedServer(reflect.TypeOf(account.AccountService{})),
-		getRedisCached(reflect.TypeOf(account.AccountService{})),
+		//getRedisCached(reflect.TypeOf(account.AccountService{})),
 	)
 }
 func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
@@ -121,20 +123,20 @@ func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
 // @host localhost:8080
 // @BasePath /api/v1
 
-// @securityDefinitions.bearer BearerAuth // <<< ĐÃ THAY ĐỔI: Định nghĩa Bearer token authentication
+// @securityDefinitions.bearer BearerAuth
 // @description "JWT Authorization header using the Bearer scheme. Enter your token in the format 'Bearer <token>'"
 // @name Authorization
 // @in header
 // @type apiKey // Vẫn dùng type apiKey cho Swagger UI để hiển thị input field
 
 // @securityDefinitions.oauth2.password OAuth2Password
-// @tokenUrl /oauth/token
+// @tokenUrl /api/v1/oauth/token
 // @in header
 // @name Authorization
 // @description "OAuth2 Password Flow - Enter email/username and password in the popup to get token."
 
 // @securityDefinitions.oauth2.password OAuth2FormLogin
-// @tokenUrl /oauth/token-form
+
 // @in header
 // @name Authorization
 // @description "OAuth2 Password Flow (Form Submit) - Use for explicit form data submission."
@@ -167,9 +169,10 @@ func main() {
 	// Định nghĩa route API "Hello World"
 	apiV1.GET("/hz", handler.HzHandler) // Gọi handler tại đây
 	//@Router /accounts/create [post]
-	//apiV1.POST("/accounts/create", accHandlers.CreateAccount, middleware_auth.JWTAuthMiddleware)
-	apiV1.POST("/accounts/create", accHandlers.CreateAccount)
+	apiV1.POST("/accounts/create", accHandlers.CreateAccount, middlewareAuth.JWTAuthMiddleware)
+	//apiV1.POST("/accounts/create", accHandlers.CreateAccount)
 	apiV1.POST("/accounts/login", accHandlers.Login)
+	apiV1.POST("/oauth/token", accHandlers.LoginByFormSubmit)
 	e.POST("/oauth/token", accHandlers.LoginByFormSubmit)
 
 	// Khởi chạy server

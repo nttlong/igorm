@@ -7,9 +7,14 @@ export let options = {
 };
 
 export default function () {
+  const userIndex = __VU; // Hoặc dùng __ITER nếu muốn tăng theo lần lặp
+  const code="xx05"
+  const email = `${code}${__VU}_${Date.now()}@example.com`;
+  const username = `${code}${userIndex}`;
+  const password = `123456`;
   const payload = JSON.stringify({
     password: '123456',
-    username: 'admin',
+    username: username,
   });
 
   const params = {

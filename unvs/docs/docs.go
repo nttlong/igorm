@@ -19,7 +19,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "OAuth2Password": []
                     }
                 ],
                 "description": "Tạo một tài khoản người dùng mới với username, email và mật khẩu.",
@@ -74,9 +74,10 @@ const docTemplate = `{
         },
         "/accounts/login": {
             "post": {
-                "description": "Xác thực thông tin đăng nhập của người dùng và trả về JWT token nếu thành công.",
+                "description": "Xác thực thông tin đăng nhập của người dùng (email hoặc username) và trả về JWT token nếu thành công.",
                 "consumes": [
-                    "application/json"
+                    "application/json",
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -84,10 +85,10 @@ const docTemplate = `{
                 "tags": [
                     "Accounts"
                 ],
-                "summary": "Đăng nhập người dùng và nhận JWT token",
+                "summary": "Đăng nhập người dùng và nhận JWT token (JSON/Form)",
                 "parameters": [
                     {
-                        "description": "Thông tin đăng nhập (email và mật khẩu)",
+                        "description": "Thông tin đăng nhập (email/username và mật khẩu)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -142,6 +143,69 @@ const docTemplate = `{
                         "description": "Hello World!",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/token": {
+            "post": {
+                "description": "Xác thực thông tin đăng nhập từ form data (username và mật khẩu) và trả về JWT token nếu thành công.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Đăng nhập người dùng bằng Form Submit (Username/Password)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tên người dùng (không phải email)",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Mật khẩu",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Kiểu cấp quyền (thường là 'password' cho OAuth2, tùy chọn)",
+                        "name": "grant_type",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Đăng nhập thành công, trả về JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Yêu cầu không hợp lệ (validation errors)",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Thông tin đăng nhập không hợp lệ",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Lỗi nội bộ server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     }
                 }
@@ -230,6 +294,27 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "failedLoginCount": {
+                    "type": "integer"
+                },
+                "isLocked": {
+                    "type": "boolean"
+                },
+                "isSupperUser": {
+                    "type": "boolean"
+                },
+                "lastFailedLoginAt": {
+                    "type": "string"
+                },
+                "lastLoginAt": {
+                    "type": "string"
+                },
+                "lastPasswordChangeAt": {
+                    "type": "string"
+                },
+                "roleId": {
+                    "type": "integer"
+                },
                 "updatedAt": {
                     "type": "string"
                 },
@@ -246,14 +331,14 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "ApiKeyAuth": {
-            "description": "\"Nhập token JWT của bạn vào đây (tiền tố 'Bearer '). Ví dụ: 'Bearer eyJhbGciOiJIUzI1Ni...' \"",
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
+        "OAuth2FormLogin": {
+            "description": "\"OAuth2 Password Flow (Form Submit) - Use for explicit form data submission.\"",
+            "type": "oauth2",
+            "flow": "password",
+            "tokenUrl": "/oauth/token-form"
         },
         "OAuth2Password": {
-            "description": "\"OAuth2 Password Flow - Lấy token từ endpoint /oauth/token\"",
+            "description": "\"OAuth2 Password Flow - Enter email/username and password in the popup to get token.\"",
             "type": "oauth2",
             "flow": "password",
             "tokenUrl": "/oauth/token"
@@ -267,8 +352,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Tên API của bạn (ví dụ: Go Account API)",
-	Description:      "Mô tả về API của bạn",
+	Title:            "Go API Example",
+	Description:      "\"JWT Authorization header using the Bearer scheme. Enter your token in the format 'Bearer <token>'\"",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

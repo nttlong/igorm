@@ -66,7 +66,9 @@ func (s *AccountService) CreateAccount(ctx context.Context, username string, ema
 	// 2. Băm mật khẩu.
 	// Đây là nơi thực hiện logic băm mật khẩu theo nghiệp vụ của ứng dụng.
 	// Repository (user_repo.go) KHÔNG NÊN băm mật khẩu.
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrHashPassword, err) // Wrap lỗi gốc
 	}
@@ -84,7 +86,10 @@ func (s *AccountService) CreateAccount(ctx context.Context, username string, ema
 	// 4. Lưu vào DB thông qua Repository
 	// Repository sẽ nhận newUser với PasswordHash đã được băm và UserId đã được gán.
 	// ĐẢM BẢO user_repo.go KHÔNG CÓ logic băm mật khẩu và KHÔNG GÁN UUID.
+	start = time.Now()
 	if err := s.userRepo.CreateUser(ctx, newUser); err != nil {
+		n = time.Since(start).Milliseconds()
+
 		// --- THÊM DÒNG NÀY ĐỂ GỠ LỖI: In ra chi tiết lỗi từ Repository ---
 		fmt.Printf("DEBUG: Error from userRepo.CreateUser: Type=%T, Value=%v\n", err, err)
 
@@ -131,21 +136,28 @@ func (s *AccountService) AuthenticateUser(ctx context.Context, username, passwor
 	ok := s.userCache.Get(ctx, username, &user)
 	if !ok {
 		user, err = s.userRepo.GetUserByUsername(ctx, username)
-		if err != nil {
+		if err != nil || user == nil {
 			// Kiểm tra lỗi "not found" từ repository (dựa vào thông báo lỗi từ repo)
-			if strings.Contains(err.Error(), "not found") {
-				return nil, ErrInvalidCredentials // Dịch thành lỗi nghiệp vụ
-			}
-			return nil, fmt.Errorf("%w: failed to get user: %v", ErrInvalidCredentials, err) // Wrap lỗi gốc
+			return nil, ErrInvalidCredentials // Dịch thành lỗi nghiệp vụ // Wrap lỗi gốc
 		}
 		s.userCache.Set(ctx, user.Username, *user, time.Minute*24)
 
 	}
+	key := user.Username + "_authenticate_ok"
+	var checkStr *string
+	if s.userCache.Get(ctx, key, &checkStr) {
+		if *checkStr == user.PasswordHash+"_"+password {
+			return user, nil
+		}
+	}
 
-	// 2. So sánh mật khẩu băm với mật khẩu thô
+	// // 2. So sánh mật khẩu băm với mật khẩu thô
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
 		// bcrypt.CompareHashAndPassword trả về lỗi nếu mật khẩu không khớp
+
 		return nil, ErrInvalidCredentials // Dịch thành lỗi nghiệp vụ
+	} else {
+		s.userCache.Set(ctx, user.Username+"_authenticate_ok", user.PasswordHash+"_"+password, time.Hour*24)
 	}
 
 	return user, nil

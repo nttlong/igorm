@@ -21,7 +21,7 @@ import (
 // @Failure 409 {object} ErrorResponse "Email đã tồn tại"
 // @Failure 500 {object} ErrorResponse "Lỗi nội bộ server"
 // @Router /accounts/create [post]
-// @Security ApiKeyAuth
+// @Security OAuth2Password
 func (h *AccountHandler) CreateAccount(c echo.Context) error {
 	req := new(CreateAccountRequest)
 	if err := c.Bind(req); err != nil {

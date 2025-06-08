@@ -16,6 +16,7 @@ type InMemoryCache struct {
 }
 
 // NewInMemoryCache tạo một instance mới của InMemoryCache
+// use "github.com/patrickmn/go-cache"
 func NewInMemoryCache(
 	ownerType reflect.Type,
 	defaultExpiration,

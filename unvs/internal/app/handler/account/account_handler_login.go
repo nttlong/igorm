@@ -14,8 +14,18 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// generateJWTToken generates a JWT token for a given user
-func generateJWTToken(user *auth.User) (string, error) {
+// OAuth2TokenResponse là cấu trúc phản hồi chuẩn cho OAuth2 Password Flow
+type OAuth2TokenResponse struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   int64  `json:"expires_in"` // Thời gian sống của token tính bằng giây
+	// Các trường khác có thể thêm vào nếu cần như refresh_token, scope, v.v.
+	Message string     `json:"message,omitempty"` // Thêm message nếu bạn muốn giữ lại
+	User    *auth.User `json:"user,omitempty"`    // Thêm thông tin user nếu bạn muốn giữ lại
+}
+
+// generateJWTToken (giữ nguyên hoặc sửa nhẹ để trả về expirationTime)
+func generateJWTToken(user *auth.User) (string, time.Time, error) { // Thêm time.Time để trả về thời gian hết hạn
 	expirationTime := time.Now().Add(24 * time.Hour) // Token hết hạn sau 24 giờ
 	claims := &UserClaims{
 		UserID:   user.UserId,
@@ -30,14 +40,36 @@ func generateJWTToken(user *auth.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedString, err := token.SignedString(config.GetJWTSecret())
 	if err != nil {
-		return "", fmt.Errorf("failed to sign token: %w", err)
+		return "", time.Time{}, fmt.Errorf("failed to sign token: %w", err)
 	}
-	return signedString, nil
+	return signedString, expirationTime, nil
+}
+
+// CreateOAuth2TokenResponse tạo phản hồi chuẩn OAuth2 từ thông tin token và user
+func CreateOAuth2TokenResponse(user *auth.User) (*OAuth2TokenResponse, error) {
+	tokenString, expirationTime, err := generateJWTToken(user)
+	if err != nil {
+		return nil, err
+	}
+
+	// Tính thời gian sống còn lại của token bằng giây
+	expiresIn := expirationTime.Unix() - time.Now().Unix()
+	if expiresIn < 0 { // Đảm bảo không trả về giá trị âm nếu token đã hết hạn
+		expiresIn = 0
+	}
+
+	return &OAuth2TokenResponse{
+		AccessToken: tokenString,
+		TokenType:   "Bearer",
+		ExpiresIn:   expiresIn,
+		Message:     "Đăng nhập thành công", // Giữ lại nếu muốn
+		User:        user,                   // Giữ lại nếu muốn
+	}, nil
 }
 
 // performLoginRequest là một helper method chứa logic chung cho việc xử lý đăng nhập.
 // Nó nhận username (có thể là email) và password, sau đó gọi service và tạo token.
-func (h *AccountHandler) performLoginRequest(ctx context.Context, username, password string) (*LoginResponse, error) {
+func (h *AccountHandler) performLoginRequest(ctx context.Context, username, password string) (*OAuth2TokenResponse, error) {
 	// Validate input (có thể dùng validator riêng nếu phức tạp hơn)
 	if username == "" || password == "" {
 		return nil, errors.New("MISSING_CREDENTIALS: Username và mật khẩu không được để trống")
@@ -60,15 +92,12 @@ func (h *AccountHandler) performLoginRequest(ctx context.Context, username, pass
 	}
 
 	// Tạo JWT token sau khi xác thực thành công
-	token, err := generateJWTToken(user)
+	auth2Token, err := CreateOAuth2TokenResponse(user)
+
 	if err != nil {
 		return nil, fmt.Errorf("TOKEN_GENERATION_FAILED: Không thể tạo token xác thực: %w", err)
 	}
 
 	// Trả về token và thông tin người dùng (không bao gồm mật khẩu hash)
-	return &LoginResponse{
-		Message: "Đăng nhập thành công",
-		Token:   token,
-		User:    user,
-	}, nil
+	return auth2Token, nil
 }

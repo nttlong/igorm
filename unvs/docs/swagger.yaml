@@ -52,6 +52,20 @@ definitions:
         type: string
       email:
         type: string
+      failedLoginCount:
+        type: integer
+      isLocked:
+        type: boolean
+      isSupperUser:
+        type: boolean
+      lastFailedLoginAt:
+        type: string
+      lastLoginAt:
+        type: string
+      lastPasswordChangeAt:
+        type: string
+      roleId:
+        type: integer
       updatedAt:
         type: string
       updatedBy:
@@ -64,8 +78,9 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: Mô tả về API của bạn
-  title: 'Tên API của bạn (ví dụ: Go Account API)'
+  description: '"JWT Authorization header using the Bearer scheme. Enter your token
+    in the format ''Bearer <token>''"'
+  title: Go API Example
   version: "1.0"
 paths:
   /accounts/create:
@@ -100,7 +115,7 @@ paths:
           schema:
             $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - OAuth2Password: []
       summary: Tạo một tài khoản người dùng mới
       tags:
       - Accounts
@@ -108,10 +123,11 @@ paths:
     post:
       consumes:
       - application/json
-      description: Xác thực thông tin đăng nhập của người dùng và trả về JWT token
-        nếu thành công.
+      - application/x-www-form-urlencoded
+      description: Xác thực thông tin đăng nhập của người dùng (email hoặc username)
+        và trả về JWT token nếu thành công.
       parameters:
-      - description: Thông tin đăng nhập (email và mật khẩu)
+      - description: Thông tin đăng nhập (email/username và mật khẩu)
         in: body
         name: request
         required: true
@@ -136,7 +152,7 @@ paths:
           description: Lỗi nội bộ server
           schema:
             $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
-      summary: Đăng nhập người dùng và nhận JWT token
+      summary: Đăng nhập người dùng và nhận JWT token (JSON/Form)
       tags:
       - Accounts
   /hz:
@@ -154,15 +170,59 @@ paths:
       summary: Lấy một lời chào đơn giản
       tags:
       - heathz
+  /oauth/token:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Xác thực thông tin đăng nhập từ form data (username và mật khẩu)
+        và trả về JWT token nếu thành công.
+      parameters:
+      - description: Tên người dùng (không phải email)
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Mật khẩu
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: Kiểu cấp quyền (thường là 'password' cho OAuth2, tùy chọn)
+        in: formData
+        name: grant_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Đăng nhập thành công, trả về JWT token
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.LoginResponse'
+        "400":
+          description: Yêu cầu không hợp lệ (validation errors)
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
+        "401":
+          description: Thông tin đăng nhập không hợp lệ
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
+        "500":
+          description: Lỗi nội bộ server
+          schema:
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
+      summary: Đăng nhập người dùng bằng Form Submit (Username/Password)
+      tags:
+      - Accounts
 securityDefinitions:
-  ApiKeyAuth:
-    description: '"Nhập token JWT của bạn vào đây (tiền tố ''Bearer ''). Ví dụ: ''Bearer
-      eyJhbGciOiJIUzI1Ni...'' "'
-    in: header
-    name: Authorization
-    type: apiKey
+  OAuth2FormLogin:
+    description: '"OAuth2 Password Flow (Form Submit) - Use for explicit form data
+      submission."'
+    flow: password
+    tokenUrl: /oauth/token-form
+    type: oauth2
   OAuth2Password:
-    description: '"OAuth2 Password Flow - Lấy token từ endpoint /oauth/token"'
+    description: '"OAuth2 Password Flow - Enter email/username and password in the
+      popup to get token."'
     flow: password
     tokenUrl: /oauth/token
     type: oauth2

@@ -5,6 +5,7 @@ import (
 	"fmt" // Thêm import fmt
 	"net/http"
 	"strings"
+	"time"
 
 	jwtUtils "unvs/pkg/jwt_utils" // Import package jwt_utils
 
@@ -32,7 +33,10 @@ func JWTAuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		tokenString := parts[1]
+		start := time.Now()                            // Thêm code để đo thời gian chạy hàm
 		claims, err := jwtUtils.DecodeJWT(tokenString) // Sử dụng hàm DecodeJWT từ jwt_utils
+		n := time.Since(start).Milliseconds()
+		fmt.Println("Elapse time in ms ", n)
 		if err != nil {
 			// fmt.Printf("DEBUG: Lỗi khi decode JWT: %v\n", err) // Để debug nếu cần
 			return c.JSON(http.StatusUnauthorized, map[string]string{

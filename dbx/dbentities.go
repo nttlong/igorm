@@ -405,7 +405,9 @@ func (ctx *DBXTenant) mssqlInsert(cntx context.Context, tblInfo *EntityType, ent
 	if cntx == nil {
 		qr = ctx.DB.QueryRow(*execSql2, dataInsert.Params...)
 	} else {
+
 		qr = ctx.DB.QueryRowContext(cntx, *execSql2, dataInsert.Params...)
+
 	}
 
 	if qr.Err() != nil {
