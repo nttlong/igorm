@@ -13,6 +13,9 @@ import (
 	"unvs/internal/model/auth"                   // Import struct User từ model/auth
 
 	// Import BaseModel từ model/base
+	_ "unvs/internal/app/cache"
+	appCache "unvs/internal/app/cache"
+
 	"github.com/google/uuid"     // Import thư viện uuid
 	"golang.org/x/crypto/bcrypt" // Import thư viện bcrypt để so sánh mật khẩu
 )
@@ -36,13 +39,14 @@ var (
 // AccountService là struct chứa logic nghiệp vụ cho các tác vụ liên quan đến tài khoản.
 // Nó phụ thuộc vào UserRepository interface để truy cập dữ liệu.
 type AccountService struct {
-	userRepo userRepo.UserRepository // Phụ thuộc vào userRepo.UserRepository interface
+	userCache appCache.Cache          // Phụ thuộc vào appCache.UserCache interface
+	userRepo  userRepo.UserRepository // Phụ thuộc vào userRepo.UserRepository interface
 }
 
 // NewAccountService tạo một instance mới của AccountService.
 // UserRepository được inject vào đây.
-func NewAccountService(repo userRepo.UserRepository) *AccountService {
-	return &AccountService{userRepo: repo}
+func NewAccountService(repo userRepo.UserRepository, cacheClient appCache.Cache) *AccountService {
+	return &AccountService{userRepo: repo, userCache: cacheClient}
 }
 
 // CreateAccount là phương thức nghiệp vụ để tạo một tài khoản mới.
@@ -113,20 +117,29 @@ func (s *AccountService) CreateAccount(ctx context.Context, username string, ema
 		// Xử lý các lỗi khác không phải DBXError từ repository
 		return nil, fmt.Errorf("%w: %v", ErrCreateAccountFail, err) // Wrap lỗi gốc
 	}
-
+	s.userCache.Set(newUser.Username, *newUser, time.Minute*24)
 	return newUser, nil
 }
 
 // AuthenticateUser là phương thức nghiệp vụ để xác thực người dùng.
 func (s *AccountService) AuthenticateUser(ctx context.Context, username, password string) (*auth.User, error) {
 	// 1. Lấy người dùng từ DB bằng email
-	user, err := s.userRepo.GetUserByUsername(ctx, username)
-	if err != nil {
-		// Kiểm tra lỗi "not found" từ repository (dựa vào thông báo lỗi từ repo)
-		if strings.Contains(err.Error(), "not found") {
-			return nil, ErrInvalidCredentials // Dịch thành lỗi nghiệp vụ
+	//get user from cache
+	cacheUser, ok := s.userCache.Get(username)
+	var user *auth.User
+	if !ok {
+		dbUser, err := s.userRepo.GetUserByUsername(ctx, username)
+		if err != nil {
+			// Kiểm tra lỗi "not found" từ repository (dựa vào thông báo lỗi từ repo)
+			if strings.Contains(err.Error(), "not found") {
+				return nil, ErrInvalidCredentials // Dịch thành lỗi nghiệp vụ
+			}
+			return nil, fmt.Errorf("%w: failed to get user: %v", ErrInvalidCredentials, err) // Wrap lỗi gốc
 		}
-		return nil, fmt.Errorf("%w: failed to get user: %v", ErrInvalidCredentials, err) // Wrap lỗi gốc
+		user = dbUser
+
+	} else if aUser, ok := cacheUser.(auth.User); ok {
+		user = &aUser
 	}
 
 	// 2. So sánh mật khẩu băm với mật khẩu thô
@@ -134,7 +147,7 @@ func (s *AccountService) AuthenticateUser(ctx context.Context, username, passwor
 		// bcrypt.CompareHashAndPassword trả về lỗi nếu mật khẩu không khớp
 		return nil, ErrInvalidCredentials // Dịch thành lỗi nghiệp vụ
 	}
-
+	s.userCache.Set(user.Username, *user, time.Minute*24)
 	return user, nil
 }
 

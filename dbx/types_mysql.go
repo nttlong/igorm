@@ -258,7 +258,15 @@ func (e *executorMySql) makeAlterTableAddColumn(tableName string, field EntityFi
 		if defaultValueFunc, ok := mapDefaultValueFuncToMysql[field.DefaultValue]; ok {
 			dfValue = defaultValueFunc
 		} else {
-			dfValue = "'" + field.DefaultValue + "'"
+			if field.NonPtrFieldType == reflect.TypeOf(bool(false)) {
+				if field.DefaultValue == "false" {
+					dfValue = "0"
+				} else {
+					dfValue = "1"
+				}
+			} else {
+				dfValue = "'" + field.DefaultValue + "'"
+			}
 		}
 
 	}

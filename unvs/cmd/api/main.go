@@ -3,6 +3,7 @@ package main
 import (
 	"dbx"
 	"log"
+	"time"
 	handler "unvs/internal/app/handler"
 	accHandler "unvs/internal/app/handler/account"
 	user_repo "unvs/internal/app/repository/user"
@@ -15,6 +16,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 
 	_ "unvs/docs" // Import thư mục chứa docs đã tạo bởi swag
+
+	cache "unvs/internal/app/cache"
 
 	echoSwagger "github.com/swaggo/echo-swagger" // Thư viện tích hợp Swagger cho Echo
 )
@@ -47,6 +50,27 @@ func getMysqlConfig() dbx.Cfg {
 		Password: "123456",
 	}
 }
+func getMemoryCache() cache.Cache {
+	return cache.NewInMemoryCache(
+		time.Minute*5, time.Minute*10,
+	)
+
+}
+func getBadgerCache() cache.Cache {
+	ret, err := cache.NewBadgerCache(
+		"unvs",
+	)
+	if err != nil {
+		panic(err)
+	}
+	return ret
+}
+func getMemcachedServer() cache.Cache {
+	return cache.NewMemcachedCache(
+		[]string{"127.0.0.1:11211"},
+	)
+}
+
 func createTenantDb(tenant string) (*dbx.DBXTenant, error) {
 	cfg := getMysqlConfig() //getMssqlConfig()
 	db := dbx.NewDBX(cfg)
@@ -66,7 +90,9 @@ func createUserRepo(tenantDB *dbx.DBXTenant) user_repo.UserRepository {
 	return user_repo.NewUserRepo(*tenantDB)
 }
 func createAccService(tenantDB *dbx.DBXTenant) *account.AccountService {
-	return account.NewAccountService(createUserRepo(tenantDB))
+	return account.NewAccountService(
+		createUserRepo(tenantDB), getMemcachedServer(), //getBadgerCache(),
+	)
 }
 func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
 	return *accHandler.NewAccountHandler(createAccService(tenantDB))
