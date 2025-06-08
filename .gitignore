@@ -1,0 +1,4 @@
+*.exe
+unvs/cmd/api/unvs
+unvs/cmd/api/unvs/*
+unvs/cmd/api/unvs/*
