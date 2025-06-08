@@ -86,9 +86,8 @@ func (s *AccountService) CreateAccount(ctx context.Context, username string, ema
 	// 4. Lưu vào DB thông qua Repository
 	// Repository sẽ nhận newUser với PasswordHash đã được băm và UserId đã được gán.
 	// ĐẢM BẢO user_repo.go KHÔNG CÓ logic băm mật khẩu và KHÔNG GÁN UUID.
-	start = time.Now()
+
 	if err := s.userRepo.CreateUser(ctx, newUser); err != nil {
-		n = time.Since(start).Milliseconds()
 
 		// --- THÊM DÒNG NÀY ĐỂ GỠ LỖI: In ra chi tiết lỗi từ Repository ---
 		fmt.Printf("DEBUG: Error from userRepo.CreateUser: Type=%T, Value=%v\n", err, err)
