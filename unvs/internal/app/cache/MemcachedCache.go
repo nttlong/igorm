@@ -1,10 +1,12 @@
 package cache
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
+	"reflect"
+	"sync"
 	"time"
 
 	"github.com/bradfitz/gomemcache/memcache"
@@ -12,14 +14,27 @@ import (
 
 // MemcachedCache là một triển khai của Cache sử dụng Memcached.
 type MemcachedCache struct {
-	client *memcache.Client
+	client    *memcache.Client
+	prefixKey string // prefix cho tên key để đảm bảo tính toàn vẹn của key
 }
 
 // NewMemcachedCache tạo một instance mới của MemcachedCache.
 // servers là danh sách các địa chỉ server Memcached (ví dụ: "127.0.0.1:11211").
-func NewMemcachedCache(servers []string) Cache {
+var (
+	mcClient *memcache.Client
+	once     sync.Once
+)
+
+func NewMemcachedCache(ownerType reflect.Type, servers []string) Cache {
+	once.Do(func() {
+		mcClient = memcache.New(servers...)
+	})
 	mc := memcache.New(servers...)
-	return &MemcachedCache{client: mc}
+	prefixKey := fmt.Sprintf("%s:%s:", ownerType.PkgPath(), ownerType.Name())
+	return &MemcachedCache{
+		client:    mc,
+		prefixKey: prefixKey,
+	}
 }
 
 // getHashedKey tạo một hash SHA256 từ key đầu vào.
@@ -31,14 +46,14 @@ func getHashedKey(key string) string {
 }
 
 // Set đặt giá trị vào cache với TTL.
-func (m *MemcachedCache) Set(key string, value interface{}, ttl time.Duration) {
+func (m *MemcachedCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) {
 	hashedKey := getHashedKey(key)
 
 	var byteValue []byte
 	var errMarshal error
 
 	// Cố gắng serialize value thành JSON
-	byteValue, errMarshal = json.Marshal(value)
+	byteValue, errMarshal = bytesEncodeObject(value)
 	if errMarshal != nil {
 		fmt.Printf("Lỗi khi serialize giá trị sang JSON cho key '%s': %v\n", key, errMarshal)
 		return // Không thể lưu nếu serialize thất bại
@@ -57,7 +72,7 @@ func (m *MemcachedCache) Set(key string, value interface{}, ttl time.Duration) {
 }
 
 // Delete xóa một key khỏi cache.
-func (m *MemcachedCache) Delete(key string) {
+func (m *MemcachedCache) Delete(ctx context.Context, key string) {
 	hashedKey := getHashedKey(key)
 	err := m.client.Delete(hashedKey)
 	if err != nil {
@@ -81,19 +96,25 @@ func (m *MemcachedCache) Close() error {
 // Get lấy giá trị từ cache.
 // Hàm này sẽ TRẢ VỀ []byte ĐƯỢC LẤY TRỰC TIẾP từ Memcached.
 // Người gọi sẽ phải tự deserialize []byte này thành kiểu dữ liệu mong muốn.
-func (m *MemcachedCache) Get(key string) (interface{}, bool) {
+func (m *MemcachedCache) Get(ctx context.Context, key string, dest interface{}) bool {
 	hashedKey := getHashedKey(key)
 	item, err := m.client.Get(hashedKey)
 	if err != nil {
 		if err == memcache.ErrCacheMiss {
-			return nil, false // Key không tồn tại
+			return false // Key không tồn tại
 		}
 		// Xử lý các lỗi khác nếu cần (ví dụ: log lỗi)
 		fmt.Printf("Lỗi khi lấy dữ liệu từ Memcached: %v\n", err)
-		return nil, false
+		return false
 	}
 	// Trả về []byte trực tiếp. Người gọi phải tự giải mã.
 	// desrialize thành kiểu dữ liệu mong muốn.
 
-	return item.Value, true
+	bff := item.Value
+	err = bytesDecodeObject(bff, dest)
+	if err != nil {
+		fmt.Printf("Lỗi khi giải mã dữ liệu từ Memcached: %v\n", err)
+		return false
+	}
+	return true
 }

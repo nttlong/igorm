@@ -1,40 +1,70 @@
 package cache
 
 import (
+	"context"
+	"crypto/sha256"
 	"log"
+	"reflect"
 	"time"
 
 	gocache "github.com/patrickmn/go-cache"
 )
 
 type InMemoryCache struct {
-	client *gocache.Cache
+	client    *gocache.Cache
+	prefixKey string
 }
 
 // NewInMemoryCache tạo một instance mới của InMemoryCache
-func NewInMemoryCache(defaultExpiration, cleanupInterval time.Duration) *InMemoryCache {
+func NewInMemoryCache(
+	ownerType reflect.Type,
+	defaultExpiration,
+	cleanupInterval time.Duration) Cache {
+	prefixKey := ownerType.PkgPath() + "." + ownerType.Name()
+	hashKey := sha256.Sum256([]byte(prefixKey))
+	//strHasKey is string version of hashKey
+
+	// for in-memory cache, default expiration and cleanup interval are ignored
 	return &InMemoryCache{
-		client: gocache.New(defaultExpiration, cleanupInterval),
-	}
+		client:    gocache.New(defaultExpiration, cleanupInterval),
+		prefixKey: string(hashKey[:]),
+	} // no check error here, so just return nil
 }
 
 // Get implements Cache.Get for InMemoryCache
-func (c *InMemoryCache) Get(key string) (interface{}, bool) {
-	return c.client.Get(key)
+func (c *InMemoryCache) Get(ctx context.Context, key string, dest interface{}) bool {
+
+	r, f := c.client.Get(c.prefixKey + ":" + key)
+	if !f {
+		return false
+	}
+	if err := bytesDecodeObject(r.([]byte), dest); err != nil {
+		log.Println("InMemoryCache: Không thể decode object: ", err)
+		return false
+	}
+
+	return true
 }
 
 // Set implements Cache.Set for InMemoryCache
-func (c *InMemoryCache) Set(key string, value interface{}, ttl time.Duration) {
+func (c *InMemoryCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) {
+	objBff, err := bytesEncodeObject(value)
+	if err != nil {
+		log.Println("InMemoryCache: Không thể encode object: ", err)
+		return
+	}
+
 	if ttl == 0 { // Sử dụng TTL mặc định nếu được truyền 0
-		c.client.Set(key, value, gocache.DefaultExpiration)
+		c.client.Set(c.prefixKey+":"+key, objBff, gocache.DefaultExpiration)
 	} else {
-		c.client.Set(key, value, ttl)
+		c.client.Set(c.prefixKey+":"+key, objBff, ttl)
 	}
 }
 
 // Delete implements Cache.Delete for InMemoryCache
-func (c *InMemoryCache) Delete(key string) {
-	c.client.Delete(key)
+func (c *InMemoryCache) Delete(ctx context.Context, key string) {
+
+	c.client.Delete(c.prefixKey + ":" + key)
 }
 
 // Close implements Cache.Close for InMemoryCache (không cần làm gì cho go-cache)

@@ -29,5 +29,5 @@ export default function () {
 //     'response contains success': (r) => r.json().message === 'Login successful',
 //   });
 
-  sleep(1); // Add a 1-second delay between iterations
+  //sleep(1); // Add a 1-second delay between iterations
 }

@@ -117,7 +117,7 @@ func (s *AccountService) CreateAccount(ctx context.Context, username string, ema
 		// Xử lý các lỗi khác không phải DBXError từ repository
 		return nil, fmt.Errorf("%w: %v", ErrCreateAccountFail, err) // Wrap lỗi gốc
 	}
-	s.userCache.Set(newUser.Username, *newUser, time.Minute*24)
+	s.userCache.Set(ctx, newUser.Username, *newUser, time.Minute*24)
 	return newUser, nil
 }
 
@@ -125,10 +125,12 @@ func (s *AccountService) CreateAccount(ctx context.Context, username string, ema
 func (s *AccountService) AuthenticateUser(ctx context.Context, username, password string) (*auth.User, error) {
 	// 1. Lấy người dùng từ DB bằng email
 	//get user from cache
-	cacheUser, ok := s.userCache.Get(username)
+
 	var user *auth.User
+	var err error
+	ok := s.userCache.Get(ctx, username, &user)
 	if !ok {
-		dbUser, err := s.userRepo.GetUserByUsername(ctx, username)
+		user, err = s.userRepo.GetUserByUsername(ctx, username)
 		if err != nil {
 			// Kiểm tra lỗi "not found" từ repository (dựa vào thông báo lỗi từ repo)
 			if strings.Contains(err.Error(), "not found") {
@@ -136,10 +138,8 @@ func (s *AccountService) AuthenticateUser(ctx context.Context, username, passwor
 			}
 			return nil, fmt.Errorf("%w: failed to get user: %v", ErrInvalidCredentials, err) // Wrap lỗi gốc
 		}
-		user = dbUser
+		s.userCache.Set(ctx, user.Username, *user, time.Minute*24)
 
-	} else if aUser, ok := cacheUser.(auth.User); ok {
-		user = &aUser
 	}
 
 	// 2. So sánh mật khẩu băm với mật khẩu thô
@@ -147,7 +147,7 @@ func (s *AccountService) AuthenticateUser(ctx context.Context, username, passwor
 		// bcrypt.CompareHashAndPassword trả về lỗi nếu mật khẩu không khớp
 		return nil, ErrInvalidCredentials // Dịch thành lỗi nghiệp vụ
 	}
-	s.userCache.Set(user.Username, *user, time.Minute*24)
+
 	return user, nil
 }
 

@@ -1,9 +1,15 @@
 package cache
 
 import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"encoding/gob"
+	_ "encoding/gob"
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"time"
 
 	"github.com/dgraph-io/badger/v4"
@@ -14,13 +20,18 @@ import (
 //
 // BadgerCache là triển khai của Cache interface sử dụng BadgerDB
 type BadgerCache struct {
-	db *badger.DB
+	db        *badger.DB
+	prefixKey string
 }
 
 // NewBadgerCache tạo một instance mới của BadgerCache.
 // dbPath là đường dẫn tới thư mục lưu trữ dữ liệu của Badger.
-func NewBadgerCache(dbPath string) (*BadgerCache, error) {
+func NewBadgerCache(ownerType reflect.Type, dbPath string) (Cache, error) {
+	prefixType := ownerType.PkgPath() + "." + ownerType.Name()
+	h := sha256.Sum256([]byte(prefixType))
+	prefixType = string(h[:])
 	// Đảm bảo thư mục tồn tại
+
 	if err := os.MkdirAll(dbPath, 0755); err != nil {
 		return nil, fmt.Errorf("không thể tạo thư mục cho Badger DB tại %s: %w", dbPath, err)
 	}
@@ -41,11 +52,14 @@ func NewBadgerCache(dbPath string) (*BadgerCache, error) {
 	// db.RunValueLogGC(0.7) // Cần quản lý việc này liên tục
 
 	log.Printf("BadgerCache đã mở tại: %s\n", dbPath)
-	return &BadgerCache{db: db}, nil
+	return &BadgerCache{db: db, prefixKey: prefixType}, nil
 }
 
 // Get implements Cache.Get for BadgerCache
-func (c *BadgerCache) Get(key string) (interface{}, bool) {
+func (c *BadgerCache) Get(ctx context.Context, key string, dest interface{}) bool {
+	realKey := c.prefixKey + key
+	sha256Key := sha256.Sum256([]byte(realKey))
+	key = string(sha256Key[:])
 	var valBytes []byte
 	err := c.db.View(func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte(key))
@@ -57,10 +71,7 @@ func (c *BadgerCache) Get(key string) (interface{}, bool) {
 	})
 
 	if err != nil {
-		if err != badger.ErrKeyNotFound {
-			log.Printf("Lỗi khi đọc từ BadgerCache cho key '%s': %v\n", key, err)
-		}
-		return nil, false
+		return false
 	}
 	// Do Badger lưu trữ bytes, bạn cần unmarshal trở lại đối tượng gốc.
 	// Điều này phức tạp hơn go-cache vì go-cache lưu trữ trực tiếp interface{}.
@@ -68,32 +79,38 @@ func (c *BadgerCache) Get(key string) (interface{}, bool) {
 	// Để đơn giản, hàm Get này sẽ trả về []byte. Service cần handle việc unmarshal.
 	// Hoặc bạn có thể thêm một Type specific Get (ví dụ: GetUser) vào interface nếu các loại đối tượng cache là cố định.
 	// Tạm thời trả về []byte và để service xử lý.
-	return valBytes, true
+	decoder := gob.NewDecoder(bytes.NewBuffer(valBytes)) // Tạo Decoder từ []byte
+	err = decoder.Decode(dest)                           // Decode vào biến đích
+	if err != nil {
+		fmt.Printf("Lỗi khi Gob Decode userBytes vào user2: %v\n", err)
+		return false
+	}
+
+	if err != nil {
+		return false
+	}
+
+	return true
 }
 
 // Set implements Cache.Set for BadgerCache
-func (c *BadgerCache) Set(key string, value interface{}, ttl time.Duration) {
+func (c *BadgerCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) {
+	realKey := c.prefixKey + key
+	sha256Key := sha256.Sum256([]byte(realKey))
+	key = string(sha256Key[:])
+	// Lấy []byte từ buffer
 	err := c.db.Update(func(txn *badger.Txn) error {
-		// Chuyển đổi value sang []byte.
-		// Đối với User struct, bạn sẽ cần JSON marshal nó.
-		// Ví dụ: userBytes, _ := json.Marshal(user)
-		// Ở đây, chúng ta giả định value đã là []byte hoặc có thể chuyển đổi.
-		var valBytes []byte
-		switch v := value.(type) {
-		case []byte:
-			valBytes = v
-		case string:
-			valBytes = []byte(v)
-		case fmt.Stringer: // Nếu value có thể chuyển thành chuỗi
-			valBytes = []byte(v.String())
-		default:
-			// Fallback: có thể marshal thành JSON nếu là struct/map
-			// hoặc trả về lỗi nếu không thể chuyển đổi
-			log.Printf("Cảnh báo: Không thể chuyển đổi giá trị %T thành []byte cho BadgerCache. Key: %s\n", value, key)
-			return fmt.Errorf("kiểu giá trị không được hỗ trợ để lưu vào BadgerCache")
-		}
 
-		entry := badger.NewEntry([]byte(key), valBytes)
+		var buffer bytes.Buffer
+		encoder := gob.NewEncoder(&buffer) // Tạo Encoder
+		err := encoder.Encode(value)       // Encode struct
+		if err != nil {
+			fmt.Printf("Lỗi khi Gob Encode user1: %v\n", err)
+			return err
+		}
+		userBytes := buffer.Bytes()
+
+		entry := badger.NewEntry([]byte(key), userBytes)
 		if ttl > 0 {
 			entry = entry.WithTTL(ttl)
 		}
@@ -105,7 +122,10 @@ func (c *BadgerCache) Set(key string, value interface{}, ttl time.Duration) {
 }
 
 // Delete implements Cache.Delete for BadgerCache
-func (c *BadgerCache) Delete(key string) {
+func (c *BadgerCache) Delete(ctx context.Context, key string) {
+	realKey := c.prefixKey + key
+	sha256Key := sha256.Sum256([]byte(realKey))
+	key = string(sha256Key[:])
 	err := c.db.Update(func(txn *badger.Txn) error {
 		return txn.Delete([]byte(key))
 	})

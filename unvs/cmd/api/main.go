@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"dbx"
 	"log"
+	"reflect"
 	"time"
 	handler "unvs/internal/app/handler"
 	accHandler "unvs/internal/app/handler/account"
@@ -50,14 +52,16 @@ func getMysqlConfig() dbx.Cfg {
 		Password: "123456",
 	}
 }
-func getMemoryCache() cache.Cache {
+func getMemoryCache(ownerType reflect.Type) cache.Cache {
 	return cache.NewInMemoryCache(
+		ownerType,
 		time.Minute*5, time.Minute*10,
 	)
 
 }
-func getBadgerCache() cache.Cache {
+func getBadgerCache(ownerType reflect.Type) cache.Cache {
 	ret, err := cache.NewBadgerCache(
+		ownerType,
 		"unvs",
 	)
 	if err != nil {
@@ -65,12 +69,21 @@ func getBadgerCache() cache.Cache {
 	}
 	return ret
 }
-func getMemcachedServer() cache.Cache {
+func getMemcachedServer(ownerType reflect.Type) cache.Cache {
 	return cache.NewMemcachedCache(
+		ownerType,
 		[]string{"127.0.0.1:11211"},
 	)
 }
-
+func getRedisCached(ownerType reflect.Type) cache.Cache {
+	return cache.NewRedisCache(
+		context.Background(),
+		ownerType,
+		"127.0.0.1:6379",
+		"",
+		0,
+	)
+}
 func createTenantDb(tenant string) (*dbx.DBXTenant, error) {
 	cfg := getMssqlConfig()
 	db := dbx.NewDBX(cfg)
@@ -92,7 +105,10 @@ func createUserRepo(tenantDB *dbx.DBXTenant) user_repo.UserRepository {
 func createAccService(tenantDB *dbx.DBXTenant) *account.AccountService {
 	return account.NewAccountService(
 		createUserRepo(tenantDB),
-		getBadgerCache(),
+		//getBadgerCache(reflect.TypeOf(account.AccountService{})),
+		//getMemoryCache(reflect.TypeOf(account.AccountService{})),
+		//getMemcachedServer(reflect.TypeOf(account.AccountService{})),
+		getRedisCached(reflect.TypeOf(account.AccountService{})),
 	)
 }
 func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
