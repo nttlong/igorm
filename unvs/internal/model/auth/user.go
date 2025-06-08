@@ -17,13 +17,15 @@ type User struct {
 	CreatedBy    string     `db:"varchar(50);idx" json:"createdBy,omitempty"`
 	UpdatedBy    *string    `db:"varchar(50);idx" json:"updatedBy,omitempty"`
 
-	Description          dbx.FullTextSearchColumn `json:"description" swag:"-"`
-	Roles                []*Role                  `db:"fk:Id" json:"users"`
-	IsLocked             bool                     `db:"df:false" json:"isLocked"`
-	LastPasswordChangeAt *time.Time               ` json:"lastPasswordChangeAt,omitempty"`
-	LastLoginAt          *time.Time               ` json:"lastLoginAt,omitempty"`
-	LastFailedLoginAt    *time.Time               ` json:"lastFailedLoginAt,omitempty"`
-	FailedLoginCount     int                      `db:"df:0" json:"failedLoginCount"`
+	Description dbx.FullTextSearchColumn `json:"description" swag:"-"`
+
+	IsLocked             bool       `db:"df:false" json:"isLocked"`
+	LastPasswordChangeAt *time.Time ` json:"lastPasswordChangeAt,omitempty"`
+	LastLoginAt          *time.Time ` json:"lastLoginAt,omitempty"`
+	LastFailedLoginAt    *time.Time ` json:"lastFailedLoginAt,omitempty"`
+	FailedLoginCount     int        `db:"df:0" json:"failedLoginCount"`
+	IsSupperUser         bool       `db:"df:false" json:"isSupperUser"`
+	RoleId               *int       `db:"fk:auth_role(Id)" json:"roleId"`
 }
 
 func init() {

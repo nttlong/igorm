@@ -15,6 +15,7 @@ type Role struct {
 	UpdatedBy *string    `db:"varchar(50);idx" json:"updatedBy,omitempty"`
 
 	Description dbx.FullTextSearchColumn `json:"description" swag:"-"`
+	Users       []User                   `db:"fk(RoleId)" json:"users,omitempty"`
 }
 
 func init() {
