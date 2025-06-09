@@ -1,5 +1,5 @@
 // internal/app/handler/account/account_handler.go
-package account // Tên package là 'account', theo tên thư mục
+package accounts // Tên package là 'account', theo tên thư mục
 
 import (
 	"dbx"
@@ -10,7 +10,7 @@ import (
 	"unvs/internal/model/auth"
 	_ "unvs/internal/model/base"
 
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 var x dbx.FullTextSearchColumn

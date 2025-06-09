@@ -8,7 +8,7 @@ import (
 
 	"unvs/internal/config" // Import config package để lấy secret
 
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // UserClaims defines the claims for the JWT token

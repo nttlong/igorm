@@ -35,19 +35,12 @@ const docTemplate = `{
                 "summary": "Tạo một tài khoản người dùng mới",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "tên của Tenant",
-                        "name": "tenant",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "Thông tin tài khoản cần tạo",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.CreateAccountRequest"
+                            "$ref": "#/definitions/internal_app_handler_account.CreateAccountRequest"
                         }
                     }
                 ],
@@ -55,25 +48,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Tạo tài khoản thành công",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.CreateAccountResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.CreateAccountResponse"
                         }
                     },
                     "400": {
                         "description": "Yêu cầu không hợp lệ (validation errors)",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.ErrorResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Email đã tồn tại",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.ErrorResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Lỗi nội bộ server",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.ErrorResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     }
                 }
@@ -100,7 +93,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.LoginRequest"
+                            "$ref": "#/definitions/internal_app_handler_account.LoginRequest"
                         }
                     }
                 ],
@@ -108,64 +101,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Đăng nhập thành công, trả về JWT token",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.LoginResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Yêu cầu không hợp lệ (validation errors)",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.ErrorResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Thông tin đăng nhập không hợp lệ",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.ErrorResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Lỗi nội bộ server",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_accounts.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/callers/call": {
-            "post": {
-                "security": [
-                    {
-                        "OAuth2Password": []
-                    }
-                ],
-                "description": "CallerHandler",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "caller"
-                ],
-                "summary": "CallerHandler",
-                "parameters": [
-                    {
-                        "description": "CallerRequest",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/internal_app_handler_callers.CallerRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Response",
-                        "schema": {
-                            "$ref": "#/definitions/internal_app_handler_callers.CallerResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     }
                 }
@@ -192,17 +146,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "post": {
-                "description": "Endpoint check the accessibility.",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Healthz"
-                ],
-                "summary": "Health check endpoint",
-                "responses": {}
             }
         },
         "/oauth/token": {
@@ -219,13 +162,6 @@ const docTemplate = `{
                 ],
                 "summary": "Đăng nhập người dùng bằng Form Submit (Username/Password)",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "tenant code",
-                        "name": "tenant",
-                        "in": "formData",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Tên người dùng (không phải email)",
@@ -251,25 +187,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Đăng nhập thành công, trả về JWT token",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_oauth.OAuth2TokenResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Yêu cầu không hợp lệ (validation errors)",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_oauth.ErrorResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Thông tin đăng nhập không hợp lệ",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_oauth.ErrorResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Lỗi nội bộ server",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_handler_oauth.ErrorResponse"
+                            "$ref": "#/definitions/internal_app_handler_account.ErrorResponse"
                         }
                     }
                 }
@@ -277,7 +213,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "internal_app_handler_accounts.CreateAccountRequest": {
+        "internal_app_handler_account.CreateAccountRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -291,7 +227,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_app_handler_accounts.CreateAccountResponse": {
+        "internal_app_handler_account.CreateAccountResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -302,7 +238,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_app_handler_accounts.ErrorResponse": {
+        "internal_app_handler_account.ErrorResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -313,7 +249,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_app_handler_accounts.LoginRequest": {
+        "internal_app_handler_account.LoginRequest": {
             "type": "object",
             "properties": {
                 "password": {
@@ -324,7 +260,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_app_handler_accounts.LoginResponse": {
+        "internal_app_handler_account.LoginResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -335,85 +271,6 @@ const docTemplate = `{
                 },
                 "user": {
                     "description": "Có thể bao gồm thêm thông tin người dùng nếu cần, nhưng không phải mật khẩu hash",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/unvs_internal_model_auth.User"
-                        }
-                    ]
-                }
-            }
-        },
-        "internal_app_handler_callers.CallerRequest": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "language": {
-                    "type": "string"
-                },
-                "params": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "tenant": {
-                    "type": "string"
-                },
-                "viewId": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_app_handler_callers.CallerResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "$ref": "#/definitions/internal_app_handler_callers.ErrorResponse"
-                },
-                "results": {}
-            }
-        },
-        "internal_app_handler_callers.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_app_handler_oauth.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_app_handler_oauth.OAuth2TokenResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "expires_in": {
-                    "description": "Thời gian sống của token tính bằng giây",
-                    "type": "integer"
-                },
-                "message": {
-                    "description": "Các trường khác có thể thêm vào nếu cần như refresh_token, scope, v.v.",
-                    "type": "string"
-                },
-                "token_type": {
-                    "type": "string"
-                },
-                "user": {
-                    "description": "Thêm thông tin user nếu bạn muốn giữ lại",
                     "allOf": [
                         {
                             "$ref": "#/definitions/unvs_internal_model_auth.User"
@@ -474,6 +331,12 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
+        "OAuth2FormLogin": {
+            "description": "\"OAuth2 Password Flow (Form Submit) - Use for explicit form data submission.\"",
+            "type": "oauth2",
+            "flow": "password",
+            "tokenUrl": "/oauth/token-form"
+        },
         "OAuth2Password": {
             "description": "\"OAuth2 Password Flow - Enter email/username and password in the popup to get token.\"",
             "type": "oauth2",
@@ -490,7 +353,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Go API Example",
-	Description:      "\"OAuth2 Password Flow (Form Submit) - Use for explicit form data submission.\"",
+	Description:      "\"JWT Authorization header using the Bearer scheme. Enter your token in the format 'Bearer <token>'\"",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

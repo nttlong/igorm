@@ -102,6 +102,7 @@ type DBX struct {
 	dns      string
 	executor IExecutor
 	compiler ICompiler
+	isOpen   bool
 }
 type DBXTenant struct {
 	DBX
@@ -135,14 +136,19 @@ func NewDBX(cfg Cfg) *DBX {
 	return ret
 }
 func (dbx *DBX) Open() error {
+	if dbx.isOpen {
+		return nil
+	}
 	if dbx.dns == "" {
 		dbx.dns = dbx.cfg.dns("")
 	}
+
 	db, err := sql.Open(dbx.cfg.Driver, dbx.dns)
 	if err != nil {
 		return err
 	}
 	dbx.DB = db
+	dbx.isOpen = true
 	return nil
 }
 func (dbx *DBX) Ping() error {
@@ -152,11 +158,11 @@ func (dbx *DBX) Ping() error {
 	return dbx.DB.Ping()
 }
 
-var cachDBXTenant = sync.Map{}
+var cacheDBXTenant = sync.Map{}
 
 func (dbx DBX) GetTenant(dbName string) (*DBXTenant, error) {
 	//check cache
-	if v, ok := cachDBXTenant.Load(dbName); ok {
+	if v, ok := cacheDBXTenant.Load(dbName); ok {
 		return v.(*DBXTenant), nil
 	}
 	//create new tenant
@@ -164,7 +170,7 @@ func (dbx DBX) GetTenant(dbName string) (*DBXTenant, error) {
 	if err != nil {
 		return nil, err
 	}
-	cachDBXTenant.Store(dbName, dbTenant)
+	cacheDBXTenant.Store(dbName, dbTenant)
 	return dbTenant, nil
 
 }

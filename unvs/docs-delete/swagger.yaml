@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  internal_app_handler_accounts.CreateAccountRequest:
+  internal_app_handler_account.CreateAccountRequest:
     properties:
       email:
         type: string
@@ -9,28 +9,28 @@ definitions:
       username:
         type: string
     type: object
-  internal_app_handler_accounts.CreateAccountResponse:
+  internal_app_handler_account.CreateAccountResponse:
     properties:
       message:
         type: string
       user:
         $ref: '#/definitions/unvs_internal_model_auth.User'
     type: object
-  internal_app_handler_accounts.ErrorResponse:
+  internal_app_handler_account.ErrorResponse:
     properties:
       code:
         type: string
       message:
         type: string
     type: object
-  internal_app_handler_accounts.LoginRequest:
+  internal_app_handler_account.LoginRequest:
     properties:
       password:
         type: string
       username:
         type: string
     type: object
-  internal_app_handler_accounts.LoginResponse:
+  internal_app_handler_account.LoginResponse:
     properties:
       message:
         type: string
@@ -41,58 +41,6 @@ definitions:
         - $ref: '#/definitions/unvs_internal_model_auth.User'
         description: Có thể bao gồm thêm thông tin người dùng nếu cần, nhưng không
           phải mật khẩu hash
-    type: object
-  internal_app_handler_callers.CallerRequest:
-    properties:
-      action:
-        type: string
-      language:
-        type: string
-      params:
-        additionalProperties: true
-        type: object
-      tenant:
-        type: string
-      viewId:
-        type: string
-    type: object
-  internal_app_handler_callers.CallerResponse:
-    properties:
-      error:
-        $ref: '#/definitions/internal_app_handler_callers.ErrorResponse'
-      results: {}
-    type: object
-  internal_app_handler_callers.ErrorResponse:
-    properties:
-      code:
-        type: string
-      message:
-        type: string
-    type: object
-  internal_app_handler_oauth.ErrorResponse:
-    properties:
-      code:
-        type: string
-      message:
-        type: string
-    type: object
-  internal_app_handler_oauth.OAuth2TokenResponse:
-    properties:
-      access_token:
-        type: string
-      expires_in:
-        description: Thời gian sống của token tính bằng giây
-        type: integer
-      message:
-        description: Các trường khác có thể thêm vào nếu cần như refresh_token, scope,
-          v.v.
-        type: string
-      token_type:
-        type: string
-      user:
-        allOf:
-        - $ref: '#/definitions/unvs_internal_model_auth.User'
-        description: Thêm thông tin user nếu bạn muốn giữ lại
     type: object
   unvs_internal_model_auth.User:
     properties:
@@ -130,7 +78,8 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: '"OAuth2 Password Flow (Form Submit) - Use for explicit form data submission."'
+  description: '"JWT Authorization header using the Bearer scheme. Enter your token
+    in the format ''Bearer <token>''"'
   title: Go API Example
   version: "1.0"
 paths:
@@ -140,36 +89,31 @@ paths:
       - application/json
       description: Tạo một tài khoản người dùng mới với username, email và mật khẩu.
       parameters:
-      - description: tên của Tenant
-        in: path
-        name: tenant
-        required: true
-        type: string
       - description: Thông tin tài khoản cần tạo
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_handler_accounts.CreateAccountRequest'
+          $ref: '#/definitions/internal_app_handler_account.CreateAccountRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Tạo tài khoản thành công
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.CreateAccountResponse'
+            $ref: '#/definitions/internal_app_handler_account.CreateAccountResponse'
         "400":
           description: Yêu cầu không hợp lệ (validation errors)
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
         "409":
           description: Email đã tồn tại
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
         "500":
           description: Lỗi nội bộ server
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
       security:
       - OAuth2Password: []
       summary: Tạo một tài khoản người dùng mới
@@ -188,53 +132,29 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_handler_accounts.LoginRequest'
+          $ref: '#/definitions/internal_app_handler_account.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Đăng nhập thành công, trả về JWT token
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.LoginResponse'
+            $ref: '#/definitions/internal_app_handler_account.LoginResponse'
         "400":
           description: Yêu cầu không hợp lệ (validation errors)
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
         "401":
           description: Thông tin đăng nhập không hợp lệ
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
         "500":
           description: Lỗi nội bộ server
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
       summary: Đăng nhập người dùng và nhận JWT token (JSON/Form)
       tags:
       - Accounts
-  /callers/call:
-    post:
-      consumes:
-      - application/json
-      description: CallerHandler
-      parameters:
-      - description: CallerRequest
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/internal_app_handler_callers.CallerRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Response
-          schema:
-            $ref: '#/definitions/internal_app_handler_callers.CallerResponse'
-      security:
-      - OAuth2Password: []
-      summary: CallerHandler
-      tags:
-      - caller
   /hz:
     get:
       consumes:
@@ -250,14 +170,6 @@ paths:
       summary: Lấy một lời chào đơn giản
       tags:
       - heathz
-    post:
-      consumes:
-      - application/json
-      description: Endpoint check the accessibility.
-      responses: {}
-      summary: Health check endpoint
-      tags:
-      - Healthz
   /oauth/token:
     post:
       consumes:
@@ -265,11 +177,6 @@ paths:
       description: Xác thực thông tin đăng nhập từ form data (username và mật khẩu)
         và trả về JWT token nếu thành công.
       parameters:
-      - description: tenant code
-        in: formData
-        name: tenant
-        required: true
-        type: string
       - description: Tên người dùng (không phải email)
         in: formData
         name: username
@@ -290,23 +197,29 @@ paths:
         "200":
           description: Đăng nhập thành công, trả về JWT token
           schema:
-            $ref: '#/definitions/internal_app_handler_oauth.OAuth2TokenResponse'
+            $ref: '#/definitions/internal_app_handler_account.LoginResponse'
         "400":
           description: Yêu cầu không hợp lệ (validation errors)
           schema:
-            $ref: '#/definitions/internal_app_handler_oauth.ErrorResponse'
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
         "401":
           description: Thông tin đăng nhập không hợp lệ
           schema:
-            $ref: '#/definitions/internal_app_handler_oauth.ErrorResponse'
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
         "500":
           description: Lỗi nội bộ server
           schema:
-            $ref: '#/definitions/internal_app_handler_oauth.ErrorResponse'
+            $ref: '#/definitions/internal_app_handler_account.ErrorResponse'
       summary: Đăng nhập người dùng bằng Form Submit (Username/Password)
       tags:
       - Accounts
 securityDefinitions:
+  OAuth2FormLogin:
+    description: '"OAuth2 Password Flow (Form Submit) - Use for explicit form data
+      submission."'
+    flow: password
+    tokenUrl: /oauth/token-form
+    type: oauth2
   OAuth2Password:
     description: '"OAuth2 Password Flow - Enter email/username and password in the
       popup to get token."'

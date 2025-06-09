@@ -1,4 +1,4 @@
-package account
+package accounts
 
 import (
 	"errors"
@@ -15,6 +15,7 @@ import (
 // @Tags Accounts
 // @Accept json
 // @Produce json
+// @Param tenant path string true "tên của Tenant"
 // @Param request body CreateAccountRequest true "Thông tin tài khoản cần tạo"
 // @Success 201 {object} CreateAccountResponse "Tạo tài khoản thành công"
 // @Failure 400 {object} ErrorResponse "Yêu cầu không hợp lệ (validation errors)"
@@ -22,7 +23,7 @@ import (
 // @Failure 500 {object} ErrorResponse "Lỗi nội bộ server"
 // @Router /accounts/create [post]
 // @Security OAuth2Password
-func (h *AccountHandler) CreateAccount(c echo.Context) error {
+func (h *AccountHandler) Create(c echo.Context) error {
 	req := new(CreateAccountRequest)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{

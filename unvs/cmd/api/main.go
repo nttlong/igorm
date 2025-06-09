@@ -7,14 +7,14 @@ import (
 	"reflect"
 	"time"
 	handler "unvs/internal/app/handler"
-	accHandler "unvs/internal/app/handler/account"
+	accHandler "unvs/internal/app/handler/accounts"
+	caller "unvs/internal/app/handler/callers"
+	oauthHandler "unvs/internal/app/handler/oauth"
 	user_repo "unvs/internal/app/repository/user"
 	"unvs/internal/app/service/account"
 	_ "unvs/internal/model/base"
 
 	_ "unvs/internal/app/middleware/auth"
-
-	middlewareAuth "unvs/internal/app/middleware/auth"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -22,6 +22,9 @@ import (
 	_ "unvs/docs" // Import thư mục chứa docs đã tạo bởi swag
 
 	cache "unvs/internal/app/cache"
+
+	_ "unvs/views_business/auth"
+	_ "unvs/views_business/users"
 
 	echoSwagger "github.com/swaggo/echo-swagger" // Thư viện tích hợp Swagger cho Echo
 )
@@ -116,6 +119,9 @@ func createAccService(tenantDB *dbx.DBXTenant) *account.AccountService {
 func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
 	return *accHandler.NewAccountHandler(createAccService(tenantDB))
 }
+func createOAuthHandler(tenantDB *dbx.DBXTenant) oauthHandler.OAuthHandler {
+	return *oauthHandler.NewOAuthHandler(createAccService(tenantDB))
+}
 
 // @title Go API Example
 // @version 1.0
@@ -126,16 +132,12 @@ func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
 // @securityDefinitions.bearer BearerAuth
 // @description "JWT Authorization header using the Bearer scheme. Enter your token in the format 'Bearer <token>'"
 // @name Authorization
-// @in header
-// @type apiKey // Vẫn dùng type apiKey cho Swagger UI để hiển thị input field
 
 // @securityDefinitions.oauth2.password OAuth2Password
-// @tokenUrl /api/v1/oauth/token
+// @tokenUrl /oauth/token
 // @in header
 // @name Authorization
 // @description "OAuth2 Password Flow - Enter email/username and password in the popup to get token."
-
-// @securityDefinitions.oauth2.password OAuth2FormLogin
 
 // @in header
 // @name Authorization
@@ -150,6 +152,8 @@ func main() {
 	tenantDB.Open()
 	defer tenantDB.Close()
 	accHandlers := createAccHandler(tenantDB)
+	oauthHandler := createOAuthHandler(tenantDB)
+	// Khởi tạo Echo
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -163,17 +167,9 @@ func main() {
 	// Route để phục vụ Swagger UI
 	// Sau khi chạy 'swag init', các file docs sẽ được tạo và route này sẽ hiển thị UI.
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.POST("/oauth/token", oauthHandler.Token)
 
-	apiV1 := e.Group("/api/v1")
-
-	// Định nghĩa route API "Hello World"
-	apiV1.GET("/hz", handler.HzHandler) // Gọi handler tại đây
-	//@Router /accounts/create [post]
-	apiV1.POST("/accounts/create", accHandlers.CreateAccount, middlewareAuth.JWTAuthMiddleware)
-	//apiV1.POST("/accounts/create", accHandlers.CreateAccount)
-	apiV1.POST("/accounts/login", accHandlers.Login)
-	apiV1.POST("/oauth/token", accHandlers.LoginByFormSubmit)
-	e.POST("/oauth/token", accHandlers.LoginByFormSubmit)
+	handler.RegisterRoutes(e, &accHandlers, &caller.CallerHandler{})
 
 	// Khởi chạy server
 	log.Println("Server đang lắng nghe tại cổng :8080")

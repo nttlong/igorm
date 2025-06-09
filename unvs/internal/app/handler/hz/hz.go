@@ -1,4 +1,4 @@
-package handler
+package hz
 
 import (
 	"net/http"
@@ -17,5 +17,18 @@ import (
 // @Success 200 {string} string "Hello World!"
 // @Router /hz [get]
 func HzHandler(c echo.Context) error {
+	return c.String(http.StatusOK, "OK")
+}
+
+type HztHandler struct {
+}
+
+// Healhtz is healh check.
+// @Summary Health check endpoint
+// @Description Endpoint check the accessibility.
+// @Tags Healthz
+// @Accept json
+// @Router /hz [post]
+func (h *HztHandler) HzHandler(c echo.Context) error {
 	return c.String(http.StatusOK, "OK")
 }

@@ -1,4 +1,4 @@
-package account
+package accounts
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	_ "unvs/internal/config"
 	config "unvs/internal/config"
 
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // OAuth2TokenResponse là cấu trúc phản hồi chuẩn cho OAuth2 Password Flow
@@ -24,8 +24,8 @@ type OAuth2TokenResponse struct {
 	User    *auth.User `json:"user,omitempty"`    // Thêm thông tin user nếu bạn muốn giữ lại
 }
 
-// generateJWTToken (giữ nguyên hoặc sửa nhẹ để trả về expirationTime)
-func generateJWTToken(user *auth.User) (string, time.Time, error) { // Thêm time.Time để trả về thời gian hết hạn
+// generateJWTToken tạo token JWT và trả về token string cùng thời gian hết hạn
+func generateJWTToken(user *auth.User) (string, time.Time, error) {
 	expirationTime := time.Now().Add(24 * time.Hour) // Token hết hạn sau 24 giờ
 	claims := &UserClaims{
 		UserID:   user.UserId,
@@ -38,7 +38,7 @@ func generateJWTToken(user *auth.User) (string, time.Time, error) { // Thêm tim
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedString, err := token.SignedString(config.GetJWTSecret())
+	signedString, err := token.SignedString([]byte(config.GetJWTSecret()))
 	if err != nil {
 		return "", time.Time{}, fmt.Errorf("failed to sign token: %w", err)
 	}
