@@ -36,9 +36,16 @@ func newCompilerMssql(dbName string, db *sql.DB) ICompiler {
 	compilerMssqlCache.Store(dbName, compilerMssql)
 	return compilerMssql
 }
+
+var parseInsertSQLCompilerMssqlCache = sync.Map{}
+
 func (w CompilerMssql) parseInsertSQL(p parseInsertInfo) (*string, error) {
 	//    sqlStmt := "INSERT INTO Employees (Code, FirstName, LastName) OUTPUT INSERTED.EmployeeId VALUES (@p1, @p2, @p3)"
-
+	//check if the sqlStmt is already cached
+	if cached, ok := parseInsertSQLCompilerMssqlCache.Load(p.SqlInsert); ok {
+		ret := cached.(string)
+		return &ret, nil
+	}
 	if len(p.keyColsNames) == 1 {
 		sql1 := strings.Split(p.SqlInsert, "VALUES (")[0]
 		sql2 := strings.Split(p.SqlInsert, "VALUES (")[1]
@@ -47,7 +54,8 @@ func (w CompilerMssql) parseInsertSQL(p parseInsertInfo) (*string, error) {
 		return &sql, nil
 
 	}
-
+	//set to cache
+	parseInsertSQLCompilerMssqlCache.Store(p.SqlInsert, p.SqlInsert)
 	return &p.SqlInsert, nil
 
 }
@@ -194,7 +202,23 @@ func mssqlParseFunction(w Compiler, node Node) (Node, error) {
 
 	return node, nil
 }
+
+var parseMssqlCache = sync.Map{}
+
 func (w CompilerMssql) Parse(sql string, args ...interface{}) (string, error) {
+	// Check if the compilerPostgres instance is already cached
+	if cached, ok := parseMssqlCache.Load(sql); ok {
+		return cached.(string), nil
+	}
+	ret, err := w.parseMssql(sql, args...)
+	if err != nil {
+		return "", err
+
+	}
+	parseMssqlCache.Store(sql, ret)
+	return ret, nil
+}
+func (w CompilerMssql) parseMssql(sql string, args ...interface{}) (string, error) {
 
 	sql, err := w.Compiler.Parse(sql, args)
 	if err != nil {
@@ -238,7 +262,17 @@ func (w CompilerMssql) Parse(sql string, args ...interface{}) (string, error) {
 		*/
 		retSQL = selectStr + " " + realFromClause + " OFFSET " + strconv.Itoa(offset) + " ROWS"
 	} else if offset > -1 && limit > -1 {
-		retSQL = selectStr + " " + realFromClause + " OFFSET " + strconv.Itoa(offset) + " ROWS FETCH NEXT " + strconv.Itoa(limit) + " ROWS ONLY"
+		if strings.Contains(realFromClause, " ORDER BY") {
+
+			retSQL = selectStr + " " + realFromClause + " OFFSET " + strconv.Itoa(offset) + " ROWS FETCH NEXT " + strconv.Itoa(limit) + " ROWS ONLY"
+		} else {
+			if strings.Contains(sql, "ROW_NUMBER() OVER (") {
+				strOder := strings.Split(sql, "ROW_NUMBER() OVER (")[1]
+				strOder = strings.Split(strOder, ")")[0]
+
+				retSQL = selectStr + " " + realFromClause + " " + strOder + " OFFSET " + strconv.Itoa(offset) + " ROWS FETCH NEXT " + strconv.Itoa(limit) + " ROWS ONLY"
+			}
+		}
 	}
 	if strings.Contains(retSQL, "<sql-server-fts>") && strings.Contains(retSQL, "</sql-server-fts>") {
 		sql_server_fts := strings.Split(retSQL, "<sql-server-fts>")[1]

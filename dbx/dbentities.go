@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 )
 
 func (ctx *DBXTenant) Insert(entity interface{}) error {
@@ -466,7 +467,7 @@ func getStructFieldValue(s interface{}, fieldName string) (interface{}, error) {
 
 	return field.Interface(), nil
 }
-func createInsertCommand(entity interface{}, entityType *EntityType) (*sqlWithParams, error) {
+func createInsertCommand2(entity interface{}, entityType *EntityType) (*sqlWithParams, error) {
 	var ret = sqlWithParams{
 		Params: []interface{}{},
 	}
@@ -500,5 +501,74 @@ func createInsertCommand(entity interface{}, entityType *EntityType) (*sqlWithPa
 
 	}
 	ret.Sql += entityType.TableName + " (" + strings.Join(fields, ",") + ") values (" + strings.Join(valParams, ",") + ")"
+	return &ret, nil
+}
+
+var getSlqInsertCache = sync.Map{}
+
+func getSlqInsert(entityType *EntityType) string {
+	if v, ok := getSlqInsertCache.Load(entityType.TableName); ok {
+		return v.(string)
+	}
+	retSql := "insert into "
+	fields := []string{}
+	valParams := []string{}
+	for _, field := range entityType.EntityFields {
+
+		if field.IsPrimaryKey && field.DefaultValue == "auto" {
+			continue
+
+		}
+		fields = append(fields, field.Name)
+		valParams = append(valParams, "?")
+
+	}
+	retSql += entityType.TableName + " (" + strings.Join(fields, ",") + ") values (" + strings.Join(valParams, ",") + ")"
+	getSlqInsertCache.Store(entityType.TableName, retSql)
+	return retSql
+}
+func createInsertCommand(entity interface{}, entityType *EntityType) (*sqlWithParams, error) {
+	var ret = sqlWithParams{
+		Params: []interface{}{},
+	}
+
+	//fields := []string{}
+	//valParams := []string{}
+	// // fields := getAllFields(typ)
+	// for _, field := range entityType.EntityFields {
+
+	// 	if field.IsPrimaryKey && field.DefaultValue == "auto" {
+	// 		continue
+
+	// 	}
+	// 	fields = append(fields, field.Name)
+	// 	valParams = append(valParams, "?")
+
+	// }
+	//ret.Sql = entityType.TableName + " (" + strings.Join(fields, ",") + ") values (" + strings.Join(valParams, ",") + ")"
+	// fields := getAllFields(typ)
+	ret.Sql = getSlqInsert(entityType)
+	for _, field := range entityType.EntityFields {
+
+		if field.IsPrimaryKey && field.DefaultValue == "auto" {
+			continue
+
+		}
+
+		fieldVal, err := getStructFieldValue(entity, field.Name)
+		if err != nil {
+			return nil, err
+		}
+		if fieldVal == nil && !field.AllowNull && field.DefaultValue == "" {
+			if val, ok := mapDefaultValueOfGoType[field.NonPtrFieldType]; ok {
+				ret.Params = append(ret.Params, val)
+
+			}
+		} else {
+			ret.Params = append(ret.Params, fieldVal)
+		}
+
+	}
+	// ret.Sql += entityType.TableName + " (" + strings.Join(fields, ",") + ") values (" + strings.Join(valParams, ",") + ")"
 	return &ret, nil
 }

@@ -204,7 +204,7 @@ var mapGoTypeToMySqlType = map[reflect.Type]string{
 	reflect.TypeOf(float64(0)):        "DOUBLE",
 	reflect.TypeOf(string("")):        "TEXT", // default length for VARCHAR
 	reflect.TypeOf(bool(false)):       "BOOL",
-	reflect.TypeOf(time.Time{}):       "DATETIME",
+	reflect.TypeOf(time.Time{}):       "DATETIME2",
 	reflect.TypeOf(decimal.Decimal{}): "DECIMAL(10,2)",
 	reflect.TypeOf(uuid.UUID{}):       "VARCHAR(36)",
 }

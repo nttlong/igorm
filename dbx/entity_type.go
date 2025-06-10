@@ -46,12 +46,56 @@ type EntityField struct {
 	IsBSON           bool
 }
 
+var newEntityTypeCache = sync.Map{}
+
 func newEntityType(t reflect.Type) (*EntityType, error) {
+	key := t.PkgPath() + t.Name()
+	if v, ok := newEntityTypeCache.Load(key); ok {
+		return v.(*EntityType), nil
+	}
+	ret, err := newEntityTypeNoCache(t)
+	if err != nil {
+		return nil, err
+	}
+	newEntityTypeCache.Store(key, ret)
+	return ret, nil
+}
+
+var getTableNameCache = sync.Map{}
+
+func getTableName(t reflect.Type) string {
+	key := t.PkgPath() + t.Name()
+	if v, ok := getTableNameCache.Load(key); ok {
+		return v.(string)
+	}
+	ret := getTableNameNoCache(t)
+	getTableNameCache.Store(key, ret)
+	return ret
+}
+func getTableNameNoCache(t reflect.Type) string {
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		if f.Anonymous {
+			if f.Type == reflect.TypeOf(EntityModel{}) {
+				tag := f.Tag.Get("db")
+				if tag != "" {
+					return tag
+				}
+			} else {
+				return getTableName(f.Type)
+
+			}
+		}
+	}
+	return ""
+
+}
+func newEntityTypeNoCache(t reflect.Type) (*EntityType, error) {
 	//check cache
 
 	ret := EntityType{
 		Type:         t,
-		TableName:    t.Name(),
+		TableName:    getTableName(t),
 		filedMap:     sync.Map{},
 		RefEntities:  []*EntityType{},
 		EntityFields: []*EntityField{},
@@ -466,6 +510,7 @@ func getAllFields(typ reflect.Type) ([]reflect.StructField, []reflect.StructFiel
 			continue
 		}
 		if field.Anonymous {
+
 			anonymousFields = append(anonymousFields, field)
 
 			continue

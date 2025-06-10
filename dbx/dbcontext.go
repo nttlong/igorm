@@ -102,7 +102,6 @@ type DBX struct {
 	dns      string
 	executor IExecutor
 	compiler ICompiler
-	isOpen   bool
 }
 type DBXTenant struct {
 	DBX
@@ -136,9 +135,7 @@ func NewDBX(cfg Cfg) *DBX {
 	return ret
 }
 func (dbx *DBX) Open() error {
-	if dbx.isOpen {
-		return nil
-	}
+
 	if dbx.dns == "" {
 		dbx.dns = dbx.cfg.dns("")
 	}
@@ -148,7 +145,7 @@ func (dbx *DBX) Open() error {
 		return err
 	}
 	dbx.DB = db
-	dbx.isOpen = true
+
 	return nil
 }
 func (dbx *DBX) Ping() error {

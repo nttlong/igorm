@@ -1,6 +1,7 @@
 package views
 
 import (
+	"context"
 	"dbx"
 	"reflect"
 	"strings"
@@ -19,6 +20,7 @@ type BaseView struct {
 	Db       dbx.DBX
 	DbTenant dbx.DBXTenant
 	Language string
+	Context  context.Context
 }
 type ViewCacheType struct {
 	Path     string

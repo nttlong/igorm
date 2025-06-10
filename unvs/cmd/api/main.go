@@ -26,6 +26,9 @@ import (
 	_ "unvs/views_business/auth"
 	_ "unvs/views_business/users"
 
+	"net/http"
+	_ "net/http/pprof"
+
 	echoSwagger "github.com/swaggo/echo-swagger" // Thư viện tích hợp Swagger cho Echo
 )
 
@@ -144,6 +147,9 @@ func createOAuthHandler(tenantDB *dbx.DBXTenant) oauthHandler.OAuthHandler {
 // @description "OAuth2 Password Flow (Form Submit) - Use for explicit form data submission."
 
 func main() {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 	var tenantDB *dbx.DBXTenant
 	tenantDB, err := createTenantDb("tenant1")
 	if err != nil {

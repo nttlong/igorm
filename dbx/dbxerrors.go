@@ -3,6 +3,7 @@ package dbx
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 	"sync"
 
@@ -97,7 +98,23 @@ func parseErrorByMssqlErrorDuplicate(ctx context.Context, db *sql.DB, err mssql.
 	return ret
 }
 
+var parseErrorByMssqlErrorCache = sync.Map{} //cache error to avoid multiple query to get column name
+
 func parseErrorByMssqlError(ctx context.Context, db *sql.DB, err error) *DBXError {
+	if mssqlErr, ok := err.(mssql.Error); ok {
+		key := fmt.Sprintf("%s:%s", mssqlErr.Number, mssqlErr.Message)
+		if v, ok := parseErrorByMssqlErrorCache.Load(key); ok {
+			return v.(*DBXError)
+		}
+		ret := parseErrorByMssqlErrorNoCache(ctx, db, err)
+		parseErrorByMssqlErrorCache.Store(key, ret)
+		return ret
+	} else {
+		return parseErrorByMssqlErrorNoCache(ctx, db, err)
+	}
+
+}
+func parseErrorByMssqlErrorNoCache(ctx context.Context, db *sql.DB, err error) *DBXError {
 	if err == nil {
 		return nil
 	}

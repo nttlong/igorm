@@ -28,8 +28,24 @@ func buildFieldMap(t reflect.Type) map[string]FieldMeta {
 }
 func buildFieldMapNoCache(t reflect.Type) map[string]FieldMeta {
 	m := map[string]FieldMeta{}
+	fmt.Println(t.Kind())
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	if t.Kind() == reflect.Slice {
+		t = t.Elem()
+	}
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
+		if f.Anonymous {
+			m2 := buildFieldMap(f.Type)
+			for k, v := range m2 {
+				m[k] = v
+			}
+		}
 		m[f.Name] = FieldMeta{
 			Offset: f.Offset,
 			Typ:    f.Type,

@@ -14,12 +14,12 @@ type QrBuilder[T any] struct {
 	ctx      context.Context
 }
 
-func Query[T any](dbx *DBXTenant, ctx context.Context) QrBuilder[T] {
+func Query[T any](dbx *DBXTenant, ctx context.Context) *QrBuilder[T] {
 	entityType, err := newEntityType(reflect.TypeFor[T]())
 	if err != nil {
 		panic(err)
 	}
-	return QrBuilder[T]{
+	return &QrBuilder[T]{
 		dbx:      dbx,
 		selector: "*",
 		from:     entityType.TableName,

@@ -129,29 +129,15 @@ func (h *CallerHandler) Call(c echo.Context) error {
 						fieldDbTenant.Set(reflect.ValueOf(*dbTenant))
 						fieldLanguage := sInputData.FieldByName("Language")
 						fieldLanguage.Set(reflect.ValueOf(req.Language))
+						fieldContext := sInputData.FieldByName("Context")
+						reqContext := c.Request().Context()
+						fieldContext.Set(reflect.ValueOf(reqContext))
 						// fieldDb.Set(reflect.ValueOf(db))
 						// fieldDbTenant.Set(reflect.ValueOf(dbTenant))
 
 						fmt.Println(fieldClaim.Kind())
 					}
 				}
-				//fieldClaim := inputData.FieldByName("Claim")
-				//fieldClaim.Set(reflect.ValueOf(*JwtInfo))
-				// inputData = inputData.Elem()
-				// fmt.Println(inputData.Kind())
-
-				// if inputData.Kind() == reflect.Ptr {
-				// 	data := inputData.Interface()
-				// 	v := reflect.ValueOf(data)
-				// 	fmt.Println(v.Kind())
-				// 	fieldClaim := v.FieldByName("Claim")
-				// 	fmt.Println(fieldClaim)
-				// 	continue
-				// }
-				// if fieldClaim, ok := paramType.FieldByName("Claim"); ok {
-				// 	fieldClaim.Set(reflect.ValueOf(*JwtInfo))
-
-				// }
 
 			} else {
 				inputData = inputData.Elem()
