@@ -69,6 +69,11 @@ definitions:
       message:
         type: string
     type: object
+  internal_app_handler_inspector.InspectorResponse:
+    properties:
+      action:
+        type: string
+    type: object
   internal_app_handler_oauth.ErrorResponse:
     properties:
       code:
@@ -258,6 +263,21 @@ paths:
       summary: Health check endpoint
       tags:
       - Healthz
+  /inspector/list:
+    post:
+      consumes:
+      - application/json
+      description: Query all api action and domain
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_app_handler_inspector.InspectorResponse'
+      summary: Query all api action and domain
+      tags:
+      - System
   /oauth/token:
     post:
       consumes:

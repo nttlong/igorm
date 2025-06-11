@@ -7,11 +7,8 @@ import (
 	"reflect"
 	"time"
 	handler "unvs/internal/app/handler"
-	accHandler "unvs/internal/app/handler/accounts"
 	caller "unvs/internal/app/handler/callers"
-	oauthHandler "unvs/internal/app/handler/oauth"
-	user_repo "unvs/internal/app/repository/user"
-	"unvs/internal/app/service/account"
+	"unvs/internal/app/handler/inspector"
 	_ "unvs/internal/model/base"
 
 	_ "unvs/internal/app/middleware/auth"
@@ -23,11 +20,13 @@ import (
 
 	cache "unvs/internal/app/cache"
 
+	_ "unvs/internal/app/handler/inspector"
 	_ "unvs/views_business/auth"
 	_ "unvs/views_business/users"
 
 	"net/http"
 	_ "net/http/pprof"
+	oauthHandler "unvs/internal/app/handler/oauth"
 
 	echoSwagger "github.com/swaggo/echo-swagger" // Thư viện tích hợp Swagger cho Echo
 )
@@ -92,39 +91,41 @@ func getRedisCached(ownerType reflect.Type) cache.Cache {
 		0,
 	)
 }
-func createTenantDb(tenant string) (*dbx.DBXTenant, error) {
-	cfg := getMssqlConfig()
-	db := dbx.NewDBX(cfg)
-	db.Open()
-	defer db.Close()
-	if err := db.Ping(); err != nil {
-		return nil, err
-	}
-	tenantDB, err := db.GetTenant(tenant)
-	if err != nil {
-		return nil, err
-	}
-	return tenantDB, nil
 
-}
-func createUserRepo(tenantDB *dbx.DBXTenant) user_repo.UserRepository {
-	return user_repo.NewUserRepo(tenantDB)
-}
-func createAccService(tenantDB *dbx.DBXTenant) *account.AccountService {
-	return account.NewAccountService(
-		createUserRepo(tenantDB),
-		//getBadgerCache(reflect.TypeOf(account.AccountService{})),
-		getMemoryCache(reflect.TypeOf(account.AccountService{})),
-		//getMemcachedServer(reflect.TypeOf(account.AccountService{})),
-		//getRedisCached(reflect.TypeOf(account.AccountService{})),
-	)
-}
-func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
-	return *accHandler.NewAccountHandler(createAccService(tenantDB))
-}
-func createOAuthHandler(tenantDB *dbx.DBXTenant) oauthHandler.OAuthHandler {
-	return *oauthHandler.NewOAuthHandler(createAccService(tenantDB))
-}
+// func createTenantDb(tenant string) (*dbx.DBXTenant, error) {
+// 	cfg := getMssqlConfig()
+// 	db := dbx.NewDBX(cfg)
+// 	db.Open()
+// 	defer db.Close()
+// 	if err := db.Ping(); err != nil {
+// 		return nil, err
+// 	}
+// 	tenantDB, err := db.GetTenant(tenant)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return tenantDB, nil
+
+// }
+// func createUserRepo(tenantDB *dbx.DBXTenant) user_repo.UserRepository {
+// 	return user_repo.NewUserRepo(tenantDB)
+// }
+// func createAccService(tenantDB *dbx.DBXTenant) *account.AccountService {
+// 	return account.NewAccountService(
+// 		createUserRepo(tenantDB),
+// 		//getBadgerCache(reflect.TypeOf(account.AccountService{})),
+// 		getMemoryCache(reflect.TypeOf(account.AccountService{})),
+// 		//getMemcachedServer(reflect.TypeOf(account.AccountService{})),
+// 		//getRedisCached(reflect.TypeOf(account.AccountService{})),
+// 	)
+// }
+// func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
+// 	return *accHandler.NewAccountHandler(createAccService(tenantDB))
+// }
+// func createOAuthHandler(tenantDB *dbx.DBXTenant) oauthHandler.OAuthHandler {
+
+// 	return *oauthHandler.NewOAuthHandler(createAccService(tenantDB))
+// }
 
 // @title Go API Example
 // @version 1.0
@@ -147,22 +148,23 @@ func createOAuthHandler(tenantDB *dbx.DBXTenant) oauthHandler.OAuthHandler {
 // @description "OAuth2 Password Flow (Form Submit) - Use for explicit form data submission."
 
 func main() {
+	defer dbx.CloseAll()
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
-	var tenantDB *dbx.DBXTenant
-	tenantDB, err := createTenantDb("tenant1")
-	if err != nil {
-		log.Fatal(err)
-	}
-	tenantDB.Open()
-	defer tenantDB.Close()
-	accHandlers := createAccHandler(tenantDB)
-	oauthHandler := createOAuthHandler(tenantDB)
+	// var tenantDB *dbx.DBXTenant
+	// tenantDB, err := createTenantDb("tenant1")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// tenantDB.Open()
+	// defer tenantDB.Close()
+	// //accHandlers := createAccHandler(tenantDB)
+	// oauthHandler := createOAuthHandler(tenantDB)
 	// Khởi tạo Echo
-	if err != nil {
-		log.Fatal(err)
-	}
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	e := echo.New()
 
@@ -173,11 +175,13 @@ func main() {
 	// Route để phục vụ Swagger UI
 	// Sau khi chạy 'swag init', các file docs sẽ được tạo và route này sẽ hiển thị UI.
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
-	e.POST("/oauth/token", oauthHandler.Token)
+	oathHandler := &oauthHandler.OAuthHandler{}
+	e.POST("/oauth/token", oathHandler.Token)
 
 	handler.RegisterRoutes(e,
-		&accHandlers,
+		//&accHandlers,
 		&caller.CallerHandler{},
+		&inspector.InspectorHandler{},
 	)
 
 	// Khởi chạy server

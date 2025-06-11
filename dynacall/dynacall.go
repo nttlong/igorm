@@ -90,6 +90,7 @@ func RegisterCaller(caller interface{}) {
 		typ = typ.Elem()
 	}
 	pkgPath := typ.PkgPath()
+	pkgPath = strings.ReplaceAll(pkgPath, "/", ".")
 	if pkgPath == "" {
 		pkgPath = "main"
 	}
@@ -97,7 +98,7 @@ func RegisterCaller(caller interface{}) {
 	if info != nil {
 		methodList := getAllMethods(caller)
 		for _, method := range methodList {
-			key := info.Path + "." + method.Name + "@" + pkgPath
+			key := method.Name + "@" + pkgPath
 			key = strings.ToLower(key)
 			callerEntry := CallerEntry{
 				Caller:     info,

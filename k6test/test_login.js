@@ -13,8 +13,11 @@ export default function () {
   const username = `${code}${userIndex}`;
   const password = `123456`;
   const payload = JSON.stringify({
-    password: '123456',
-    username: username,
+    "action": "login@unvs.br.auth.users",
+    "language": "string",
+    "args": ["root","root"],
+    "tenant": "string",
+    "viewId": "string"
   });
 
   const params = {
@@ -23,11 +26,11 @@ export default function () {
     },
   };
 
-  const res = http.post('http://localhost:8080/api/v1/accounts/login', payload, params);
+  const res = http.post('http://localhost:8080/api/v1/callers/call', payload, params);
   check(res, {
     'status is 200': (r) => r.status === 200,
     // SỬA DÒNG NÀY: Thay đổi chuỗi kiểm tra để khớp với tiếng Việt
-    'response message is correct': (r) => r.json().message === 'Đăng nhập thành công', 
+    //'response message is correct': (r) => r.json().message === 'Đăng nhập thành công', 
   });
 //   check(res, {
 //     'status is 200': (r) => r.status === 200,

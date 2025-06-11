@@ -5,6 +5,7 @@ package dynacall
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 )
 
@@ -30,6 +31,12 @@ func invoke(method reflect.Method, args []interface{}, injector interface{}) (in
 		argTypes = append(argTypes, argType)
 	}
 	_, structInstance, f, err := CreateDynamicStruct(argTypes)
+	if len(f) != len(args) {
+		return nil, CallError{
+			Code: CallErrorCodeInvalidArgs,
+			Err:  fmt.Errorf("invalid number of arguments, expected %d, got %d", len(f), len(args)),
+		}
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -52,5 +59,18 @@ func invoke(method reflect.Method, args []interface{}, injector interface{}) (in
 	}
 
 	ret := method.Func.Call(invokeArgs)
-	return ret, nil
+	retData := make([]interface{}, method.Type.NumOut())
+	for i := 0; i < method.Type.NumOut(); i++ {
+		//get all the return values and fecth into retData
+		retData[i] = ret[i].Interface()
+	}
+	//outPutType := method.funcType.Out(0)
+	retErr := retData[len(retData)-1]
+	if retErr != nil {
+		return nil, retErr.(error)
+	}
+	if len(retData) == 2 {
+		return retData[0], nil
+	}
+	return ret[0 : len(ret)-1], nil
 }

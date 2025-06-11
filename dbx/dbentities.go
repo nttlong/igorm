@@ -572,3 +572,53 @@ func createInsertCommand(entity interface{}, entityType *EntityType) (*sqlWithPa
 	// ret.Sql += entityType.TableName + " (" + strings.Join(fields, ",") + ") values (" + strings.Join(valParams, ",") + ")"
 	return &ret, nil
 }
+func Count[T any](ctx *DBXTenant, where string, args ...interface{}) (int64, error) {
+	entityType := reflect.TypeFor[T]()
+	e, err := CreateEntityType(entityType)
+	if err != nil {
+		return 0, err
+	}
+	sqlCount := "select count(*) as count from " + e.TableName
+	if where != "" {
+		sqlCount += " where " + where
+	}
+	execSQl, err := ctx.compiler.Parse(sqlCount, args...)
+	if err != nil {
+		return 0, err
+	}
+	var count int64
+	err = ctx.DB.QueryRow(execSQl, args...).Scan(&count)
+	if err != nil {
+		if dbxErr := parseErrorByMssqlError(nil, ctx.DB, err); dbxErr != nil {
+			return 0, dbxErr
+		}
+		return 0, err
+	}
+	return count, nil
+
+}
+func CountWithContext[T any](ctx context.Context, db *DBXTenant, where string, args ...interface{}) (int64, error) {
+	entityType := reflect.TypeFor[T]()
+	e, err := CreateEntityType(entityType)
+	if err != nil {
+		return 0, err
+	}
+	sqlCount := "select count(*) as count from " + e.TableName
+	if where != "" {
+		sqlCount += " where " + where
+	}
+	var count int64
+	execSQl, err := db.compiler.Parse(sqlCount, args...)
+	if err != nil {
+		return 0, err
+	}
+	err = db.DB.QueryRowContext(ctx, execSQl, args...).Scan(&count)
+	if err != nil {
+		if dbxErr := parseErrorByMssqlError(ctx, db.DB, err); dbxErr != nil {
+			return 0, dbxErr
+		}
+		return 0, err
+	}
+	return count, nil
+
+}

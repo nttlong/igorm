@@ -18,6 +18,7 @@ const (
 	CallErrorCodeInvalidCallerPath
 	CallErrorCodeCallerPathNotFound
 	CallerSystemError
+	CallErrorCodeInvalidArgs
 )
 
 func (e CallErrorCode) String() string {
@@ -38,6 +39,8 @@ func (e CallErrorCode) String() string {
 		return "caller path not found"
 	case CallerSystemError:
 		return "caller system error"
+	case CallErrorCodeInvalidArgs:
+		return "invalid arguments"
 	default:
 		return "unknown error"
 	}

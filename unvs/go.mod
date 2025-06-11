@@ -3,7 +3,6 @@ module unvs
 go 1.24.3
 
 require (
-    edyna v0.0.0-20220223132316-b832511892a9
 	dbx v0.0.0-20220223132316-b832511892a9
 	github.com/bradfitz/gomemcache v0.0.0-20250403215159-8d39553ac7cf
 	github.com/dgraph-io/badger/v4 v4.7.0
@@ -21,6 +20,12 @@ require (
 )
 
 require (
+	dbmodels v0.0.0-00010101000000-000000000000 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
+)
+
+require (
+	dynacall v0.0.0-20220223132316-b832511892a9
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
@@ -78,8 +83,13 @@ require (
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	unvs.br.auth v0.0.0-20220223132316-b832511892a9
 )
 
 replace dbx => ../dbx
+
 replace dynacall => ../dynacall
 
+replace unvs.br.auth => ../businessRules/auth
+
+replace dbmodels => ../dbmodels

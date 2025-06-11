@@ -199,6 +199,29 @@
                 "responses": {}
             }
         },
+        "/inspector/list": {
+            "post": {
+                "description": "Query all api action and domain",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "Query all api action and domain",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_inspector.InspectorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/oauth/token": {
             "post": {
                 "description": "Xác thực thông tin đăng nhập từ form data (username và mật khẩu) và trả về JWT token nếu thành công.",
@@ -374,6 +397,14 @@
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_app_handler_inspector.InspectorResponse": {
+            "type": "object",
+            "properties": {
+                "action": {
                     "type": "string"
                 }
             }

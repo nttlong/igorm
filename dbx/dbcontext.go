@@ -102,6 +102,7 @@ type DBX struct {
 	dns      string
 	executor IExecutor
 	compiler ICompiler
+	isOpen   bool
 }
 type DBXTenant struct {
 	DBX
@@ -118,9 +119,23 @@ func (dbx *DBX) GetCompiler() ICompiler {
 	return dbx.compiler
 }
 
+var dbxCache = sync.Map{}
+
 func NewDBX(cfg Cfg) *DBX {
+	key := cfg.dns("")
+	if v, ok := dbxCache.Load(key); ok {
+		ret := v.(DBX)
+		return &ret
+	}
+	dbx := newDBXNoCache(cfg)
+	dbxCache.Store(key, *dbx)
+	return dbx
+	//check cache
+}
+func newDBXNoCache(cfg Cfg) *DBX {
 
 	ret := &DBX{cfg: cfg}
+
 	ret.dns = ret.cfg.dns("")
 	if cfg.Driver == "postgres" {
 		ret.executor = newExecutorPostgres()
@@ -135,6 +150,9 @@ func NewDBX(cfg Cfg) *DBX {
 	return ret
 }
 func (dbx *DBX) Open() error {
+	if dbx.isOpen {
+		return nil
+	}
 
 	if dbx.dns == "" {
 		dbx.dns = dbx.cfg.dns("")
@@ -145,6 +163,7 @@ func (dbx *DBX) Open() error {
 		return err
 	}
 	dbx.DB = db
+	dbx.isOpen = true
 
 	return nil
 }
@@ -171,14 +190,8 @@ func (dbx DBX) GetTenant(dbName string) (*DBXTenant, error) {
 	return dbTenant, nil
 
 }
-func (dbx DBX) getTenant(dbName string) (*DBXTenant, error) {
 
-	oldDb := dbx.DB
-	dbx.Open()
-	defer func() {
-		dbx.DB.Close()
-		dbx.DB = oldDb
-	}()
+func createDbTenantNoCache(dbx DBX, dbName string) *DBXTenant {
 	dbTenant := DBXTenant{
 		DBX: DBX{
 			cfg:      dbx.cfg,
@@ -187,12 +200,31 @@ func (dbx DBX) getTenant(dbName string) (*DBXTenant, error) {
 		},
 		TenantDbName: dbName,
 	}
-	err := dbx.executor.createDb(dbName)(dbx, dbTenant)
+
+	return &dbTenant
+}
+func createDbTenant(dbx DBX, dbName string) *DBXTenant {
+	//check cache
+	if v, ok := cacheDBXTenant.Load(dbName); ok {
+		ret := v.(DBXTenant)
+		return &ret
+	}
+	//create new tenant
+	dbTenant := createDbTenantNoCache(dbx, dbName)
+	cacheDBXTenant.Store(dbName, &dbTenant)
+	return dbTenant
+}
+
+func (dbx DBX) getTenant(dbName string) (*DBXTenant, error) {
+
+	dbx.Open()
+	defer dbx.Close()
+	dbTenant := createDbTenant(dbx, dbName)
+	err := dbx.executor.createDb(dbName)(dbx, *dbTenant)
 	if err != nil {
 		return nil, err
 	}
 	dbTenant.Open()
-	defer dbTenant.Close()
 
 	for _, e := range _entities.GetEntities() {
 
@@ -213,7 +245,7 @@ func (dbx DBX) getTenant(dbName string) (*DBXTenant, error) {
 	}
 	dbTenant.TenantDbName = dbName
 
-	return &dbTenant, nil
+	return dbTenant, nil
 }
 
 func (dbx *DBXTenant) Exec(query string, args ...interface{}) (sql.Result, error) {
