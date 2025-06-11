@@ -3,6 +3,7 @@ module unvs
 go 1.24.3
 
 require (
+    edyna v0.0.0-20220223132316-b832511892a9
 	dbx v0.0.0-20220223132316-b832511892a9
 	github.com/bradfitz/gomemcache v0.0.0-20250403215159-8d39553ac7cf
 	github.com/dgraph-io/badger/v4 v4.7.0
@@ -80,3 +81,5 @@ require (
 )
 
 replace dbx => ../dbx
+replace dynacall => ../dynacall
+

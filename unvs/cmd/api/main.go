@@ -175,7 +175,10 @@ func main() {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.POST("/oauth/token", oauthHandler.Token)
 
-	handler.RegisterRoutes(e, &accHandlers, &caller.CallerHandler{})
+	handler.RegisterRoutes(e,
+		&accHandlers,
+		&caller.CallerHandler{},
+	)
 
 	// Khởi chạy server
 	log.Println("Server đang lắng nghe tại cổng :8080")
