@@ -3,29 +3,35 @@ package auth
 import (
 	authModel "dbmodels/auth"
 	"dbx"
-	"strings"
 )
 
 func (u *User) Login(username string, password string) (*OAuth2Token, error) {
 	CreateSysAdminUser(u.TenantDb, u.Context)
 	// get user from db
-	user, err := dbx.Query[authModel.User](u.TenantDb, u.Context).Where("Username = ?", username).First()
+	var user *authModel.User
+	//var err error
+	if !u.Cache.Get(u.Context, "user_"+username, &user) {
+		user, err := dbx.Query[authModel.User](u.TenantDb, u.Context).Where("Username = ?", username).First()
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		} else {
+
+			u.Cache.Set(u.Context, "user_"+username, &user, 0)
+		}
 	}
-	if user == nil {
-		return nil, nil
-	}
+	// if user == nil {
+	// 	return nil, nil
+	// }
 
 	// hashPassword, err := hashPasswordWithSalt(password + "@" + strings.ToLower(username))
 	// if err != nil {
 	// 	return false, err
 	// }
 
-	if err = verifyPassword(password+"@"+strings.ToLower(username), user.PasswordHash); err != nil {
-		return nil, nil
-	}
+	// if err = verifyPassword(password+"@"+strings.ToLower(username), user.PasswordHash); err != nil {
+	// 	return nil, nil
+	// }
 
 	defaultRole := "user"
 	if user.RoleId != nil {

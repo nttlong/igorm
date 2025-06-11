@@ -1,4 +1,4 @@
-package cache
+package caching
 
 import (
 	"context"
@@ -36,6 +36,7 @@ func NewInMemoryCache(
 func (c *InMemoryCache) Get(ctx context.Context, key string, dest interface{}) bool {
 
 	r, f := c.client.Get(c.prefixKey + ":" + key)
+
 	if !f {
 		return false
 	}

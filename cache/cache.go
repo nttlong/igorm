@@ -1,5 +1,5 @@
 // internal/app/cache/cache.go
-package cache
+package caching
 
 import (
 	"context"

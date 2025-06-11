@@ -18,7 +18,7 @@ import (
 
 	_ "unvs/docs" // Import thư mục chứa docs đã tạo bởi swag
 
-	cache "unvs/internal/app/cache"
+	cache "caching"
 
 	_ "unvs/internal/app/handler/inspector"
 	_ "unvs/views_business/auth"

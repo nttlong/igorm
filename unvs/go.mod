@@ -25,6 +25,7 @@ require (
 )
 
 require (
+    caching v0.0.0-20220223132316-b832511892a9
 	dynacall v0.0.0-20220223132316-b832511892a9
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
@@ -93,3 +94,4 @@ replace dynacall => ../dynacall
 replace unvs.br.auth => ../businessRules/auth
 
 replace dbmodels => ../dbmodels
+replace caching => ../cache

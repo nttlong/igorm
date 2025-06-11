@@ -5,7 +5,11 @@ import (
 	"dbx"
 	"dynacall"
 	"net/http"
+	"reflect"
+	"sync"
+	"time"
 
+	cache "caching"
 	"unvs/internal/config"
 	_ "unvs/views"
 
@@ -31,7 +35,17 @@ type CallerResponse struct {
 	Results interface{}    `json:"results,omitempty"`
 }
 
-func createCfg() *dbx.Cfg {
+func createPgCfg() *dbx.Cfg {
+	return &dbx.Cfg{
+		Driver:   "postgres",
+		Host:     "localhost",
+		Port:     5432,
+		User:     "postgres",
+		Password: "123456",
+		SSL:      false,
+	}
+}
+func createMssqlCfg() *dbx.Cfg {
 	return &dbx.Cfg{
 		Driver:   "mssql",
 		Host:     "localhost",
@@ -42,7 +56,9 @@ func createCfg() *dbx.Cfg {
 	}
 }
 func createDbx() *dbx.DBX {
-	ret := dbx.NewDBX(*createCfg())
+	cf := createPgCfg()
+	cf = createMssqlCfg()
+	ret := dbx.NewDBX(*cf)
 	return ret
 }
 func createTenantDbx(tenant string) *dbx.DBXTenant {
@@ -52,6 +68,19 @@ func createTenantDbx(tenant string) *dbx.DBXTenant {
 		panic(e)
 	}
 	return r
+}
+
+var cacher cache.Cache
+var onceCache sync.Once
+
+func createCache() cache.Cache {
+	onceCache.Do(func() {
+		cacher = cache.NewInMemoryCache(
+			reflect.TypeOf(CallerHandler{}),
+			10*time.Minute, 10*time.Minute)
+	})
+	return cacher
+
 }
 
 // CallerHandler
@@ -86,11 +115,13 @@ func (h *CallerHandler) Call(c echo.Context) error {
 		TenantDb  *dbx.DBXTenant
 		Context   context.Context
 		JwtSecret []byte
+		Cache     cache.Cache
 	}{
 		Tenant:    req.Tenant,
 		TenantDb:  tenantDb,
 		Context:   c.Request().Context(),
 		JwtSecret: config.GetJWTSecret(),
+		Cache:     createCache(),
 	})
 	if err != nil {
 		if e, ok := err.(dynacall.CallError); ok {

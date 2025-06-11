@@ -13,8 +13,8 @@ import (
 	"unvs/internal/model/auth"                   // Import struct User từ model/auth
 
 	// Import BaseModel từ model/base
-	_ "unvs/internal/app/cache"
-	appCache "unvs/internal/app/cache"
+	_ "caching"
+	appCache "caching"
 
 	"github.com/google/uuid"     // Import thư viện uuid
 	"golang.org/x/crypto/bcrypt" // Import thư viện bcrypt để so sánh mật khẩu

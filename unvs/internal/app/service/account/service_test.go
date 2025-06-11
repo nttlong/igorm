@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
+	cache "caching"
 	"dbx"
-	"unvs/internal/app/cache"
 	userRepo "unvs/internal/app/repository/user"
 
 	"github.com/stretchr/testify/assert"
