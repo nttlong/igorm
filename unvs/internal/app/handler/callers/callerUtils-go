@@ -1,0 +1,37 @@
+// package caller
+
+// import (
+// 	"sync"
+
+// 	"dbx"
+// )
+
+// func callerUtilsSetJWTInfo() {
+
+// }
+// func getCfg() dbx.Cfg {
+// 	ret := dbx.Cfg{
+// 		Driver: "mssql",
+// 		Host:   "localhost",
+
+// 		User:     "sa",
+// 		Password: "123456",
+// 		SSL:      false,
+// 	}
+// 	return ret
+// }
+
+// var db dbx.DBX
+// var once sync.Once
+
+// func getDbx() dbx.DBX {
+// 	once.Do(func() {
+// 		cfg := getCfg()
+// 		_db := dbx.NewDBX(cfg)
+// 		db = *_db
+// 	})
+
+// 	return db
+// }
+
+// var cacheDbTenants = sync.Map{}

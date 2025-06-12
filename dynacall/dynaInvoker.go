@@ -4,9 +4,11 @@ this code is used to call a method of a struct dynamically use as private method
 package dynacall
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 /*
@@ -17,44 +19,69 @@ and the rest of the arguments are the parameters of the method
 for example: func(u*user) update(name string, age int) error
 args = []interface{}{u, "john", 25}
 */
-func invoke(method reflect.Method, args []interface{}, injector interface{}) (interface{}, error) {
+func invoke(method reflect.Method, arg interface{}, injector interface{}) (interface{}, error) {
 	funcType := method.Type
 
 	ownerType := funcType.In(0) //first argument is the owner ex: func(u*user) methodName ... owner is u
 	ownerInstance := createReceiverInstance(ownerType, injector)
-	invokeArgs := make([]reflect.Value, len(args)+1)
-	invokeArgs[0] = ownerInstance
-	argTypes := []reflect.Type{}
-	for i := 1; i < funcType.NumIn(); i++ {
-		// paramVal := args[i-1]
-		argType := funcType.In(i)
-		argTypes = append(argTypes, argType)
-	}
-	_, structInstance, f, err := CreateDynamicStruct(argTypes)
-	if len(f) != len(args) {
-		return nil, CallError{
-			Code: CallErrorCodeInvalidArgs,
-			Err:  fmt.Errorf("invalid number of arguments, expected %d, got %d", len(f), len(args)),
+	args := []interface{}{}
+	if arg != nil {
+		val := reflect.ValueOf(arg)
+		if val.Type().Kind() == reflect.Slice {
+			args = arg.([]interface{})
+		} else {
+			args = append(args, arg)
 		}
 	}
-	if err != nil {
-		return nil, err
-	}
 
-	wrapperArgs := map[string]interface{}{}
-	for i := 0; i < len(args); i++ {
-		wrapperArgs[f[i].Name] = args[i]
-	}
-	jsonBytes, err := json.Marshal(wrapperArgs)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(jsonBytes, structInstance.Addr().Interface())
-	if err != nil {
-		return nil, err
-	}
-	for i := 0; i < structInstance.NumField(); i++ {
-		invokeArgs[i+1] = structInstance.Field(i)
+	invokeArgs := make([]reflect.Value, len(args)+1)
+	invokeArgs[0] = ownerInstance
+	// argTypes := []reflect.Type{}
+	for i := 1; i < funcType.NumIn(); i++ {
+		// // paramVal := args[i-1]
+		argType := funcType.In(i)
+		valueType := reflect.TypeOf(args[i-1])
+		if valueType.ConvertibleTo(argType) {
+			invokeArgs[i] = reflect.ValueOf(args[i-1]).Convert(argType)
+		} else {
+			if argType.Kind() == reflect.Ptr {
+				argType = argType.Elem()
+			}
+			if argType == reflect.TypeOf(time.Now()) {
+				if strTime, ok := args[i-1].(string); ok {
+					timeVale, err := time.Parse(time.RFC3339, strTime)
+					if err != nil {
+						return nil, CallError{
+							Code: CallErrorCodeInvalidArgs,
+							Err:  fmt.Errorf("invalid time format, expected RFC3339, got %s", strTime),
+						}
+					}
+					invokeArgs[i] = reflect.ValueOf(timeVale)
+					continue
+
+				}
+			}
+			if argType == reflect.TypeOf(uuid.UUID{}) {
+				if strUUID, ok := args[i-1].(string); ok {
+					uuidVale, err := uuid.Parse(strUUID)
+					if err != nil {
+						return nil, CallError{
+							Code: CallErrorCodeInvalidArgs,
+							Err:  fmt.Errorf("invalid uuid format, expected uuid, got %s", strUUID),
+						}
+					}
+					invokeArgs[i] = reflect.ValueOf(uuidVale)
+					continue
+				}
+
+			}
+
+			return nil, CallError{Err: CallError{
+				Code: CallErrorCodeInvalidArgs,
+				Err:  fmt.Errorf("invalid args, expected %s, got %s", argType, args[i-1]),
+			}}
+		}
+		// argTypes = append(argTypes, argType)
 
 	}
 

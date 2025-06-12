@@ -4,10 +4,10 @@ import (
 	"context"
 	"dbx"
 	"dynacall"
+	"log"
 	"net/http"
+	"net/url"
 	"reflect"
-	"sync"
-	"time"
 
 	cache "caching"
 	"unvs/internal/config"
@@ -19,10 +19,9 @@ import (
 type CallerHandler struct {
 }
 type CallerRequest struct {
-	Action   string        `json:"action"`
-	Args     []interface{} `json:"args"`
-	Tenant   string        `json:"tenant"`
-	Language string        `json:"language"`
+	Args     interface{} `json:"args"`
+	Tenant   string      `json:"tenant"`
+	Language string      `json:"language"`
 }
 type ErrorResponse struct {
 	Code    string `json:"code"`
@@ -35,107 +34,78 @@ type CallerResponse struct {
 	Results interface{}    `json:"results,omitempty"`
 }
 
-func createPgCfg() *dbx.Cfg {
-	return &dbx.Cfg{
-		Driver:   "postgres",
-		Host:     "localhost",
-		Port:     5432,
-		User:     "postgres",
-		Password: "123456",
-		SSL:      false,
-	}
-}
-func createMssqlCfg() *dbx.Cfg {
-	return &dbx.Cfg{
-		Driver:   "mssql",
-		Host:     "localhost",
-		Port:     0,
-		User:     "sa",
-		Password: "123456",
-		SSL:      false,
-	}
-}
-func createDbx() *dbx.DBX {
-	cf := createPgCfg()
-	cf = createMssqlCfg()
-	ret := dbx.NewDBX(*cf)
-	return ret
-}
-func createTenantDbx(tenant string) *dbx.DBXTenant {
-	db := createDbx()
-	r, e := db.GetTenant(tenant)
-	if e != nil {
-		panic(e)
-	}
-	return r
-}
-
-var cacher cache.Cache
-var onceCache sync.Once
-
-func createCache() cache.Cache {
-	onceCache.Do(func() {
-		cacher = cache.NewInMemoryCache(
-			reflect.TypeOf(CallerHandler{}),
-			10*time.Minute, 10*time.Minute)
-	})
-	return cacher
-
-}
-
 // CallerHandler
 // @summary CallerHandler
 // @description CallerHandler
 // @tags caller
 // @accept json
 // @produce json
+// @Param action path string true "The specific action to invoke (e.g., login, register, logout)"
 // @Param request body CallerRequest true "CallerRequest"
-// @router /callers/call [post]
+// @router /invoke/{action} [post]
 // @Success 201 {object} CallerResponse "Response"
 // @Security OAuth2Password
 func (h *CallerHandler) Call(c echo.Context) error {
+	callerPath := c.Param("action")
+	callerPath, err := url.PathUnescape(callerPath)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, ErrorResponse{
+			Code:    "INVALID_REQUEST_URL",
+			Message: "Invalid request URL",
+		})
+	}
+	//req := new(CallerRequest)
+	req, err := dynacall.NewRequestInstance(callerPath, reflect.TypeOf(CallerRequest{}))
 
-	req := new(CallerRequest)
-
-	if err := c.Bind(req); err != nil {
+	if err := c.Bind(req.Data); err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Code:    "INVALID_REQUEST_BODY",
 			Message: "Dữ liệu yêu cầu không hợp lệ",
 		})
 	}
-	tenantDb, err := getTenantDb(req.Tenant)
+
+	tenantDb, err := config.CreateTenantDbx(req.GetString("Tenant"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
-			Code:    "INVALID_TENANT",
-			Message: "Không tìm thấy tenant",
+		log.Fatal(err)
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "INTERNAL_SERVER_ERROR",
+			Message: "Internal server error",
 		})
 	}
-	retCall, err := dynacall.Call(req.Action, req.Args, struct {
-		Tenant    string
-		TenantDb  *dbx.DBXTenant
-		Context   context.Context
-		JwtSecret []byte
-		Cache     cache.Cache
-	}{
-		Tenant:    req.Tenant,
-		TenantDb:  tenantDb,
-		Context:   c.Request().Context(),
-		JwtSecret: config.GetJWTSecret(),
-		Cache:     createCache(),
-	})
-	if err != nil {
-		if e, ok := err.(dynacall.CallError); ok {
-			return c.JSON(http.StatusBadRequest, ErrorResponse{
-				Code:    e.Code.String(),
-				Message: e.Err.Error(),
-			})
+	args := req.Get("Args")
+	if omapDatak, ok := args.(interface{}); ok {
+
+		retCall, err := dynacall.Call(callerPath, omapDatak, struct {
+			Tenant    string
+			TenantDb  *dbx.DBXTenant
+			Context   context.Context
+			JwtSecret []byte
+			Cache     cache.Cache
+		}{
+			Tenant:    req.GetString("Tenant"),
+			TenantDb:  tenantDb,
+			Context:   c.Request().Context(),
+			JwtSecret: config.GetJWTSecret(),
+			Cache:     config.GetCache(),
+		})
+		if err != nil {
+			if e, ok := err.(dynacall.CallError); ok {
+				return c.JSON(http.StatusBadRequest, ErrorResponse{
+					Code:    e.Code.String(),
+					Message: e.Err.Error(),
+				})
+			}
+			return c.JSON(http.StatusBadRequest, err)
 		}
-		return c.JSON(http.StatusBadRequest, err)
+		// err = retCall[1].(error)
+		// if err != nil {
+		// 	return c.JSON(http.StatusBadRequest, err)
+		// }
+		return c.JSON(http.StatusOK, retCall)
 	}
-	// err = retCall[1].(error)
-	// if err != nil {
-	// 	return c.JSON(http.StatusBadRequest, err)
-	// }
-	return c.JSON(http.StatusOK, retCall)
+	return c.JSON(http.StatusBadRequest, ErrorResponse{
+		Code:    "INVALID_REQUEST_BODY",
+		Message: "Dữ liệu yêu cầu không hợp lệ",
+	})
 
 }

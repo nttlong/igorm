@@ -20,7 +20,29 @@ type CallerEntry struct {
 type ArgsCaller struct {
 }
 
-func Call(callerPath string, args []interface{}, injector interface{}) (interface{}, error) {
+func GetInputTypeOfCallerPath(callerPath string) ([]reflect.Type, error) {
+	if !strings.Contains(callerPath, "@") {
+		return nil, CallError{
+			Err:  fmt.Errorf("caller path should be in format of package.path@method"),
+			Code: CallErrorCodeInvalidCallerPath,
+		}
+	}
+	callerEntry, found := callerCache.Load(strings.ToLower(callerPath))
+	if !found {
+		return nil, CallError{
+			Err:  fmt.Errorf("caller not found"),
+			Code: CallErrorCodeCallerPathNotFound,
+		}
+	}
+	method := callerEntry.(CallerEntry).Method
+	ret := make([]reflect.Type, method.Type.NumIn()-1)
+	for i := 1; i < method.Type.NumIn(); i++ {
+		ret[i-1] = method.Type.In(i)
+	}
+	return ret, nil
+}
+
+func Call(callerPath string, args interface{}, injector interface{}) (interface{}, error) {
 	if !strings.Contains(callerPath, "@") {
 		return nil, CallError{
 			Err:  fmt.Errorf("caller path should be in format of package.path@method"),
@@ -36,6 +58,8 @@ func Call(callerPath string, args []interface{}, injector interface{}) (interfac
 	}
 	if caller, ok := callerEntry.(CallerEntry); ok {
 		method := caller.Method
+		typ := reflect.TypeOf(args)
+		fmt.Print(typ.Kind())
 		return invoke(method, args, injector)
 	}
 	return nil, CallError{

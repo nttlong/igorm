@@ -35,11 +35,12 @@ func (q QrBuilder[T]) First() (*T, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	sqlSelect := ""
 	if q.where == "" {
-		sqlSelect = "SELECT * FROM " + entityType.TableName + " LIMIT 1"
+		sqlSelect = "SELECT " + q.selector + " FROM " + entityType.TableName + " LIMIT 1"
 	} else {
-		sqlSelect = "SELECT * FROM " + entityType.TableName + " WHERE " + q.where + " LIMIT 1"
+		sqlSelect = "SELECT " + q.selector + " FROM " + entityType.TableName + " WHERE " + q.where + " LIMIT 1"
 	}
 	rows, err := q.dbx.Query(sqlSelect, q.args...)
 	if err != nil {

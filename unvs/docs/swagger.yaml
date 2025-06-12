@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  internal_app_handler_accounts.CreateAccountRequest:
+  accounts.CreateAccountRequest:
     properties:
       email:
         type: string
@@ -9,28 +9,28 @@ definitions:
       username:
         type: string
     type: object
-  internal_app_handler_accounts.CreateAccountResponse:
+  accounts.CreateAccountResponse:
     properties:
       message:
         type: string
       user:
         $ref: '#/definitions/unvs_internal_model_auth.User'
     type: object
-  internal_app_handler_accounts.ErrorResponse:
+  accounts.ErrorResponse:
     properties:
       code:
         type: string
       message:
         type: string
     type: object
-  internal_app_handler_accounts.LoginRequest:
+  accounts.LoginRequest:
     properties:
       password:
         type: string
       username:
         type: string
     type: object
-  internal_app_handler_accounts.LoginResponse:
+  accounts.LoginResponse:
     properties:
       message:
         type: string
@@ -44,16 +44,10 @@ definitions:
     type: object
   internal_app_handler_callers.CallerRequest:
     properties:
-      action:
-        type: string
+      args: {}
       language:
         type: string
-      params:
-        additionalProperties: true
-        type: object
       tenant:
-        type: string
-      viewId:
         type: string
     type: object
   internal_app_handler_callers.CallerResponse:
@@ -71,33 +65,10 @@ definitions:
     type: object
   internal_app_handler_inspector.InspectorResponse:
     properties:
-      action:
-        type: string
-    type: object
-  internal_app_handler_oauth.ErrorResponse:
-    properties:
-      code:
-        type: string
-      message:
-        type: string
-    type: object
-  internal_app_handler_oauth.OAuth2TokenResponse:
-    properties:
-      access_token:
-        type: string
-      expires_in:
-        description: Thời gian sống của token tính bằng giây
-        type: integer
-      message:
-        description: Các trường khác có thể thêm vào nếu cần như refresh_token, scope,
-          v.v.
-        type: string
-      token_type:
-        type: string
-      user:
-        allOf:
-        - $ref: '#/definitions/unvs_internal_model_auth.User'
-        description: Thêm thông tin user nếu bạn muốn giữ lại
+      apiList:
+        items:
+          type: string
+        type: array
     type: object
   unvs_internal_model_auth.User:
     properties:
@@ -155,26 +126,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_handler_accounts.CreateAccountRequest'
+          $ref: '#/definitions/accounts.CreateAccountRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Tạo tài khoản thành công
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.CreateAccountResponse'
+            $ref: '#/definitions/accounts.CreateAccountResponse'
         "400":
           description: Yêu cầu không hợp lệ (validation errors)
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/accounts.ErrorResponse'
         "409":
           description: Email đã tồn tại
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/accounts.ErrorResponse'
         "500":
           description: Lỗi nội bộ server
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/accounts.ErrorResponse'
       security:
       - OAuth2Password: []
       summary: Tạo một tài khoản người dùng mới
@@ -193,53 +164,29 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_handler_accounts.LoginRequest'
+          $ref: '#/definitions/accounts.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Đăng nhập thành công, trả về JWT token
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.LoginResponse'
+            $ref: '#/definitions/accounts.LoginResponse'
         "400":
           description: Yêu cầu không hợp lệ (validation errors)
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/accounts.ErrorResponse'
         "401":
           description: Thông tin đăng nhập không hợp lệ
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/accounts.ErrorResponse'
         "500":
           description: Lỗi nội bộ server
           schema:
-            $ref: '#/definitions/internal_app_handler_accounts.ErrorResponse'
+            $ref: '#/definitions/accounts.ErrorResponse'
       summary: Đăng nhập người dùng và nhận JWT token (JSON/Form)
       tags:
       - Accounts
-  /callers/call:
-    post:
-      consumes:
-      - application/json
-      description: CallerHandler
-      parameters:
-      - description: CallerRequest
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/internal_app_handler_callers.CallerRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Response
-          schema:
-            $ref: '#/definitions/internal_app_handler_callers.CallerResponse'
-      security:
-      - OAuth2Password: []
-      summary: CallerHandler
-      tags:
-      - caller
   /hz:
     get:
       consumes:
@@ -278,54 +225,38 @@ paths:
       summary: Query all api action and domain
       tags:
       - System
-  /oauth/token:
+  /invoke/{action}:
     post:
       consumes:
-      - application/x-www-form-urlencoded
-      description: Xác thực thông tin đăng nhập từ form data (username và mật khẩu)
-        và trả về JWT token nếu thành công.
+      - application/json
+      description: CallerHandler
       parameters:
-      - description: tenant code
-        in: formData
-        name: tenant
+      - description: The specific action to invoke (e.g., login, register, logout)
+        in: path
+        name: action
         required: true
         type: string
-      - description: Tên người dùng (không phải email)
-        in: formData
-        name: username
+      - description: CallerRequest
+        in: body
+        name: request
         required: true
-        type: string
-      - description: Mật khẩu
-        in: formData
-        name: password
-        required: true
-        type: string
-      - description: Kiểu cấp quyền (thường là 'password' cho OAuth2, tùy chọn)
-        in: formData
-        name: grant_type
-        type: string
+        schema:
+          $ref: '#/definitions/internal_app_handler_callers.CallerRequest'
       produces:
       - application/json
       responses:
-        "200":
-          description: Đăng nhập thành công, trả về JWT token
+        "201":
+          description: Response
           schema:
-            $ref: '#/definitions/internal_app_handler_oauth.OAuth2TokenResponse'
-        "400":
-          description: Yêu cầu không hợp lệ (validation errors)
-          schema:
-            $ref: '#/definitions/internal_app_handler_oauth.ErrorResponse'
-        "401":
-          description: Thông tin đăng nhập không hợp lệ
-          schema:
-            $ref: '#/definitions/internal_app_handler_oauth.ErrorResponse'
-        "500":
-          description: Lỗi nội bộ server
-          schema:
-            $ref: '#/definitions/internal_app_handler_oauth.ErrorResponse'
-      summary: Đăng nhập người dùng bằng Form Submit (Username/Password)
+            $ref: '#/definitions/internal_app_handler_callers.CallerResponse'
+      security:
+      - OAuth2Password: []
+      summary: CallerHandler
       tags:
-      - Accounts
+      - caller
+  /oauth/token:
+    post:
+      responses: {}
 securityDefinitions:
   OAuth2Password:
     description: '"OAuth2 Password Flow - Enter email/username and password in the

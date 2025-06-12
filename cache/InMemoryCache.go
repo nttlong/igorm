@@ -35,31 +35,50 @@ func NewInMemoryCache(
 // Get implements Cache.Get for InMemoryCache
 func (c *InMemoryCache) Get(ctx context.Context, key string, dest interface{}) bool {
 
-	r, f := c.client.Get(c.prefixKey + ":" + key)
+	val := reflect.ValueOf(dest)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	} else {
+		log.Println("InMemoryCache: Can not get object, dest muste be a pointer")
+	}
+	destType := reflect.TypeOf(dest).Elem()
+	key = c.prefixKey + ":" + key + ":" + destType.PkgPath() + "." + destType.Name()
+
+	r, f := c.client.Get(key)
 
 	if !f {
 		return false
 	}
-	if err := bytesDecodeObject(r.([]byte), dest); err != nil {
-		log.Println("InMemoryCache: Không thể decode object: ", err)
-		return false
-	}
+	// dest = r
+	val.Set(reflect.ValueOf(r))
+	// if err := bytesDecodeObject(r.([]byte), val.Interface()); err != nil {
+	// 	log.Println("InMemoryCache: Không thể decode object: ", err)
+	// 	return false
+	// }
 
 	return true
 }
 
 // Set implements Cache.Set for InMemoryCache
 func (c *InMemoryCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) {
-	objBff, err := bytesEncodeObject(value)
-	if err != nil {
-		log.Println("InMemoryCache: Không thể encode object: ", err)
-		return
+	val := reflect.ValueOf(value)
+	destType := reflect.TypeOf(value)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+		destType = destType.Elem()
 	}
 
+	key = c.prefixKey + ":" + key + ":" + destType.PkgPath() + "." + destType.Name()
+	// objBff, err := bytesEncodeObject(val.Interface())
+	// if err != nil {
+	// 	log.Println("InMemoryCache: Không thể encode object: ", err)
+	// 	return
+	// }
+
 	if ttl == 0 { // Sử dụng TTL mặc định nếu được truyền 0
-		c.client.Set(c.prefixKey+":"+key, objBff, gocache.DefaultExpiration)
+		c.client.Set(key, val.Interface(), gocache.DefaultExpiration)
 	} else {
-		c.client.Set(c.prefixKey+":"+key, objBff, ttl)
+		c.client.Set(key, val.Interface(), ttl)
 	}
 }
 

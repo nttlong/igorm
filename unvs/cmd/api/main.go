@@ -176,11 +176,12 @@ func main() {
 	// Sau khi chạy 'swag init', các file docs sẽ được tạo và route này sẽ hiển thị UI.
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	oathHandler := &oauthHandler.OAuthHandler{}
+	callHandler := &caller.CallerHandler{}
 	e.POST("/oauth/token", oathHandler.Token)
-
+	apiV1 := e.Group("/api/v1")
+	apiV1.POST("/invoke/:action", callHandler.Call)
 	handler.RegisterRoutes(e,
-		//&accHandlers,
-		&caller.CallerHandler{},
+
 		&inspector.InspectorHandler{},
 	)
 

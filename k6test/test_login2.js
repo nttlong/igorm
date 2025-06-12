@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 export let options = {
-  vus: 1, // Number of virtual users
+  vus: 200, // Number of virtual users
   duration: '30s', // Test duration
 };
 
@@ -13,9 +13,11 @@ export default function () {
   const username = `${code}${userIndex}`;
   const password = `123456`;
   const payload = JSON.stringify({
-    "args": {"username":"root","password":"root"},
+    "action": "login@unvs.br.auth.users",
     "language": "string",
-    "tenant": "string"
+    "args": ["root","root"],
+    "tenant": "string",
+    "viewId": "string"
   });
 
   const params = {
@@ -24,7 +26,7 @@ export default function () {
     },
   };
 
-  const res = http.post('http://localhost:8080/api/v1/invoke/login2@unvs.br.auth.users', payload, params);
+  const res = http.post('http://localhost:8080/api/v1/callers/call', payload, params);
   check(res, {
     'status is 200': (r) => r.status === 200,
     // SỬA DÒNG NÀY: Thay đổi chuỗi kiểm tra để khớp với tiếng Việt
