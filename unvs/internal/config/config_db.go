@@ -2,17 +2,25 @@ package config
 
 import (
 	"dbx"
+	"sync"
 )
 
+var onceConfig sync.Once
+var cfg *dbx.Cfg
+
 func createCfg() *dbx.Cfg {
-	return &dbx.Cfg{
-		Driver:   "mssql",
-		Host:     "localhost",
-		Port:     0,
-		User:     "sa",
-		Password: "123456",
-		SSL:      false,
-	}
+	onceConfig.Do(func() {
+		cfg = &dbx.Cfg{
+			Driver:   AppConfigInstance.Database.Driver,
+			Host:     AppConfigInstance.Database.Host,
+			Port:     AppConfigInstance.Database.Port,
+			User:     AppConfigInstance.Database.User,
+			Password: AppConfigInstance.Database.Password,
+			SSL:      AppConfigInstance.Database.SSL,
+		}
+
+	})
+	return cfg
 }
 func createDbx() *dbx.DBX {
 	ret := dbx.NewDBX(*createCfg())

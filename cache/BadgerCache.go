@@ -27,6 +27,7 @@ type BadgerCache struct {
 // NewBadgerCache tạo một instance mới của BadgerCache.
 // dbPath là đường dẫn tới thư mục lưu trữ dữ liệu của Badger.
 func NewBadgerCache(ownerType reflect.Type, dbPath string) (Cache, error) {
+
 	prefixType := ownerType.PkgPath() + "." + ownerType.Name()
 	h := sha256.Sum256([]byte(prefixType))
 	prefixType = string(h[:])
@@ -57,7 +58,13 @@ func NewBadgerCache(ownerType reflect.Type, dbPath string) (Cache, error) {
 
 // Get implements Cache.Get for BadgerCache
 func (c *BadgerCache) Get(ctx context.Context, key string, dest interface{}) bool {
-	realKey := c.prefixKey + key
+	val := reflect.ValueOf(dest)
+	typ := reflect.TypeOf(dest)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+		typ = typ.Elem()
+	}
+	realKey := c.prefixKey + ":" + key + ":" + typ.PkgPath() + "." + typ.Name()
 	sha256Key := sha256.Sum256([]byte(realKey))
 	key = string(sha256Key[:])
 	var valBytes []byte
@@ -95,15 +102,22 @@ func (c *BadgerCache) Get(ctx context.Context, key string, dest interface{}) boo
 
 // Set implements Cache.Set for BadgerCache
 func (c *BadgerCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) {
-	realKey := c.prefixKey + key
+
+	val := reflect.ValueOf(value)
+	typ := reflect.TypeOf(value)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+		typ = typ.Elem()
+	}
+	realKey := c.prefixKey + ":" + key + ":" + typ.PkgPath() + "." + typ.Name()
 	sha256Key := sha256.Sum256([]byte(realKey))
 	key = string(sha256Key[:])
 	// Lấy []byte từ buffer
 	err := c.db.Update(func(txn *badger.Txn) error {
 
 		var buffer bytes.Buffer
-		encoder := gob.NewEncoder(&buffer) // Tạo Encoder
-		err := encoder.Encode(value)       // Encode struct
+		encoder := gob.NewEncoder(&buffer)     // Tạo Encoder
+		err := encoder.Encode(val.Interface()) // Encode struct
 		if err != nil {
 			fmt.Printf("Lỗi khi Gob Encode user1: %v\n", err)
 			return err

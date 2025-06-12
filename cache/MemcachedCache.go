@@ -47,6 +47,11 @@ func getHashedKey(key string) string {
 
 // Set đặt giá trị vào cache với TTL.
 func (m *MemcachedCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) {
+	typ := reflect.TypeOf(value)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	key = m.prefixKey + key + ":" + typ.PkgPath() + "." + typ.Name()
 	hashedKey := getHashedKey(key)
 
 	var byteValue []byte
@@ -73,6 +78,7 @@ func (m *MemcachedCache) Set(ctx context.Context, key string, value interface{},
 
 // Delete xóa một key khỏi cache.
 func (m *MemcachedCache) Delete(ctx context.Context, key string) {
+
 	hashedKey := getHashedKey(key)
 	err := m.client.Delete(hashedKey)
 	if err != nil {
@@ -97,6 +103,11 @@ func (m *MemcachedCache) Close() error {
 // Hàm này sẽ TRẢ VỀ []byte ĐƯỢC LẤY TRỰC TIẾP từ Memcached.
 // Người gọi sẽ phải tự deserialize []byte này thành kiểu dữ liệu mong muốn.
 func (m *MemcachedCache) Get(ctx context.Context, key string, dest interface{}) bool {
+	typ := reflect.TypeOf(dest)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	key = m.prefixKey + key + ":" + typ.PkgPath() + "." + typ.Name()
 	hashedKey := getHashedKey(key)
 	item, err := m.client.Get(hashedKey)
 	if err != nil {

@@ -1,131 +1,29 @@
 package main
 
 import (
-	"context"
 	"dbx"
+	"io"
 	"log"
-	"reflect"
-	"time"
+	"os"
+	"path/filepath"
 	handler "unvs/internal/app/handler"
 	caller "unvs/internal/app/handler/callers"
 	"unvs/internal/app/handler/inspector"
-	_ "unvs/internal/model/base"
+	oauthHandler "unvs/internal/app/handler/oauth"
+	"unvs/internal/config"
 
-	_ "unvs/internal/app/middleware/auth"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
 	_ "unvs/docs" // Import thư mục chứa docs đã tạo bởi swag
 
-	cache "caching"
-
-	_ "unvs/internal/app/handler/inspector"
-	_ "unvs/views_business/auth"
-	_ "unvs/views_business/users"
-
 	"net/http"
 	_ "net/http/pprof"
-	oauthHandler "unvs/internal/app/handler/oauth"
 
 	echoSwagger "github.com/swaggo/echo-swagger" // Thư viện tích hợp Swagger cho Echo
 )
-
-func getMssqlConfig() dbx.Cfg {
-	return dbx.Cfg{
-		Driver:   "mssql",
-		Host:     "localhost",
-		Port:     0,
-		User:     "sa",
-		Password: "123456",
-	}
-
-}
-func getPgConfig() dbx.Cfg {
-	return dbx.Cfg{
-		Driver:   "postgres",
-		Host:     "localhost",
-		Port:     5432,
-		User:     "postgres",
-		Password: "123456",
-	}
-}
-func getMysqlConfig() dbx.Cfg {
-	return dbx.Cfg{
-		Driver:   "mysql",
-		Host:     "localhost",
-		Port:     3306,
-		User:     "root",
-		Password: "123456",
-	}
-}
-func getMemoryCache(ownerType reflect.Type) cache.Cache {
-	return cache.NewInMemoryCache(
-		ownerType,
-		time.Minute*5, time.Minute*10,
-	)
-
-}
-func getBadgerCache(ownerType reflect.Type) cache.Cache {
-	ret, err := cache.NewBadgerCache(
-		ownerType,
-		"unvs",
-	)
-	if err != nil {
-		panic(err)
-	}
-	return ret
-}
-func getMemcachedServer(ownerType reflect.Type) cache.Cache {
-	return cache.NewMemcachedCache(
-		ownerType,
-		[]string{"127.0.0.1:11211"},
-	)
-}
-func getRedisCached(ownerType reflect.Type) cache.Cache {
-	return cache.NewRedisCache(
-		context.Background(),
-		ownerType,
-		"127.0.0.1:6379",
-		"",
-		0,
-	)
-}
-
-// func createTenantDb(tenant string) (*dbx.DBXTenant, error) {
-// 	cfg := getMssqlConfig()
-// 	db := dbx.NewDBX(cfg)
-// 	db.Open()
-// 	defer db.Close()
-// 	if err := db.Ping(); err != nil {
-// 		return nil, err
-// 	}
-// 	tenantDB, err := db.GetTenant(tenant)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return tenantDB, nil
-
-// }
-// func createUserRepo(tenantDB *dbx.DBXTenant) user_repo.UserRepository {
-// 	return user_repo.NewUserRepo(tenantDB)
-// }
-// func createAccService(tenantDB *dbx.DBXTenant) *account.AccountService {
-// 	return account.NewAccountService(
-// 		createUserRepo(tenantDB),
-// 		//getBadgerCache(reflect.TypeOf(account.AccountService{})),
-// 		getMemoryCache(reflect.TypeOf(account.AccountService{})),
-// 		//getMemcachedServer(reflect.TypeOf(account.AccountService{})),
-// 		//getRedisCached(reflect.TypeOf(account.AccountService{})),
-// 	)
-// }
-// func createAccHandler(tenantDB *dbx.DBXTenant) accHandler.AccountHandler {
-// 	return *accHandler.NewAccountHandler(createAccService(tenantDB))
-// }
-// func createOAuthHandler(tenantDB *dbx.DBXTenant) oauthHandler.OAuthHandler {
-
-// 	return *oauthHandler.NewOAuthHandler(createAccService(tenantDB))
-// }
 
 // @title Go API Example
 // @version 1.0
@@ -148,30 +46,51 @@ func getRedisCached(ownerType reflect.Type) cache.Cache {
 // @description "OAuth2 Password Flow (Form Submit) - Use for explicit form data submission."
 
 func main() {
-	defer dbx.CloseAll()
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
-	// var tenantDB *dbx.DBXTenant
-	// tenantDB, err := createTenantDb("tenant1")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// tenantDB.Open()
-	// defer tenantDB.Close()
-	// //accHandlers := createAccHandler(tenantDB)
-	// oauthHandler := createOAuthHandler(tenantDB)
-	// Khởi tạo Echo
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	err := config.LoadConfig()
+	if err != nil {
+		panic(err)
+	}
+	logPath := config.AppConfigInstance.Logs
+	logDir := filepath.Dir(logPath)
+	err = os.MkdirAll(logDir, 0755)
+	if err != nil {
+		panic(err)
+	}
+	// logFile, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+	if err != nil {
+		log.Fatalf("Không thể mở file log '%s': %v", logPath, err)
+	}
+	// defer logFile.Close()
+	defer dbx.CloseAll()
+	lumberjackLogger := &lumberjack.Logger{
+		Filename: logPath, // Tên file log chính
+
+		MaxSize:    2,    // log xoay vòng khi đạt 10 MB
+		MaxBackups: 10,   // Giữ lại tối đa 3 file log cũ đã xoay vòng
+		MaxAge:     28,   // Xóa các file log cũ hơn 28 ngày
+		Compress:   true, // Nén các file log cũ (.gz)
+	}
+	mw := io.MultiWriter(os.Stdout, lumberjackLogger)
+	log.SetOutput(mw)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
 	e := echo.New()
 
 	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
 
+	e.Use(middleware.Recover())
+	// Cấu hình logger của Echo
+	e.Logger.SetOutput(mw)
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: `{"time":"${time_rfc3339_nano}","remote_ip":"${remote_ip}",` +
+			`"method":"${method}","uri":"${uri}","status":${status},` +
+			`"latency_human":"${latency_human}"}` + "\n",
+		Output: mw,
+	}))
 	// Route để phục vụ Swagger UI
 	// Sau khi chạy 'swag init', các file docs sẽ được tạo và route này sẽ hiển thị UI.
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
@@ -188,5 +107,5 @@ func main() {
 	// Khởi chạy server
 	log.Println("Server đang lắng nghe tại cổng :8080")
 	log.Println("Truy cập Swagger UI tại: http://localhost:8080/swagger/index.html")
-	log.Fatal(e.Start(":8080"))
+	log.Fatal(e.Start(config.AppConfigInstance.Server.Bind + ":" + config.AppConfigInstance.Server.Port))
 }

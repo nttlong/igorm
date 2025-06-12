@@ -11,7 +11,6 @@ import (
 
 	cache "caching"
 	"unvs/internal/config"
-	_ "unvs/views"
 
 	"github.com/labstack/echo/v4"
 )

@@ -67,7 +67,7 @@ func (h *OAuthHandler) Token(c echo.Context) error {
 		Tenant:    tenantName,
 		JwtSecret: config.GetJWTSecret(),
 		Cache:     config.GetCache(),
-		Context:   context.Background(),
+		Context:   c.Request().Context(),
 		TenantDb:  dbTenant,
 	})
 	if err != nil {
