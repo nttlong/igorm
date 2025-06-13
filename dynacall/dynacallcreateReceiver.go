@@ -1,16 +1,18 @@
 package dynacall
 
-import "reflect"
+import (
+	"reflect"
+)
 
 func createReceiverInstance(receiverType reflect.Type, injector interface{}) reflect.Value {
 	receiverStructType := receiverType.Elem()
 	receiverInstance := reflect.New(receiverStructType)
 	if injector != nil {
-		applyInjector(receiverInstance, injector)
+		applyInjector(receiverType, receiverInstance, injector)
 	}
 	return receiverInstance
 }
-func applyInjector(receiverInstance reflect.Value, injector interface{}) {
+func applyInjector(receiverType reflect.Type, receiverInstance reflect.Value, injector interface{}) {
 	injectorType := reflect.TypeOf(injector)
 	injectorValue := reflect.ValueOf(injector)
 	for i := 0; i < injectorType.NumField(); i++ {
@@ -18,11 +20,40 @@ func applyInjector(receiverInstance reflect.Value, injector interface{}) {
 		fieldName := field.Name
 
 		fieldValue := injectorValue.FieldByName(fieldName)
+
 		if fieldValue.IsValid() {
-			receiverField := receiverInstance.Elem().FieldByName(fieldName)
+
+			receiverInstanceEle := receiverInstance
+			if receiverInstance.Kind() == reflect.Ptr {
+				receiverInstanceEle = receiverInstance.Elem()
+			}
+
+			receiverField := receiverInstanceEle.FieldByName(fieldName)
 			if receiverField.IsValid() {
 				receiverField.Set(fieldValue)
 			}
 		}
 	}
+	if receiverType.Kind() == reflect.Ptr {
+		receiverType = receiverType.Elem()
+		receiverInstance = receiverInstance.Elem()
+	}
+	for i := 0; i < receiverType.NumField(); i++ {
+		field := receiverType.Field(i)
+
+		if field.Anonymous && field.Type != reflect.TypeOf(Caller{}) {
+			if field.Type.Kind() == reflect.Ptr {
+				field.Type = field.Type.Elem()
+			}
+			if field.Type.Kind() == reflect.Ptr {
+				field.Type = field.Type.Elem()
+			}
+			fieldValue := receiverInstance.Field(i)
+			if fieldValue.IsValid() {
+
+				applyInjector(field.Type, fieldValue, injector)
+			}
+		}
+	}
+
 }

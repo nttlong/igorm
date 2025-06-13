@@ -1,21 +1,24 @@
 package caller
 
 import (
+	cache "caching"
 	"context"
 	"dbx"
 	"dynacall"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
 	"reflect"
-
-	cache "caching"
+	"runtime/debug"
 	"unvs/internal/config"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
 
 type CallerHandler struct {
+	AppLogger *logrus.Logger
 }
 type CallerRequest struct {
 	Args     interface{} `json:"args"`
@@ -23,8 +26,10 @@ type CallerRequest struct {
 	Language string      `json:"language"`
 }
 type ErrorResponse struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
+	Code    string   `json:"code"`
+	Fields  []string `json:"fields"`
+	Values  []string `json:"values"`
+	Message string   `json:"message"`
 }
 
 // Response struct for successful account creation
@@ -45,6 +50,7 @@ type CallerResponse struct {
 // @Success 201 {object} CallerResponse "Response"
 // @Security OAuth2Password
 func (h *CallerHandler) Call(c echo.Context) error {
+
 	callerPath := c.Param("action")
 	callerPath, err := url.PathUnescape(callerPath)
 	if err != nil {
@@ -57,6 +63,8 @@ func (h *CallerHandler) Call(c echo.Context) error {
 	req, err := dynacall.NewRequestInstance(callerPath, reflect.TypeOf(CallerRequest{}))
 
 	if err := c.Bind(req.Data); err != nil {
+		log.Fatal(err)
+		fmt.Println(err.Error())
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Code:    "INVALID_REQUEST_BODY",
 			Message: "Dữ liệu yêu cầu không hợp lệ",
@@ -74,18 +82,30 @@ func (h *CallerHandler) Call(c echo.Context) error {
 	args := req.Get("Args")
 	if omapDatak, ok := args.(interface{}); ok {
 
+		defer func() {
+			if r := recover(); r != nil {
+
+				pkgPath := reflect.TypeOf(h).Elem().PkgPath() + "/Call"
+				log := h.AppLogger.WithField("pkgPath", pkgPath).WithField("callerPath", callerPath)
+				log.Errorf("Panic occurred: %v\n", r)
+				log.Printf("Stack Trace:\n%s", debug.Stack())
+
+			}
+		}() // Gọi ngay lập tức hàm ẩn danh deferred
 		retCall, err := dynacall.Call(callerPath, omapDatak, struct {
-			Tenant    string
-			TenantDb  *dbx.DBXTenant
-			Context   context.Context
-			JwtSecret []byte
-			Cache     cache.Cache
+			Tenant      string
+			TenantDb    *dbx.DBXTenant
+			Context     context.Context
+			JwtSecret   []byte
+			Cache       cache.Cache
+			AccessToken string
 		}{
-			Tenant:    req.GetString("Tenant"),
-			TenantDb:  tenantDb,
-			Context:   c.Request().Context(),
-			JwtSecret: config.GetJWTSecret(),
-			Cache:     config.GetCache(),
+			Tenant:      req.GetString("Tenant"),
+			TenantDb:    tenantDb,
+			Context:     c.Request().Context(),
+			JwtSecret:   config.GetJWTSecret(),
+			Cache:       config.GetCache(),
+			AccessToken: c.Request().Header.Get("Authorization"),
 		})
 		if err != nil {
 			if e, ok := err.(dynacall.CallError); ok {
@@ -94,7 +114,21 @@ func (h *CallerHandler) Call(c echo.Context) error {
 					Message: e.Err.Error(),
 				})
 			}
-			return c.JSON(http.StatusBadRequest, err)
+			if e, ok := err.(*dbx.DBXError); ok {
+				if e.Code == dbx.DBXErrorCodeDuplicate {
+					return c.JSON(http.StatusConflict, ErrorResponse{
+						Code:    e.Code.String(),
+						Fields:  e.Fields,
+						Values:  e.Values,
+						Message: e.Error(),
+					})
+				}
+
+			}
+			return c.JSON(http.StatusInternalServerError, ErrorResponse{
+				Code:    "SERVER_ERROR",
+				Message: "Server error",
+			})
 		}
 		// err = retCall[1].(error)
 		// if err != nil {

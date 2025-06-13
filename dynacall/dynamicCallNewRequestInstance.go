@@ -44,10 +44,22 @@ func NewRequestInstance(callerPath string, instanceType reflect.Type) (*RequestT
 			if len(inputType) == 0 {
 				continue
 			} else if len(inputType) == 1 {
-				fields[i] = reflect.StructField{
-					Name: "Args",
-					Type: inputType[0],
-					Tag:  reflect.StructTag(""),
+				if inputType[0].Kind() == reflect.Ptr {
+					panic("not implemented")
+				}
+				if inputType[0].Kind() == reflect.Slice {
+					inputTypeSlice := reflect.SliceOf(inputType[0])
+					fields[i] = reflect.StructField{
+						Name: "Args",
+						Type: inputTypeSlice,
+						Tag:  reflect.StructTag(""),
+					}
+				} else {
+					fields[i] = reflect.StructField{
+						Name: "Args",
+						Type: inputType[0],
+						Tag:  reflect.StructTag(""),
+					}
 				}
 			} else {
 				interfaceType := reflect.TypeOf((*interface{})(nil)).Elem()

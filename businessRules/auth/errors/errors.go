@@ -9,6 +9,7 @@ const (
 	ErrInvalidUsernameOrPassword
 	ErrInvalidToken
 	ErrInvalidRefreshToken
+	ErrAccessDeny
 )
 
 func (e AuthErrorCode) String() string {

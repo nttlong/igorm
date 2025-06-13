@@ -3,6 +3,7 @@ package inspector
 import (
 	"dynacall"
 	"net/http"
+	"reflect"
 
 	_ "dynacall"
 
@@ -11,8 +12,13 @@ import (
 	_ "unvs.br.auth/users"
 )
 
+type APIEntry struct {
+	CallerPath string
+	Args       []interface{}
+	Results    []interface{}
+}
 type InspectorResponse struct {
-	APIList []string `json:"apiList"`
+	APIList []APIEntry `json:"apiList"`
 }
 type InspectorHandler struct {
 }
@@ -29,11 +35,23 @@ type InspectorHandler struct {
 // @Router /inspector/list [post]
 func (h *InspectorHandler) List(c echo.Context) error {
 	res := &InspectorResponse{
-		APIList: []string{},
+		APIList: []APIEntry{},
 	}
 	for _, entry := range dynacall.GetAllCaller() {
 		// Do something with the entry
-		res.APIList = append(res.APIList, entry.CallerPath)
+		args := getInputArgs(entry.Method)
+		apiEntry := APIEntry{
+			CallerPath: entry.CallerPath,
+			Args:       args,
+		}
+		res.APIList = append(res.APIList, apiEntry)
 	}
 	return c.JSON(http.StatusCreated, res)
+}
+func getInputArgs(method reflect.Method) []interface{} {
+	args := []interface{}{}
+	for i := 1; i < method.Type.NumIn(); i++ {
+		args = append(args, reflect.New(method.Type.In(i)).Interface())
+	}
+	return args
 }

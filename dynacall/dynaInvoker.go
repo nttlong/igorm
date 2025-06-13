@@ -1,6 +1,3 @@
-/*
-this code is used to call a method of a struct dynamically use as private method
-*/
 package dynacall
 
 import (
@@ -28,7 +25,10 @@ func invoke(method reflect.Method, arg interface{}, injector interface{}) (inter
 	if arg != nil {
 		val := reflect.ValueOf(arg)
 		if val.Type().Kind() == reflect.Slice {
-			args = arg.([]interface{})
+			for i := 0; i < val.Len(); i++ {
+				args = append(args, val.Index(i).Interface())
+			}
+			// args = arg.([]interface{})
 		} else {
 			args = append(args, arg)
 		}
@@ -41,8 +41,37 @@ func invoke(method reflect.Method, arg interface{}, injector interface{}) (inter
 		// // paramVal := args[i-1]
 		argType := funcType.In(i)
 		valueType := reflect.TypeOf(args[i-1])
+		if valueType.Kind() == reflect.Ptr {
+			valueType = valueType.Elem()
+		}
+		if argType == valueType {
+			invokeArgs[i] = reflect.ValueOf(args[i-1])
+			continue
+		}
+		if argType.Kind() == reflect.Ptr {
+			if argType.Elem() == valueType {
+				invokeArgs[i] = reflect.ValueOf(args[i-1])
+				continue
+			}
+		}
+		test := fmt.Sprintf("argType: %v, valueType: %v\n", argType, valueType)
+		fmt.Println(test)
+
 		if valueType.ConvertibleTo(argType) {
-			invokeArgs[i] = reflect.ValueOf(args[i-1]).Convert(argType)
+
+			val := reflect.ValueOf(args[i-1])
+			if invokeArgs[i].Kind() == reflect.Ptr {
+				invokeArgs[i] = val.Addr()
+			} else {
+				invokeArgs[i] = val
+			}
+			// val.Set(invokeArgs[i])
+			// if val.Type().Kind() == reflect.Ptr {
+			// 	invokeArgs[i] = val.Elem()
+			// } else {
+			// 	invokeArgs[i] = val
+			// }
+			// invokeArgs[i] = reflect.ValueOf(args[i-1]).Convert(argType)
 		} else {
 			if argType.Kind() == reflect.Ptr {
 				argType = argType.Elem()

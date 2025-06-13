@@ -16,6 +16,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/sirupsen/logrus"
 
 	_ "unvs/docs" // Import thư mục chứa docs đã tạo bởi swag
 
@@ -24,6 +25,8 @@ import (
 
 	echoSwagger "github.com/swaggo/echo-swagger" // Thư viện tích hợp Swagger cho Echo
 )
+
+var appLogger *logrus.Logger
 
 // @title Go API Example
 // @version 1.0
@@ -46,6 +49,7 @@ import (
 // @description "OAuth2 Password Flow (Form Submit) - Use for explicit form data submission."
 
 func main() {
+	appLogger = logrus.New()
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
@@ -75,8 +79,28 @@ func main() {
 		Compress:   true, // Nén các file log cũ (.gz)
 	}
 	mw := io.MultiWriter(os.Stdout, lumberjackLogger)
-	log.SetOutput(mw)
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+	appLogger.SetOutput(mw)
+
+	// 3. Cấu hình Formatter cho Logrus
+	// Sử dụng JSONFormatter để có log cấu trúc, dễ dàng thêm các trường như "package"
+	// appLogger.SetFormatter(&logrus.JSONFormatter{
+	// 	TimestampFormat: time.RFC3339Nano, // Định dạng thời gian chi tiết hơn
+	// })
+	// appLogger.SetFormatter(&logrus.TextFormatter{
+	// 	DisableColors:   false,        // Đặt true nếu bạn chạy trên môi trường không hỗ trợ màu (ví dụ: production server không có terminal)
+	// 	FullTimestamp:   true,         // Hiển thị đầy đủ thông tin thời gian (ngày, giờ, phút, giây, nano giây)
+	// 	TimestampFormat: time.RFC3339, // Định dạng thời gian (ví dụ: "2006-01-02T15:04:05Z07:00")
+	// 	// Có thể thêm thêm các tùy chọn khác như:
+	// 	// DisableSorting:  true, // Không sắp xếp các trường theo thứ tự abc
+	// 	// QuoteEmptyFields: true, // Thêm dấu ngoặc kép cho các trường rỗng
+	// 	// FieldMap:        logrus.FieldMap{ // Map lại tên các trường mặc định nếu muốn
+	// 	// 	logrus.FieldKeyTime:  "@timestamp",
+	// 	// 	logrus.FieldKeyLevel: "level",
+	// 	// 	logrus.FieldKeyMsg:   "message",
+	// 	// },
+	// })
+	// 4. Cấu hình Level cho Logrus
+	// appLogger.SetLevel(logrus.TraceLevel | logrus.InfoLevel | logrus.ErrorLevel | logrus.DebugLevel | logrus.PanicLevel | logrus.FatalLevel | logrus.WarnLevel) // Chỉ hiển thị Info, Warn, Error, Fatal, Panic
 
 	e := echo.New()
 
@@ -95,7 +119,9 @@ func main() {
 	// Sau khi chạy 'swag init', các file docs sẽ được tạo và route này sẽ hiển thị UI.
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	oathHandler := &oauthHandler.OAuthHandler{}
-	callHandler := &caller.CallerHandler{}
+	callHandler := &caller.CallerHandler{
+		AppLogger: appLogger,
+	}
 	e.POST("/oauth/token", oathHandler.Token)
 	apiV1 := e.Group("/api/v1")
 	apiV1.POST("/invoke/:action", callHandler.Call)

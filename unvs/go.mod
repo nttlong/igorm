@@ -22,6 +22,7 @@ require (
 require (
 	dbmodels v0.0.0-00010101000000-000000000000 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )
 

@@ -58,8 +58,7 @@ func Call(callerPath string, args interface{}, injector interface{}) (interface{
 	}
 	if caller, ok := callerEntry.(CallerEntry); ok {
 		method := caller.Method
-		typ := reflect.TypeOf(args)
-		fmt.Print(typ.Kind())
+
 		return invoke(method, args, injector)
 	}
 	return nil, CallError{
@@ -91,18 +90,67 @@ func getCaller(caller interface{}) *Caller {
 	return nil
 
 }
+
+func isMethodFromStructOnly(t reflect.Type, methodName string) bool {
+	// Kiểm tra xem type có phải struct không
+	t1 := t
+	if t.Kind() != reflect.Struct {
+		t1 = t.Elem()
+	}
+
+	// Duyệt qua tất cả field để tìm embed
+	for i := 0; i < t1.NumField(); i++ {
+		field := t1.Field(i)
+		if field.Anonymous && field.Type.Kind() == reflect.Struct {
+			// Kiểm tra method của embed hiện tại
+			embedType := field.Type
+			for j := 0; j < embedType.NumMethod(); j++ {
+				embedMethod := embedType.Method(j)
+				if embedMethod.Name == methodName {
+					return false // Method thuộc về embed
+				}
+			}
+			if field.Type.Kind() == reflect.Ptr {
+				embedType = field.Type.Elem()
+			}
+			for j := 0; j < embedType.NumMethod(); j++ {
+				embedMethod := embedType.Method(j)
+				if embedMethod.Name == methodName {
+					return false // Method thuộc về embed
+				}
+			}
+			ptrEmbedInstance := reflect.New(embedType)
+			ptrEmbedTyp := ptrEmbedInstance.Type()
+
+			for j := 0; j < ptrEmbedTyp.NumMethod(); j++ {
+				embedMethod := ptrEmbedTyp.Method(j)
+				if embedMethod.Name == methodName {
+					return false // Method thuộc về embed
+				}
+			}
+			// Đệ quy kiểm tra embed lồng nhau
+			if !isMethodFromStructOnly(embedType, methodName) {
+				return false // Method thuộc về embed lồng nhau
+			}
+		}
+	}
+
+	// Nếu không tìm thấy method trong bất kỳ embed nào, trả về true
+	return true
+}
 func getAllMethods(caller interface{}) []reflect.Method {
 	ret := []reflect.Method{}
 	typ := reflect.TypeOf(caller)
-	// if typ.Kind() == reflect.Ptr {
-	// 	typ = typ.Elem()
-	// }
+
 	fmt.Print(typ.Name())
 	for i := 0; i < typ.NumMethod(); i++ {
 		method := typ.Method(i)
-		//check if first letter is uppercase
-		if method.Name[0] >= 'A' && method.Name[0] <= 'Z' {
-			ret = append(ret, method)
+
+		if isMethodFromStructOnly(typ, method.Name) {
+			//check if first letter is uppercase
+			if method.Name[0] >= 'A' && method.Name[0] <= 'Z' {
+				ret = append(ret, method)
+			}
 		}
 	}
 

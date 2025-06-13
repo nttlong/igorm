@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"unvs.br.auth/services"
 )
 
 var cacheCreatedSysAdminUser = sync.Map{}
@@ -42,7 +43,7 @@ func createSysAdminUserNoCache(db *dbx.DBXTenant, ctx context.Context) {
 		IsSupperUser: true,
 		IsLocked:     false,
 	}
-	rootUser.PasswordHash, err = hashPasswordWithSalt("root@root")
+	rootUser.PasswordHash, err = (&services.PasswordService{}).HashPassword("root", "root")
 	if err != nil {
 		return
 	}

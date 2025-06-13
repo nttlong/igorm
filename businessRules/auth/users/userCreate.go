@@ -3,14 +3,16 @@ package auth
 import (
 	authModels "dbmodels/auth"
 	"fmt"
-	"strings"
 	"time"
+
+	"unvs.br.auth/services"
 
 	"github.com/google/uuid"
 )
 
 func (u *User) Create(username, password, email string) (*authModels.User, error) {
-	hasPass, err := hashPasswordWithSalt(password + "@" + strings.ToLower(username))
+
+	hasPass, err := (&services.PasswordService{}).HashPassword(password, username)
 	if err != nil {
 		return nil, fmt.Errorf("failed to hash password: %w", err)
 	}

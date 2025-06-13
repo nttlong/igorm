@@ -4,20 +4,21 @@ import (
 	authModel "dbmodels/auth"
 	"dbx"
 	"fmt"
-	"strings"
-	"time"
+
+	service "unvs.br.auth/services"
 
 	authError "unvs.br.auth/errors"
 )
 
-func (u *User) Login(username string, password string, LoginCount time.Time) (*OAuth2Token, error) {
+func (u *User) Login(username string, password string) (*service.OAuth2Token, error) {
+	(&u.TokenService).DecodeAccessToken("token")
 	CreateSysAdminUser(u.TenantDb, u.Context)
 	if username == "" || password == "" {
 		return nil, fmt.Errorf("username or password is empty")
 	}
 	// get user from db
 	var user authModel.User
-	var err error
+
 	if !u.Cache.Get(u.Context, "user_"+username, &user) {
 		_user, err := dbx.Query[authModel.User](
 			u.TenantDb,
@@ -39,7 +40,8 @@ func (u *User) Login(username string, password string, LoginCount time.Time) (*O
 	ok := ""
 	if !u.Cache.Get(u.Context, key, &ok) {
 
-		if err = verifyPassword(password+"@"+strings.ToLower(username), user.PasswordHash); err != nil {
+		err := u.VerifyPassword(username, password, user.PasswordHash)
+		if err != nil {
 			return nil, &authError.AuthError{
 				Code:    authError.ErrInvalidUsernameOrPassword,
 				Message: "Invalid username or password",
@@ -59,13 +61,14 @@ func (u *User) Login(username string, password string, LoginCount time.Time) (*O
 		}
 	}
 
-	return generateToken(u.JwtSecret, user.UserId, defaultRole)
+	return (&service.TokenService{
+		JwtSecret: u.JwtSecret,
+	}).GenerateToken(user.UserId, defaultRole)
 
 }
 func (u *User) Login2(login struct {
-	Username string    `json:"username"`
-	Password string    `json:"password"`
-	LoginOn  time.Time `json:"loginOn"`
-}) (*OAuth2Token, error) {
-	return u.Login(login.Username, login.Password, login.LoginOn)
+	Username string `json:"username"`
+	Password string `json:"password"`
+}) (*service.OAuth2Token, error) {
+	return u.Login(login.Username, login.Password)
 }
