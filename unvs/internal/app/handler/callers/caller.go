@@ -62,6 +62,12 @@ func (h *CallerHandler) Call(c echo.Context) error {
 	}
 	//req := new(CallerRequest)
 	req, err := dynacall.NewRequestInstance(callerPath, reflect.TypeOf(CallerRequest{}))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "INTERNAL_SERVER_ERROR",
+			Message: "Internal server error",
+		})
+	}
 
 	if err := c.Bind(req.Data); err != nil {
 		if eError, ok := err.(*echo.HTTPError); ok {
@@ -151,7 +157,33 @@ func (h *CallerHandler) Call(c echo.Context) error {
 			AccessToken: c.Request().Header.Get("Authorization"),
 		})
 		if err != nil {
-			if e, ok := err.(dynacall.CallError); ok {
+
+			if e, ok := err.(*dynacall.CallError); ok {
+				if e.Code == dynacall.CallErrorCodeTokenExpired {
+					return c.JSON(http.StatusUnauthorized, ErrorResponse{
+						Code:    e.Code.String(),
+						Message: e.Err.Error(),
+					})
+				}
+				if e.Code == dynacall.CallErrorCodeAccessDenied {
+					return c.JSON(http.StatusForbidden, ErrorResponse{
+						Code:    e.Code.String(),
+						Message: e.Err.Error(),
+					})
+				}
+				if e.Code == dynacall.CallErrorCodeAuthenticationFailed {
+					return c.JSON(http.StatusUnauthorized, ErrorResponse{
+						Code:    e.Code.String(),
+						Message: e.Err.Error(),
+					})
+				}
+				if e.Code == dynacall.CallErrorCodeAuthenticationFailed {
+					return c.JSON(http.StatusUnauthorized, ErrorResponse{
+						Code:    e.Code.String(),
+						Message: e.Err.Error(),
+					})
+				}
+
 				return c.JSON(http.StatusBadRequest, ErrorResponse{
 					Code:    e.Code.String(),
 					Message: e.Err.Error(),

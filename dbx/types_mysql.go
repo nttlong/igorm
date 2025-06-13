@@ -337,7 +337,7 @@ func (e *executorMySql) getSQlCreateTable(entityType *EntityType) (SqlCommandLis
 
 	return ret, nil
 }
-func (e *executorMySql) makeSqlCommandForeignKey(fkInfo []*ForeignKeyInfo) []*SqlCommandForeignKey {
+func (e *executorMySql) makeSqlCommandForeignKey(fkInfo map[string]fkInfoEntry) []*SqlCommandForeignKey {
 	/**
 		ALTER TABLE child_table_name
 	ADD CONSTRAINT fk_name -- Tên tùy chọn cho khóa ngoại
@@ -347,26 +347,19 @@ func (e *executorMySql) makeSqlCommandForeignKey(fkInfo []*ForeignKeyInfo) []*Sq
 	[ON UPDATE action]; -- Hành động khi bản ghi cha bị cập nhật
 	*/
 	ret := []*SqlCommandForeignKey{}
-	for _, fk := range fkInfo {
-		fromFields := []string{}
-		for _, col := range fk.FromFields {
-			fromFields = append(fromFields, col.Name)
-		}
-		toFields := []string{}
-		for _, col := range fk.ToFields {
-			toFields = append(toFields, col.Name)
-		}
-		fkName := fk.FromEntity.Name() + "_" + strings.Join(fromFields, "_") + fk.ToEntity.Name() + "_" + strings.Join(toFields, "_") + "_fkey"
-		fromKey := e.quote(fromFields...)
-		toKeys := e.quote(toFields...)
-		sql := "ALTER TABLE " + e.quote(fk.FromEntity.Name()) + " ADD CONSTRAINT " + e.quote(fkName) + " FOREIGN KEY (" + fromKey + ") REFERENCES " + e.quote(fk.ToEntity.Name()) + "(" + toKeys + ")  ON UPDATE CASCADE"
+	for _, info := range fkInfo {
+		fkName := info.OwnerTable + "__" + strings.Join(info.OwnerFields, "_") + "___" + info.ForeignTable + "__" + strings.Join(info.ForeignFields, "_") + "_fkey"
+		ownerFields := e.quote(info.OwnerFields...)
+		foreignFields := e.quote(info.ForeignFields...)
+
+		sql := "ALTER TABLE " + e.quote(info.OwnerTable) + " ADD CONSTRAINT " + e.quote(fkName) + " FOREIGN KEY (" + ownerFields + ") REFERENCES " + e.quote(info.ForeignTable) + "(" + foreignFields + ")  ON UPDATE CASCADE"
 
 		ret = append(ret, &SqlCommandForeignKey{
 			string:     sql,
-			FromTable:  fk.FromEntity.Name(),
-			FromFields: fromFields,
-			ToTable:    fk.ToEntity.Name(),
-			ToFields:   toFields,
+			FromTable:  info.OwnerTable,
+			FromFields: info.OwnerFields,
+			ToTable:    info.ForeignTable,
+			ToFields:   info.ForeignFields,
 		})
 	}
 

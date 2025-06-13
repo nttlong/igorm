@@ -19,30 +19,66 @@ const (
 	CallErrorCodeCallerPathNotFound
 	CallerSystemError
 	CallErrorCodeInvalidArgs
+	CallErrorCodeTokenExpired
+	CallErrorCodeTokenInvalid
+	CallErrorCodeTokenNotFound
+	CallErrorCodeTokenInvalidFormat
+	CallErrorCodeTokenInvalidIssuer
+	CallErrorCodeTokenInvalidAudience
+	CallErrorCodeTokenInvalidSubject
+	CallErrorCodeTokenInvalidSignature
+	CallErrorCodeTokenInvalidExpiry
+	CallErrorCodeAuthorizationFailed
+	CallErrorCodeAuthenticationFailed
+	CallErrorCodeAccessDenied
 )
 
 func (e CallErrorCode) String() string {
 	switch e {
 	case CallErrorCodeUnknown:
-		return "unknown error"
+		return "UNKNOWN"
 	case CallErrorCodeInvalidParams:
-		return "invalid parameters"
+		return "INVALID_PARAMS"
 	case CallErrorCodeInvalidReturn:
-		return "invalid return value"
+		return "INVALID_RETURN"
 	case CallErrorCodeTimeout:
-		return "timeout"
+		return "TIMEOUT"
 	case CallErrorCodeInternalError:
-		return "internal error"
+		return "INTERNAL_ERROR"
 	case CallErrorCodeInvalidCallerPath:
-		return "invalid caller path"
+		return "INVALID_CALLER_PATH"
 	case CallErrorCodeCallerPathNotFound:
-		return "caller path not found"
+		return "CALLER_PATH_NOT_FOUND"
 	case CallerSystemError:
-		return "caller system error"
+		return "CALLER_SYSTEM_ERROR"
 	case CallErrorCodeInvalidArgs:
-		return "invalid arguments"
+		return "INVALID_ARGS"
+	case CallErrorCodeTokenExpired:
+		return "TOKEN_EXPIRED"
+	case CallErrorCodeTokenInvalid:
+		return "TOKEN_INVALID"
+	case CallErrorCodeTokenNotFound:
+		return "TOKEN_NOT_FOUND"
+	case CallErrorCodeTokenInvalidFormat:
+		return "TOKEN_INVALID_FORMAT"
+	case CallErrorCodeTokenInvalidIssuer:
+		return "TOKEN_INVALID_ISSUER"
+	case CallErrorCodeTokenInvalidAudience:
+		return "TOKEN_INVALID_AUDIENCE"
+	case CallErrorCodeTokenInvalidSubject:
+		return "TOKEN_INVALID_SUBJECT"
+	case CallErrorCodeTokenInvalidSignature:
+		return "TOKEN_INVALID_SIGNATURE"
+	case CallErrorCodeTokenInvalidExpiry:
+		return "TOKEN_INVALID_EXPIRY"
+	case CallErrorCodeAuthorizationFailed:
+		return "AUTHORIZATION_FAILED"
+	case CallErrorCodeAuthenticationFailed:
+		return "AUTHENTICATION_FAILED"
+	case CallErrorCodeAccessDenied:
+		return "ACCESS_DENIED"
 	default:
-		return "unknown error"
+		return "UNKNOWN"
 	}
 }
 

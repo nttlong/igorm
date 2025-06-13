@@ -26,10 +26,10 @@ type User struct {
 	LastFailedLoginAt      *time.Time ` json:"lastFailedLoginAt,omitempty"`
 	FailedLoginCount       int        `db:"df:0" json:"failedLoginCount"`
 	IsSupperUser           bool       `db:"df:false" json:"isSupperUser"`
-	RoleId                 *int       `db:"fk:auth_role(Id)" json:"roleId"`
+	RoleId                 *int       `json:"roleId"`
 	PasswordChangeRequired bool       `db:"df:false" json:"passwordChangeRequired"`
 }
 
 func init() {
-	dbx.AddEntities(&User{}, &Role{})
+	dbx.AddEntities(&User{}, &Role{}, &View{}, &ViewRole{})
 }

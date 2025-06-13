@@ -383,7 +383,7 @@ func (e executorMssql) getSQlCreateTable(entityType *EntityType) (SqlCommandList
 
 	return ret, nil
 }
-func (e executorMssql) makeSqlCommandForeignKey(fkInfo []*ForeignKeyInfo) []*SqlCommandForeignKey {
+func (e executorMssql) makeSqlCommandForeignKey(fkInfo map[string]fkInfoEntry) []*SqlCommandForeignKey {
 	/**
 		ALTER TABLE child_table_name
 	ADD CONSTRAINT fk_name -- Tên tùy chọn cho khóa ngoại
@@ -393,19 +393,12 @@ func (e executorMssql) makeSqlCommandForeignKey(fkInfo []*ForeignKeyInfo) []*Sql
 	[ON UPDATE action]; -- Hành động khi bản ghi cha bị cập nhật
 	*/
 	ret := []*SqlCommandForeignKey{}
-	for _, fk := range fkInfo {
-		fromFields := []string{}
-		for _, col := range fk.FromFields {
-			fromFields = append(fromFields, col.Name)
-		}
-		toFields := []string{}
-		for _, col := range fk.ToFields {
-			toFields = append(toFields, col.Name)
-		}
-		fkName := fk.FromEntity.Name() + "_" + strings.Join(fromFields, "_") + fk.ToEntity.Name() + "_" + strings.Join(toFields, "_") + "_fkey"
-		fromKey := e.quote(fromFields...)
-		toKeys := e.quote(toFields...)
-		sql := "ALTER TABLE " + e.quote(fk.FromEntity.Name()) + " ADD CONSTRAINT " + e.quote(fkName) + " FOREIGN KEY (" + fromKey + ") REFERENCES " + e.quote(fk.ToEntity.Name()) + "(" + toKeys + ")  ON UPDATE CASCADE"
+	for _, info := range fkInfo {
+
+		fkName := info.OwnerTable + "__" + strings.Join(info.OwnerFields, "_") + "___" + info.ForeignTable + "__" + strings.Join(info.ForeignFields, "_") + "_fkey"
+		ownerFields := e.quote(info.OwnerFields...)
+		foreignFields := e.quote(info.ForeignFields...)
+		sql := "ALTER TABLE " + e.quote(info.OwnerTable) + " ADD CONSTRAINT " + e.quote(fkName) + " FOREIGN KEY (" + ownerFields + ") REFERENCES " + e.quote(info.ForeignTable) + "(" + foreignFields + ")  ON UPDATE CASCADE"
 
 		/**
 				IF NOT EXISTS (
@@ -419,15 +412,15 @@ func (e executorMssql) makeSqlCommandForeignKey(fkInfo []*ForeignKeyInfo) []*Sql
 		    ADD CONSTRAINT [WorkingDays_EmployeeIdEmployees_EmployeeId_fkey] FOREIGN KEY ([EmployeeId]) REFERENCES [Employees]([EmployeeId]) ON UPDATE CASCADE;
 		END;
 		*/
-		sqlCheck := "SELECT 1 FROM sys.foreign_keys WHERE name = N'" + fkName + "' AND parent_object_id = OBJECT_ID(N'" + fk.FromEntity.Name() + "')"
+		sqlCheck := "SELECT 1 FROM sys.foreign_keys WHERE name = N'" + fkName + "' AND parent_object_id = OBJECT_ID(N'" + info.ForeignTable + "')"
 		sqlCheck = "IF NOT EXISTS (" + sqlCheck + ") BEGIN \n" + sql + "\n END;"
 
 		ret = append(ret, &SqlCommandForeignKey{
 			string:     sqlCheck,
-			FromTable:  fk.FromEntity.Name(),
-			FromFields: fromFields,
-			ToTable:    fk.ToEntity.Name(),
-			ToFields:   toFields,
+			FromTable:  info.OwnerTable,
+			FromFields: info.OwnerFields,
+			ToTable:    info.ForeignTable,
+			ToFields:   info.ForeignFields,
 		})
 	}
 
@@ -459,7 +452,7 @@ func (e executorMssql) createDb(dbName string) func(dbMaster DBX, dbTenant DBXTe
 	}
 }
 func (e executorMssql) quote(str ...string) string {
-	return "[" + strings.Join(str, "][") + "]"
+	return "[" + strings.Join(str, "],[") + "]"
 
 }
 func mssqlSqlMigrateEntity(db *sql.DB, dbName string, entity interface{}) error {

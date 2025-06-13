@@ -79,7 +79,7 @@ type IExecutor interface {
 	makeSQlCreateTable(primaryKey []*EntityField, tableName string) SqlCommandCreateTable
 	makeAlterTableAddColumn(tableName string, field EntityField) SqlCommandAddColumn
 	getSQlCreateTable(entityType *EntityType) (SqlCommandList, error)
-	makeSqlCommandForeignKey([]*ForeignKeyInfo) []*SqlCommandForeignKey
+	makeSqlCommandForeignKey(map[string]fkInfoEntry) []*SqlCommandForeignKey
 	createDb(dbName string) func(dbMaster DBX, dbTenant DBXTenant) error
 	quote(str ...string) string
 	setPkIndex(tableName string, pkName string)

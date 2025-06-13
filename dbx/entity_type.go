@@ -31,6 +31,7 @@ type EntityType struct {
 	hasGetDefaultValueColsName      bool // list of field names that have default value
 }
 type EntityField struct {
+	TableName string
 	reflect.StructField
 	AllowNull    bool
 	IsPrimaryKey bool
@@ -116,6 +117,7 @@ func newEntityTypeNoCache(t reflect.Type) (*EntityType, error) {
 		}
 
 		ef := EntityField{
+			TableName:       ret.TableName,
 			StructField:     f,
 			AllowNull:       true,
 			NonPtrFieldType: nf,
@@ -148,6 +150,8 @@ func newEntityTypeNoCache(t reflect.Type) (*EntityType, error) {
 		err = refEntityField.initPropertiesByTags()
 
 		fkNameList := strings.Split(refEntityField.ForeignKey, ",")
+		name := refEntityField
+		fmt.Println(name)
 		for _, fkName := range fkNameList {
 			fx := refEntity.GetFieldByName(fkName)
 			if fx == nil {
@@ -480,19 +484,104 @@ type ForeignKeyInfo struct {
 	ToEntity   *EntityType
 	ToFields   []*EntityField
 }
+type fkInfoEntry struct {
+	ForeignTable  string
+	OwnerTable    string
+	ForeignFields []string
+	OwnerFields   []string
+}
 
-func (e *EntityType) GetForeignKeyRef() []*ForeignKeyInfo {
-	retList := []*ForeignKeyInfo{}
-	for _, refEntity := range e.RefEntities {
-		ret := ForeignKeyInfo{}
-		ret.FromEntity = refEntity
-		ret.ToEntity = e
-		ret.FromFields = refEntity.RefFields
-		ret.ToFields = e.GetPrimaryKey()
-		retList = append(retList, &ret)
+func (e *EntityType) GetForeignKeyRef() map[string]fkInfoEntry {
+	// retList := []*ForeignKeyInfo{}
+	mapRefEntities := map[string]fkInfoEntry{}
+	fmt.Println(e.TableName)
+	if e.TableName == "View" {
+		fmt.Println(e.TableName)
+	}
+	for i := 0; i < e.Type.NumField(); i++ {
+		eField := e.Type.Field(i)
+
+		tag := ";" + eField.Tag.Get("db") + ";"
+		// fmt.Println(tag)
+
+		if strings.Contains(tag, ";fk:") || strings.Contains(tag, ";fk(") {
+			fkField := ""
+			if strings.Contains(tag, ";fk:") {
+				fkField = strings.Split(tag, ";fk:")[1]
+				fkField = strings.Split(fkField, ";")[0]
+			}
+			if strings.Contains(tag, ";fk(") {
+				fkField = strings.Split(tag, ";fk(")[1]
+				fkField = strings.Split(fkField, ")")[0]
+			}
+			// fmt.Println(fkField)
+			if fkField != "" {
+				eFieldTYpe := eField.Type
+				if eFieldTYpe.Kind() == reflect.Ptr {
+					eFieldTYpe = eFieldTYpe.Elem()
+				}
+				if eFieldTYpe.Kind() == reflect.Slice {
+					eFieldTYpe = eFieldTYpe.Elem()
+				}
+				if eFieldTYpe.Kind() == reflect.Ptr {
+					eFieldTYpe = eFieldTYpe.Elem()
+				}
+				for j := 0; j < eFieldTYpe.NumField(); j++ {
+					refField := eFieldTYpe.Field(j)
+					if refField.Anonymous && refField.Type == reflect.TypeOf(EntityModel{}) {
+						fkTable := eFieldTYpe.Name()
+						fkName := e.TableName + "_" + fkTable
+						fromFields := e.GetPrimaryKey()
+						if len(fromFields) > 1 {
+							panic("not support multiple primary key")
+						}
+						if len(fromFields) == 0 {
+							panic("entity must have a primary key")
+						}
+						if entry, ok := mapRefEntities[fkName]; ok {
+							// entry.FromFields = append(entry.FromFields, fromFields[0].Name)
+							// entry.ToFields = append(entry.ToFields, refField.Name)
+							mapRefEntities[fkName] = entry
+							// fmt.Println(entry)
+
+						} else {
+							mapRefEntities[fkName] = fkInfoEntry{
+								ForeignTable:  e.TableName,
+								OwnerTable:    fkTable,
+								ForeignFields: []string{fromFields[0].Name},
+								OwnerFields:   []string{fkField},
+							}
+							fmt.Println(mapRefEntities[fkName])
+						}
+					}
+				}
+
+			}
+
+		}
 
 	}
-	return retList
+	// for _, val := range mapRefEntities {
+	// 	fmt.Println(val)
+	// 	// refEntity := val
+	// 	// ret := ForeignKeyInfo{}
+	// 	// ret.FromEntity = refEntity
+	// 	// ret.ToEntity = e
+	// 	// ret.FromFields = refEntity.RefFields
+	// 	// ret.ToFields = e.GetPrimaryKey()
+	// 	// retList = append(retList, &ret)
+	// }
+
+	// for _, refEntity := range e.RefEntities {
+	// 	ret := ForeignKeyInfo{}
+	// 	ret.FromEntity = refEntity
+	// 	ret.ToEntity = e
+	// 	ret.FromFields = refEntity.RefFields
+	// 	ret.ToFields = e.GetPrimaryKey()
+	// 	retList = append(retList, &ret)
+
+	// }
+	return mapRefEntities
 
 }
 

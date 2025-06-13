@@ -10,20 +10,21 @@ const (
 	ErrInvalidToken
 	ErrInvalidRefreshToken
 	ErrAccessDeny
+	ErrTokenExpired
 )
 
 func (e AuthErrorCode) String() string {
 	switch e {
 	case ErrUnknown:
-		return "unknown error"
+		return "UNKNOWN_ERROR"
 	case ErrInvalidUsernameOrPassword:
-		return "invalid username or password"
+		return "INVALID_USERNAME_OR_PASSWORD"
 	case ErrInvalidToken:
-		return "invalid token"
+		return "INVALID_TOKEN"
 	case ErrInvalidRefreshToken:
-		return "invalid refresh token"
+		return "INVALID_REFRESH_TOKEN"
 	default:
-		return "unknown error"
+		return "UNKNOWN_ERROR"
 	}
 }
 

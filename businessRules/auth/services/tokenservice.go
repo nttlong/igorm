@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"log"
 	"reflect"
 	"strings"
 	"time"
@@ -64,6 +65,9 @@ func (s *TokenService) ValidateAccessToken(accessToken string) (*OAuth2Token, er
 	}
 	tokenInfo, err := s.DecodeAccessToken(accessTokenValidate)
 	if err != nil {
+		if auErr, ok := err.(*authErr.AuthError); ok {
+			return nil, auErr
+		}
 		return nil, err
 	}
 
@@ -79,17 +83,31 @@ func (s *TokenService) DecodeAccessToken(accessToken string) (*OAuth2Token, erro
 	token, err := jwt.ParseWithClaims(accessToken, &jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
 		// Kiểm tra thuật toán ký
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			log.Printf("unexpected signing method: %v", token.Header["alg"])
+			return nil, &authErr.AuthError{
+				Code:    authErr.ErrInvalidToken,
+				Message: "invalid token",
+			}
+			//fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return s.JwtSecret, nil
 	})
 	if err != nil {
+		if strings.Contains(err.Error(), ": token is expired") {
+			return nil, &authErr.AuthError{
+				Code:    authErr.ErrTokenExpired,
+				Message: "token has expired",
+			}
+		}
 		return nil, fmt.Errorf("failed to parse token: %w", err)
 	}
 
 	// Kiểm tra token có hợp lệ không
 	if !token.Valid {
-		return nil, fmt.Errorf("invalid token")
+		return nil, &authErr.AuthError{
+			Code:    authErr.ErrInvalidToken,
+			Message: "invalid token",
+		}
 	}
 
 	// Lấy claims
@@ -114,7 +132,10 @@ func (s *TokenService) DecodeAccessToken(accessToken string) (*OAuth2Token, erro
 	currentTime := time.Now().Unix()
 	expiresIn := int64(exp) - currentTime
 	if expiresIn < 0 {
-		return nil, fmt.Errorf("token has expired")
+		return nil, &authErr.AuthError{
+			Code:    authErr.ErrInvalidToken,
+			Message: "token has expired",
+		}
 	}
 
 	// Tạo OAuth2Token

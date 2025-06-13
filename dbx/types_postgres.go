@@ -250,32 +250,24 @@ func (e *executorPostgres) createSqlCreateUniqueIndexIfNotExists(indexName strin
 		Index:     index,
 	}
 }
-func (e *executorPostgres) makeSqlCommandForeignKey(fkInfo []*ForeignKeyInfo) []*SqlCommandForeignKey {
+func (e *executorPostgres) makeSqlCommandForeignKey(fkInfo map[string]fkInfoEntry) []*SqlCommandForeignKey {
 	/**
 	ALTER TABLE public."AAA"
 	ADD CONSTRAINT "AAA_DepartmentId_fkey" FOREIGN KEY ("DepartmentId")
 	*/
 	ret := []*SqlCommandForeignKey{}
-	for _, fk := range fkInfo {
-		fromFields := []string{}
-		for _, col := range fk.FromFields {
-			fromFields = append(fromFields, col.Name)
-		}
-		toFields := []string{}
-		for _, col := range fk.ToFields {
-			toFields = append(toFields, col.Name)
-		}
-		fkName := fk.FromEntity.Name() + "_" + strings.Join(fromFields, "_") + fk.ToEntity.Name() + "_" + strings.Join(toFields, "_") + "_fkey"
-		fromKey := "\"" + strings.Join(fromFields, "\",\"") + "\""
-		toKeys := "\"" + strings.Join(toFields, "\",\"") + "\""
-		sql := "ALTER TABLE \"" + fk.FromEntity.Name() + "\" ADD CONSTRAINT \"" + fkName + "\" FOREIGN KEY (" + fromKey + ") REFERENCES \"" + fk.ToEntity.Name() + "\" (" + toKeys + ") ON UPDATE CASCADE"
+	for _, info := range fkInfo {
+		fkName := info.OwnerTable + "__" + strings.Join(info.OwnerFields, "_") + "___" + info.ForeignTable + "__" + strings.Join(info.ForeignFields, "_") + "_fkey"
+		ownerFields := e.quote(info.OwnerFields...)
+		foreignFields := e.quote(info.ForeignFields...)
+		sql := "ALTER TABLE " + e.quote(info.OwnerTable) + " ADD CONSTRAINT " + fkName + " FOREIGN KEY (" + e.quote(ownerFields) + ") REFERENCES " + e.quote(info.ForeignTable) + " (" + foreignFields + ") ON UPDATE CASCADE"
 
 		ret = append(ret, &SqlCommandForeignKey{
 			string:     sql,
-			FromTable:  fk.FromEntity.Name(),
-			FromFields: fromFields,
-			ToTable:    fk.ToEntity.Name(),
-			ToFields:   toFields,
+			FromTable:  info.OwnerTable,
+			FromFields: info.OwnerFields,
+			ToTable:    info.ForeignTable,
+			ToFields:   info.ForeignFields,
 		})
 	}
 
