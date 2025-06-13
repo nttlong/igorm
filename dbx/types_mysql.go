@@ -64,48 +64,7 @@ func (e *executorMySql) createTable(dbname string, entity interface{}) func(db *
 	}
 	ret := func(db *sql.DB) error {
 
-		if db == nil {
-			return fmt.Errorf("please open db first")
-		}
-		for _, sqlCmd := range sqlList {
-
-			_, err := db.Exec(sqlCmd.String())
-			if err != nil {
-
-				if mySQlErr, ok := err.(*mysql.MySQLError); ok {
-					if mySQlErr.Number == 1060 || mySQlErr.Number == 1061 || mySQlErr.Number == 1826 {
-
-						continue
-					} else {
-
-						fmt.Println(red+"SQL: "+reset+sqlCmd.String(), red+"Error: "+reset+err.Error())
-						return DBXMigrationError{
-							Message: err.Error(),
-							DBName:  dbname,
-							Code:    fmt.Sprintf("%d", mySQlErr.Number), // mysql error code
-							Sql:     sqlCmd.String(),
-							Err:     err,
-						}
-					}
-
-				} else {
-					fmt.Println(red+"SQL: "+reset+sqlCmd.String(), red+"Error: "+reset+err.Error())
-
-					return DBXMigrationError{
-						Message: err.Error(),
-						DBName:  dbname,
-						Code:    "unknown", // mysql error code
-						Sql:     sqlCmd.String(),
-						Err:     err,
-					}
-				}
-
-			}
-
-		}
-		//save entityType to cache
-		checkCreateTable.Store(key, true)
-		return nil
+		return mhysqlExecCreateTable(db, dbname, key, sqlList)
 	}
 	return ret
 }
@@ -204,7 +163,7 @@ var mapGoTypeToMySqlType = map[reflect.Type]string{
 	reflect.TypeOf(float64(0)):        "DOUBLE",
 	reflect.TypeOf(string("")):        "TEXT", // default length for VARCHAR
 	reflect.TypeOf(bool(false)):       "BOOL",
-	reflect.TypeOf(time.Time{}):       "DATETIME2",
+	reflect.TypeOf(time.Time{}):       "DATETIME",
 	reflect.TypeOf(decimal.Decimal{}): "DECIMAL(10,2)",
 	reflect.TypeOf(uuid.UUID{}):       "VARCHAR(36)",
 }

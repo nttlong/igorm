@@ -11,7 +11,7 @@ import (
 	authErr "unvs.br.auth/errors"
 )
 
-func (r *RoleService) Create(data *struct {
+func (r *RoleService) Create(data struct {
 	Code        string `json:"code"`
 	Name        string `json:"name"`
 	Description string `json:"description"`

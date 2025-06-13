@@ -5,9 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"reflect"
 	"strings"
 	"sync"
+	"time"
 )
 
 func (ctx *DBXTenant) Insert(entity interface{}) error {
@@ -225,7 +227,11 @@ func (ctx *DBXTenant) pgInsert(cntx context.Context, tblInfo *EntityType, entity
 
 		rw, errQr = ctx.DB.Query((*execSql2), dataInsert.Params...)
 	} else {
+		start := time.Now()
 		rw, errQr = ctx.DB.QueryContext(cntx, (*execSql2), dataInsert.Params...)
+		n := time.Since(start).Milliseconds()
+		fmt.Println(red, "time", n, reset, green, (*execSql2), reset)
+		log.Println(red, "time", n, reset, green, (*execSql2), reset)
 	}
 
 	if errQr != nil {

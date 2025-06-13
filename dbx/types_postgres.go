@@ -260,7 +260,7 @@ func (e *executorPostgres) makeSqlCommandForeignKey(fkInfo map[string]fkInfoEntr
 		fkName := info.OwnerTable + "__" + strings.Join(info.OwnerFields, "_") + "___" + info.ForeignTable + "__" + strings.Join(info.ForeignFields, "_") + "_fkey"
 		ownerFields := e.quote(info.OwnerFields...)
 		foreignFields := e.quote(info.ForeignFields...)
-		sql := "ALTER TABLE " + e.quote(info.OwnerTable) + " ADD CONSTRAINT " + fkName + " FOREIGN KEY (" + e.quote(ownerFields) + ") REFERENCES " + e.quote(info.ForeignTable) + " (" + foreignFields + ") ON UPDATE CASCADE"
+		sql := "ALTER TABLE " + e.quote(info.OwnerTable) + " ADD CONSTRAINT " + fkName + " FOREIGN KEY (" + ownerFields + ") REFERENCES " + e.quote(info.ForeignTable) + " (" + foreignFields + ") ON UPDATE CASCADE"
 
 		ret = append(ret, &SqlCommandForeignKey{
 			string:     sql,

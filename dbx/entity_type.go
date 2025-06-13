@@ -495,9 +495,7 @@ func (e *EntityType) GetForeignKeyRef() map[string]fkInfoEntry {
 	// retList := []*ForeignKeyInfo{}
 	mapRefEntities := map[string]fkInfoEntry{}
 	fmt.Println(e.TableName)
-	if e.TableName == "View" {
-		fmt.Println(e.TableName)
-	}
+
 	for i := 0; i < e.Type.NumField(); i++ {
 		eField := e.Type.Field(i)
 
@@ -551,7 +549,7 @@ func (e *EntityType) GetForeignKeyRef() map[string]fkInfoEntry {
 								ForeignFields: []string{fromFields[0].Name},
 								OwnerFields:   []string{fkField},
 							}
-							fmt.Println(mapRefEntities[fkName])
+
 						}
 					}
 				}

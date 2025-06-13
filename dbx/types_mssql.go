@@ -179,7 +179,7 @@ func (e executorMssql) makeSQlCreateTable(primaryKey []*EntityField, tableName s
 	for _, field := range primaryKey {
 		pkCols = append(pkCols, field.Name)
 
-		fieldType := mapGoTypeToMySqlType[field.Type]
+		fieldType := mapGoTypeToMssqlSqlType[field.Type]
 		if field.DefaultValue == "auto" {
 			fieldType = "INT IDENTITY(1,1) "
 		}
@@ -215,7 +215,7 @@ var mapGoTypeToMssqlSqlType = map[reflect.Type]string{
 	reflect.TypeOf(float64(0)):        "FLOAT",
 	reflect.TypeOf(string("")):        "NVARCHAR(MAX)",
 	reflect.TypeOf(bool(false)):       "BIT",
-	reflect.TypeOf(time.Time{}):       "DATETIME",
+	reflect.TypeOf(time.Time{}):       "DATETIME2",
 	reflect.TypeOf(decimal.Decimal{}): "DECIMAL(10,2)",
 	reflect.TypeOf(uuid.UUID{}):       "UNIQUEIDENTIFIER",
 }
@@ -412,7 +412,7 @@ func (e executorMssql) makeSqlCommandForeignKey(fkInfo map[string]fkInfoEntry) [
 		    ADD CONSTRAINT [WorkingDays_EmployeeIdEmployees_EmployeeId_fkey] FOREIGN KEY ([EmployeeId]) REFERENCES [Employees]([EmployeeId]) ON UPDATE CASCADE;
 		END;
 		*/
-		sqlCheck := "SELECT 1 FROM sys.foreign_keys WHERE name = N'" + fkName + "' AND parent_object_id = OBJECT_ID(N'" + info.ForeignTable + "')"
+		sqlCheck := "SELECT 1 FROM sys.foreign_keys WHERE name = N'" + fkName + "' AND parent_object_id = OBJECT_ID(N'" + info.OwnerTable + "')"
 		sqlCheck = "IF NOT EXISTS (" + sqlCheck + ") BEGIN \n" + sql + "\n END;"
 
 		ret = append(ret, &SqlCommandForeignKey{

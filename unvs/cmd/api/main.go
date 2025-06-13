@@ -79,7 +79,10 @@ func main() {
 		Compress:   true, // Nén các file log cũ (.gz)
 	}
 	mw := io.MultiWriter(os.Stdout, lumberjackLogger)
+
 	appLogger.SetOutput(mw)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+	// --------------------------------------------------------
 
 	// 3. Cấu hình Formatter cho Logrus
 	// Sử dụng JSONFormatter để có log cấu trúc, dễ dàng thêm các trường như "package"

@@ -9,8 +9,22 @@ database:
   password: "123456"
   ssl: false
   name: "mygoapi"
-
- 
+database3:
+  driver: "mysql"
+  host: "localhost"
+  port: 3306
+  user: "root"
+  password: "123456"
+  name: "mygoapi"
+  ssl: false
+database2:
+  driver: "postgres"
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "123456"
+  name: "mygoapi"
+  ssl: false
 server:
   bind: "0.0.0.0"
   port: 8080

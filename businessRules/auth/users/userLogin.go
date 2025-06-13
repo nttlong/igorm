@@ -30,6 +30,12 @@ func (u *User) Login(username string, password string) (*service.OAuth2Token, er
 		if err != nil {
 			return nil, err
 		} else {
+			if _user == nil {
+				return nil, &authError.AuthError{
+					Code:    authError.ErrInvalidUsernameOrPassword,
+					Message: "Invalid username or password",
+				}
+			}
 			user = *_user
 			u.Cache.Set(u.Context, "user_"+username, *_user, 0)
 
