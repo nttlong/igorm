@@ -1694,3 +1694,168 @@ ____________________________________O/_______
 {"time":"2025-06-13T12:46:36.4605783+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"767.5545ms"}
 {"time":"2025-06-13T12:47:21.5428102+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":200,"latency_human":"13.41ms"}
 {"time":"2025-06-13T12:47:26.9310342+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"1.4288ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-13T12:49:42.5089795+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] not implemented goroutine 7 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x16d4540?, 0x2194000?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.NewRequestInstance({0xc0000361e0, 0x19}, {0x21afd40, 0x17bae20})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:48 +0x11ce\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000186a58, {0x21b0758, 0xc0000aa0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:63 +0x2bb\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc000269688, {0x21a0fc0, 0xc0000000e0}, 0xc0000c6000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026cd00}, {0x21a0fc0, 0xc0000000e0}, 0xc0000c6000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000bc090, {0x21a32a8, 0xc0000a60a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x20777145850, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc000250930, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0002507a0, 0xc000218fe0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000250788, 0x234, {0xc0000be0f0, 0x2, 0x2}, 0xc0002507a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000250788, 0xc0002194a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000250788)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002a4fc0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002a4fc0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002a4fc0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc00026cd00, {0x21a0e70, 0xc000186ab0})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc000269688, {0xc000263e80, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:136 +0xa5d\n\ngoroutine 20 [IO wait]:\ninternal/poll.runtime_pollWait(0x20777145738, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0000b81b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0000b8020, 0xc0000a53f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0000b8008, 0x22c, {0xc0000be000, 0x2, 0x2}, 0xc0000b8020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0000b8008, 0xc0000a58c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0000b8008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000098100)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc000098100)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc00009c000, {0x2\n"}
+{"time":"2025-06-13T12:50:36.9699777+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] not implemented goroutine 7 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x16d4540?, 0x2194000?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.NewRequestInstance({0xc000036220, 0x19}, {0x21afd40, 0x17bae20})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:48 +0x11ce\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000186a58, {0x21b0758, 0xc0000aa0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:63 +0x2bb\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc000269688, {0x21a0fc0, 0xc0000001c0}, 0xc0000c6280)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026cd00}, {0x21a0fc0, 0xc0000001c0}, 0xc0000c6280)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000bc090, {0x21a32a8, 0xc0000a60a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x20777145850, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc000250930, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0002507a0, 0xc000218fe0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000250788, 0x234, {0xc0000be0f0, 0x2, 0x2}, 0xc0002507a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000250788, 0xc0002194a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000250788)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002a4fc0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002a4fc0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002a4fc0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc00026cd00, {0x21a0e70, 0xc000186ab0})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc000269688, {0xc000263e80, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:136 +0xa5d\n\ngoroutine 20 [IO wait]:\ninternal/poll.runtime_pollWait(0x20777145738, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0000b81b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0000b8020, 0xc0000a53f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0000b8008, 0x22c, {0xc0000be000, 0x2, 0x2}, 0xc0000b8020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0000b8008, 0xc0000a58c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0000b8008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000098100)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc000098100)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc00009c000, {0x2\n"}
+{"time":"2025-06-13T12:50:57.2793579+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] not implemented goroutine 7 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x16d4540?, 0x2194000?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.NewRequestInstance({0xc000036240, 0x19}, {0x21afd40, 0x17bae20})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:48 +0x11ce\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000186a58, {0x21b0758, 0xc0000aa0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:63 +0x2bb\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc000269688, {0x21a0fc0, 0xc0000002a0}, 0xc0000c6500)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026cd00}, {0x21a0fc0, 0xc0000002a0}, 0xc0000c6500)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000bc090, {0x21a32a8, 0xc0000a60a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x20777145850, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc000250930, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0002507a0, 0xc000218fe0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000250788, 0x234, {0xc0000be0f0, 0x2, 0x2}, 0xc0002507a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000250788, 0xc0002194a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000250788)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002a4fc0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002a4fc0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002a4fc0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc00026cd00, {0x21a0e70, 0xc000186ab0})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc000269688, {0xc000263e80, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:136 +0xa5d\n\ngoroutine 20 [IO wait]:\ninternal/poll.runtime_pollWait(0x20777145738, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0000b81b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0000b8020, 0xc0000a53f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0000b8008, 0x22c, {0xc0000be000, 0x2, 0x2}, 0xc0000b8020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0000b8008, 0xc0000a58c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0000b8008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000098100)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc000098100)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc00009c000, {0x2\n"}
+{"time":"2025-06-13T12:51:10.0229462+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] not implemented goroutine 7 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x16d4540?, 0x2194000?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.NewRequestInstance({0xc000036260, 0x19}, {0x21afd40, 0x17bae20})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:48 +0x11ce\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000186a58, {0x21b0758, 0xc0000aa0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:63 +0x2bb\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x21b0758, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc000269688, {0x21a0fc0, 0xc000000380}, 0xc0000c6780)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026cd00}, {0x21a0fc0, 0xc000000380}, 0xc0000c6780)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000bc090, {0x21a32a8, 0xc0000a60a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x20777145850, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc000250930, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0002507a0, 0xc000218fe0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000250788, 0x234, {0xc0000be0f0, 0x2, 0x2}, 0xc0002507a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000250788, 0xc0002194a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000250788)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002a4fc0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002a4fc0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002a4fc0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc00026cd00, {0x21a0e70, 0xc000186ab0})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc000269688, {0xc000263e80, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:136 +0xa5d\n\ngoroutine 20 [IO wait]:\ninternal/poll.runtime_pollWait(0x20777145738, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0000b81b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0000b8020, 0xc0000a53f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0000b8008, 0x22c, {0xc0000be000, 0x2, 0x2}, 0xc0000b8020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0000b8008, 0xc0000a58c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0000b8008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000098100)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc000098100)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc00009c000, {0x2\n"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-13T12:58:06+07:00" level=error msg="code=400, message=Unmarshal type error: expected=struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got=array, field=Args, offset=13, internal=json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-13T12:59:14+07:00" level=error msg="code=400, message=Unmarshal type error: expected=struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got=array, field=Args, offset=13, internal=json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-13T13:00:44+07:00" level=error msg="json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+{"time":"2025-06-13T13:00:48.5128196+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"8.1594831s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-13T13:11:37+07:00" level=error msg="json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+{"time":"2025-06-13T13:11:37.8942206+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"3.6919921s"}
+time="2025-06-13T13:12:06+07:00" level=error msg="json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-13T13:12:55+07:00" level=error msg="json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+{"time":"2025-06-13T13:12:56.6814572+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"4.4865676s"}
+time="2025-06-13T13:13:41+07:00" level=error msg="json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+{"time":"2025-06-13T13:14:19.3253969+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"47.3918285s"}
+time="2025-06-13T13:14:24+07:00" level=error msg="json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-13T13:15:33+07:00" level=error msg="json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+{"time":"2025-06-13T13:15:34.7944323+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"3.3862264s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-13T13:16:40+07:00" level=error msg="json: cannot unmarshal array into Go struct field .Args of type struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }"
+{"time":"2025-06-13T13:16:43.3233249+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"7.7161351s"}
+{"time":"2025-06-13T13:17:24.3002063+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"798.8937ms"}
+{"time":"2025-06-13T13:17:34.8135891+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"8.0876ms"}
+{"time":"2025-06-13T13:17:46.1398511+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"10.1477ms"}
+{"time":"2025-06-13T13:17:58.5186234+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":200,"latency_human":"9.8439ms"}
+{"time":"2025-06-13T13:18:27.442719+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"2.0296ms"}

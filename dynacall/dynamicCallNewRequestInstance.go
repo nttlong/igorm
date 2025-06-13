@@ -1,6 +1,7 @@
 package dynacall
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 )
@@ -44,9 +45,14 @@ func NewRequestInstance(callerPath string, instanceType reflect.Type) (*RequestT
 			if len(inputType) == 0 {
 				continue
 			} else if len(inputType) == 1 {
-				if inputType[0].Kind() == reflect.Ptr {
-					panic("not implemented")
-				}
+				// if inputType[0].Kind() == reflect.Ptr {
+				// 	fields[i] = reflect.StructField{
+				// 		Name: "Args",
+				// 		Type: inputType[0],
+				// 		Tag:  reflect.StructTag(""),
+				// 	}
+
+				// }
 				if inputType[0].Kind() == reflect.Slice {
 					inputTypeSlice := reflect.SliceOf(inputType[0])
 					fields[i] = reflect.StructField{
@@ -91,5 +97,25 @@ func NewRequestInstance(callerPath string, instanceType reflect.Type) (*RequestT
 	ret.Data = structInstance.Addr().Interface()
 
 	return ret, nil
-	return nil, nil
+
+}
+func GetInputExampleCallerPath(callerPath string) ([]interface{}, error) {
+	if !strings.Contains(callerPath, "@") {
+		return nil, errors.New("callerPath is invalid")
+	}
+	callerEntry, found := callerCache.Load(strings.ToLower(callerPath))
+	if !found {
+		return nil, errors.New("callerEntry not found")
+	}
+	method := callerEntry.(CallerEntry).Method
+	ret := []interface{}{}
+	for i := 1; i < method.Type.NumIn(); i++ {
+		inputType := method.Type.In(i)
+		if inputType.Kind() == reflect.Ptr {
+			inputType = inputType.Elem()
+		}
+		inputValue := reflect.New(inputType).Interface()
+		ret = append(ret, inputValue)
+	}
+	return ret, nil
 }

@@ -5,6 +5,7 @@ import (
 	"context"
 	"dbx"
 	"dynacall"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -63,11 +64,53 @@ func (h *CallerHandler) Call(c echo.Context) error {
 	req, err := dynacall.NewRequestInstance(callerPath, reflect.TypeOf(CallerRequest{}))
 
 	if err := c.Bind(req.Data); err != nil {
-		log.Fatal(err)
-		fmt.Println(err.Error())
+		if eError, ok := err.(*echo.HTTPError); ok {
+			h.AppLogger.Error(eError.Unwrap().Error())
+			exampleData, errGet := dynacall.GetInputExampleCallerPath(callerPath)
+			if errGet != nil {
+				return c.JSON(http.StatusBadRequest, ErrorResponse{
+					Code:    "INVALID_REQUEST_BODY",
+					Message: "Invalid request body",
+				})
+			}
+			if exampleData == nil || len(exampleData) == 0 {
+				return c.JSON(http.StatusBadRequest, ErrorResponse{
+					Code:    "INVALID_REQUEST_BODY",
+					Message: "Invalid request body",
+				})
+			} else if len(exampleData) == 1 {
+				jsonData, err := json.Marshal(exampleData[0])
+				if err != nil {
+					return c.JSON(http.StatusBadRequest, ErrorResponse{
+						Code:    "INVALID_REQUEST_BODY",
+						Message: "Invalid request body",
+					})
+				}
+				msg := fmt.Sprintf("Invalid request body, Expected: %s", string(jsonData))
+				return c.JSON(http.StatusBadRequest, ErrorResponse{
+					Code:    "INVALID_REQUEST_BODY",
+					Message: msg,
+				})
+			} else {
+				jsonData, err := json.Marshal(exampleData)
+				if err != nil {
+					return c.JSON(http.StatusBadRequest, ErrorResponse{
+						Code:    "INVALID_REQUEST_BODY",
+						Message: "Invalid request body",
+					})
+				}
+				msg := fmt.Sprintf("Invalid request body, Expected: %s", string(jsonData))
+				return c.JSON(http.StatusBadRequest, ErrorResponse{
+					Code:    "INVALID_REQUEST_BODY",
+					Message: msg,
+				})
+			}
+
+		}
+
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Code:    "INVALID_REQUEST_BODY",
-			Message: "Dữ liệu yêu cầu không hợp lệ",
+			Message: "Invalid request body",
 		})
 	}
 

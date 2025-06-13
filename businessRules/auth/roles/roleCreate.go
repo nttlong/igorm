@@ -9,13 +9,11 @@ import (
 	authErrors "unvs.br.auth/errors"
 )
 
-type RoleInfo struct {
+func (r *RoleService) Create(data *struct {
 	Code        string `json:"code"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-}
-
-func (r *RoleService) Create(data []*RoleInfo) (*dbmodels.Role, error) {
+}) (*dbmodels.Role, error) {
 	tokenInfo, err := r.ValidateAccessToken(r.AccessToken)
 	if err != nil {
 		return nil, err
@@ -28,9 +26,9 @@ func (r *RoleService) Create(data []*RoleInfo) (*dbmodels.Role, error) {
 	}
 	role := dbmodels.Role{
 		RoleId:      dbx.NewUUID(),
-		Code:        data[0].Code,
-		Name:        data[0].Name,
-		Description: dbx.FullTextSearchColumn(data[0].Description),
+		Code:        data.Code,
+		Name:        data.Name,
+		Description: dbx.FullTextSearchColumn(data.Description),
 		CreatedAt:   time.Now().UTC(),
 		CreatedBy:   "system",
 	}
