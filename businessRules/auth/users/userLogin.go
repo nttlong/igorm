@@ -67,9 +67,7 @@ func (u *User) Login(username string, password string) (*service.OAuth2Token, er
 		}
 	}
 
-	return (&service.TokenService{
-		JwtSecret: u.JwtSecret,
-	}).GenerateToken(user.UserId, defaultRole)
+	return u.GenerateToken(user.UserId, defaultRole)
 
 }
 func (u *User) Login2(login struct {

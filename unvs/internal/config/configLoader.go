@@ -25,6 +25,7 @@ func LoadConfig() error {
 	viper.SetDefault("server.debug_mode", false)
 	viper.SetDefault("cache", "bagger")
 	viper.SetDefault("logs", "./logs/app.log")
+	viper.SetDefault("encryptionKey", "78U+eSy0l4+IegiyiN0kmYaYDq+Nek2m9zDKxHLCHBa1N1dcgTAd67WrcUW2H91/")
 
 	// 2. Đặt tên file cấu hình (không bao gồm phần mở rộng)
 	viper.SetConfigName("config")

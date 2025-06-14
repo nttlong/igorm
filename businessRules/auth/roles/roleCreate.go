@@ -27,7 +27,7 @@ func (r *RoleService) Create(data struct {
 			}
 			return nil, &dynacall.CallError{
 				Code: dynacall.CallErrorCodeAccessDenied,
-				Err:  err,
+				Err:  errors.New("Access Deny"),
 			}
 		}
 

@@ -40,6 +40,6 @@ redis:
   db: 0
   timeout: 50
 logs: ./logs/app.log
-    
+encryptionKey: 78U+eSy0l4+Iegiy  
 
 

@@ -4,13 +4,27 @@ app:
 database:
   driver: "mssql"
   host: "localhost"
-  
+  port: 0
   user: "sa"
   password: "123456"
   ssl: false
   name: "mygoapi"
-
- 
+database3:
+  driver: "mysql"
+  host: "localhost"
+  port: 3306
+  user: "root"
+  password: "123456"
+  name: "mygoapi"
+  ssl: false
+database2:
+  driver: "postgres"
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "123456"
+  name: "mygoapi"
+  ssl: false
 server:
   bind: "0.0.0.0"
   port: 8080
@@ -26,5 +40,6 @@ redis:
   db: 0
   timeout: 50
 logs: ./logs/app.log
+encryptionKey: 78U+eSy0l4+IegiyiN0kmYaYDq+Nek2m9zDKxHLCHBa1N1dcgTAd67WrcUW2H91/  
 
 

@@ -2,6 +2,7 @@ package services
 
 import (
 	"crypto/rand"
+	"dbx"
 	"encoding/base64"
 	"fmt"
 	"log"
@@ -25,13 +26,15 @@ type OAuth2Token struct {
 }
 type TokenService struct {
 	CacheService
-	JwtSecret []byte
+	TenantDb      *dbx.DBXTenant
+	EncryptionKey string
 }
 
 func (p *TokenService) getPath() string {
 	typ := reflect.TypeOf(*p)
 	return typ.PkgPath() + "/" + typ.Name()
 }
+
 func (p *TokenService) validate() string {
 	typ := reflect.TypeOf(*p)
 	if p.Cache != nil {
@@ -54,7 +57,7 @@ func (s *TokenService) ValidateAccessToken(accessToken string) (*OAuth2Token, er
 		}
 		return nil, e
 	}
-	cacheKey := fmt.Sprintf("%s:%s", path, accessToken)
+	cacheKey := fmt.Sprintf("%s:%s;%s", s.TenantDb.TenantDbName, path, accessToken)
 	ret := OAuth2Token{}
 	if s.Cache.Get(s.Context, cacheKey, &ret) {
 		return &ret, nil
@@ -90,13 +93,23 @@ func (s *TokenService) DecodeAccessToken(accessToken string) (*OAuth2Token, erro
 			}
 			//fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return s.JwtSecret, nil
+		jwtSecret, err := s.GetJwtSecret()
+		if err != nil {
+			return nil, err
+		}
+		return jwtSecret, nil
 	})
 	if err != nil {
 		if strings.Contains(err.Error(), ": token is expired") {
 			return nil, &authErr.AuthError{
 				Code:    authErr.ErrTokenExpired,
 				Message: "token has expired",
+			}
+		}
+		if strings.Contains(err.Error(), ": signature is invalid") {
+			return nil, &authErr.AuthError{
+				Code:    authErr.ErrInvalidToken,
+				Message: "invalid token",
 			}
 		}
 		return nil, fmt.Errorf("failed to parse token: %w", err)
@@ -170,7 +183,11 @@ func (s *TokenService) GenerateToken(userID string, role string) (*OAuth2Token, 
 
 	// Tạo token JWT
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	accessToken, err := token.SignedString(s.JwtSecret)
+	jwtSecret, err := s.GetJwtSecret()
+	if err != nil {
+		return nil, err
+	}
+	accessToken, err := token.SignedString(jwtSecret)
 	if err != nil {
 		return nil, fmt.Errorf("failed to sign JWT: %w", err)
 	}

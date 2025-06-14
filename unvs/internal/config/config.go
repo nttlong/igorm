@@ -34,6 +34,7 @@ type Config struct {
 	MemcachedServer []string   `mapstructure:"memcached"`
 	Redis           RedisCache `mapstructure:"redis"`
 	Logs            string     `mapstructure:"logs"`
+	EncryptionKey   string     `mapstructure:"encryptionKey"`
 }
 type RedisCache struct {
 	Host     string `mapstructure:"host"`

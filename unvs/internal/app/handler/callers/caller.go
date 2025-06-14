@@ -142,22 +142,26 @@ func (h *CallerHandler) Call(c echo.Context) error {
 			}
 		}() // Gọi ngay lập tức hàm ẩn danh deferred
 		retCall, err := dynacall.Call(callerPath, omapDatak, struct {
-			Tenant      string
-			TenantDb    *dbx.DBXTenant
-			Context     context.Context
-			JwtSecret   []byte
+			Tenant        string
+			TenantDb      *dbx.DBXTenant
+			Context       context.Context
+			EncryptionKey string
+
 			Cache       cache.Cache
 			AccessToken string
 		}{
-			Tenant:      req.GetString("Tenant"),
-			TenantDb:    tenantDb,
-			Context:     c.Request().Context(),
-			JwtSecret:   config.GetJWTSecret(),
+			Tenant:        req.GetString("Tenant"),
+			TenantDb:      tenantDb,
+			Context:       c.Request().Context(),
+			EncryptionKey: config.AppConfigInstance.EncryptionKey,
+
 			Cache:       config.GetCache(),
 			AccessToken: c.Request().Header.Get("Authorization"),
 		})
 		if err != nil {
-
+			pkgPath := reflect.TypeOf(h).Elem().PkgPath() + "/Call"
+			log := h.AppLogger.WithField("pkgPath", pkgPath).WithField("callerPath", callerPath)
+			log.Error(err)
 			if e, ok := err.(*dynacall.CallError); ok {
 				if e.Code == dynacall.CallErrorCodeTokenExpired {
 					return c.JSON(http.StatusUnauthorized, ErrorResponse{

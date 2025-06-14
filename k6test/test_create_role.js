@@ -3,7 +3,7 @@ import { check, sleep } from 'k6';
 //import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 export let options = {
-  vus: 10,
+  vus: 200,
   duration: '60s',
   thresholds: {
     'http_req_duration': ['p(95)<500'], // 95th percentile dưới 500ms
@@ -21,7 +21,7 @@ export default function () {
   
   const rolename = `${code}${userIndex}`;
   
-  const AccessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk4MzAxODUsImlhdCI6MTc0OTgyNjU4NSwicm9sZSI6InVzZXIiLCJzY29wZSI6InJlYWQgd3JpdGUiLCJ1c2VySWQiOiIifQ.VqMv5DMdCCkemLfXnx3hVRO-H1y2tKqOG9P3-3YNPH0`; //goi 1 request khac de login
+  const AccessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk4MzQ4NzUsImlhdCI6MTc0OTgzMTI3NSwicm9sZSI6InVzZXIiLCJzY29wZSI6InJlYWQgd3JpdGUiLCJ1c2VySWQiOiIifQ.yMRg60VGd9Gg9utTPQDHFNmXxaSNJktUtE0ZMGwJ9Jk`; //goi 1 request khac de login
 
   const params = {
     headers: {
