@@ -31,6 +31,7 @@ type ErrorResponse struct {
 	Fields  []string `json:"fields"`
 	Values  []string `json:"values"`
 	Message string   `json:"message"`
+	MaxSize int      `json:"maxSize"`
 }
 
 // Response struct for successful account creation
@@ -202,6 +203,20 @@ func (h *CallerHandler) Call(c echo.Context) error {
 						Message: e.Error(),
 					})
 				}
+				if e.Code == dbx.DBXErrorCodeInvalidSize {
+
+					return c.JSON(http.StatusBadRequest, ErrorResponse{
+						Code:    e.Code.String(),
+						Message: e.Error(),
+						MaxSize: e.MaxSize,
+						Fields:  e.Fields,
+					})
+				}
+
+				return c.JSON(http.StatusBadRequest, ErrorResponse{
+					Code:    e.Code.String(),
+					Message: e.Error(),
+				})
 
 			}
 			return c.JSON(http.StatusInternalServerError, ErrorResponse{

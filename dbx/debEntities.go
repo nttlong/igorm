@@ -230,13 +230,20 @@ func (ctx *DBXTenant) pgInsert(cntx context.Context, tblInfo *EntityType, entity
 		start := time.Now()
 		rw, errQr = ctx.DB.QueryContext(cntx, (*execSql2), dataInsert.Params...)
 		n := time.Since(start).Milliseconds()
-		fmt.Println(red, "time", n, reset, green, (*execSql2), reset)
-		log.Println(red, "time", n, reset, green, (*execSql2), reset)
+		defer func() {
+			fmt.Println(red, "time", n, reset, green, (*execSql2), reset)
+			log.Println(red, "time", n, reset, green, (*execSql2), reset)
+		}()
+		if errQr != nil {
+			return PostgresErrorParser.ParseError(cntx, ctx.DB, errQr)
+
+		}
+
 	}
 
 	if errQr != nil {
 
-		return errQr
+		return PostgresErrorParser.ParseError(cntx, ctx.DB, errQr)
 	}
 	defer rw.Close()
 	cols, err := rw.Columns()

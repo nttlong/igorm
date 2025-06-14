@@ -94,6 +94,9 @@ func (e *executorPostgres) makeSQlCreateTable(fields []*EntityField, tableName s
 	}
 
 }
+
+var pgCacheConstraintLength = map[string]map[string]int{}
+
 func (e *executorPostgres) makeAlterTableAddColumn(tableName string, field EntityField) SqlCommandAddColumn {
 	if field.Type == reflect.TypeOf(FullTextSearchColumn("")) {
 		/**
@@ -161,7 +164,16 @@ func (e *executorPostgres) makeAlterTableAddColumn(tableName string, field Entit
 		    ADD CONSTRAINT "Test" CHECK (length("Code"::text) < 10)
 		    NOT VALID;
 		*/
-		sqlAddConstraintStr := "ALTER TABLE IF EXISTS \"" + tableName + "\" ADD CONSTRAINT \"" + tableName + "_" + field.Name + "_check_length\" CHECK (char_length(\"" + field.Name + "\") <= " + strconv.Itoa(field.MaxLen) + ") NOT VALID;"
+		strLen := strconv.Itoa(field.MaxLen)
+		constraintName := tableName + "_" + field.Name + "__check_length_" + strLen
+		if _, ok := pgCacheConstraintLength[tableName]; !ok {
+			pgCacheConstraintLength[tableName] = map[string]int{}
+		}
+		if _, ok := pgCacheConstraintLength[tableName][constraintName]; !ok {
+			pgCacheConstraintLength[tableName][constraintName] = field.MaxLen
+		}
+
+		sqlAddConstraintStr := "ALTER TABLE IF EXISTS \"" + tableName + "\" ADD CONSTRAINT \"" + constraintName + "\" CHECK (char_length(\"" + field.Name + "\") <= " + strLen + ") NOT VALID;"
 		sqlCmdCreateTableStr += ";" + sqlAddConstraintStr + ";"
 	}
 

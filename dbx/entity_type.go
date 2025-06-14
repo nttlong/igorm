@@ -16,7 +16,7 @@ import (
 type EntityType struct {
 	reflect.Type
 	TableName                       string
-	filedMap                        sync.Map
+	fieldMap                        sync.Map
 	RefEntities                     []*EntityType
 	EntityFields                    []*EntityField
 	IsLoaded                        bool
@@ -97,7 +97,7 @@ func newEntityTypeNoCache(t reflect.Type) (*EntityType, error) {
 	ret := EntityType{
 		Type:         t,
 		TableName:    getTableName(t),
-		filedMap:     sync.Map{},
+		fieldMap:     sync.Map{},
 		RefEntities:  []*EntityType{},
 		EntityFields: []*EntityField{},
 	}
@@ -337,7 +337,7 @@ func (e *EntityType) getAllFieldsDelete() ([]*EntityField, error) {
 		ef := EntityType{
 			Type:        ft,
 			TableName:   ft.Name(),
-			filedMap:    sync.Map{},
+			fieldMap:    sync.Map{},
 			RefEntities: []*EntityType{},
 		}
 		eRefEntity = append(eRefEntity, &ef)
@@ -356,13 +356,14 @@ var (
 func (e *EntityType) GetFieldByName(FieldName string) *EntityField {
 	//check cache
 	FieldName = strings.ToLower(FieldName)
-	if field, ok := e.filedMap.Load(FieldName); ok {
-		return field.(*EntityField)
+	if field, ok := e.fieldMap.Load(FieldName); ok {
+		ret := field.(EntityField)
+		return &ret
 	}
 
 	for _, f := range e.EntityFields {
 		if strings.EqualFold(f.Name, FieldName) {
-			e.filedMap.Store(FieldName, &f)
+			e.fieldMap.Store(FieldName, *f)
 			return f
 		}
 	}
@@ -638,6 +639,14 @@ func getAllFields(typ reflect.Type) ([]reflect.StructField, []reflect.StructFiel
 }
 
 var cacheCreateEntityType sync.Map
+var cacheTableNameEntity = map[string]*EntityType{}
+
+func GetEntityTypeByTableName(tableName string) *EntityType {
+	if ret, ok := cacheTableNameEntity[tableName]; ok {
+		return ret
+	}
+	return nil
+}
 
 // Get all fields of the entity type, including embedded fields.
 func CreateEntityType(entity interface{}) (*EntityType, error) {
@@ -696,6 +705,7 @@ func CreateEntityType(entity interface{}) (*EntityType, error) {
 	if err != nil {
 		return nil, err
 	}
+	cacheTableNameEntity[ret.TableName] = ret
 	//save to cache
 	cacheCreateEntityType.Store(key, ret)
 	uk := map[string][]string{}
@@ -712,6 +722,7 @@ func CreateEntityType(entity interface{}) (*EntityType, error) {
 	for k, v := range uk {
 		dbxEntityCache.set_uk(ret.TableName+"_"+k, v)
 	}
+
 	return ret, nil
 }
 
