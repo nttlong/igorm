@@ -58,17 +58,18 @@ func (h *OAuthHandler) Token(c echo.Context) error {
 		})
 	}
 	ret, err := dynacall.Call(callPath, postData, struct {
-		Tenant    string
-		TenantDb  *dbx.DBXTenant
-		Context   context.Context
-		JwtSecret []byte
-		Cache     caching.Cache
+		Tenant   string
+		TenantDb *dbx.DBXTenant
+		Context  context.Context
+
+		Cache         caching.Cache
+		EncryptionKey string
 	}{
-		Tenant:    tenantName,
-		JwtSecret: config.GetJWTSecret(),
-		Cache:     config.GetCache(),
-		Context:   c.Request().Context(),
-		TenantDb:  dbTenant,
+		Tenant:        tenantName,
+		EncryptionKey: config.AppConfigInstance.EncryptionKey,
+		Cache:         config.GetCache(),
+		Context:       c.Request().Context(),
+		TenantDb:      dbTenant,
 	})
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{

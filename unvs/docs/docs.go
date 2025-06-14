@@ -15,123 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/accounts/create": {
-            "post": {
-                "security": [
-                    {
-                        "OAuth2Password": []
-                    }
-                ],
-                "description": "Tạo một tài khoản người dùng mới với username, email và mật khẩu.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Accounts"
-                ],
-                "summary": "Tạo một tài khoản người dùng mới",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "tên của Tenant",
-                        "name": "tenant",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Thông tin tài khoản cần tạo",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/accounts.CreateAccountRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Tạo tài khoản thành công",
-                        "schema": {
-                            "$ref": "#/definitions/accounts.CreateAccountResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Yêu cầu không hợp lệ (validation errors)",
-                        "schema": {
-                            "$ref": "#/definitions/accounts.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Email đã tồn tại",
-                        "schema": {
-                            "$ref": "#/definitions/accounts.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Lỗi nội bộ server",
-                        "schema": {
-                            "$ref": "#/definitions/accounts.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/accounts/login": {
-            "post": {
-                "description": "Xác thực thông tin đăng nhập của người dùng (email hoặc username) và trả về JWT token nếu thành công.",
-                "consumes": [
-                    "application/json",
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Accounts"
-                ],
-                "summary": "Đăng nhập người dùng và nhận JWT token (JSON/Form)",
-                "parameters": [
-                    {
-                        "description": "Thông tin đăng nhập (email/username và mật khẩu)",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/accounts.LoginRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Đăng nhập thành công, trả về JWT token",
-                        "schema": {
-                            "$ref": "#/definitions/accounts.LoginResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Yêu cầu không hợp lệ (validation errors)",
-                        "schema": {
-                            "$ref": "#/definitions/accounts.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Thông tin đăng nhập không hợp lệ",
-                        "schema": {
-                            "$ref": "#/definitions/accounts.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Lỗi nội bộ server",
-                        "schema": {
-                            "$ref": "#/definitions/accounts.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/hz": {
             "get": {
                 "description": "Trả về chuỗi \"Hello World!\"",
@@ -189,7 +72,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/invoke/{action}": {
+        "/invoke": {
             "post": {
                 "security": [
                     {
@@ -210,9 +93,37 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "The specific id of feature. Each UI at frontend will have a unique feature id and must be approve by backend team.",
+                        "name": "feature",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "The specific action to invoke (e.g., login, register, logout)",
                         "name": "action",
-                        "in": "path",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The specific module to invoke (e.g., unvs.br.auth.roles, unvs.br.auth.uusers, ...)",
+                        "name": "module",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The specific tenant to invoke (e.g., default, name, ...)",
+                        "name": "tenant",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The specific language to invoke (e.g., en, pt, ...)",
+                        "name": "lan",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -235,6 +146,86 @@ const docTemplate = `{
                 }
             }
         },
+        "/invoke-form": {
+            "post": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    }
+                ],
+                "description": "Handles form data submission including file uploads.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "caller"
+                ],
+                "summary": "Submit handler for form data and file uploads",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The specific id of feature. Each UI at frontend will have a unique feature id and must be approve by backend team.",
+                        "name": "feature",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The specific tenant to invoke (e.g., default, name, ...)",
+                        "name": "tenant",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The specific module to invoke (e.g., unvs.br.auth.roles, unvs.br.auth.uusers, ...)",
+                        "name": "module",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The specific action to invoke (e.g., login, register, logout)",
+                        "name": "action",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The specific language to invoke (e.g., en, pt, ...)",
+                        "name": "lan",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON data object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "One or more files to upload",
+                        "name": "files",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_callers.CallerResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/oauth/token": {
             "post": {
                 "responses": {}
@@ -242,82 +233,10 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "accounts.CreateAccountRequest": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "accounts.CreateAccountResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/unvs_internal_model_auth.User"
-                }
-            }
-        },
-        "accounts.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "accounts.LoginRequest": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "accounts.LoginResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "token": {
-                    "type": "string"
-                },
-                "user": {
-                    "description": "Có thể bao gồm thêm thông tin người dùng nếu cần, nhưng không phải mật khẩu hash",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/unvs_internal_model_auth.User"
-                        }
-                    ]
-                }
-            }
-        },
         "internal_app_handler_callers.CallerRequest": {
             "type": "object",
             "properties": {
-                "args": {},
-                "language": {
-                    "type": "string"
-                },
-                "tenant": {
-                    "type": "string"
-                }
+                "args": {}
             }
         },
         "internal_app_handler_callers.CallerResponse": {
@@ -335,8 +254,39 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "maxSize": {
+                    "type": "integer"
+                },
                 "message": {
                     "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "internal_app_handler_inspector.APIEntry": {
+            "type": "object",
+            "properties": {
+                "args": {
+                    "type": "array",
+                    "items": {}
+                },
+                "callerPath": {
+                    "type": "string"
+                },
+                "results": {
+                    "type": "array",
+                    "items": {}
                 }
             }
         },
@@ -346,58 +296,8 @@ const docTemplate = `{
                 "apiList": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/internal_app_handler_inspector.APIEntry"
                     }
-                }
-            }
-        },
-        "unvs_internal_model_auth.User": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "createdBy": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "failedLoginCount": {
-                    "type": "integer"
-                },
-                "isLocked": {
-                    "type": "boolean"
-                },
-                "isSupperUser": {
-                    "type": "boolean"
-                },
-                "lastFailedLoginAt": {
-                    "type": "string"
-                },
-                "lastLoginAt": {
-                    "type": "string"
-                },
-                "lastPasswordChangeAt": {
-                    "type": "string"
-                },
-                "roleId": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "updatedBy": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
                 }
             }
         }

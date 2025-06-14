@@ -10,6 +10,7 @@ import (
 type Caller struct {
 	Path string
 }
+
 type CallerEntry struct {
 	Caller     *Caller
 	Method     reflect.Method
@@ -43,6 +44,24 @@ func GetInputTypeOfCallerPath(callerPath string) ([]reflect.Type, error) {
 }
 
 func Call(callerPath string, args interface{}, injector interface{}) (interface{}, error) {
+	argsType := reflect.TypeOf(args)
+	if argsType.Kind() != reflect.Slice {
+		argsValue := reflect.ValueOf(args)
+
+		if argsValue.Kind() == reflect.Ptr {
+			argsValue = argsValue.Elem()
+			argsType = argsType.Elem()
+
+		}
+		if field, found := argsType.FieldByName("Args"); found {
+			argsValue = argsValue.FieldByName(field.Name)
+			if argsValue.Kind() == reflect.Ptr {
+				argsValue = argsValue.Elem()
+			}
+			args = argsValue.Interface()
+		}
+	}
+
 	if !strings.Contains(callerPath, "@") {
 		return nil, CallError{
 			Err:  fmt.Errorf("caller path should be in format of package.path@method"),

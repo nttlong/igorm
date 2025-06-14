@@ -127,7 +127,8 @@ func main() {
 	}
 	e.POST("/oauth/token", oathHandler.Token)
 	apiV1 := e.Group("/api/v1")
-	apiV1.POST("/invoke/:action", callHandler.Call)
+	apiV1.POST("/invoke", callHandler.Call)
+	apiV1.POST("/invoke-form", callHandler.FormSubmit)
 	handler.RegisterRoutes(e,
 
 		&inspector.InspectorHandler{},

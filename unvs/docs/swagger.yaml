@@ -1,54 +1,8 @@
 basePath: /api/v1
 definitions:
-  accounts.CreateAccountRequest:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  accounts.CreateAccountResponse:
-    properties:
-      message:
-        type: string
-      user:
-        $ref: '#/definitions/unvs_internal_model_auth.User'
-    type: object
-  accounts.ErrorResponse:
-    properties:
-      code:
-        type: string
-      message:
-        type: string
-    type: object
-  accounts.LoginRequest:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  accounts.LoginResponse:
-    properties:
-      message:
-        type: string
-      token:
-        type: string
-      user:
-        allOf:
-        - $ref: '#/definitions/unvs_internal_model_auth.User'
-        description: Có thể bao gồm thêm thông tin người dùng nếu cần, nhưng không
-          phải mật khẩu hash
-    type: object
   internal_app_handler_callers.CallerRequest:
     properties:
       args: {}
-      language:
-        type: string
-      tenant:
-        type: string
     type: object
   internal_app_handler_callers.CallerResponse:
     properties:
@@ -60,48 +14,36 @@ definitions:
     properties:
       code:
         type: string
+      fields:
+        items:
+          type: string
+        type: array
+      maxSize:
+        type: integer
       message:
         type: string
+      values:
+        items:
+          type: string
+        type: array
+    type: object
+  internal_app_handler_inspector.APIEntry:
+    properties:
+      args:
+        items: {}
+        type: array
+      callerPath:
+        type: string
+      results:
+        items: {}
+        type: array
     type: object
   internal_app_handler_inspector.InspectorResponse:
     properties:
       apiList:
         items:
-          type: string
+          $ref: '#/definitions/internal_app_handler_inspector.APIEntry'
         type: array
-    type: object
-  unvs_internal_model_auth.User:
-    properties:
-      createdAt:
-        type: string
-      createdBy:
-        type: string
-      description:
-        type: string
-      email:
-        type: string
-      failedLoginCount:
-        type: integer
-      isLocked:
-        type: boolean
-      isSupperUser:
-        type: boolean
-      lastFailedLoginAt:
-        type: string
-      lastLoginAt:
-        type: string
-      lastPasswordChangeAt:
-        type: string
-      roleId:
-        type: integer
-      updatedAt:
-        type: string
-      updatedBy:
-        type: string
-      userId:
-        type: string
-      username:
-        type: string
     type: object
 host: localhost:8080
 info:
@@ -110,83 +52,6 @@ info:
   title: Go API Example
   version: "1.0"
 paths:
-  /accounts/create:
-    post:
-      consumes:
-      - application/json
-      description: Tạo một tài khoản người dùng mới với username, email và mật khẩu.
-      parameters:
-      - description: tên của Tenant
-        in: path
-        name: tenant
-        required: true
-        type: string
-      - description: Thông tin tài khoản cần tạo
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/accounts.CreateAccountRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Tạo tài khoản thành công
-          schema:
-            $ref: '#/definitions/accounts.CreateAccountResponse'
-        "400":
-          description: Yêu cầu không hợp lệ (validation errors)
-          schema:
-            $ref: '#/definitions/accounts.ErrorResponse'
-        "409":
-          description: Email đã tồn tại
-          schema:
-            $ref: '#/definitions/accounts.ErrorResponse'
-        "500":
-          description: Lỗi nội bộ server
-          schema:
-            $ref: '#/definitions/accounts.ErrorResponse'
-      security:
-      - OAuth2Password: []
-      summary: Tạo một tài khoản người dùng mới
-      tags:
-      - Accounts
-  /accounts/login:
-    post:
-      consumes:
-      - application/json
-      - application/x-www-form-urlencoded
-      description: Xác thực thông tin đăng nhập của người dùng (email hoặc username)
-        và trả về JWT token nếu thành công.
-      parameters:
-      - description: Thông tin đăng nhập (email/username và mật khẩu)
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/accounts.LoginRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Đăng nhập thành công, trả về JWT token
-          schema:
-            $ref: '#/definitions/accounts.LoginResponse'
-        "400":
-          description: Yêu cầu không hợp lệ (validation errors)
-          schema:
-            $ref: '#/definitions/accounts.ErrorResponse'
-        "401":
-          description: Thông tin đăng nhập không hợp lệ
-          schema:
-            $ref: '#/definitions/accounts.ErrorResponse'
-        "500":
-          description: Lỗi nội bộ server
-          schema:
-            $ref: '#/definitions/accounts.ErrorResponse'
-      summary: Đăng nhập người dùng và nhận JWT token (JSON/Form)
-      tags:
-      - Accounts
   /hz:
     get:
       consumes:
@@ -225,15 +90,37 @@ paths:
       summary: Query all api action and domain
       tags:
       - System
-  /invoke/{action}:
+  /invoke:
     post:
       consumes:
       - application/json
       description: CallerHandler
       parameters:
+      - description: The specific id of feature. Each UI at frontend will have a unique
+          feature id and must be approve by backend team.
+        in: query
+        name: feature
+        required: true
+        type: string
       - description: The specific action to invoke (e.g., login, register, logout)
-        in: path
+        in: query
         name: action
+        required: true
+        type: string
+      - description: The specific module to invoke (e.g., unvs.br.auth.roles, unvs.br.auth.uusers,
+          ...)
+        in: query
+        name: module
+        required: true
+        type: string
+      - description: The specific tenant to invoke (e.g., default, name, ...)
+        in: query
+        name: tenant
+        required: true
+        type: string
+      - description: The specific language to invoke (e.g., en, pt, ...)
+        in: query
+        name: lan
         required: true
         type: string
       - description: CallerRequest
@@ -252,6 +139,61 @@ paths:
       security:
       - OAuth2Password: []
       summary: CallerHandler
+      tags:
+      - caller
+  /invoke-form:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Handles form data submission including file uploads.
+      parameters:
+      - description: The specific id of feature. Each UI at frontend will have a unique
+          feature id and must be approve by backend team.
+        in: query
+        name: feature
+        required: true
+        type: string
+      - description: The specific tenant to invoke (e.g., default, name, ...)
+        in: query
+        name: tenant
+        required: true
+        type: string
+      - description: The specific module to invoke (e.g., unvs.br.auth.roles, unvs.br.auth.uusers,
+          ...)
+        in: query
+        name: module
+        required: true
+        type: string
+      - description: The specific action to invoke (e.g., login, register, logout)
+        in: query
+        name: action
+        required: true
+        type: string
+      - description: The specific language to invoke (e.g., en, pt, ...)
+        in: query
+        name: lan
+        required: true
+        type: string
+      - description: JSON data object
+        in: body
+        name: data
+        required: true
+        schema:
+          type: object
+      - description: One or more files to upload
+        in: formData
+        name: files
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Response
+          schema:
+            $ref: '#/definitions/internal_app_handler_callers.CallerResponse'
+      security:
+      - OAuth2Password: []
+      summary: Submit handler for form data and file uploads
       tags:
       - caller
   /oauth/token:

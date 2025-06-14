@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"reflect"
 	"runtime/debug"
+	"strings"
 	"unvs/internal/config"
 
 	"github.com/labstack/echo/v4"
@@ -22,9 +22,9 @@ type CallerHandler struct {
 	AppLogger *logrus.Logger
 }
 type CallerRequest struct {
-	Args     interface{} `json:"args"`
-	Tenant   string      `json:"tenant"`
-	Language string      `json:"language"`
+	Args interface{} `json:"args"`
+	// Tenant   string      `json:"tenant"`
+	// Language string      `json:"language"`
 }
 type ErrorResponse struct {
 	Code    string   `json:"code"`
@@ -46,23 +46,67 @@ type CallerResponse struct {
 // @tags caller
 // @accept json
 // @produce json
-// @Param action path string true "The specific action to invoke (e.g., login, register, logout)"
+// @Param feature query string true "The specific id of feature. Each UI at frontend will have a unique feature id and must be approve by backend team."
+// @Param action query string true "The specific action to invoke (e.g., login, register, logout)"
+// @Param module query string true "The specific module to invoke (e.g., unvs.br.auth.roles, unvs.br.auth.uusers, ...)"
+// @Param tenant query string true "The specific tenant to invoke (e.g., default, name, ...)"
+// @Param lan query string true "The specific language to invoke (e.g., en, pt, ...)"
 // @Param request body CallerRequest true "CallerRequest"
-// @router /invoke/{action} [post]
+// @router /invoke [post]
 // @Success 201 {object} CallerResponse "Response"
 // @Security OAuth2Password
 func (h *CallerHandler) Call(c echo.Context) error {
+	feature := c.Request().URL.Query().Get("feature")
+	if feature == "" {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "INVALID_REQUEST_BODY",
+			Message: "query string 'feature' is required",
+		})
 
-	callerPath := c.Param("action")
-	callerPath, err := url.PathUnescape(callerPath)
+	}
+
+	tenantName := c.Request().URL.Query().Get("tenant")
+	if tenantName == "" {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "INVALID_REQUEST_BODY",
+			Message: "query string 'tenant' is required",
+		})
+
+	}
+	lan := c.Request().URL.Query().Get("lan")
+	if lan == "" {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "INVALID_REQUEST_BODY",
+			Message: "query string 'lan' is required",
+		})
+
+	}
+	action := c.Request().URL.Query().Get("action")
+	if action == "" {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "INVALID_REQUEST_BODY",
+			Message: "query string 'action' is required",
+		})
+
+	}
+	module := c.Request().URL.Query().Get("module")
+	if module == "" {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "INVALID_REQUEST_BODY",
+			Message: "query string'module' is required",
+		})
+
+	}
+	callerPath := action + "@" + module
+	req, err := dynacall.NewRequestInstance(callerPath, reflect.TypeOf(CallerRequest{}))
+
 	if err != nil {
-		return c.JSON(http.StatusNotFound, ErrorResponse{
-			Code:    "INVALID_REQUEST_URL",
-			Message: "Invalid request URL",
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "INVALID_REQUEST_BODY",
+			Message: "Invalid request body",
 		})
 	}
-	//req := new(CallerRequest)
-	req, err := dynacall.NewRequestInstance(callerPath, reflect.TypeOf(CallerRequest{}))
+
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{
 			Code:    "INTERNAL_SERVER_ERROR",
@@ -121,7 +165,39 @@ func (h *CallerHandler) Call(c echo.Context) error {
 		})
 	}
 
-	tenantDb, err := config.CreateTenantDbx(req.GetString("Tenant"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "INVALID_REQUEST_BODY",
+			Message: "Invalid request body",
+		})
+	}
+
+	tenantDb, err := config.CreateTenantDbx(tenantName)
+	if err != nil {
+		appLogger := h.AppLogger.WithField("pkgPath", reflect.TypeOf(h).Elem().PkgPath()+"/Call")
+		appLogger.Error(err)
+		return c.JSON(http.StatusForbidden, ErrorResponse{
+			Code:    "FORBIDDEN",
+			Message: "Forbidden",
+		})
+	}
+	err = tenantDb.Open()
+	if module == "" {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Code:    "INVALID_REQUEST_BODY",
+			Message: "query string'module' is required",
+		})
+
+	}
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Code:    "INTERNAL_SERVER_ERROR",
+			Message: "internal server error",
+		})
+
+	}
+
 	if err != nil {
 		log.Fatal(err)
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{
@@ -129,8 +205,9 @@ func (h *CallerHandler) Call(c echo.Context) error {
 			Message: "Internal server error",
 		})
 	}
-	args := req.Get("Args")
-	if omapDatak, ok := args.(interface{}); ok {
+
+	// args := req.Get("Args")
+	if omapDatak, ok := req.Data.(interface{}); ok {
 
 		defer func() {
 			if r := recover(); r != nil {
@@ -147,17 +224,21 @@ func (h *CallerHandler) Call(c echo.Context) error {
 			TenantDb      *dbx.DBXTenant
 			Context       context.Context
 			EncryptionKey string
+			Language      string
 
 			Cache       cache.Cache
 			AccessToken string
+			FeatureId   string
 		}{
-			Tenant:        req.GetString("Tenant"),
+			Tenant:        tenantName,
 			TenantDb:      tenantDb,
 			Context:       c.Request().Context(),
 			EncryptionKey: config.AppConfigInstance.EncryptionKey,
+			Language:      lan,
 
 			Cache:       config.GetCache(),
 			AccessToken: c.Request().Header.Get("Authorization"),
+			FeatureId:   feature,
 		})
 		if err != nil {
 			pkgPath := reflect.TypeOf(h).Elem().PkgPath() + "/Call"
@@ -192,6 +273,18 @@ func (h *CallerHandler) Call(c echo.Context) error {
 				return c.JSON(http.StatusBadRequest, ErrorResponse{
 					Code:    e.Code.String(),
 					Message: e.Err.Error(),
+				})
+			}
+			if e, ok := err.(dynacall.CallError); ok {
+				if strings.Contains(e.Err.Error(), "invalid args") {
+					return c.JSON(http.StatusBadRequest, ErrorResponse{
+						Code:    "INVALID_REQUEST_BODY",
+						Message: "invalid request body",
+					})
+				}
+				return c.JSON(http.StatusInternalServerError, ErrorResponse{
+					Code:    e.Code.String(),
+					Message: "Server error",
 				})
 			}
 			if e, ok := err.(*dbx.DBXError); ok {

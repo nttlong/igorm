@@ -28,6 +28,7 @@ type TokenService struct {
 	CacheService
 	TenantDb      *dbx.DBXTenant
 	EncryptionKey string
+	Language      string
 }
 
 func (p *TokenService) getPath() string {

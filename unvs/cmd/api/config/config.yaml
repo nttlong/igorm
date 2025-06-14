@@ -1,7 +1,7 @@
 app:
   name: MyGoAPI
   version: 1.0.0
-database2:
+database:
   driver: "mssql"
   host: "localhost"
   port: 0
@@ -17,7 +17,7 @@ database3:
   password: "123456"
   name: "mygoapi"
   ssl: false
-database:
+database2:
   driver: "postgres"
   host: "localhost"
   port: 5432

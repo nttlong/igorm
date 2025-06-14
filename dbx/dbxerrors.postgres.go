@@ -71,7 +71,10 @@ func (p *postgresErrorParser) ParseError(ctx context.Context, db *sql.DB, err er
 		}
 
 	}
-	panic("not implemented")
+	return &DBXError{
+		Code:    DBXErrorCodeUnknown,
+		Message: err.Error(),
+	}
 }
 
 var PostgresErrorParser postgresErrorParser

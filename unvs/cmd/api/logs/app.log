@@ -1746,3 +1746,1203 @@ time="2025-06-14T17:19:10+07:00" level=error msg="duplicate key error" callerPat
 {"time":"2025-06-14T17:19:10.3412565+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"8.6451ms"}
 time="2025-06-14T17:19:32+07:00" level=error msg="duplicate key error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
 {"time":"2025-06-14T17:19:32.7939167+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"6.8453ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T17:23:43.8283737+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":200,"latency_human":"7.3607483s"}
+time="2025-06-14T17:23:52+07:00" level=error msg="unknown error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T17:23:52.4961404+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"11.743ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T17:39:08.2135274+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"1.5181ms"}
+{"time":"2025-06-14T17:39:08.215432+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"1.3375ms"}
+{"time":"2025-06-14T17:39:08.8919475+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"143.4335ms"}
+{"time":"2025-06-14T17:39:08.8939475+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"97.1163ms"}
+{"time":"2025-06-14T17:39:08.8951708+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"148.6359ms"}
+{"time":"2025-06-14T17:39:22.585208+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] encryption key is missing in unvs.br.auth/services/getJwtSecret goroutine 52 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1a70c20?, 0xc0002b6780?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nunvs.br.auth/services.(*TokenService).getJwtSecret(0xc000206168)\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenserviceJwtSecret.go:184 +0x119c\nunvs.br.auth/services.(*TokenService).GetJwtSecret(0xc000206168)\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenserviceJwtSecret.go:61 +0x214\nunvs.br.auth/services.(*TokenService).GenerateToken(0xc000206168, {0x0, 0x0}, {0x1c1c525, 0x4})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenservice.go:186 +0x418\nunvs.br.auth/users.(*User).Login(0xc000206140, {0xc0003e0950, 0x4}, {0xc00031e633, 0x4})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/userLogin.go:70 +0xcde\nreflect.Value.call({0xc0002a2060, 0xc0000889c0, 0x13}, {0x1c1c349, 0x4}, {0xc000396460, 0x3, 0x3})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc0002a2060, 0xc0000889c0, 0x13}, {0xc000396460, 0x3, 0x3})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x19eb00f, 0x5}, {0x0, 0x0}, {0x254e580, 0xc0002a2060}, {0xc0002a2060, 0xc0000889c0, 0x13}, 0x5}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynaInvoker.go:117 +0x16e5\ndynacall.Call({0x1c35e9e, 0x18}, {0x1a5df00, 0xc000008888}, {0x1b86b80, 0xc000396410})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:62 +0x37b\nunvs/internal/app/handler/oauth.(*OAuthHandler).Token(0x2d2bfc0, {0x254ef98, 0xc0003040a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/oauth/token.go:60 +0x910\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x254ef98, 0xc0003040a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x254ef98, 0xc0003040a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x254ef98, 0xc0003040a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x253f6a0, 0xc0003482a0}, 0xc000336500)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x253f6a0, 0xc0003482a0}, 0xc000336500)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc00032c240, {0x2541988, 0xc000330050})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x273f6b76430, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc000186fe0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x2c8, {0xc00032e3c0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc00004d4a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002857c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002857c0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002857c0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x253f550, 0xc000088c48})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c7b08, {0xc0002b2560, 0xc})\n\tC:/Users/MSI\n"}
+{"time":"2025-06-14T17:43:57.6823569+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] encryption key is missing in unvs.br.auth/services/getJwtSecret goroutine 52 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1a70c20?, 0xc0001140e0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nunvs.br.auth/services.(*TokenService).getJwtSecret(0xc0002063e8)\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenserviceJwtSecret.go:184 +0x119c\nunvs.br.auth/services.(*TokenService).GetJwtSecret(0xc0002063e8)\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenserviceJwtSecret.go:61 +0x214\nunvs.br.auth/services.(*TokenService).GenerateToken(0xc0002063e8, {0x0, 0x0}, {0x1c1c525, 0x4})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenservice.go:186 +0x418\nunvs.br.auth/users.(*User).Login(0xc0002063c0, {0xc0003ac1c0, 0x4}, {0xc000587db3, 0x4})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/userLogin.go:70 +0xcde\nreflect.Value.call({0xc0002a2060, 0xc0000889c0, 0x13}, {0x1c1c349, 0x4}, {0xc000266140, 0x3, 0x3})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc0002a2060, 0xc0000889c0, 0x13}, {0xc000266140, 0x3, 0x3})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x19eb00f, 0x5}, {0x0, 0x0}, {0x254e580, 0xc0002a2060}, {0xc0002a2060, 0xc0000889c0, 0x13}, 0x5}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynaInvoker.go:117 +0x16e5\ndynacall.Call({0x1c35e9e, 0x18}, {0x1a5df00, 0xc0005848a0}, {0x1b86b80, 0xc0002660f0})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:62 +0x37b\nunvs/internal/app/handler/oauth.(*OAuthHandler).Token(0x2d2bfc0, {0x254ef98, 0xc000206140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/oauth/token.go:60 +0x910\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x254ef98, 0xc000206140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x254ef98, 0xc000206140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x254ef98, 0xc000206140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x253f6a0, 0xc0001e01c0}, 0xc000336140)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x253f6a0, 0xc0001e01c0}, 0xc000336140)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc00032c240, {0x2541988, 0xc000330050})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait, 4 minutes]:\ninternal/poll.runtime_pollWait(0x273f6b76430, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc000186fe0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x2c8, {0xc00032e3c0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc00004d4a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002857c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002857c0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002857c0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x253f550, 0xc000088c48})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c7b08, {0xc0002b2560, 0xc})\n\tC\n"}
+{"time":"2025-06-14T17:44:50.0074103+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] encryption key is missing in unvs.br.auth/services/getJwtSecret goroutine 171 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1a70c20?, 0xc0002b6950?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nunvs.br.auth/services.(*TokenService).getJwtSecret(0xc000206528)\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenserviceJwtSecret.go:184 +0x119c\nunvs.br.auth/services.(*TokenService).GetJwtSecret(0xc000206528)\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenserviceJwtSecret.go:61 +0x214\nunvs.br.auth/services.(*TokenService).GenerateToken(0xc000206528, {0x0, 0x0}, {0x1c1c525, 0x4})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenservice.go:186 +0x418\nunvs.br.auth/users.(*User).Login(0xc000206500, {0xc0001c0620, 0x4}, {0xc0002f54b3, 0x4})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/userLogin.go:70 +0xcde\nreflect.Value.call({0xc0002a2060, 0xc0000889c0, 0x13}, {0x1c1c349, 0x4}, {0xc000266230, 0x3, 0x3})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc0002a2060, 0xc0000889c0, 0x13}, {0xc000266230, 0x3, 0x3})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x19eb00f, 0x5}, {0x0, 0x0}, {0x254e580, 0xc0002a2060}, {0xc0002a2060, 0xc0000889c0, 0x13}, 0x5}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynaInvoker.go:117 +0x16e5\ndynacall.Call({0x1c35e9e, 0x18}, {0x1a5df00, 0xc0002f6228}, {0x1b86b80, 0xc0002661e0})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:62 +0x37b\nunvs/internal/app/handler/oauth.(*OAuthHandler).Token(0x2d2bfc0, {0x254ef98, 0xc000206460})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/oauth/token.go:60 +0x910\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x254ef98, 0xc000206460})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x254ef98, 0xc000206460})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x254ef98, 0xc000206460})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x253f6a0, 0xc0001e0a80}, 0xc000336280)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x253f6a0, 0xc0001e0a80}, 0xc000336280)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000e0090, {0x2541988, 0xc0002660f0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x273f6b76430, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc00004cfe0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x350, {0xc00032e0f0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc00004d4a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002857c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002857c0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002857c0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x253f550, 0xc000088c48})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c7b08, {0xc0002b2560, 0xc})\n\tC:/Users/MS\n"}
+{"time":"2025-06-14T17:44:58.8223978+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] encryption key is missing in unvs.br.auth/services/getJwtSecret goroutine 171 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1a70c20?, 0xc000114620?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nunvs.br.auth/services.(*TokenService).getJwtSecret(0xc0003f2488)\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenserviceJwtSecret.go:184 +0x119c\nunvs.br.auth/services.(*TokenService).GetJwtSecret(0xc0003f2488)\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenserviceJwtSecret.go:61 +0x214\nunvs.br.auth/services.(*TokenService).GenerateToken(0xc0003f2488, {0x0, 0x0}, {0x1c1c525, 0x4})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/services/tokenservice.go:186 +0x418\nunvs.br.auth/users.(*User).Login(0xc0003f2460, {0xc000320120, 0x4}, {0xc000344bf3, 0x4})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/userLogin.go:70 +0xcde\nreflect.Value.call({0xc0002a2060, 0xc0000889c0, 0x13}, {0x1c1c349, 0x4}, {0xc000396500, 0x3, 0x3})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc0002a2060, 0xc0000889c0, 0x13}, {0xc000396500, 0x3, 0x3})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x19eb00f, 0x5}, {0x0, 0x0}, {0x254e580, 0xc0002a2060}, {0xc0002a2060, 0xc0000889c0, 0x13}, 0x5}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynaInvoker.go:117 +0x16e5\ndynacall.Call({0x1c35e9e, 0x18}, {0x1a5df00, 0xc000310c30}, {0x1b86b80, 0xc0003964b0})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:62 +0x37b\nunvs/internal/app/handler/oauth.(*OAuthHandler).Token(0x2d2bfc0, {0x254ef98, 0xc000206140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/oauth/token.go:60 +0x910\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x254ef98, 0xc000206140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x254ef98, 0xc000206140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x254ef98, 0xc000206140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x253f6a0, 0xc000000000}, 0xc000194000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x253f6a0, 0xc000000000}, 0xc000194000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000e0090, {0x2541988, 0xc0002660f0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x273f6b76430, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc00004cfe0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x350, {0xc00032e0f0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc00004d4a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002857c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002857c0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002857c0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x253f550, 0xc000088c48})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c7b08, {0xc0002b2560, 0xc})\n\tC:/Users/MS\n"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T17:47:03.0449815+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"5.9873543s"}
+{"time":"2025-06-14T17:47:16.4851318+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"0s"}
+{"time":"2025-06-14T17:47:58.9496351+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":200,"latency_human":"5.2455148s"}
+time="2025-06-14T17:48:13+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T17:48:13.8302514+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"7.5038454s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T17:51:02+07:00" level=error msg="unknown error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T17:51:02.1558874+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"14.1282931s"}
+time="2025-06-14T17:51:09+07:00" level=error msg="unknown error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T17:51:09.0283495+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"1.2677ms"}
+time="2025-06-14T17:51:18+07:00" level=error msg="unknown error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T17:51:18.3858888+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"1.3411ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T17:54:22+07:00" level=error msg="String or binary data would be truncated." callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T17:54:22.3450399+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"1m39.8562938s"}
+time="2025-06-14T17:55:09+07:00" level=error msg="String or binary data would be truncated." callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T17:55:09.1646552+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"3.8419116s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T18:13:28+07:00" level=error msg="Panic occurred: reflect: call of reflect.Value.FieldByName on ptr Value\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-14T18:13:28+07:00" level=info msg="Stack Trace:\ngoroutine 20 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:141 +0x1ed\npanic({0x14dd040?, 0xc0000089c0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.flag.mustBe(0x16, 0x19)\n\tC:/Program Files/Go/src/reflect/value.go:221 +0xa5\nreflect.Value.FieldByName({0x14721a0, 0xc0000d4c60, 0x16}, {0x1454c34, 0x6})\n\tC:/Program Files/Go/src/reflect/value.go:1349 +0x6c\ndbx.validateSizeSingle(0xc0000fb8c0, {0x14721a0, 0xc0000d4c60})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:36 +0x126\ndbx.validateSize({0x14721a0, 0xc0000d4c60})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:29 +0x28e\ndbx.(*DBXTenant).InsertWithContext(0xc00022e8c0, {0x1f62a08, 0xc0001d74f0}, {0x14721a0, 0xc0000d4c60})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:72 +0x65\ndbx.InsertWithContext({0x1f62a08, 0xc0001d74f0}, 0xc00022e8c0, {0x14721a0, 0xc0000d4c60})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:20 +0x4b\nunvs.br.auth/roles.(*RoleService).Create(0xc000202080, {{0xc000032fa0, 0x46}, {0x0, 0x0}, {0x0, 0x0}})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/roles/roleCreate.go:51 +0x55f\nreflect.Value.call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0x163d349, 0x4}, {0xc000170e40, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0xc000170e40, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x140cb72, 0x6}, {0x0, 0x0}, {0x1f6f600, 0xc00009b4a0}, {0xc00009b4a0, 0xc0000886a8, 0x13}, 0x0}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynaInvoker.go:117 +0x16e5\ndynacall.Call({0xc000224f00, 0x19}, {0x1571e20, 0xc000115a10}, {0x15ba6e0, 0xc0003a8420})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:62 +0x37b\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088c10, {0x1f70018, 0xc00022e460})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:145 +0x1774\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x1f70018, 0xc00022e460})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x1f70018, 0xc00022e460})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x1f70018, 0xc00022e460})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x1f60720, 0xc0001e0d20}, 0xc0001f7cc0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x1f60720, 0xc0001e0d20}, 0xc0001f7cc0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000144090, {0x1f62a08, 0xc0001d74a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:13:28.7658168+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":200,"latency_human":"894.7202ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T18:32:28+07:00" level=error msg="Field Code exceeds the maximum length of 2" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:32:28.1258462+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"29.5078108s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T18:33:17+07:00" level=error msg="Panic occurred: reflect: call of reflect.Value.Elem on string Value\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-14T18:33:17+07:00" level=info msg="Stack Trace:\ngoroutine 50 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:141 +0x1ed\npanic({0x1afd040?, 0xc000110288?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.Value.Elem({0x1ab1c20, 0xc0000d4c68, 0x198})\n\tC:/Program Files/Go/src/reflect/value.go:1265 +0x3c6\ndbx.validateSizeSingle(0xc0000f98c0, {0x1c13160, 0xc0000d4c60, 0x199})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:44 +0x116\ndbx.validateSize({0x1a921a0, 0xc0000d4c60})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:36 +0x308\ndbx.(*DBXTenant).InsertWithContext(0xc000258500, {0x2582a28, 0xc0001d54f0}, {0x1a921a0, 0xc0000d4c60})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:72 +0x65\ndbx.InsertWithContext({0x2582a28, 0xc0001d54f0}, 0xc000258500, {0x1a921a0, 0xc0000d4c60})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:20 +0x4b\nunvs.br.auth/roles.(*RoleService).Create(0xc000346100, {{0xc000032fa0, 0x46}, {0x0, 0x0}, {0x0, 0x0}})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/roles/roleCreate.go:51 +0x55f\nreflect.Value.call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0x1c5d349, 0x4}, {0xc000324c00, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0xc000324c00, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x1a2cb72, 0x6}, {0x0, 0x0}, {0x258f620, 0xc00009b4a0}, {0xc00009b4a0, 0xc0000886a8, 0x13}, 0x0}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynaInvoker.go:117 +0x16e5\ndynacall.Call({0xc000224f20, 0x19}, {0x1b91e20, 0xc00010a360}, {0x1bda6e0, 0xc00009bc20})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:62 +0x37b\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088c10, {0x2590038, 0xc00022de00})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:145 +0x1774\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2590038, 0xc00022de00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2590038, 0xc00022de00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2590038, 0xc00022de00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x2580740, 0xc0001e0d20}, 0xc0001f7cc0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x2580740, 0xc0001e0d20}, 0xc0001f7cc0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc00032c090, {0x2582a28, 0xc0001d54a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:33:17.0781146+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":200,"latency_human":"5.222802s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T18:35:28+07:00" level=error msg="Field Code exceeds the maximum length of 2" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:35:28.7518675+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"8.4781935s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T18:37:16+07:00" level=error msg="Field Code exceeds the maximum length of 50" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:37:16.5286801+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"3.1074229s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T18:38:48+07:00" level=error msg="Field Code exceeds the maximum length of 50" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:38:48.9152941+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":400,"latency_human":"1.1007749s"}
+time="2025-06-14T18:39:14+07:00" level=error msg="Panic occurred: interface conversion: interface {} is *string, not string\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-14T18:39:14+07:00" level=info msg="Stack Trace:\ngoroutine 50 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:141 +0x1ed\npanic({0x1a9b840?, 0xc00010bb00?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndbx.validateSizeSingle(0xc0000f98c0, {0x1b93160, 0xc0000d4e70, 0x199})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:47 +0x505\ndbx.validateSize({0x1a121a0, 0xc0000d4e70})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:39 +0x308\ndbx.(*DBXTenant).InsertWithContext(0xc00022e640, {0x2502a08, 0xc0000e3810}, {0x1a121a0, 0xc0000d4e70})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:72 +0x65\ndbx.InsertWithContext({0x2502a08, 0xc0000e3810}, 0xc00022e640, {0x1a121a0, 0xc0000d4e70})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:20 +0x4b\nunvs.br.auth/roles.(*RoleService).Create(0xc0003ce380, {{0xc00000a440, 0x4}, {0x0, 0x0}, {0x0, 0x0}})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/roles/roleCreate.go:51 +0x55f\nreflect.Value.call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0x1bdd349, 0x4}, {0xc00010b200, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0xc00010b200, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x19acb72, 0x6}, {0x0, 0x0}, {0x250f600, 0xc00009b4a0}, {0xc00009b4a0, 0xc0000886a8, 0x13}, 0x0}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynaInvoker.go:117 +0x16e5\ndynacall.Call({0xc0001145a0, 0x19}, {0x1b11e20, 0xc00010b020}, {0x1b5a6e0, 0xc0001089c0})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:62 +0x37b\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088c10, {0x2510018, 0xc00022e140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:145 +0x1774\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2510018, 0xc00022e140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2510018, 0xc00022e140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2510018, 0xc00022e140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x2500720, 0xc0002962a0}, 0xc0001943c0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x2500720, 0xc0002962a0}, 0xc0001943c0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc00032c090, {0x2502a08, 0xc0001d54a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:39:14.0613705+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":200,"latency_human":"702.5µs"}
+time="2025-06-14T18:39:52+07:00" level=error msg="Panic occurred: interface conversion: interface {} is *string, not string\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-14T18:39:52+07:00" level=info msg="Stack Trace:\ngoroutine 50 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:141 +0x1ed\npanic({0x1a9b840?, 0xc00028a090?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndbx.validateSizeSingle(0xc0000f98c0, {0x1b93160, 0xc0002d4160, 0x199})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:47 +0x505\ndbx.validateSize({0x1a121a0, 0xc0002d4160})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:39 +0x308\ndbx.(*DBXTenant).InsertWithContext(0xc00022e640, {0x2502a08, 0xc0001d4230}, {0x1a121a0, 0xc0002d4160})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:72 +0x65\ndbx.InsertWithContext({0x2502a08, 0xc0001d4230}, 0xc00022e640, {0x1a121a0, 0xc0002d4160})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:20 +0x4b\nunvs.br.auth/roles.(*RoleService).Create(0xc00029e800, {{0xc0001c03f0, 0x4}, {0x0, 0x0}, {0x0, 0x0}})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/roles/roleCreate.go:51 +0x55f\nreflect.Value.call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0x1bdd349, 0x4}, {0xc0004ae8a0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0xc0004ae8a0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x19acb72, 0x6}, {0x0, 0x0}, {0x250f600, 0xc00009b4a0}, {0xc00009b4a0, 0xc0000886a8, 0x13}, 0x0}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynaInvoker.go:117 +0x16e5\ndynacall.Call({0xc0003120c0, 0x19}, {0x1b11e20, 0xc0004ae6f0}, {0x1b5a6e0, 0xc0002a09c0})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:62 +0x37b\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088c10, {0x2510018, 0xc0002be0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:145 +0x1774\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2510018, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2510018, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2510018, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x2500720, 0xc000001ce0}, 0xc0001f6000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x2500720, 0xc000001ce0}, 0xc0001f6000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc00032c090, {0x2502a08, 0xc0001d54a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:39:52.7175738+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":200,"latency_human":"22.1767675s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T18:42:31+07:00" level=error msg="Panic occurred: reflect: call of reflect.Value.Type on zero Value\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-14T18:42:31+07:00" level=info msg="Stack Trace:\ngoroutine 50 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:141 +0x1ed\npanic({0x137d040?, 0xc0004a8270?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.Value.abiTypeSlow({0x0, 0x0, 0x0})\n\tC:/Program Files/Go/src/reflect/value.go:2400 +0x286\nreflect.Value.typeSlow({0x0, 0x0, 0x0})\n\tC:/Program Files/Go/src/reflect/value.go:2388 +0x37\nreflect.Value.Type({0x0, 0x0, 0x0})\n\tC:/Program Files/Go/src/reflect/value.go:2383 +0x9f\ndbx.validateSizeSingle(0xc0000f98c0, {0x1493160, 0xc0001ea160, 0x199})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:49 +0x1af\ndbx.validateSize({0x13121a0, 0xc0001ea160})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.validate.size.go:39 +0x308\ndbx.(*DBXTenant).InsertWithContext(0xc0003046e0, {0x1e02a08, 0xc000330050}, {0x13121a0, 0xc0001ea160})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:72 +0x65\ndbx.InsertWithContext({0x1e02a08, 0xc000330050}, 0xc0003046e0, {0x13121a0, 0xc0001ea160})\n\tE:/Docker/go/unvs/igorm/dbx/db.action.insert.go:20 +0x4b\nunvs.br.auth/roles.(*RoleService).Create(0xc000202100, {{0xc000320380, 0x4}, {0x0, 0x0}, {0x0, 0x0}})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/roles/roleCreate.go:51 +0x55f\nreflect.Value.call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0x14dd349, 0x4}, {0xc000238810, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc00009b4a0, 0xc0000886a8, 0x13}, {0xc000238810, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x12acb72, 0x6}, {0x0, 0x0}, {0x1e0f600, 0xc00009b4a0}, {0xc00009b4a0, 0xc0000886a8, 0x13}, 0x0}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynaInvoker.go:117 +0x16e5\ndynacall.Call({0xc0003120a0, 0x19}, {0x1411e20, 0xc00028a570}, {0x145a6e0, 0xc0002a0780})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:62 +0x37b\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088c10, {0x1e10018, 0xc0003040a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:145 +0x1774\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x1e10018, 0xc0003040a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x1e10018, 0xc0003040a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x1e10018, 0xc0003040a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x1e00720, 0xc00034c000}, 0xc00033a000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x1e00720, 0xc00034c000}, 0xc00033a000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc00032c090, {0x1e02a08, 0xc000330000})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:42:31.4924311+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":200,"latency_human":"2.3884209s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T18:45:18+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:45:18.7029823+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"11.1380854s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T18:47:21+07:00" level=error msg="dynacall error: UNKNOWN_ERROR: token has expired (TOKEN_EXPIRED)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:47:21.8340459+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":401,"latency_human":"4.4485617s"}
+{"time":"2025-06-14T18:48:00.2898682+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"11.5902819s"}
+time="2025-06-14T18:48:08+07:00" level=error msg="dynacall error: Access Deny (ACCESS_DENIED)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:48:08.830309+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":403,"latency_human":"947.4µs"}
+time="2025-06-14T18:48:22+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T18:48:22.04485+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke/create%40unvs.br.auth.roles","status":409,"latency_human":"13.6202ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T18:57:37.8782375+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"564µs"}
+{"time":"2025-06-14T18:57:37.9337538+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"508.8µs"}
+{"time":"2025-06-14T18:57:37.9380753+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"523.4µs"}
+{"time":"2025-06-14T18:57:37.9390985+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.5794ms"}
+{"time":"2025-06-14T18:57:38.0184056+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"61.2274ms"}
+{"time":"2025-06-14T18:57:38.0473836+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"2.26ms"}
+{"time":"2025-06-14T18:57:38.1674254+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"333.9µs"}
+{"time":"2025-06-14T18:57:38.1727712+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"506.8µs"}
+{"time":"2025-06-14T18:57:38.1803383+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T18:59:01.2770391+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"547.9µs"}
+{"time":"2025-06-14T18:59:27.3485315+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles","status":404,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T19:16:40.5813827+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles","status":400,"latency_human":"504.4µs"}
+{"time":"2025-06-14T19:16:51.5932944+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"654.8µs"}
+{"time":"2025-06-14T19:16:51.6212028+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T19:16:51.627786+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"532.9µs"}
+{"time":"2025-06-14T19:16:51.6295064+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"3.258ms"}
+{"time":"2025-06-14T19:16:51.7068075+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"61.8525ms"}
+{"time":"2025-06-14T19:16:51.7322141+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.7012ms"}
+{"time":"2025-06-14T19:16:51.8590578+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T19:16:51.8674832+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T19:16:51.8691042+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"511.7µs"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T19:20:54+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:20:54.3696033+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":500,"latency_human":"33.4270346s"}
+time="2025-06-14T19:21:32+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T19:23:10+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:23:19.7299694+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"12.0241055s"}
+time="2025-06-14T19:24:21+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T19:26:48+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:26:48.7374302+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"898.8736ms"}
+time="2025-06-14T19:27:00+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T19:28:55+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:28:58.2710294+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"3.983305s"}
+time="2025-06-14T19:29:54+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:29:54.0262803+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"0s"}
+time="2025-06-14T19:30:08+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:30:35.9622835+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"27.0369087s"}
+time="2025-06-14T19:46:59+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:46:59.8975666+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"15m29.4243254s"}
+time="2025-06-14T19:48:18+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:48:18.2716882+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"1m8.5603524s"}
+time="2025-06-14T19:49:15+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:49:15.5699379+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"54.5432864s"}
+time="2025-06-14T19:49:46+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:49:46.0138301+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"27.1293725s"}
+time="2025-06-14T19:49:55+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T19:49:55.4848591+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"6.7298459s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T20:00:24+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got {{  }} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:00:24.2839316+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"22.6935838s"}
+time="2025-06-14T20:02:56+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got {{  }} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:02:56.020981+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"2m20.2476071s"}
+time="2025-06-14T20:04:33+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got {{  }} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:04:33.435243+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"1m33.3438775s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T20:07:16+07:00" level=error msg="dynacall error: Access Deny (ACCESS_DENIED)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:07:16.1679673+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":403,"latency_human":"22.577426s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T20:13:10+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" }, got &{{  }} (INVALID_ARGS) (UNKNOWN)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:13:10.2291759+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"32.3767818s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T20:18:55+07:00" level=error msg="json: cannot unmarshal array into Go value of type struct { Args struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" } }"
+{"time":"2025-06-14T20:18:55.477576+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"2.408396s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T20:19:50+07:00" level=error msg="json: cannot unmarshal array into Go value of type struct { Args struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" } }"
+{"time":"2025-06-14T20:19:50.248281+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"3.5075182s"}
+time="2025-06-14T20:20:04+07:00" level=error msg="json: cannot unmarshal array into Go value of type struct { Args struct { Code string \"json:\\\"code\\\"\"; Name string \"json:\\\"name\\\"\"; Description string \"json:\\\"description\\\"\" } }"
+{"time":"2025-06-14T20:20:04.666739+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"7.1934719s"}
+time="2025-06-14T20:20:37+07:00" level=error msg="dynacall error: Access Deny (ACCESS_DENIED)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:20:37.5442137+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":403,"latency_human":"25.187096s"}
+{"time":"2025-06-14T20:21:18.2597184+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] reflect: FieldByName of non-struct type []interface {} goroutine 35 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1de2c00?, 0xc0000492b0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).FieldByName(0x1dcfee0, {0x1f8e324, 0x4})\n\tC:/Program Files/Go/src/reflect/type.go:758 +0x212\ndynacall.Call({0x1fa7e9d, 0x18}, {0x1dcfee0, 0xc0003d48a0}, {0x1ef8b40, 0xc0001542d0})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:53 +0x197\nunvs/internal/app/handler/oauth.(*OAuthHandler).Token(0x309df40, {0x28bfcf8, 0xc0001960a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/oauth/token.go:60 +0x8fe\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x28bfcf8, 0xc0001960a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x28bfcf8, 0xc0001960a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x28bfcf8, 0xc0001960a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc000147b08, {0x28b01c0, 0xc0003d8000}, 0xc000176140)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc000148e00}, {0x28b01c0, 0xc0003d8000}, 0xc000176140)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0001b6090, {0x28b24a8, 0xc0001ba000})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x25259dfa3a0, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc00012cbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc00012ca20, 0xc000106fe0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc00012ca08, 0x23c, {0xc0001b80f0, 0x2, 0x2}, 0xc00012ca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc00012ca08, 0xc00004d4a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc00012ca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002057c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002057c0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002057c0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc000148e00, {0x28b0070, 0xc000088c48})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc000147b08, {0xc000232570, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:139 +0xa5d\n\ngoroutine 7 [IO wait]:\ninternal/poll.runtime_pollWait(0x25259dfa288, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001b21b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001b2020, 0xc0002893f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001b2008, 0x230, {0xc0001b8000, 0x2, 0x2}, 0xc0001b2020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001b2008, 0xc0002898c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001b2008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0001aa080)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc0001aa08\n"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T20:22:52.7634193+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"4.7181926s"}
+{"time":"2025-06-14T20:23:04.641055+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":200,"latency_human":"5.7341579s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T20:26:55+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:26:55.1319343+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"6.8864738s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-14T20:37:47+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:37:47.438986+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"5.5265549s"}
+time="2025-06-14T20:38:20+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:20.8362685+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"7.1378ms"}
+time="2025-06-14T20:38:21+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:21.8462642+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"1.6774ms"}
+time="2025-06-14T20:38:22+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:22.016023+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"1.6068ms"}
+time="2025-06-14T20:38:22+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:22.1812727+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"1.7325ms"}
+time="2025-06-14T20:38:22+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:22.3053886+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"2.1804ms"}
+time="2025-06-14T20:38:22+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:22.5678353+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"3.4575ms"}
+time="2025-06-14T20:38:35+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:35.6089794+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"1.4506ms"}
+time="2025-06-14T20:38:36+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:36.2921874+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"1.3396ms"}
+time="2025-06-14T20:38:36+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:36.6150968+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"1.8338ms"}
+time="2025-06-14T20:38:36+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:38:36.7840739+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"1.7151ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T20:44:59.972456+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"665.7µs"}
+{"time":"2025-06-14T20:45:00.0039176+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"521.8µs"}
+{"time":"2025-06-14T20:45:00.0098336+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.7071ms"}
+{"time":"2025-06-14T20:45:00.0109097+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"555.1µs"}
+{"time":"2025-06-14T20:45:00.0968594+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"64.5404ms"}
+{"time":"2025-06-14T20:45:00.1162582+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.662ms"}
+{"time":"2025-06-14T20:45:00.1440647+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"1.0579ms"}
+{"time":"2025-06-14T20:45:00.1836744+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T20:45:00.2473219+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T20:46:36.8340384+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"0s"}
+{"time":"2025-06-14T20:46:57.9497849+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=aaa&action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":400,"latency_human":"502.6µs"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T20:47:57.1859383+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"578.3µs"}
+{"time":"2025-06-14T20:47:57.2124225+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"506.7µs"}
+{"time":"2025-06-14T20:47:57.2150476+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.625ms"}
+{"time":"2025-06-14T20:47:57.2155863+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.0588ms"}
+{"time":"2025-06-14T20:47:57.4570438+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"507.9µs"}
+{"time":"2025-06-14T20:47:57.468186+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T20:47:57.5563915+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"314.7146ms"}
+{"time":"2025-06-14T20:47:57.5573928+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"165.8898ms"}
+{"time":"2025-06-14T20:47:57.5603922+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"233.5625ms"}
+{"time":"2025-06-14T20:48:02.3711744+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"525.4µs"}
+time="2025-06-14T20:49:12+07:00" level=error msg="dynacall error: Access Deny (ACCESS_DENIED)" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:49:12.7810286+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=aaa&action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":403,"latency_human":"3.9926492s"}
+{"time":"2025-06-14T20:49:40.5109511+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"17.9827ms"}
+time="2025-06-14T20:49:46+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:49:46.3122874+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=aaa&action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"7.9032ms"}
+time="2025-06-14T20:50:54+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.roles pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-14T20:51:09.3353252+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=aaa&action=create&module=unvs.br.auth.roles&tenant=test&lan=vi","status":409,"latency_human":"42.6436797s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:07:12.7711232+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"603.8µs"}
+{"time":"2025-06-14T21:07:12.8065889+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"510.9µs"}
+{"time":"2025-06-14T21:07:12.8099775+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"1.0338ms"}
+{"time":"2025-06-14T21:07:12.8181831+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"213.5µs"}
+{"time":"2025-06-14T21:07:12.921365+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"71.3778ms"}
+{"time":"2025-06-14T21:07:12.9537083+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.5317ms"}
+{"time":"2025-06-14T21:07:13.0836413+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"511µs"}
+{"time":"2025-06-14T21:07:13.085493+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T21:07:13.0931762+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:11:02.426523+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"506.6µs"}
+{"time":"2025-06-14T21:11:02.4593548+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"506.5µs"}
+{"time":"2025-06-14T21:11:02.4634527+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"3.2544ms"}
+{"time":"2025-06-14T21:11:02.4650513+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"529.5µs"}
+{"time":"2025-06-14T21:11:02.559616+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"71.8209ms"}
+{"time":"2025-06-14T21:11:02.5812704+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.6078ms"}
+{"time":"2025-06-14T21:11:02.6030006+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"665.4µs"}
+{"time":"2025-06-14T21:11:02.7158652+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T21:11:02.7220765+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:13:22.1773184+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"563.1µs"}
+{"time":"2025-06-14T21:13:22.2107297+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"569.4µs"}
+{"time":"2025-06-14T21:13:22.2209749+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.0923ms"}
+{"time":"2025-06-14T21:13:22.2246958+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.052ms"}
+{"time":"2025-06-14T21:13:22.2910859+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"51.9635ms"}
+{"time":"2025-06-14T21:13:22.3245244+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.3814ms"}
+{"time":"2025-06-14T21:13:22.3591323+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"503.7µs"}
+{"time":"2025-06-14T21:13:22.4660486+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"550.6µs"}
+{"time":"2025-06-14T21:13:22.4716134+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"527.8µs"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:15:16.3328381+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"503.6µs"}
+{"time":"2025-06-14T21:15:16.3715201+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T21:15:16.3802103+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"3.4674ms"}
+{"time":"2025-06-14T21:15:16.385384+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"508.4µs"}
+{"time":"2025-06-14T21:15:16.4791449+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"74.0187ms"}
+{"time":"2025-06-14T21:15:16.4947737+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.5845ms"}
+{"time":"2025-06-14T21:15:16.6392952+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T21:15:16.6400561+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"760.9µs"}
+{"time":"2025-06-14T21:15:16.6460204+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:17:26.2552679+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"552.3µs"}
+{"time":"2025-06-14T21:17:26.2854629+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"565.6µs"}
+{"time":"2025-06-14T21:17:26.2937679+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.0459ms"}
+{"time":"2025-06-14T21:17:26.2943005+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.2102ms"}
+{"time":"2025-06-14T21:17:26.3800563+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"64.6013ms"}
+{"time":"2025-06-14T21:17:26.4075437+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.616ms"}
+{"time":"2025-06-14T21:17:26.5388889+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T21:17:26.5393873+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"498.4µs"}
+{"time":"2025-06-14T21:17:26.5459972+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T21:18:44.0670186+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] implement me goroutine 7 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1652c00?, 0x2112400?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc00010a9d8, {0x21305d8, 0xc000192280})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/call.form.go:47 +0x36\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x21305d8, 0xc000192280})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x21305d8, 0xc000192280})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x21305d8, 0xc000192280})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc000163d48, {0x2120a40, 0xc0004981c0}, 0xc000490280)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc000202e00}, {0x2120a40, 0xc0004981c0}, 0xc000490280)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000e03f0, {0x2122d28, 0xc000119d60})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x274786ef990, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc00016abb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc00016aa20, 0xc000186fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc00016aa08, 0xe0, {0xc0002b60f0, 0x2, 0x2}, 0xc00016aa20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc00016aa08, 0xc0001874a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc00016aa08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002a6080)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002a6080)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002a6080})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc000202e00, {0x21208f0, 0xc00010aa18})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc000163d48, {0xc000239de0, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:140 +0xadd\n\ngoroutine 19 [IO wait]:\ninternal/poll.runtime_pollWait(0x274786ef878, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc00019c1b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc00019c020, 0xc0003093f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc00019c008, 0x228, {0xc00019e000, 0x2, 0x2}, 0xc00019c020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc00019c008, 0xc0003098c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc00019c008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000099380)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc000099380)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc000300000, {0x2120890, 0xc000099380})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\nnet/http.(*Server).ListenAndServe(0xc000300000)\n\tC:/Program Files/\n"}
+{"time":"2025-06-14T21:19:25.3700626+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] implement me goroutine 7 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1652c00?, 0x2112400?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc00010a9d8, {0x21305d8, 0xc000295d60})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/call.form.go:47 +0x36\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x21305d8, 0xc000295d60})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x21305d8, 0xc000295d60})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x21305d8, 0xc000295d60})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc000163d48, {0x2120a40, 0xc00023c0e0}, 0xc00024e000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc000202e00}, {0x2120a40, 0xc00023c0e0}, 0xc00024e000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000e03f0, {0x2122d28, 0xc000119d60})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x274786ef990, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc00016abb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc00016aa20, 0xc000186fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc00016aa08, 0xe0, {0xc0002b60f0, 0x2, 0x2}, 0xc00016aa20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc00016aa08, 0xc0002bd4a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc00016aa08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002a6080)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002a6080)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002a6080})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc000202e00, {0x21208f0, 0xc00010aa18})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc000163d48, {0xc000239de0, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:140 +0xadd\n\ngoroutine 19 [IO wait]:\ninternal/poll.runtime_pollWait(0x274786ef878, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc00019c1b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc00019c020, 0xc0003093f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc00019c008, 0x228, {0xc00019e000, 0x2, 0x2}, 0xc00019c020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc00019c008, 0xc0003098c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc00019c008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000099380)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc000099380)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc000300000, {0x2120890, 0xc000099380})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\nnet/http.(*Server).ListenAndServe(0xc000300000)\n\tC:/Program Files/\n"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:21:41.4537673+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] implement me goroutine 35 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1ca2ca0?, 0x27625a0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000088c10, {0x2780778, 0xc00022dd60})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/call.form.go:52 +0x259\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2780778, 0xc00022dd60})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2780778, 0xc00022dd60})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2780778, 0xc00022dd60})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x2770be0, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x2770be0, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000136090, {0x2772ec8, 0xc0001d54a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x26cf9196388, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc000186fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x234, {0xc0001380f0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc0001874a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc000205380})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x2770a90, 0xc000088c50})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c7b08, {0xc000232580, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:140 +0xadd\n\ngoroutine 7 [IO wait]:\ninternal/poll.runtime_pollWait(0x26cf9196270, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001321b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc000132020, 0xc0002893f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000132008, 0x228, {0xc000138000, 0x2, 0x2}, 0xc000132020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000132008, 0xc0002898c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000132008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc00012a080)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc00012a080)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc000280000, {0x2770a30, 0xc00012a080})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\nnet/http.(*Server).ListenAndServe(0xc000280000)\n\tC:/Program File\n"}
+{"time":"2025-06-14T21:21:46.0682315+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"542.3µs"}
+{"time":"2025-06-14T21:21:46.1091527+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"506.3µs"}
+{"time":"2025-06-14T21:21:46.1136717+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"1.7495ms"}
+{"time":"2025-06-14T21:21:46.1147181+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.0464ms"}
+{"time":"2025-06-14T21:21:46.2183736+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"84.3228ms"}
+{"time":"2025-06-14T21:21:46.2387794+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.5567ms"}
+{"time":"2025-06-14T21:21:46.3742993+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"509.8µs"}
+{"time":"2025-06-14T21:21:46.3748367+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T21:21:46.3859578+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:23:51.3697341+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"1.0697ms"}
+{"time":"2025-06-14T21:23:51.4011612+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"511.6µs"}
+{"time":"2025-06-14T21:23:51.4082206+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.0779ms"}
+{"time":"2025-06-14T21:23:51.410455+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"506µs"}
+{"time":"2025-06-14T21:23:51.480123+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"53.9812ms"}
+{"time":"2025-06-14T21:23:51.5149687+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.6022ms"}
+{"time":"2025-06-14T21:23:51.6444417+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T21:23:51.651068+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T21:23:51.6527107+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"506.9µs"}
+{"time":"2025-06-14T21:24:15.6193296+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"538.8µs"}
+{"time":"2025-06-14T21:24:42.09298+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"1.6579245s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:37:04.3407056+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] runtime error: invalid memory address or nil pointer dereference goroutine 20 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x18217a0?, 0x2a08d80?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000088c10, {0x22a1f78, 0xc00024e000})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/call.form.go:57 +0x411\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x22a1f78, 0xc00024e000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x22a1f78, 0xc00024e000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x22a1f78, 0xc00024e000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x22923e0, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x22923e0, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0002be090, {0x22946c8, 0xc0001d74a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x27b7f466570, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc00018cfd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x234, {0xc0002c00f0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc00018d4a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc000205380})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x2292290, 0xc000088c50})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c7b08, {0xc000232570, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:140 +0xadd\n\ngoroutine 7 [IO wait]:\ninternal/poll.runtime_pollWait(0x27b7f466458, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0002ba1b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0002ba020, 0xc0002893f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0002ba008, 0x228, {0xc0002c0000, 0x2, 0x2}, 0xc0002ba020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0002ba008, 0xc0002898c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0002ba008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002940c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc0002940c0)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc000280000, {0x2292230, 0xc0002940c0})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\nnet/http.(*Server).ListenAndServe(0xc000280000)\n\tC:/Program File\n"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:38:36.745949+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] runtime error: invalid memory address or nil pointer dereference goroutine 50 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1f817a0?, 0x3168d80?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.(*RequestType).Get(0x0, {0x20cf584, 0x4})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:23 +0x9b\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000088c10, {0x2a01f98, 0xc00023c140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/call.form.go:57 +0x405\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2a01f98, 0xc00023c140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2a01f98, 0xc00023c140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2a01f98, 0xc00023c140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x29f2400, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x29f2400, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc00032c090, {0x29f46e8, 0xc0001d54a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x22c68f56370, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc000186fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x230, {0xc00032e0f0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc0001874a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc000205380})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x29f22b0, 0xc000088c50})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c7b08, {0xc000232570, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:140 +0xadd\n\ngoroutine 7 [IO wait]:\ninternal/poll.runtime_pollWait(0x22c68f56258, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0003261b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc000326020, 0xc0002893f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000326008, 0x224, {0xc00032e000, 0x2, 0x2}, 0xc000326020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000326008, 0xc0002898c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000326008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc00031c080)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc00031c080)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc000280000, {0x29f2250, 0xc00031\n"}
+{"time":"2025-06-14T21:38:58.8557799+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] runtime error: invalid memory address or nil pointer dereference goroutine 50 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1f817a0?, 0x3168d80?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.(*RequestType).Get(0x0, {0x20cf584, 0x4})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:23 +0x9b\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000088c10, {0x2a01f98, 0xc0002be140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/call.form.go:57 +0x405\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2a01f98, 0xc0002be140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2a01f98, 0xc0002be140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2a01f98, 0xc0002be140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x29f2400, 0xc0002d8000}, 0xc0002c0280)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x29f2400, 0xc0002d8000}, 0xc0002c0280)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc00032c090, {0x29f46e8, 0xc0001d54a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x22c68f56370, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc000186fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x230, {0xc00032e0f0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc0001874a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc000205380})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x29f22b0, 0xc000088c50})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c7b08, {0xc000232570, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:140 +0xadd\n\ngoroutine 7 [IO wait]:\ninternal/poll.runtime_pollWait(0x22c68f56258, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0003261b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc000326020, 0xc0002893f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000326008, 0x224, {0xc00032e000, 0x2, 0x2}, 0xc000326020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000326008, 0xc0002898c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000326008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc00031c080)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc00031c080)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc000280000, {0x29f2250, 0xc00031\n"}
+{"time":"2025-06-14T21:39:19.632855+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] runtime error: invalid memory address or nil pointer dereference goroutine 50 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1f817a0?, 0x3168d80?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.(*RequestType).Get(0x0, {0x20cf584, 0x4})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:23 +0x9b\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000088c10, {0x2a01f98, 0xc00023c140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/call.form.go:57 +0x405\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2a01f98, 0xc00023c140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2a01f98, 0xc00023c140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2a01f98, 0xc00023c140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c7b08, {0x29f2400, 0xc0001e0ee0}, 0xc0001f7e00)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x29f2400, 0xc0001e0ee0}, 0xc0001f7e00)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc00032c090, {0x29f46e8, 0xc0001d54a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x22c68f56370, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc000186fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x230, {0xc00032e0f0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc0001874a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc000205380)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc000205380})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x29f22b0, 0xc000088c50})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c7b08, {0xc000232570, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:140 +0xadd\n\ngoroutine 7 [IO wait]:\ninternal/poll.runtime_pollWait(0x22c68f56258, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0003261b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc000326020, 0xc0002893f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000326008, 0x224, {0xc00032e000, 0x2, 0x2}, 0xc000326020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000326008, 0xc0002898c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000326008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc00031c080)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc00031c080)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc000280000, {0x29f2250, 0xc00031\n"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:43:24.6799564+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=create%40unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"39.8674947s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T21:54:14.9008545+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"36.2302633s"}
+{"time":"2025-06-14T21:56:42.1680138+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"15.5957676s"}
+{"time":"2025-06-14T21:59:22.6994167+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"1m45.7282871s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T22:09:04.7091705+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"33.5758103s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T22:12:48.5790337+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"34.27369s"}
+{"time":"2025-06-14T22:13:48.0834946+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] implement me goroutine 36 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1b24d40?, 0x25e5010?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc00010cc08, {0x2603218, 0xc0002a80a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/call.form.go:92 +0xfb8\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2603218, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2603218, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2603218, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001e9b08, {0x25f3680, 0xc0002d2000}, 0xc0002c2000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001ece00}, {0x25f3680, 0xc0002d2000}, 0xc0002c2000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0002be090, {0x25f5968, 0xc0001fb4a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x22479ddf410, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001d2bb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001d2a20, 0xc000198fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001d2a08, 0x24c, {0xc0002c00f0, 0x2, 0x2}, 0xc0001d2a20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001d2a08, 0xc0001994a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001d2a08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc00022b340)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc00022b340)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc00022b340})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001ece00, {0x25f3530, 0xc00010cc48})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001e9b08, {0xc000256530, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:140 +0xadd\n\ngoroutine 20 [IO wait]:\ninternal/poll.runtime_pollWait(0x22479ddf2f8, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0002ba1b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0002ba020, 0xc0002893f8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0002ba008, 0x240, {0xc0002c0000, 0x2, 0x2}, 0xc0002ba020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0002ba008, 0xc0002898c0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0002ba008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002940c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc0002940c0)\n\tC:/Program Files/Go/src/net/tcpsock.go:380 +0x65\nnet/http.(*Server).Serve(0xc000280000, {0x25f34d0, 0xc0002940c0})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\nnet/http.(*Server).ListenAndServe(0xc000280000)\n\tC:/Program Fil\n"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T22:25:24.8503289+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":500,"latency_human":"14.7921774s"}
+{"time":"2025-06-14T22:26:08.4839163+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"7.2765ms"}
+{"time":"2025-06-14T22:26:17.4045322+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":200,"latency_human":"6.0003287s"}
+{"time":"2025-06-14T22:26:45.6129299+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":500,"latency_human":"54.1155ms"}
+{"time":"2025-06-14T22:27:23.4545888+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"1.0135ms"}
+{"time":"2025-06-14T22:27:34.719101+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":500,"latency_human":"12.7076ms"}
+{"time":"2025-06-14T22:27:42.6246625+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=aaaa&tenant=string&module=unvs.br.auth.roles&action=create&lan=vi","status":200,"latency_human":"10.3997ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T22:31:06.4260676+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"508.8µs"}
+{"time":"2025-06-14T22:31:06.4852081+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T22:31:06.4872588+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"1.5146ms"}
+{"time":"2025-06-14T22:31:06.4906102+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"508.7µs"}
+{"time":"2025-06-14T22:31:06.5719857+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"60.411ms"}
+{"time":"2025-06-14T22:31:06.5966008+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.5414ms"}
+{"time":"2025-06-14T22:31:06.7364997+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T22:31:06.737004+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"504.3µs"}
+{"time":"2025-06-14T22:31:06.7403707+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T22:36:36.4594379+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"1.738ms"}
+{"time":"2025-06-14T22:36:36.4914449+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"513.5µs"}
+{"time":"2025-06-14T22:36:36.4983129+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.1469ms"}
+{"time":"2025-06-14T22:36:36.4988192+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"3.2841ms"}
+{"time":"2025-06-14T22:36:36.5811256+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"65.85ms"}
+{"time":"2025-06-14T22:36:36.6132415+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"3.6378ms"}
+{"time":"2025-06-14T22:36:36.7454207+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T22:36:36.7476594+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"853.8µs"}
+{"time":"2025-06-14T22:36:36.7516776+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T22:43:11.8362326+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"627.3µs"}
+{"time":"2025-06-14T22:43:11.8615964+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"1.0696ms"}
+{"time":"2025-06-14T22:43:11.8652519+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.3977ms"}
+{"time":"2025-06-14T22:43:11.8662986+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"518.7µs"}
+{"time":"2025-06-14T22:43:11.9448423+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"54.0617ms"}
+{"time":"2025-06-14T22:43:11.968947+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.6011ms"}
+{"time":"2025-06-14T22:43:11.9939645+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"1.737ms"}
+{"time":"2025-06-14T22:43:12.0474414+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"503.7µs"}
+{"time":"2025-06-14T22:43:12.0965784+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T22:44:43.6689984+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"509.8µs"}
+{"time":"2025-06-14T22:45:08.4433562+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=das&tenant=test001&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"158.1µs"}
+{"time":"2025-06-14T22:46:02.7924418+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=das&tenant=test001&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"17.5239783s"}
+{"time":"2025-06-14T22:46:40.9493402+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=das&tenant=test001&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"32.700035s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T22:52:09.227263+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=das&tenant=test001&module=unvs.br.auth.roles&action=create&lan=vi","status":400,"latency_human":"1m18.2112463s"}
+{"time":"2025-06-14T22:52:09.2298954+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"2.6324ms"}
+{"time":"2025-06-14T22:52:09.327844+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"780.1µs"}
+{"time":"2025-06-14T22:52:09.3351951+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.6367ms"}
+{"time":"2025-06-14T22:52:10.9035978+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"22.2811ms"}
+{"time":"2025-06-14T22:52:11.0600046+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"178.6873ms"}
+{"time":"2025-06-14T22:52:11.1449826+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"2.1817ms"}
+{"time":"2025-06-14T22:52:11.1478867+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"5.0858ms"}
+{"time":"2025-06-14T22:52:11.2100366+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T22:52:11.2224005+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-14T22:52:32.1338313+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=a&tenant=a&module=a&action=a&lan=a","status":400,"latency_human":"1.2493ms"}
+{"time":"2025-06-14T22:52:34.1533922+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=a&tenant=a&module=a&action=a&lan=a","status":400,"latency_human":"0s"}
+{"time":"2025-06-14T22:52:34.94243+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=a&tenant=a&module=a&action=a&lan=a","status":400,"latency_human":"0s"}
+{"time":"2025-06-14T22:52:55.3541982+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=a&tenant=a&module=a&action=a&lan=a","status":400,"latency_human":"3.4104553s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-14T22:54:08.3747778+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=a&tenant=a&module=a&action=a&lan=a","status":400,"latency_human":"2.6653596s"}

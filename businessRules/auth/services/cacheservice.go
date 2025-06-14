@@ -6,6 +6,7 @@ import (
 )
 
 type CacheService struct {
-	Cache   caching.Cache
-	Context context.Context
+	Cache    caching.Cache
+	Context  context.Context
+	Language string
 }
