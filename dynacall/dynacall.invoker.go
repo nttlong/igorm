@@ -54,6 +54,12 @@ func invoke(method reflect.Method, arg interface{}, injector interface{}) (inter
 				continue
 			}
 		}
+		kn := valueType.Kind().String()
+		fmt.Println("kn: ", kn)
+		if argType.Kind() == reflect.Struct && valueType.Kind() == reflect.Struct {
+			invokeArgs[i] = reflect.ValueOf(args[i-1])
+			continue
+		}
 		test := fmt.Sprintf("argType: %v, valueType: %v\n", argType, valueType)
 		fmt.Println(test)
 
@@ -65,13 +71,7 @@ func invoke(method reflect.Method, arg interface{}, injector interface{}) (inter
 			} else {
 				invokeArgs[i] = val
 			}
-			// val.Set(invokeArgs[i])
-			// if val.Type().Kind() == reflect.Ptr {
-			// 	invokeArgs[i] = val.Elem()
-			// } else {
-			// 	invokeArgs[i] = val
-			// }
-			// invokeArgs[i] = reflect.ValueOf(args[i-1]).Convert(argType)
+
 		} else {
 			if argType.Kind() == reflect.Ptr {
 				argType = argType.Elem()

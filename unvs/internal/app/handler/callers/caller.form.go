@@ -5,7 +5,6 @@ import (
 	"context"
 	"dbx"
 	"dynacall"
-	"encoding/json"
 	"fmt"
 	"mime/multipart"
 	"net/http"
@@ -58,7 +57,13 @@ func (h *CallerHandler) FormSubmit(c echo.Context) error {
 	}
 	fmt.Println(info)
 	callerPath := info.Action + "@" + info.Module
-	req, err := dynacall.NewRequestInstance(callerPath, reflect.TypeOf(CallerRequest{}))
+	req, err := dynacall.NewInvoker(callerPath)
+	err = req.New(callerPath)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	// req, err := dynacall.NewRequestInstance(callerPath)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -66,12 +71,11 @@ func (h *CallerHandler) FormSubmit(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	data := "{\"Args\":" + c.FormValue("data") + "}"
 
-	err = json.Unmarshal([]byte(data), &req.Data)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+
 	tenantDb, err := config.CreateTenantDbx(info.Tenant)
 	if err != nil {
 		appLogger := h.AppLogger.WithField("pkgPath", reflect.TypeOf(h).Elem().PkgPath()+"/Call")
@@ -99,8 +103,8 @@ func (h *CallerHandler) FormSubmit(c echo.Context) error {
 			log.Printf("Stack Trace:\n%s", debug.Stack())
 
 		}
-	}() // Gọi ngay lập tức hàm ẩn danh deferred
-	retCall, err := dynacall.Call(callerPath, req.Data, struct {
+	}()
+	fn := req.Injector(struct {
 		Tenant        string
 		TenantDb      *dbx.DBXTenant
 		Context       context.Context
@@ -120,7 +124,9 @@ func (h *CallerHandler) FormSubmit(c echo.Context) error {
 		Cache:       config.GetCache(),
 		AccessToken: c.Request().Header.Get("Authorization"),
 		FeatureId:   info.Feature,
-	})
+	}) // Gọi ngay lập tức hàm ẩn danh deferred
+	retCall, err := fn()
+
 	if err != nil {
 		return h.CallHandlerErr(c, err, callerPath)
 	}

@@ -3200,3 +3200,798 @@ time="2025-06-15T08:29:40+07:00" level=error msg="dynacall error: INVALID_USERNA
 {"time":"2025-06-15T08:29:40.2154515+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.0297ms"}
 time="2025-06-15T08:29:44+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
 {"time":"2025-06-15T08:29:44.9975161+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"62.1382ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T10:22:29.9400553+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"506.2µs"}
+{"time":"2025-06-15T10:22:29.9850678+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"506.9µs"}
+{"time":"2025-06-15T10:22:29.9883744+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"505.3µs"}
+{"time":"2025-06-15T10:22:29.9964937+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"11.2887ms"}
+{"time":"2025-06-15T10:22:30.088759+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"70.9013ms"}
+{"time":"2025-06-15T10:22:30.1066104+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"6.6442ms"}
+{"time":"2025-06-15T10:22:30.2328467+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T10:22:30.2386445+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T10:22:30.2447731+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"505.3µs"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T11:28:45.4747637+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"0s"}
+time="2025-06-15T11:30:17+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:30:17.3133722+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"4.7536532s"}
+{"time":"2025-06-15T11:31:30.8261265+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T11:31:30.8300288+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"557.6µs"}
+{"time":"2025-06-15T11:31:31.3164677+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"106.9985ms"}
+{"time":"2025-06-15T11:31:31.3174702+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"165.6266ms"}
+{"time":"2025-06-15T11:31:31.3194664+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"168.6959ms"}
+time="2025-06-15T11:32:03+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:32:03.3244176+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"782.7µs"}
+time="2025-06-15T11:33:55+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:33:55.8044778+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"1m38.1923058s"}
+time="2025-06-15T11:34:20+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:34:20.2819833+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"2.7221994s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T11:39:16+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:39:16.3250146+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"7.2940673s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T11:43:05+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:43:05.8429839+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"2m3.9997959s"}
+time="2025-06-15T11:43:19+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:43:19.6346434+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"11.1697884s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T11:44:44+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:44:44.9531204+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"14.2709961s"}
+time="2025-06-15T11:45:20+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:45:20.8847927+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"30.2709984s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T11:47:12+07:00" level=error msg="json: Unmarshal(non-pointer struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" })"
+{"time":"2025-06-15T11:47:12.0556195+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"2.9143634s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T11:50:41+07:00" level=error msg="Panic occurred: reflect: FieldByName of non-struct type map[string]interface {}\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T11:50:41+07:00" level=info msg="Stack Trace:\ngoroutine 20 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:177 +0x1ed\npanic({0x1efb6c0?, 0xc000386000?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).FieldByName(0x1f75be0, {0x20a1a02, 0x4})\n\tC:/Program Files/Go/src/reflect/type.go:758 +0x212\ndynacall.Call({0xc000031ba8, 0x18}, {0x1f75be0, 0xc000238d80}, {0x2039200, 0xc00029e900})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:56 +0x1a2\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088bd0, {0x29cf778, 0xc00022bea0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:181 +0x205e\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x29cf778, 0xc00022bea0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x29cf778, 0xc00022bea0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x29cf778, 0xc00022bea0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x29c0040, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x29c0040, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0002be090, {0x29c2288, 0xc0001d72c0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:50:41.0366928+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"13.8124146s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T11:59:44+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *struct { Tenant string; TenantDb *dbx.DBXTenant; Context context.Context; EncryptionKey string; Language string; Cache caching.Cache; AccessToken string; FeatureId string }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T11:59:44+07:00" level=info msg="Stack Trace:\ngoroutine 7 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:176 +0x1ed\npanic({0x1e0b700?, 0xc0002da010?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x1df5c80)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndynacall.applyInjector({0x28ded80, 0x1f53560}, {0x1f53560, 0xc000018000, 0x16}, {0x1df5c80, 0xc0002a8080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:18 +0xcb\ndynacall.createReceiverInstance({0x28ded80, 0x1f53560}, {0x1df5c80, 0xc0002a8080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:11 +0xb8\ndynacall.invoke({{0x1d87fd1, 0x5}, {0x0, 0x0}, {0x28ded80, 0xc0002c66c0}, {0xc0002c66c0, 0xc0001869d0, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:23 +0xa5\ndynacall.Call({0xc000030210, 0x18}, {0x1eaf500, 0xc00029e000}, {0x1df5c80, 0xc0002a8080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:86 +0x7fb\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000186bc8, {0x28df798, 0xc0000aa0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:180 +0x2116\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x28df798, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x28df798, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x28df798, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0002698c8, {0x28d0060, 0xc0000000e0}, 0xc0000c6000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026ce00}, {0x28d0060, 0xc0000000e0}, 0xc0000c6000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000bc090, {0x28d22a8, 0xc0000a60a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T11:59:44.1804365+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"32.1221644s"}
+time="2025-06-15T12:00:15+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *struct { Tenant string; TenantDb *dbx.DBXTenant; Context context.Context; EncryptionKey string; Language string; Cache caching.Cache; AccessToken string; FeatureId string }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T12:00:15+07:00" level=info msg="Stack Trace:\ngoroutine 7 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:176 +0x1ed\npanic({0x1e0b700?, 0xc0002da530?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x1df5c80)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndynacall.applyInjector({0x28ded80, 0x1f53560}, {0x1f53560, 0xc0000181c0, 0x16}, {0x1df5c80, 0xc000224100})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:18 +0xcb\ndynacall.createReceiverInstance({0x28ded80, 0x1f53560}, {0x1df5c80, 0xc000224100})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:11 +0xb8\ndynacall.invoke({{0x1d87fd1, 0x5}, {0x0, 0x0}, {0x28ded80, 0xc0002c66c0}, {0xc0002c66c0, 0xc0001869d0, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:23 +0xa5\ndynacall.Call({0xc0003b4078, 0x18}, {0x1eaf500, 0xc00029e100}, {0x1df5c80, 0xc000224100})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:86 +0x7fb\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000186bc8, {0x28df798, 0xc0000aa0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:180 +0x2116\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x28df798, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x28df798, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x28df798, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0002698c8, {0x28d0060, 0xc0000180e0}, 0xc00029c140)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026ce00}, {0x28d0060, 0xc0000180e0}, 0xc00029c140)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000bc090, {0x28d22a8, 0xc0000a60a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T12:00:15.2171108+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"21.8695596s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T12:05:11+07:00" level=error msg="Panic occurred: reflect: FieldByName of non-struct type map[string]interface {}\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T12:05:11+07:00" level=info msg="Stack Trace:\ngoroutine 36 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:179 +0x1ed\npanic({0x1bfb700?, 0xc00028c240?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).FieldByName(0x1c75c20, {0x1da1a42, 0x4})\n\tC:/Program Files/Go/src/reflect/type.go:758 +0x212\ndynacall.Call({0xc0002a60d8, 0x18}, {0x1c75c20, 0xc00028aab0}, {0x1be5c80, 0xc000054200})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:60 +0x337\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc00011e7e0, {0x26cf7b8, 0xc0002a80a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:183 +0x2225\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x26cf7b8, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x26cf7b8, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x26cf7b8, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc000214d88, {0x26c0080, 0xc0002d8000}, 0xc0002c8000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00011ad00}, {0x26c0080, 0xc0002d8000}, 0xc0002c8000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0002be090, {0x26c22c8, 0xc0002900a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T12:05:11.8070451+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"18.6583011s"}
+time="2025-06-15T12:05:54+07:00" level=error msg="Panic occurred: reflect: FieldByName of non-struct type map[string]interface {}\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T12:05:54+07:00" level=info msg="Stack Trace:\ngoroutine 36 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:179 +0x1ed\npanic({0x1bfb700?, 0xc00040e0b0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).FieldByName(0x1c75c20, {0x1da1a42, 0x4})\n\tC:/Program Files/Go/src/reflect/type.go:758 +0x212\ndynacall.Call({0xc0000303a8, 0x18}, {0x1c75c20, 0xc0000e59b0}, {0x1be5c80, 0xc00023e080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:60 +0x337\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc00011e7e0, {0x26cf7b8, 0xc0002a80a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:183 +0x2225\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x26cf7b8, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x26cf7b8, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x26cf7b8, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc000214d88, {0x26c0080, 0xc000111a40}, 0xc000242280)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00011ad00}, {0x26c0080, 0xc000111a40}, 0xc000242280)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0002be090, {0x26c22c8, 0xc0002900a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T12:05:54.0343047+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"26.0756096s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T12:12:24+07:00" level=error msg="json: Unmarshal(non-pointer struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" })"
+{"time":"2025-06-15T12:12:24.690756+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"7.2419866s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T12:16:14+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *struct { Tenant string; TenantDb *dbx.DBXTenant; Context context.Context; EncryptionKey string; Language string; Cache caching.Cache; AccessToken string; FeatureId string }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T12:16:14+07:00" level=info msg="Stack Trace:\ngoroutine 7 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:182 +0x1ed\npanic({0x1a7b700?, 0xc0002be040?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x1a65c80)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndynacall.applyInjector({0x254eda0, 0x1bc3560}, {0x1bc3560, 0xc0000de000, 0x16}, {0x1a65c80, 0xc000054100})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:18 +0xcb\ndynacall.createReceiverInstance({0x254eda0, 0x1bc3560}, {0x1a65c80, 0xc000054100})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:11 +0xb8\ndynacall.invoke({{0x19f7fd1, 0x5}, {0x0, 0x0}, {0x254eda0, 0xc0002c6660}, {0xc0002c6660, 0xc00018c9c0, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:23 +0xa5\ndynacall.Call({0xc000030210, 0x18}, {0x1af5c20, 0xc000042b70}, {0x1a65c80, 0xc000054100})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:86 +0x5db\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc00018cbb8, {0x254f7b8, 0xc0000b4140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:186 +0x2385\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x254f7b8, 0xc0000b4140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x254f7b8, 0xc0000b4140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x254f7b8, 0xc0000b4140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0002698c8, {0x2540080, 0xc0000000e0}, 0xc0000d0000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026ce00}, {0x2540080, 0xc0000000e0}, 0xc0000d0000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000c6090, {0x25422c8, 0xc0000b00a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T12:16:16.5459524+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"24.2362918s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T12:30:32+07:00" level=error msg="json: Unmarshal(non-pointer reflect.Value)"
+{"time":"2025-06-15T12:30:32.0574228+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"2.960752s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T12:32:56.5614386+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] reflect: call of reflect.Value.Elem on struct Value goroutine 20 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1ac5ee0?, 0xc0000092f0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.Value.Elem({0x1b1f520, 0xc00022ed80, 0x199})\n\tC:/Program Files/Go/src/reflect/value.go:1265 +0x3c6\ndynacall.(*RequestType).Get(0xc000009278, {0x1c21b02, 0x4})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:26 +0x233\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088bd0, {0x254f8d8, 0xc00022bd60})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:65 +0x40d\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x254f8d8, 0xc00022bd60})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x254f8d8, 0xc00022bd60})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x254f8d8, 0xc00022bd60})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x25401a0, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x25401a0, 0xc0001e0e00}, 0xc0001f7cc0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000144090, {0x25423e8, 0xc0001d52c0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x1436bcd6150, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc000186fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x1b0, {0xc0001460f0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc0001874a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000205340)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc000205340)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc000205340})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x2540050, 0xc000088c10})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c78c8, {0xc000230530, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:148 +0xadd\n\ngoroutine 7 [IO wait]:\ninternal/poll.runtime_pollWait(0x1436bcd6038, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001401b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc000140020, 0xc000113440)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000140008, 0x214, {0xc000146000, 0x2, 0x2}, 0xc000140020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000140008, 0xc000113908)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000140008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc00011e0c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc00011e0c0\n"}
+{"time":"2025-06-15T12:33:01.3774643+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] reflect: call of reflect.Value.Elem on struct Value goroutine 20 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1ac5ee0?, 0xc000290078?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.Value.Elem({0x1b1f520, 0xc00028a080, 0x199})\n\tC:/Program Files/Go/src/reflect/value.go:1265 +0x3c6\ndynacall.(*RequestType).Get(0xc000290048, {0x1c21b02, 0x4})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:26 +0x233\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088bd0, {0x254f8d8, 0xc0002b0140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:65 +0x40d\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x254f8d8, 0xc0002b0140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x254f8d8, 0xc0002b0140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x254f8d8, 0xc0002b0140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x25401a0, 0xc0002c6000}, 0xc0002b2280)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x25401a0, 0xc0002c6000}, 0xc0002b2280)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000144090, {0x25423e8, 0xc0001d52c0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x1436bcd6150, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001acbb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001aca20, 0xc000186fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001aca08, 0x1b0, {0xc0001460f0, 0x2, 0x2}, 0xc0001aca20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001aca08, 0xc0001874a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001aca08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000205340)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc000205340)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc000205340})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x2540050, 0xc000088c10})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c78c8, {0xc000230530, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:148 +0xadd\n\ngoroutine 7 [IO wait]:\ninternal/poll.runtime_pollWait(0x1436bcd6038, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001401b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc000140020, 0xc000113440)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000140008, 0x214, {0xc000146000, 0x2, 0x2}, 0xc000140020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000140008, 0xc000113908)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000140008)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc00011e0c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).Accept(0xc00011e0c0\n"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T13:03:47+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *struct { Tenant string; TenantDb *dbx.DBXTenant; Context context.Context; EncryptionKey string; Language string; Cache caching.Cache; AccessToken string; FeatureId string }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T13:03:47+07:00" level=info msg="Stack Trace:\ngoroutine 20 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:196 +0x1ed\npanic({0x150b720?, 0xc00038e060?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x14f5ca0)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndynacall.applyInjector({0x1fded60, 0x1653620}, {0x1653620, 0xc0002d81c0, 0x16}, {0x14f5ca0, 0xc000202100})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:18 +0xcb\ndynacall.createReceiverInstance({0x1fded60, 0x1653620}, {0x14f5ca0, 0xc000202100})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:11 +0xb8\ndynacall.invoke({{0x1487fd1, 0x5}, {0x0, 0x0}, {0x1fded60, 0xc000220720}, {0xc000220720, 0xc0000889d8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:23 +0xa5\ndynacall.Call({0xc0002a60d8, 0x18}, {0xc000294280, 0xc00028e220}, {0x14f5ca0, 0xc000202100})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:101 +0x33b\ndynacall.NewCaller.func1({0xc000294280, 0xc00028e220})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:53 +0x92\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088bd0, {0x1fdf778, 0xc0002a80a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:221 +0x1eaf\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x1fdf778, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x1fdf778, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x1fdf778, 0xc0002a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x1fd0040, 0xc0002d8000}, 0xc0002c8000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x1fd0040, 0xc0002d8000}, 0xc0002c8000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0002be090, {0x1fd2288, 0xc0002900a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:03:47.2750829+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"10.898635s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T13:09:59+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *struct { Tenant string; TenantDb *dbx.DBXTenant; Context context.Context; EncryptionKey string; Language string; Cache caching.Cache; AccessToken string; FeatureId string }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T13:09:59+07:00" level=info msg="Stack Trace:\ngoroutine 20 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:202 +0x1ed\npanic({0x209b720?, 0xc000116220?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x2085ca0)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndynacall.applyInjector({0x2b6ee20, 0x21e3620}, {0x21e3620, 0xc0001ded20, 0x16}, {0x2085ca0, 0xc000126880})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:18 +0xcb\ndynacall.createReceiverInstance({0x2b6ee20, 0x21e3620}, {0x2085ca0, 0xc000126880})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:11 +0xb8\ndynacall.invoke({{0x2017fd1, 0x5}, {0x0, 0x0}, {0x2b6ee20, 0xc000220720}, {0xc000220720, 0xc0000889d8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:23 +0xa5\ndynacall.Call({0xc00012c0d8, 0x18}, {0x213f520, 0xc00022e2c0}, {0x2085ca0, 0xc000126880})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.NewCaller.func1({0xc00011e280, 0xc000118220})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:53 +0x92\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088bd0, {0x2b6f838, 0xc00012e0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:227 +0x21cf\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2b6f838, 0xc00012e0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2b6f838, 0xc00012e0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2b6f838, 0xc00012e0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x2b60100, 0xc00015e000}, 0xc00014e000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x2b60100, 0xc00015e000}, 0xc00014e000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000144090, {0x2b62348, 0xc00011a0a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:09:59.3099573+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"32.7959351s"}
+time="2025-06-15T13:11:04+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *struct { Tenant string; TenantDb *dbx.DBXTenant; Context context.Context; EncryptionKey string; Language string; Cache caching.Cache; AccessToken string; FeatureId string }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T13:11:04+07:00" level=info msg="Stack Trace:\ngoroutine 20 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:202 +0x1ed\npanic({0x209b720?, 0xc000218210?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x2085ca0)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndynacall.applyInjector({0x2b6ee20, 0x21e3620}, {0x21e3620, 0xc0003c2000, 0x16}, {0x2085ca0, 0xc00042c080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:18 +0xcb\ndynacall.createReceiverInstance({0x2b6ee20, 0x21e3620}, {0x2085ca0, 0xc00042c080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:11 +0xb8\ndynacall.invoke({{0x2017fd1, 0x5}, {0x0, 0x0}, {0x2b6ee20, 0xc000220720}, {0xc000220720, 0xc0000889d8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:23 +0xa5\ndynacall.Call({0xc000426090, 0x18}, {0x213f520, 0xc0001f8080}, {0x2085ca0, 0xc00042c080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.NewCaller.func1({0xc00011e280, 0xc000118200})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:53 +0x92\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088bd0, {0x2b6f838, 0xc00022a1e0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:227 +0x21cf\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2b6f838, 0xc00022a1e0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2b6f838, 0xc00022a1e0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2b6f838, 0xc00022a1e0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x2b60100, 0xc00024a000}, 0xc00014e3c0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x2b60100, 0xc00024a000}, 0xc00014e3c0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000144090, {0x2b62348, 0xc00011a0a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:11:04.1762962+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"53.6526239s"}
+time="2025-06-15T13:11:37+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *struct { Tenant string; TenantDb *dbx.DBXTenant; Context context.Context; EncryptionKey string; Language string; Cache caching.Cache; AccessToken string; FeatureId string }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T13:11:37+07:00" level=info msg="Stack Trace:\ngoroutine 20 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:202 +0x1ed\npanic({0x209b720?, 0xc0001d3110?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x2085ca0)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndynacall.applyInjector({0x2b6ee20, 0x21e3620}, {0x21e3620, 0xc000488000, 0x16}, {0x2085ca0, 0xc000202080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:18 +0xcb\ndynacall.createReceiverInstance({0x2b6ee20, 0x21e3620}, {0x2085ca0, 0xc000202080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacallcreateReceiver.go:11 +0xb8\ndynacall.invoke({{0x2017fd1, 0x5}, {0x0, 0x0}, {0x2b6ee20, 0xc000220720}, {0xc000220720, 0xc0000889d8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:23 +0xa5\ndynacall.Call({0xc0000302b8, 0x18}, {0x213f520, 0xc00028a1e0}, {0x2085ca0, 0xc000202080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.NewCaller.func1({0xc00011e280, 0xc00028a160})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:53 +0x92\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088bd0, {0x2b6f838, 0xc00012ea00})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:227 +0x21cf\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2b6f838, 0xc00012ea00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2b6f838, 0xc00012ea00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2b6f838, 0xc00012ea00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x2b60100, 0xc000001ce0}, 0xc000194000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x2b60100, 0xc000001ce0}, 0xc000194000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000144090, {0x2b62348, 0xc00011a0a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:11:37.0980167+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"30.2936189s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T13:13:59.0666574+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"32.494248s"}
+{"time":"2025-06-15T13:14:49.038753+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"11.8647782s"}
+time="2025-06-15T13:16:58+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" }, got {{ }} (INVALID_ARGS) (UNKNOWN)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:16:58.0998736+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":400,"latency_human":"6.8377887s"}
+time="2025-06-15T13:20:14+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" }, got {{ }} (INVALID_ARGS) (UNKNOWN)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:20:14.2140612+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":400,"latency_human":"3m9.9859353s"}
+time="2025-06-15T13:20:47+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" }, got {{ }} (INVALID_ARGS) (UNKNOWN)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:20:47.7925257+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":400,"latency_human":"24.2864014s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T13:23:14+07:00" level=error msg="dynacall error: dynacall error: invalid args, expected struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" }, got {{ }} (INVALID_ARGS) (UNKNOWN)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:23:14.0044282+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":400,"latency_human":"12.2467119s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T13:28:57+07:00" level=error msg="Panic occurred: reflect: Elem of invalid type struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T13:28:57+07:00" level=info msg="Stack Trace:\ngoroutine 36 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:102 +0x1ed\npanic({0x11eb720?, 0xc000276210?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.elem(0x128f520)\n\tC:/Program Files/Go/src/reflect/type.go:733 +0x91\nreflect.(*rtype).Elem(0x128f520)\n\tC:/Program Files/Go/src/reflect/type.go:737 +0x2f\ndynacall.invoke({{0x1167fd1, 0x5}, {0x0, 0x0}, {0x1cbef00, 0xc00009b620}, {0xc00009b620, 0xc000088380, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:44 +0x396\ndynacall.Call({0xc000030f90, 0x18}, {0xc0000ac5a0, 0xc000188860}, {0x1329300, 0xc000054300})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000088578, {0x1cbf918, 0xc0000da140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:106 +0x12bf\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x1cbf918, 0xc0000da140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x1cbf918, 0xc0000da140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x1cbf918, 0xc0000da140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0000a0d88, {0x1cb01e0, 0xc0000001c0}, 0xc0000aa500)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0000c6600}, {0x1cb01e0, 0xc0000001c0}, 0xc0000aa500)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000144090, {0x1cb2428, 0xc00009e780})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:28:57.8041855+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"11.554492s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T13:40:49+07:00" level=error msg="Panic occurred: reflect: Call using struct { Args struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" } } as type struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T13:40:49+07:00" level=info msg="Stack Trace:\ngoroutine 20 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:111 +0x1ed\npanic({0x181b720?, 0xc000048020?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.Value.call({0xc00021e720, 0xc0000889d8, 0x13}, {0x19c1bc2, 0x4}, {0xc00032b650, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:440 +0x22d6\nreflect.Value.Call({0xc00021e720, 0xc0000889d8, 0x13}, {0xc00032b650, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x1797fd1, 0x5}, {0x0, 0x0}, {0x22eef00, 0xc00021e720}, {0xc00021e720, 0xc0000889d8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:123 +0x1925\ndynacall.Call({0xc0001a60d8, 0x18}, {0xc000180240, 0xc00022c320}, {0x1959300, 0xc0001a0200})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000088bd0, {0x22ef918, 0xc0001a80a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:115 +0x1445\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x22ef918, 0xc0001a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x22ef918, 0xc0001a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x22ef918, 0xc0001a80a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001478c8, {0x22e01e0, 0xc0001dc000}, 0xc0001c8000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc000148e00}, {0x22e01e0, 0xc0001dc000}, 0xc0001c8000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0001be090, {0x22e2428, 0xc0001920a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:40:49.3326118+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"9.4926746s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T13:43:39+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:43:39.0355584+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"9.5679216s"}
+time="2025-06-15T13:44:45+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:44:48.6430628+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"1m1.8306642s"}
+time="2025-06-15T13:45:54+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:45:54.0658623+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"8.5518656s"}
+time="2025-06-15T13:46:12+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:46:12.4562727+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"14.4844187s"}
+time="2025-06-15T13:46:44+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:46:44.0844506+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"11.5596561s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T13:54:29.6049224+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] reflect.Set: value of type *struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" } is not assignable to type struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" } goroutine 7 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x17fb720?, 0xc0002da440?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.Value.assignTo({0xc0002ab480, 0xc0002d4d60, 0x16}, {0x19aabb7, 0xb}, 0x189f520, 0x0)\n\tC:/Program Files/Go/src/reflect/value.go:3072 +0x4b1\nreflect.Value.Set({0x189f520, 0xc0002d4d80, 0x199}, {0xc0002ab480, 0xc0002d4d60, 0x16})\n\tC:/Program Files/Go/src/reflect/value.go:2057 +0xcf\ndynacall.NewRequestInstance({0xc0001cda70, 0x18}, {0x22cef40, 0x1881cc0})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:70 +0xb46\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000186bc8, {0x22cf958, 0xc0002d1ea0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:61 +0x378\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x22cf958, 0xc0002d1ea0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x22cf958, 0xc0002d1ea0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x22cf958, 0xc0002d1ea0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0002698c8, {0x22c0220, 0xc000286d20}, 0xc00029dcc0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026ce00}, {0x22c0220, 0xc000286d20}, 0xc00029dcc0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000bc090, {0x22c2468, 0xc0002792c0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x2706d7f7050, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc000250bb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc000250a20, 0xc000218fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000250a08, 0x23c, {0xc0000be0f0, 0x2, 0x2}, 0xc000250a20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000250a08, 0xc0002194a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000250a08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002ab300)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002ab300)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002ab300})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc00026ce00, {0x22c00d0, 0xc000186c08})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0002698c8, {0xc0002d6500, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:148 +0xadd\n\ngoroutine 20 [IO wait]:\ninternal/poll.runtime_pollWait(0x2706d7f6f38, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0000b81b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0000b8020, 0xc0000a5440)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0000b8008, 0x230, {0xc0000be000, 0x2, 0x2}, 0xc0000b8020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0000b8008, 0xc0000a5908)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).ac\n"}
+{"time":"2025-06-15T13:54:31.7967079+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] reflect.Set: value of type *struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" } is not assignable to type struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" } goroutine 7 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x17fb720?, 0xc000048330?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.Value.assignTo({0xc0002ab480, 0xc00008c1a0, 0x16}, {0x19aabb7, 0xb}, 0x189f520, 0x0)\n\tC:/Program Files/Go/src/reflect/value.go:3072 +0x4b1\nreflect.Value.Set({0x189f520, 0xc00008c1c0, 0x199}, {0xc0002ab480, 0xc00008c1a0, 0x16})\n\tC:/Program Files/Go/src/reflect/value.go:2057 +0xcf\ndynacall.NewRequestInstance({0xc000030210, 0x18}, {0x22cef40, 0x1881cc0})\n\tE:/Docker/go/unvs/igorm/dynacall/dynamicCallNewRequestInstance.go:70 +0xb46\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000186bc8, {0x22cf958, 0xc0000aa0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:61 +0x378\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x22cf958, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x22cf958, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x22cf958, 0xc0000aa0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0002698c8, {0x22c0220, 0xc0000000e0}, 0xc0000c0000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026ce00}, {0x22c0220, 0xc0000000e0}, 0xc0000c0000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000bc090, {0x22c2468, 0xc0002792c0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x2706d7f7050, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc000250bb0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc000250a20, 0xc000218fd8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000250a08, 0x23c, {0xc0000be0f0, 0x2, 0x2}, 0xc000250a20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000250a08, 0xc0002194a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc000250a08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002ab300)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002ab300)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002ab300})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc00026ce00, {0x22c00d0, 0xc000186c08})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0002698c8, {0xc0002d6500, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:148 +0xadd\n\ngoroutine 20 [IO wait]:\ninternal/poll.runtime_pollWait(0x2706d7f6f38, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0000b81b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0000b8020, 0xc0000a5440)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0000b8008, 0x230, {0xc0000be000, 0x2, 0x2}, 0xc0000b8020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0000b8008, 0xc0000a5908)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).ac\n"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T13:59:42+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T13:59:42.7586176+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"12.8963195s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T14:02:40.1852031+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"25.0108838s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T14:24:09.0349365+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"8.9619232s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T14:26:20.9649272+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"9.3859624s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T14:34:24.5238922+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"7.6718697s"}
+time="2025-06-15T14:34:42+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T14:34:42.7995314+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"7.4990069s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T15:05:33+07:00" level=error msg="Panic occurred: reflect: Call using *struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" } as type struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T15:05:33+07:00" level=info msg="Stack Trace:\ngoroutine 5 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:103 +0x1ed\npanic({0x16ca600?, 0xc000326010?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.Value.call({0xc0002c66c0, 0xc0001869d0, 0x13}, {0x18708fe, 0x4}, {0xc00032b3e0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:440 +0x22d6\nreflect.Value.Call({0xc0002c66c0, 0xc0001869d0, 0x13}, {0xc00032b3e0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x1646fd1, 0x5}, {0x0, 0x0}, {0x219d980, 0xc0002c66c0}, {0xc0002c66c0, 0xc0001869d0, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:117 +0x1925\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:43 +0xfb\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000186bc8, {0x219e398, 0xc0002d1e00})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:128 +0x10f1\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x219e398, 0xc0002d1e00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x219e398, 0xc0002d1e00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x219e398, 0xc0002d1e00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0002698c8, {0x218ec60, 0xc000286d20}, 0xc00029dcc0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026ce00}, {0x218ec60, 0xc000286d20}, 0xc00029dcc0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000b0090, {0x2190ea8, 0xc00027b2c0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:05:33.541333+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"7.6005481s"}
+time="2025-06-15T15:06:01+07:00" level=error msg="Panic occurred: reflect: Call using *struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" } as type struct { Username string \"json:\\\"username\\\"\"; Password string \"json:\\\"password\\\"\" }\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-15T15:06:01+07:00" level=info msg="Stack Trace:\ngoroutine 5 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:103 +0x1ed\npanic({0x16ca600?, 0xc000326120?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.Value.call({0xc0002c66c0, 0xc0001869d0, 0x13}, {0x18708fe, 0x4}, {0xc00032ba40, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:440 +0x22d6\nreflect.Value.Call({0xc0002c66c0, 0xc0001869d0, 0x13}, {0xc00032ba40, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x1646fd1, 0x5}, {0x0, 0x0}, {0x219d980, 0xc0002c66c0}, {0xc0002c66c0, 0xc0001869d0, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:117 +0x1925\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:43 +0xfb\nunvs/internal/app/handler/callers.(*CallerHandler).FormSubmit(0xc000186bc8, {0x219e398, 0xc0002f85a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.form.go:128 +0x10f1\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x219e398, 0xc0002f85a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x219e398, 0xc0002f85a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x219e398, 0xc0002f85a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0002698c8, {0x218ec60, 0xc000286b60}, 0xc000228140)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026ce00}, {0x218ec60, 0xc000286b60}, 0xc000228140)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000b0090, {0x2190ea8, 0xc00027b2c0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:06:01.8806481+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"21.6843952s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T15:10:51+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:10:51.9905463+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"9.6968058s"}

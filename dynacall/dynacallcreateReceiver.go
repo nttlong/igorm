@@ -15,6 +15,10 @@ func createReceiverInstance(receiverType reflect.Type, injector interface{}) ref
 func applyInjector(receiverType reflect.Type, receiverInstance reflect.Value, injector interface{}) {
 	injectorType := reflect.TypeOf(injector)
 	injectorValue := reflect.ValueOf(injector)
+	if injectorType.Kind() == reflect.Ptr {
+		injectorType = injectorType.Elem()
+		injectorValue = injectorValue.Elem()
+	}
 	for i := 0; i < injectorType.NumField(); i++ {
 		field := injectorType.Field(i)
 		fieldName := field.Name

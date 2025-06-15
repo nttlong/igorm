@@ -21,16 +21,16 @@ type CallerEntry struct {
 type ArgsCaller struct {
 }
 
-func GetInputTypeOfCallerPath(callerPath string) ([]reflect.Type, error) {
+func GetInputTypeOfCallerPath(callerPath string) ([]reflect.Type, *reflect.Method, error) {
 	if !strings.Contains(callerPath, "@") {
-		return nil, CallError{
+		return nil, nil, CallError{
 			Err:  fmt.Errorf("caller path should be in format of package.path@method"),
 			Code: CallErrorCodeInvalidCallerPath,
 		}
 	}
 	callerEntry, found := callerCache.Load(strings.ToLower(callerPath))
 	if !found {
-		return nil, CallError{
+		return nil, nil, CallError{
 			Err:  fmt.Errorf("caller not found"),
 			Code: CallErrorCodeCallerPathNotFound,
 		}
@@ -40,33 +40,60 @@ func GetInputTypeOfCallerPath(callerPath string) ([]reflect.Type, error) {
 	for i := 1; i < method.Type.NumIn(); i++ {
 		ret[i-1] = method.Type.In(i)
 	}
-	return ret, nil
+	return ret, &method, nil
 }
 
-func Call(callerPath string, args interface{}, injector interface{}) (interface{}, error) {
-	argsType := reflect.TypeOf(args)
-	if argsType.Kind() != reflect.Slice {
-		argsValue := reflect.ValueOf(args)
+// type InjectorCaller struct {
+// 	callerPath string
+// 	injector   interface{}
+// }
 
-		if argsValue.Kind() == reflect.Ptr {
-			argsValue = argsValue.Elem()
-			argsType = argsType.Elem()
-
-		}
-		if field, found := argsType.FieldByName("Args"); found {
-			argsValue = argsValue.FieldByName(field.Name)
-			if argsValue.Kind() == reflect.Ptr {
-				argsValue = argsValue.Elem()
-			}
-			args = argsValue.Interface()
-		}
+func NewCaller(callerPath string, injector interface{}) func(args interface{}) (interface{}, error) {
+	return func(args interface{}) (interface{}, error) {
+		return Call(callerPath, args, injector)
 	}
+}
 
-	if !strings.Contains(callerPath, "@") {
-		return nil, CallError{
-			Err:  fmt.Errorf("caller path should be in format of package.path@method"),
-			Code: CallErrorCodeInvalidCallerPath,
-		}
+//	func (i *InjectorCaller) Call(args interface{}) (interface{}, error) {
+//		return Call(i.callerPath, args, i.injector)
+//	}
+func Call(callerPath string, args interface{}, injector interface{}) (interface{}, error) {
+
+	// if req, ok := args.(*RequestType); ok {
+	// 	args = req.Get("Args")
+	// } else {
+	// 	argsType := reflect.TypeOf(args)
+	// 	if argsType.Kind() == reflect.Ptr {
+	// 		argsType = argsType.Elem()
+	// 	if argsType.Kind() != reflect.Slice {
+	// 		argsValue := reflect.ValueOf(args)
+
+	// 		if argsValue.Kind() == reflect.Ptr {
+	// 			argsValue = argsValue.Elem()
+	// 			argsType = argsType.Elem()
+
+	// 		}
+	// 		if field, found := argsType.FieldByName("Args"); found {
+	// 			argsValue = argsValue.FieldByName(field.Name)
+	// 			if argsValue.Kind() == reflect.Ptr {
+	// 				argsValue = argsValue.Elem()
+	// 			}
+	// 			args = argsValue.Interface()
+	// 		}
+	// 	}
+
+	// 	if !strings.Contains(callerPath, "@") {
+	// 		return nil, CallError{
+	// 			Err:  fmt.Errorf("caller path should be in format of package.path@method"),
+	// 			Code: CallErrorCodeInvalidCallerPath,
+	// 		}
+	// 	}
+	// }
+	fx := reflect.ValueOf(args)
+	if fx.Kind() == reflect.Ptr {
+		fx = fx.Elem()
+		args = fx.Interface()
+
 	}
 	callerEntry, found := callerCache.Load(strings.ToLower(callerPath))
 	if !found {

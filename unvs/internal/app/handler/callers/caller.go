@@ -55,49 +55,28 @@ type CallerResponse struct {
 // @Success 201 {object} CallerResponse "Response"
 // @Security OAuth2Password
 func (h *CallerHandler) Call(c echo.Context) error {
-	feature := c.Request().URL.Query().Get("feature")
-	if feature == "" {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
-			Code:    "INVALID_REQUEST_BODY",
-			Message: "query string 'feature' is required",
-		})
-
+	info, err := ExtractRequireQueryStrings(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-
-	tenantName := c.Request().URL.Query().Get("tenant")
-	if tenantName == "" {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
-			Code:    "INVALID_REQUEST_BODY",
-			Message: "query string 'tenant' is required",
-		})
-
+	fmt.Println(info)
+	callerPath := info.Action + "@" + info.Module
+	req, err := dynacall.NewInvoker(callerPath)
+	err = req.New(callerPath)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	lan := c.Request().URL.Query().Get("lan")
-	if lan == "" {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
-			Code:    "INVALID_REQUEST_BODY",
-			Message: "query string 'lan' is required",
-		})
+	// req, err := dynacall.NewRequestInstance(callerPath)
+	// args := req.Get("Args")
+	// tpy := reflect.TypeOf(args)
+	// for i := 0; i < tpy.NumField(); i++ {
+	// 	field := tpy.Field(i)
+	// 	fmt.Println(field.Name)
+	// }
+	// fmt.Println(reflect.TypeOf(args).Name())
 
-	}
-	action := c.Request().URL.Query().Get("action")
-	if action == "" {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
-			Code:    "INVALID_REQUEST_BODY",
-			Message: "query string 'action' is required",
-		})
-
-	}
-	module := c.Request().URL.Query().Get("module")
-	if module == "" {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
-			Code:    "INVALID_REQUEST_BODY",
-			Message: "query string'module' is required",
-		})
-
-	}
-	callerPath := action + "@" + module
-	req, err := dynacall.NewRequestInstance(callerPath, reflect.TypeOf(CallerRequest{}))
+	// jsonBff, err := json.Marshal(req.Data)
+	// fmt.Print(string(jsonBff))
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
@@ -112,8 +91,16 @@ func (h *CallerHandler) Call(c echo.Context) error {
 			Message: "Internal server error",
 		})
 	}
+	// vv := &struct { // Định nghĩa struct ẩn danh ngay đây
+	// 	Username string
+	// 	Password string
+	// }{
+	// 	Username: "admin",  // Gán giá trị cụ thể
+	// 	Password: "123456", // Gán giá trị cụ thể
+	// }
 
-	if err := c.Bind(req.Data); err != nil {
+	if err := c.Bind(req.Args); err != nil {
+
 		if eError, ok := err.(*echo.HTTPError); ok {
 			h.AppLogger.Error(eError.Unwrap().Error())
 			exampleData, errGet := dynacall.GetInputExampleCallerPath(callerPath)
@@ -171,7 +158,7 @@ func (h *CallerHandler) Call(c echo.Context) error {
 		})
 	}
 
-	tenantDb, err := config.CreateTenantDbx(tenantName)
+	tenantDb, err := config.CreateTenantDbx(info.Tenant)
 	if err != nil {
 		appLogger := h.AppLogger.WithField("pkgPath", reflect.TypeOf(h).Elem().PkgPath()+"/Call")
 		appLogger.Error(err)
@@ -181,13 +168,6 @@ func (h *CallerHandler) Call(c echo.Context) error {
 		})
 	}
 	err = tenantDb.Open()
-	if module == "" {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
-			Code:    "INVALID_REQUEST_BODY",
-			Message: "query string'module' is required",
-		})
-
-	}
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{
@@ -216,7 +196,7 @@ func (h *CallerHandler) Call(c echo.Context) error {
 
 		}
 	}() // Gọi ngay lập tức hàm ẩn danh deferred
-	retCall, err := dynacall.Call(callerPath, req.Data, struct {
+	injectorCaller := dynacall.NewCaller(callerPath, &struct {
 		Tenant        string
 		TenantDb      *dbx.DBXTenant
 		Context       context.Context
@@ -227,16 +207,17 @@ func (h *CallerHandler) Call(c echo.Context) error {
 		AccessToken string
 		FeatureId   string
 	}{
-		Tenant:        tenantName,
+		Tenant:        info.Tenant,
 		TenantDb:      tenantDb,
 		Context:       c.Request().Context(),
 		EncryptionKey: config.AppConfigInstance.EncryptionKey,
-		Language:      lan,
+		Language:      info.Lan,
 
 		Cache:       config.GetCache(),
 		AccessToken: c.Request().Header.Get("Authorization"),
-		FeatureId:   feature,
+		FeatureId:   info.Feature,
 	})
+	retCall, err := injectorCaller(req.Args)
 	if err != nil {
 		return h.CallHandlerErr(c, err, callerPath)
 	}
