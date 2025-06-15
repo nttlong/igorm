@@ -3995,3 +3995,84 @@ ____________________________________O/_______
 ⇨ http server started on [::]:8080
 time="2025-06-15T15:10:51+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
 {"time":"2025-06-15T15:10:51.9905463+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"9.6968058s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T15:16:06+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:06.1000972+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"15.6113654s"}
+time="2025-06-15T15:16:15+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:15.7340452+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"3.6579ms"}
+time="2025-06-15T15:16:16+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:16.3665067+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"0s"}
+time="2025-06-15T15:16:16+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:16.5542649+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"0s"}
+time="2025-06-15T15:16:16+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:16.7062696+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"0s"}
+time="2025-06-15T15:16:16+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:16.8209446+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"0s"}
+time="2025-06-15T15:16:16+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:16.9688884+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"842.7µs"}
+time="2025-06-15T15:16:17+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:17.1028468+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"572.9µs"}
+time="2025-06-15T15:16:17+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:17.2415115+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"558.9µs"}
+time="2025-06-15T15:16:17+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:17.3664905+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"754.2µs"}
+time="2025-06-15T15:16:17+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:17.4991662+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"510.6µs"}
+time="2025-06-15T15:16:17+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:17.6504882+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"175.6µs"}
+time="2025-06-15T15:16:17+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:17.793197+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"575.6µs"}
+time="2025-06-15T15:16:17+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:16:17.9328552+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"0s"}
+time="2025-06-15T15:17:07+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T15:17:07.9299417+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"24.5460255s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T15:21:44.0348963+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":400,"latency_human":"4.6585537s"}
+{"time":"2025-06-15T15:21:51.3881111+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":400,"latency_human":"0s"}
+{"time":"2025-06-15T15:22:17.3266777+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":400,"latency_human":"16.8454619s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T15:23:32.2026785+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"5.4595238s"}
+{"time":"2025-06-15T15:23:41.0512808+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"5.1026309s"}
+{"time":"2025-06-15T15:23:53.4558031+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"1.2775947s"}
+{"time":"2025-06-15T15:24:01.1426164+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T15:24:01.8928803+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"505.7µs"}
+{"time":"2025-06-15T15:24:02.1209241+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"853.9µs"}
+{"time":"2025-06-15T15:24:02.2834246+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=login&tenant=default&module=unvs.br.auth.users&action=login&lan=vi","status":200,"latency_human":"1.3747ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T15:26:09.043774+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"6.0909688s"}

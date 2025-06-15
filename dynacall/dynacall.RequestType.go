@@ -1,6 +1,7 @@
 package dynacall
 
 import (
+	"encoding/json"
 	"reflect"
 )
 
@@ -42,4 +43,11 @@ func (r *Invoker) Injector(injector interface{}) func() (interface{}, error) {
 	return func() (interface{}, error) {
 		return Call(r.callerPath, r.Args, injector)
 	}
+}
+func (r *Invoker) LoadJSON(jsonStr string) error {
+	err := json.Unmarshal([]byte(jsonStr), r.Args)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -66,17 +66,6 @@ func (h *CallerHandler) Call(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	// req, err := dynacall.NewRequestInstance(callerPath)
-	// args := req.Get("Args")
-	// tpy := reflect.TypeOf(args)
-	// for i := 0; i < tpy.NumField(); i++ {
-	// 	field := tpy.Field(i)
-	// 	fmt.Println(field.Name)
-	// }
-	// fmt.Println(reflect.TypeOf(args).Name())
-
-	// jsonBff, err := json.Marshal(req.Data)
-	// fmt.Print(string(jsonBff))
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
@@ -91,13 +80,6 @@ func (h *CallerHandler) Call(c echo.Context) error {
 			Message: "Internal server error",
 		})
 	}
-	// vv := &struct { // Định nghĩa struct ẩn danh ngay đây
-	// 	Username string
-	// 	Password string
-	// }{
-	// 	Username: "admin",  // Gán giá trị cụ thể
-	// 	Password: "123456", // Gán giá trị cụ thể
-	// }
 
 	if err := c.Bind(req.Args); err != nil {
 
@@ -196,7 +178,7 @@ func (h *CallerHandler) Call(c echo.Context) error {
 
 		}
 	}() // Gọi ngay lập tức hàm ẩn danh deferred
-	injectorCaller := dynacall.NewCaller(callerPath, &struct {
+	fn := req.Injector(&struct {
 		Tenant        string
 		TenantDb      *dbx.DBXTenant
 		Context       context.Context
@@ -217,7 +199,8 @@ func (h *CallerHandler) Call(c echo.Context) error {
 		AccessToken: c.Request().Header.Get("Authorization"),
 		FeatureId:   info.Feature,
 	})
-	retCall, err := injectorCaller(req.Args)
+
+	retCall, err := fn()
 	if err != nil {
 		return h.CallHandlerErr(c, err, callerPath)
 	}
