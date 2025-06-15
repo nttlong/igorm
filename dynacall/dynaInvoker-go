@@ -1,4 +1,0 @@
-/*
-this code is used to call a method of a struct dynamically use as private method
-*/
-package dynacall

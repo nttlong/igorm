@@ -32,7 +32,10 @@ func newCompilerMssql(dbName string, db *sql.DB) ICompiler {
 			OnCompiler: onCompilerMssql,
 		},
 	}
-	compilerMssql.LoadDbDictionary(dbName, db)
+	err := compilerMssql.LoadDbDictionary(dbName, db)
+	if err != nil {
+		fmt.Println(err)
+	}
 	compilerMssqlCache.Store(dbName, compilerMssql)
 	return compilerMssql
 }

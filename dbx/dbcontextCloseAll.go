@@ -5,14 +5,20 @@ import "fmt"
 func CloseAllDBXTenant() {
 	cacheDBXTenant.Range(func(key, value interface{}) bool {
 		fmt.Printf("Closing DBX connection:% s", key)
-		value.(DBXTenant).Close()
+		err := value.(DBXTenant).Close()
+		if err != nil {
+			panic(err)
+		}
 		return true
 	})
 }
 func CloseAllDBX() {
 	dbxCache.Range(func(key, value interface{}) bool {
 		fmt.Printf("Closing DBX connection:% s", key)
-		value.(DBX).Close()
+		err := value.(DBX).Close()
+		if err != nil {
+			panic(err)
+		}
 		return true
 	})
 }

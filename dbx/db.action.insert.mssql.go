@@ -87,7 +87,19 @@ func (ctx *DBXTenant) mssqlInsert(cntx context.Context, tblInfo *EntityType, ent
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 				idField.SetInt(insertedID)
 			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-				idField.SetUint(uint64(insertedID))
+				// Kiểm tra xem insertedID có phải là số âm không.
+				// Nếu là số âm, có thể đó là một lỗi từ cơ sở dữ liệu
+				// hoặc một trường hợp không mong muốn.
+				if insertedID < 0 {
+					// Error handling: Log, return error, or set default value 0
+					// Example: log.Printf("Warning: Negative ID received from DB: %d", insertedID)
+					// Or: return errors.New("negative ID received")
+					// For this case, you may want to set 0 or ignore
+					idField.SetUint(0) // Gán 0 nếu bạn muốn bỏ qua ID âm
+
+				} else {
+					idField.SetUint(uint64(insertedID))
+				}
 			}
 		} else {
 			return fmt.Errorf("cannot set '%s' field", tblInfo.GetPrimaryKeyName()[0])

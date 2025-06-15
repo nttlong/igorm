@@ -2946,3 +2946,257 @@ ____________________________________O/_______
                                     O\
 ⇨ http server started on [::]:8080
 {"time":"2025-06-14T22:54:08.3747778+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=a&tenant=a&module=a&action=a&lan=a","status":400,"latency_human":"2.6653596s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T07:56:56.5713297+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"482.4µs"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T07:58:26.1311201+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"577.6µs"}
+{"time":"2025-06-15T07:58:26.1542472+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"514.8µs"}
+{"time":"2025-06-15T07:58:26.1605303+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.2394ms"}
+{"time":"2025-06-15T07:58:26.1626796+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"512.3µs"}
+{"time":"2025-06-15T07:58:26.3280243+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"1.0123ms"}
+{"time":"2025-06-15T07:58:26.3317933+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"312.1µs"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T07:59:25.9330253+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"695.2µs"}
+{"time":"2025-06-15T07:59:25.9539383+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"507µs"}
+{"time":"2025-06-15T07:59:25.9588438+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T07:59:25.9644579+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"7.8826ms"}
+{"time":"2025-06-15T07:59:26.0564918+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T07:59:26.0620851+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T08:00:47.8398761+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=dasd&action=dsa&module=dasd&tenant=dasd&lan=dasd","status":400,"latency_human":"0s"}
+{"time":"2025-06-15T08:01:17.8501645+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=dasd&action=dsa&module=dasd&tenant=dasd&lan=dasd","status":400,"latency_human":"0s"}
+{"time":"2025-06-15T08:01:19.0597466+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=dasd&action=dsa&module=dasd&tenant=dasd&lan=dasd","status":400,"latency_human":"78µs"}
+{"time":"2025-06-15T08:01:19.5606478+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=dasd&action=dsa&module=dasd&tenant=dasd&lan=dasd","status":400,"latency_human":"0s"}
+{"time":"2025-06-15T08:01:19.8328247+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=dasd&action=dsa&module=dasd&tenant=dasd&lan=dasd","status":400,"latency_human":"384.4µs"}
+{"time":"2025-06-15T08:01:20.0581965+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=dasd&action=dsa&module=dasd&tenant=dasd&lan=dasd","status":400,"latency_human":"0s"}
+{"time":"2025-06-15T08:01:40.0628215+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T08:01:40.4578734+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"2.0541ms"}
+{"time":"2025-06-15T08:01:40.4589317+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"58.2243ms"}
+{"time":"2025-06-15T08:01:40.4632782+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"62.5711ms"}
+{"time":"2025-06-15T08:01:44.2538371+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=dasd&action=dsa&module=dasd&tenant=dasd&lan=dasd","status":400,"latency_human":"531.4µs"}
+{"time":"2025-06-15T08:01:54.2946808+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"1.9881ms"}
+{"time":"2025-06-15T08:01:54.3089252+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T08:01:54.3112362+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T08:01:54.3122632+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"1.5322ms"}
+{"time":"2025-06-15T08:01:54.4719692+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"308.1µs"}
+{"time":"2025-06-15T08:01:54.4769644+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T08:04:38.6640453+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"597.9µs"}
+{"time":"2025-06-15T08:04:38.679655+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T08:04:38.6848274+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"4.4204ms"}
+{"time":"2025-06-15T08:04:38.6848274+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"510.1µs"}
+{"time":"2025-06-15T08:04:38.8327419+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"506.8µs"}
+{"time":"2025-06-15T08:04:38.8327419+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T08:05:19.3424688+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"1.4057149s"}
+{"time":"2025-06-15T08:05:55.5361317+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"0s"}
+{"time":"2025-06-15T08:06:51.8417336+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"6.1299805s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T08:15:24.7255198+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"1.1320873s"}
+{"time":"2025-06-15T08:15:31.1440283+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T08:15:31.5049942+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"49.8377ms"}
+{"time":"2025-06-15T08:15:31.5195708+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"645.3µs"}
+{"time":"2025-06-15T08:15:31.5219358+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"68.4754ms"}
+{"time":"2025-06-15T08:15:33.913273+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"1.0498ms"}
+{"time":"2025-06-15T08:15:36.9091248+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"856.3µs"}
+{"time":"2025-06-15T08:15:37.8878318+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"507.2µs"}
+{"time":"2025-06-15T08:15:38.0556927+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"0s"}
+{"time":"2025-06-15T08:15:38.2092412+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"728.6µs"}
+{"time":"2025-06-15T08:15:38.3400418+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"504.2µs"}
+{"time":"2025-06-15T08:15:38.6309944+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"567.6µs"}
+{"time":"2025-06-15T08:15:43.6119487+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login21&lan=vi","status":400,"latency_human":"0s"}
+{"time":"2025-06-15T08:15:54.5962505+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":200,"latency_human":"567.6µs"}
+time="2025-06-15T08:16:10+07:00" level=error msg="INVALID_USERNAME_OR_PASSWORD: Invalid username or password" callerPath=login2@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:16:10.3487375+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":500,"latency_human":"2.5265ms"}
+time="2025-06-15T08:16:26+07:00" level=error msg="INVALID_USERNAME_OR_PASSWORD: Invalid username or password" callerPath=login2@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:16:26.0394243+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":500,"latency_human":"1.9285ms"}
+time="2025-06-15T08:16:51+07:00" level=error msg="INVALID_USERNAME_OR_PASSWORD: Invalid username or password" callerPath=login2@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:17:13.2301592+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":500,"latency_human":"31.6353841s"}
+time="2025-06-15T08:17:17+07:00" level=error msg="INVALID_USERNAME_OR_PASSWORD: Invalid username or password" callerPath=login2@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:17:17.4884606+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":500,"latency_human":"2.2467726s"}
+time="2025-06-15T08:17:34+07:00" level=error msg="INVALID_USERNAME_OR_PASSWORD: Invalid username or password" callerPath=login2@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:17:56.9068644+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":500,"latency_human":"30.1635163s"}
+time="2025-06-15T08:18:01+07:00" level=error msg="INVALID_USERNAME_OR_PASSWORD: Invalid username or password" callerPath=login2@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:18:31.2501165+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":500,"latency_human":"32.2982015s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T08:21:41.6014297+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login2&lan=vi","status":400,"latency_human":"538.9µs"}
+time="2025-06-15T08:21:49+07:00" level=error msg="INVALID_USERNAME_OR_PASSWORD: Invalid username or password" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:21:51.5541336+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":500,"latency_human":"5.28884s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-15T08:28:59+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:01.3231007+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"6.3756116s"}
+time="2025-06-15T08:29:19+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:25.5914774+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"10.6336133s"}
+time="2025-06-15T08:29:28+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:28.0049566+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"3.7083ms"}
+time="2025-06-15T08:29:28+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:28.1546452+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.1308ms"}
+time="2025-06-15T08:29:28+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:28.3071652+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.1284ms"}
+time="2025-06-15T08:29:28+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:28.4260619+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.0686ms"}
+time="2025-06-15T08:29:28+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:28.5642032+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.3599ms"}
+time="2025-06-15T08:29:28+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:28.6986614+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"596.6µs"}
+time="2025-06-15T08:29:28+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:28.8301991+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"831.1µs"}
+time="2025-06-15T08:29:28+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:28.968192+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"615.1µs"}
+time="2025-06-15T08:29:29+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:29.2445136+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"750.3µs"}
+time="2025-06-15T08:29:32+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:32.8607965+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.6311ms"}
+time="2025-06-15T08:29:33+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:33.201614+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"3.6894ms"}
+time="2025-06-15T08:29:33+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:33.3886117+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"22.5142ms"}
+time="2025-06-15T08:29:33+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:33.4779263+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.5002ms"}
+time="2025-06-15T08:29:33+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:33.6278215+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"4.3164ms"}
+time="2025-06-15T08:29:33+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:33.7595545+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.2229ms"}
+time="2025-06-15T08:29:33+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:33.9052616+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"3.1285ms"}
+time="2025-06-15T08:29:34+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:34.0632472+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"3.4738ms"}
+time="2025-06-15T08:29:34+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:34.2252657+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"13.2688ms"}
+time="2025-06-15T08:29:34+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:34.3625416+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.0063ms"}
+time="2025-06-15T08:29:34+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:34.5312198+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.625ms"}
+time="2025-06-15T08:29:34+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:34.6907491+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.8002ms"}
+time="2025-06-15T08:29:34+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:34.8725367+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.7138ms"}
+time="2025-06-15T08:29:35+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:35.0416098+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.3787ms"}
+time="2025-06-15T08:29:35+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:35.2001193+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.2185ms"}
+time="2025-06-15T08:29:35+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:35.498231+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"906.2µs"}
+time="2025-06-15T08:29:35+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:35.6946544+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.4506ms"}
+time="2025-06-15T08:29:35+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:35.8791506+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.8143ms"}
+time="2025-06-15T08:29:36+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:36.063454+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.0181ms"}
+time="2025-06-15T08:29:36+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:36.2168592+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.5788ms"}
+time="2025-06-15T08:29:36+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:36.3786144+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.4192ms"}
+time="2025-06-15T08:29:36+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:36.5529401+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.3817ms"}
+time="2025-06-15T08:29:36+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:36.7135141+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.4546ms"}
+time="2025-06-15T08:29:36+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:36.8536819+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"881.7µs"}
+time="2025-06-15T08:29:37+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:37.0085281+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.8145ms"}
+time="2025-06-15T08:29:37+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:37.1465141+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.3921ms"}
+time="2025-06-15T08:29:37+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:37.2944077+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.5995ms"}
+time="2025-06-15T08:29:37+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:37.4505023+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.7114ms"}
+time="2025-06-15T08:29:37+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:37.6181701+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.6702ms"}
+time="2025-06-15T08:29:37+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:37.7714842+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.3838ms"}
+time="2025-06-15T08:29:37+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:37.9246052+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"5.9581ms"}
+time="2025-06-15T08:29:38+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:38.070328+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.1798ms"}
+time="2025-06-15T08:29:38+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:38.2336305+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"894µs"}
+time="2025-06-15T08:29:38+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:38.3712291+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.2418ms"}
+time="2025-06-15T08:29:38+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:38.5375444+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"3.2754ms"}
+time="2025-06-15T08:29:38+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:38.6692024+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.8663ms"}
+time="2025-06-15T08:29:38+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:38.8170887+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.9072ms"}
+time="2025-06-15T08:29:38+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:38.963307+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.0788ms"}
+time="2025-06-15T08:29:39+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:39.1153547+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.0345ms"}
+time="2025-06-15T08:29:39+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:39.264192+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.0445ms"}
+time="2025-06-15T08:29:39+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:39.4109394+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.7627ms"}
+time="2025-06-15T08:29:39+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:39.6068014+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.0786ms"}
+time="2025-06-15T08:29:39+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:39.7501505+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.6903ms"}
+time="2025-06-15T08:29:39+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:39.9020755+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.1062ms"}
+time="2025-06-15T08:29:40+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:40.0687974+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"1.3323ms"}
+time="2025-06-15T08:29:40+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:40.2154515+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"2.0297ms"}
+time="2025-06-15T08:29:44+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-15T08:29:44.9975161+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke-form?feature=system&tenant=test&module=unvs.br.auth.users&action=login&lan=vi","status":401,"latency_human":"62.1382ms"}

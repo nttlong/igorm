@@ -1,0 +1,7 @@
+# E:\Docker\go\unvs\igorm\unvs\.golangci.yml
+issues:
+  exclude-rules:
+    - path: dbx/dbscaner.go # <-- Đã sửa đường dẫn tương đối
+      linters:
+        - gosec
+      text: "G103: Use of unsafe calls should be audited"

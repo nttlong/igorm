@@ -31,7 +31,10 @@ func newCompilerMysql(dbName string, db *sql.DB) ICompiler {
 			OnCompiler: onCompilerMySql,
 		},
 	}
-	compilerMysql.LoadDbDictionary(dbName, db)
+	err := compilerMysql.LoadDbDictionary(dbName, db)
+	if err != nil {
+		fmt.Println(err)
+	}
 	compilerMysqlCache.Store(dbName, compilerMysql)
 	return compilerMysql
 }
@@ -58,8 +61,8 @@ func (w CompilerMySql) parseInsertSQL(p parseInsertInfo) (*string, error) {
 func (w CompilerMySql) LoadDbDictionary(dbName string, db *sql.DB) error {
 	// decalre sql get table and columns in postgres
 	//sqlGetTableAndColumns := "SELECT table_name, column_name FROM information_schema.columns WHERE table_schema = 'public' ORDER BY table_name, column_name"
-	sqlGetTableAndColumns := "SELECT TABLE_NAME ,   COLUMN_NAME  FROM INFORMATION_SCHEMA.COLUMNS WHERE 	TABLE_SCHEMA ='" + dbName + "'"
-	rows, err := db.Query(sqlGetTableAndColumns)
+	sqlGetTableAndColumns := "SELECT TABLE_NAME ,   COLUMN_NAME  FROM INFORMATION_SCHEMA.COLUMNS WHERE 	TABLE_SCHEMA =?"
+	rows, err := db.Query(sqlGetTableAndColumns, dbName)
 	if err != nil {
 		return err
 	}

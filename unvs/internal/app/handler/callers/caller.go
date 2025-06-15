@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"reflect"
 	"runtime/debug"
-	"strings"
 	"unvs/internal/config"
 
 	"github.com/labstack/echo/v4"
@@ -124,7 +123,7 @@ func (h *CallerHandler) Call(c echo.Context) error {
 					Message: "Invalid request body",
 				})
 			}
-			if exampleData == nil || len(exampleData) == 0 {
+			if len(exampleData) == 0 {
 				return c.JSON(http.StatusBadRequest, ErrorResponse{
 					Code:    "INVALID_REQUEST_BODY",
 					Message: "Invalid request body",
@@ -207,125 +206,42 @@ func (h *CallerHandler) Call(c echo.Context) error {
 	}
 
 	// args := req.Get("Args")
-	if omapDatak, ok := req.Data.(interface{}); ok {
+	defer func() {
+		if r := recover(); r != nil {
 
-		defer func() {
-			if r := recover(); r != nil {
-
-				pkgPath := reflect.TypeOf(h).Elem().PkgPath() + "/Call"
-				log := h.AppLogger.WithField("pkgPath", pkgPath).WithField("callerPath", callerPath)
-				log.Errorf("Panic occurred: %v\n", r)
-				log.Printf("Stack Trace:\n%s", debug.Stack())
-
-			}
-		}() // Gọi ngay lập tức hàm ẩn danh deferred
-		retCall, err := dynacall.Call(callerPath, omapDatak, struct {
-			Tenant        string
-			TenantDb      *dbx.DBXTenant
-			Context       context.Context
-			EncryptionKey string
-			Language      string
-
-			Cache       cache.Cache
-			AccessToken string
-			FeatureId   string
-		}{
-			Tenant:        tenantName,
-			TenantDb:      tenantDb,
-			Context:       c.Request().Context(),
-			EncryptionKey: config.AppConfigInstance.EncryptionKey,
-			Language:      lan,
-
-			Cache:       config.GetCache(),
-			AccessToken: c.Request().Header.Get("Authorization"),
-			FeatureId:   feature,
-		})
-		if err != nil {
 			pkgPath := reflect.TypeOf(h).Elem().PkgPath() + "/Call"
 			log := h.AppLogger.WithField("pkgPath", pkgPath).WithField("callerPath", callerPath)
-			log.Error(err)
-			if e, ok := err.(*dynacall.CallError); ok {
-				if e.Code == dynacall.CallErrorCodeTokenExpired {
-					return c.JSON(http.StatusUnauthorized, ErrorResponse{
-						Code:    e.Code.String(),
-						Message: e.Err.Error(),
-					})
-				}
-				if e.Code == dynacall.CallErrorCodeAccessDenied {
-					return c.JSON(http.StatusForbidden, ErrorResponse{
-						Code:    e.Code.String(),
-						Message: e.Err.Error(),
-					})
-				}
-				if e.Code == dynacall.CallErrorCodeAuthenticationFailed {
-					return c.JSON(http.StatusUnauthorized, ErrorResponse{
-						Code:    e.Code.String(),
-						Message: e.Err.Error(),
-					})
-				}
-				if e.Code == dynacall.CallErrorCodeAuthenticationFailed {
-					return c.JSON(http.StatusUnauthorized, ErrorResponse{
-						Code:    e.Code.String(),
-						Message: e.Err.Error(),
-					})
-				}
+			log.Errorf("Panic occurred: %v\n", r)
+			log.Printf("Stack Trace:\n%s", debug.Stack())
 
-				return c.JSON(http.StatusBadRequest, ErrorResponse{
-					Code:    e.Code.String(),
-					Message: e.Err.Error(),
-				})
-			}
-			if e, ok := err.(dynacall.CallError); ok {
-				if strings.Contains(e.Err.Error(), "invalid args") {
-					return c.JSON(http.StatusBadRequest, ErrorResponse{
-						Code:    "INVALID_REQUEST_BODY",
-						Message: "invalid request body",
-					})
-				}
-				return c.JSON(http.StatusInternalServerError, ErrorResponse{
-					Code:    e.Code.String(),
-					Message: "Server error",
-				})
-			}
-			if e, ok := err.(*dbx.DBXError); ok {
-				if e.Code == dbx.DBXErrorCodeDuplicate {
-					return c.JSON(http.StatusConflict, ErrorResponse{
-						Code:    e.Code.String(),
-						Fields:  e.Fields,
-						Values:  e.Values,
-						Message: e.Error(),
-					})
-				}
-				if e.Code == dbx.DBXErrorCodeInvalidSize {
-
-					return c.JSON(http.StatusBadRequest, ErrorResponse{
-						Code:    e.Code.String(),
-						Message: e.Error(),
-						MaxSize: e.MaxSize,
-						Fields:  e.Fields,
-					})
-				}
-
-				return c.JSON(http.StatusBadRequest, ErrorResponse{
-					Code:    e.Code.String(),
-					Message: e.Error(),
-				})
-
-			}
-			return c.JSON(http.StatusInternalServerError, ErrorResponse{
-				Code:    "SERVER_ERROR",
-				Message: "Server error",
-			})
 		}
-		// err = retCall[1].(error)
-		// if err != nil {
-		// 	return c.JSON(http.StatusBadRequest, err)
-		// }
-		return c.JSON(http.StatusOK, retCall)
+	}() // Gọi ngay lập tức hàm ẩn danh deferred
+	retCall, err := dynacall.Call(callerPath, req.Data, struct {
+		Tenant        string
+		TenantDb      *dbx.DBXTenant
+		Context       context.Context
+		EncryptionKey string
+		Language      string
+
+		Cache       cache.Cache
+		AccessToken string
+		FeatureId   string
+	}{
+		Tenant:        tenantName,
+		TenantDb:      tenantDb,
+		Context:       c.Request().Context(),
+		EncryptionKey: config.AppConfigInstance.EncryptionKey,
+		Language:      lan,
+
+		Cache:       config.GetCache(),
+		AccessToken: c.Request().Header.Get("Authorization"),
+		FeatureId:   feature,
+	})
+	if err != nil {
+		return h.CallHandlerErr(c, err, callerPath)
 	}
-	return c.JSON(http.StatusBadRequest, ErrorResponse{
-		Code:    "INVALID_REQUEST_BODY",
-		Message: "Dữ liệu yêu cầu không hợp lệ",
+	return c.JSON(http.StatusOK, CallerResponse{
+		Results: retCall,
 	})
 
 }

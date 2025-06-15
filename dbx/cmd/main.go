@@ -99,7 +99,10 @@ func getMssqlConfig() dbx.Cfg {
 }
 func insertData(TenantDb *dbx.DBXTenant) {
 
-	TenantDb.Open()
+	err := TenantDb.Open()
+	if err != nil {
+		panic(err)
+	}
 	defer TenantDb.Close()
 	avg := int64(0)
 	for i := 0; i < 100000; i++ {
@@ -178,9 +181,12 @@ func loadData(TenantDb *dbx.DBXTenant) {
 	fmt.Println("Average time in ms ", avg/int64(10000))
 }
 func main() {
-	dbx.AddEntities(&Employees{}, &Departments{}, &Users{}, &WorkingDays{})
+	err := dbx.AddEntities(&Employees{}, &Departments{}, &Users{}, &WorkingDays{})
+	if err != nil {
+		panic(err)
+	}
 	db := dbx.NewDBX(getPgConfig())
-	err := db.Open()
+	err = db.Open()
 	if err != nil {
 		panic(err)
 	}
@@ -191,7 +197,10 @@ func main() {
 		panic(err)
 	}
 
-	TenantDb.Open()
+	err = TenantDb.Open()
+	if err != nil {
+		panic(err)
+	}
 	defer TenantDb.Close()
 	//insertData(TenantDb)
 	selectData(TenantDb)

@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 	handler "unvs/internal/app/handler"
 	caller "unvs/internal/app/handler/callers"
 	"unvs/internal/app/handler/inspector"
@@ -21,7 +22,7 @@ import (
 	_ "unvs/docs" // Import thư mục chứa docs đã tạo bởi swag
 
 	"net/http"
-	_ "net/http/pprof"
+	// _ "net/http/pprof"
 
 	echoSwagger "github.com/swaggo/echo-swagger" // Thư viện tích hợp Swagger cho Echo
 )
@@ -51,7 +52,14 @@ var appLogger *logrus.Logger
 func main() {
 	appLogger = logrus.New()
 	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
+		s := &http.Server{
+			Addr:         "localhost:6060",
+			Handler:      nil,               // Your main Echo router should be here, not nil
+			ReadTimeout:  10 * time.Second,  // Ví dụ: timeout đọc 10 giây
+			WriteTimeout: 10 * time.Second,  // Ví dụ: timeout ghi 10 giây
+			IdleTimeout:  120 * time.Second, // Ví dụ: timeout kết nối rảnh 120 giây
+		}
+		log.Println(s.ListenAndServe())
 	}()
 	err := config.LoadConfig()
 	if err != nil {
@@ -59,7 +67,7 @@ func main() {
 	}
 	logPath := config.AppConfigInstance.Logs
 	logDir := filepath.Dir(logPath)
-	err = os.MkdirAll(logDir, 0755)
+	err = os.MkdirAll(logDir, 0750)
 	if err != nil {
 		panic(err)
 	}

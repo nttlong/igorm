@@ -342,7 +342,10 @@ func (e *executorMySql) createDb(dbName string) func(dbMaster DBX, dbTenant DBXT
 		}
 		// Switch to the new database
 		dbTenant.TenantDbName = dbName
-		dbTenant.Open()
+		err = dbTenant.Open()
+		if err != nil {
+			return err
+		}
 		defer dbTenant.Close()
 		// _, err = dbTenant.DB.Exec("DROP FUNCTION IF EXISTS dbx_HighlightText")
 		// if err != nil {

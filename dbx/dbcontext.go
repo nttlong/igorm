@@ -217,14 +217,20 @@ func createDbTenant(dbx DBX, dbName string) *DBXTenant {
 
 func (dbx DBX) getTenant(dbName string) (*DBXTenant, error) {
 
-	dbx.Open()
-	defer dbx.Close()
-	dbTenant := createDbTenant(dbx, dbName)
-	err := dbx.executor.createDb(dbName)(dbx, *dbTenant)
+	err := dbx.Open()
 	if err != nil {
 		return nil, err
 	}
-	dbTenant.Open()
+	defer dbx.Close()
+	dbTenant := createDbTenant(dbx, dbName)
+	err = dbx.executor.createDb(dbName)(dbx, *dbTenant)
+	if err != nil {
+		return nil, err
+	}
+	err = dbTenant.Open()
+	if err != nil {
+		return nil, err
+	}
 
 	for _, e := range _entities.GetEntities() {
 

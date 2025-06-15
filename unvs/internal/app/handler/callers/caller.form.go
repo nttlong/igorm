@@ -63,10 +63,6 @@ func (h *CallerHandler) FormSubmit(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	jsonData, _ := json.Marshal(req)
-
-	fmt.Println(jsonData)
-
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -86,48 +82,53 @@ func (h *CallerHandler) FormSubmit(c echo.Context) error {
 		})
 	}
 	err = tenantDb.Open()
-	if omapDatak, ok := req.Data.(interface{}); ok {
-
-		defer func() {
-			if r := recover(); r != nil {
-
-				pkgPath := reflect.TypeOf(h).Elem().PkgPath() + "/Call"
-				log := h.AppLogger.WithField("pkgPath", pkgPath).WithField("callerPath", callerPath)
-				log.Errorf("Panic occurred: %v\n", r)
-				log.Printf("Stack Trace:\n%s", debug.Stack())
-
-			}
-		}() // Gọi ngay lập tức hàm ẩn danh deferred
-		retCall, err := dynacall.Call(callerPath, omapDatak, struct {
-			Tenant        string
-			TenantDb      *dbx.DBXTenant
-			Context       context.Context
-			EncryptionKey string
-			Language      string
-
-			Cache       cache.Cache
-			AccessToken string
-			FeatureId   string
-		}{
-			Tenant:        info.Tenant,
-			TenantDb:      tenantDb,
-			Context:       c.Request().Context(),
-			EncryptionKey: config.AppConfigInstance.EncryptionKey,
-			Language:      info.Lan,
-
-			Cache:       config.GetCache(),
-			AccessToken: c.Request().Header.Get("Authorization"),
-			FeatureId:   info.Feature,
+	if err != nil {
+		appLogger := h.AppLogger.WithField("pkgPath", reflect.TypeOf(h).Elem().PkgPath()+"/Call")
+		appLogger.Error(err)
+		return c.JSON(http.StatusForbidden, ErrorResponse{
+			Code:    "FORBIDDEN",
+			Message: "Forbidden",
 		})
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-		}
-		response := FormResponse{
-			Status:  "success",
-			Message: "Call success",
-			Data:    retCall,
-		}
-		return c.JSON(http.StatusOK, response)
 	}
-	return echo.NewHTTPError(http.StatusBadRequest, "Invalid data format")
+	defer func() {
+		if r := recover(); r != nil {
+
+			pkgPath := reflect.TypeOf(h).Elem().PkgPath() + "/Call"
+			log := h.AppLogger.WithField("pkgPath", pkgPath).WithField("callerPath", callerPath)
+			log.Errorf("Panic occurred: %v\n", r)
+			log.Printf("Stack Trace:\n%s", debug.Stack())
+
+		}
+	}() // Gọi ngay lập tức hàm ẩn danh deferred
+	retCall, err := dynacall.Call(callerPath, req.Data, struct {
+		Tenant        string
+		TenantDb      *dbx.DBXTenant
+		Context       context.Context
+		EncryptionKey string
+		Language      string
+
+		Cache       cache.Cache
+		AccessToken string
+		FeatureId   string
+	}{
+		Tenant:        info.Tenant,
+		TenantDb:      tenantDb,
+		Context:       c.Request().Context(),
+		EncryptionKey: config.AppConfigInstance.EncryptionKey,
+		Language:      info.Lan,
+
+		Cache:       config.GetCache(),
+		AccessToken: c.Request().Header.Get("Authorization"),
+		FeatureId:   info.Feature,
+	})
+	if err != nil {
+		return h.CallHandlerErr(c, err, callerPath)
+	}
+	response := FormResponse{
+		Status:  "success",
+		Message: "Call success",
+		Data:    retCall,
+	}
+	return c.JSON(http.StatusOK, response)
+
 }

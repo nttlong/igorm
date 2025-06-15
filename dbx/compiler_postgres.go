@@ -33,7 +33,10 @@ func newCompilerPostgres(dbName string, db *sql.DB) ICompiler {
 			OnCompiler: onCompilerPostgres,
 		},
 	}
-	compilerPostgres.LoadDbDictionary(dbName, db)
+	err := compilerPostgres.LoadDbDictionary(dbName, db)
+	if err != nil {
+		panic(err)
+	}
 	compilerPostgresCache.Store(dbName, compilerPostgres)
 	return compilerPostgres
 }

@@ -32,6 +32,9 @@ func CreateTenantDbx(tenant string) (*dbx.DBXTenant, error) {
 	if e != nil {
 		return nil, e
 	}
-	db.Open()
+	e = db.Open()
+	if e != nil {
+		return nil, e
+	}
 	return r, nil
 }

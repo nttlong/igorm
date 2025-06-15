@@ -201,13 +201,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "JSON data object",
+                        "type": "string",
+                        "default": "{\"code\":\"R003\",\"name\":\"test3\",\"description\":\"example description\"}",
+                        "description": "JSON stringify from browser",
                         "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object"
-                        }
+                        "in": "formData",
+                        "required": true
                     },
                     {
                         "type": "file",

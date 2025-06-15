@@ -334,10 +334,16 @@ func (ctx *DBXTenant) mssqlInsertDelete(tblInfo *EntityType, entity interface{})
 	var finalErr error
 	defer func() {
 		if r := recover(); r != nil {
-			tx.Rollback()
+			err := tx.Rollback()
+			if err != nil {
+				panic(err)
+			}
 			panic(r)
 		} else if finalErr != nil {
-			tx.Rollback()
+			err = tx.Rollback()
+			if err != nil {
+				panic(err)
+			}
 		}
 	}()
 
@@ -368,10 +374,14 @@ func (ctx *DBXTenant) mssqlInsertDelete(tblInfo *EntityType, entity interface{})
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 				idField.SetInt(insertedID)
 			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-				idField.SetUint(uint64(insertedID))
+				if insertedID < 0 {
+					idField.SetUint(0)
+				} else {
+					idField.SetUint(uint64(insertedID))
+				}
 			}
 		} else {
-			fmt.Printf("Cảnh báo: Không thể gán insertedID %d vào trường '%s' của entity\n", insertedID, tblInfo.GetPrimaryKeyName())
+			fmt.Printf("Warning: Cannot assign insertedID %d to field '%s' of entity\n", insertedID, tblInfo.GetPrimaryKeyName())
 		}
 	} else {
 		// === QUAN TRỌNG: Nếu Valid là FALSE, có nghĩa là SCOPE_IDENTITY() trả về NULL ===

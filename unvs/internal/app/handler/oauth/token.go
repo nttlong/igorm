@@ -47,7 +47,7 @@ func (h *OAuthHandler) Token(c echo.Context) error {
 			Message: "grant_type 'password' supported only",
 		})
 	}
-	callPath := "login@unvs.br.auth.users"
+	callPath := "AuthenticateUser@unvs.br.auth.users"
 	postData := []interface{}{username, password}
 	dbTenant, err := config.CreateTenantDbx(tenantName)
 	if err != nil {

@@ -3,6 +3,7 @@ package auth
 import (
 	authModel "dbmodels/auth"
 	"dbx"
+	"dynacall"
 	"fmt"
 
 	service "unvs.br.auth/services"
@@ -10,7 +11,7 @@ import (
 	authError "unvs.br.auth/errors"
 )
 
-func (u *User) Login(username string, password string) (*service.OAuth2Token, error) {
+func (u *User) AuthenticateUser(username string, password string) (*service.OAuth2Token, error) {
 	(&u.TokenService).DecodeAccessToken("token")
 	CreateSysAdminUser(u.TenantDb, u.Context)
 	if username == "" || password == "" {
@@ -70,9 +71,23 @@ func (u *User) Login(username string, password string) (*service.OAuth2Token, er
 	return u.GenerateToken(user.UserId, defaultRole)
 
 }
-func (u *User) Login2(login struct {
+func (u *User) Login(login struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }) (*service.OAuth2Token, error) {
-	return u.Login(login.Username, login.Password)
+	ret, err := u.AuthenticateUser(login.Username, login.Password)
+	if err != nil {
+		if authErr, ok := err.(*authError.AuthError); ok {
+			if authErr.Code == authError.ErrInvalidUsernameOrPassword {
+				return nil, &dynacall.CallError{
+					Code: dynacall.CallErrorCodeAuthenticationFailed,
+					Err:  err,
+				}
+			}
+			return nil, authErr
+		}
+
+		return nil, err
+	}
+	return ret, nil
 }

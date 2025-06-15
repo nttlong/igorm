@@ -174,12 +174,12 @@ paths:
         name: lan
         required: true
         type: string
-      - description: JSON data object
-        in: body
+      - default: '{"code":"R003","name":"test3","description":"example description"}'
+        description: JSON stringify from browser
+        in: formData
         name: data
         required: true
-        schema:
-          type: object
+        type: string
       - description: One or more files to upload
         in: formData
         name: files

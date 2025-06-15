@@ -438,7 +438,10 @@ func (e executorMssql) createDb(dbName string) func(dbMaster DBX, dbTenant DBXTe
 		if err != nil {
 			return err
 		}
-		dbTenant.Open()
+		err = dbTenant.Open()
+		if err != nil {
+			return err
+		}
 		defer dbTenant.Close()
 		r, err := dbTenant.DB.Exec(createMssqlHighlightFunction())
 		if err != nil {
