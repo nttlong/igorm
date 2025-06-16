@@ -79,7 +79,7 @@ const MainLayout = () => {
   }, []);
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? "dark" : ""}`}>
+    <div className={`main-layout min-h-screen ${isDarkMode ? "dark" : ""}`}>
       <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
         <Header 
           onSidebarToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -100,7 +100,7 @@ const MainLayout = () => {
         />
 
         <main
-          className={`flex-1 mt-16 p-6 transition-all duration-300 ${
+          className={`flex-1  transition-all duration-300 ${
             isSidebarCollapsed ? "ml-16" : "ml-64"
           }`}
         >

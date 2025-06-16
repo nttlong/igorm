@@ -4351,3 +4351,27 @@ time="2025-06-16T18:25:53+07:00" level=error msg="dynacall error: INVALID_USERNA
 {"time":"2025-06-16T18:30:25.2085658+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"2.0643ms"}
 {"time":"2025-06-16T18:30:45.0748224+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"812.2µs"}
 {"time":"2025-06-16T18:41:00.4806132+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-16T18:44:01.900927+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=default&lan=en-US","status":200,"latency_human":"1.4610207s"}
+{"time":"2025-06-16T19:04:28.1496419+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=default&lan=en-US","status":200,"latency_human":"72.1713ms"}
+{"time":"2025-06-16T19:04:31.0468287+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=default&lan=en-US","status":200,"latency_human":"1.295ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-16T19:11:37.3541907+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=default&lan=en-US","status":200,"latency_human":"1.3180353s"}
