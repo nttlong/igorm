@@ -1,6 +1,6 @@
 // src/App.tsx
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FiHome, FiSettings, FiUsers, FiFolder } from "react-icons/fi"; // Đảm bảo import đầy đủ icon nếu dùng ở đây
 
 // BỎ BrowserRouter khỏi đây. Chỉ giữ lại Routes, Route, Outlet
@@ -18,10 +18,12 @@ import ProjectsPage from './pages/ProjectsPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/Login'; 
 import ProtectedRoute from './components/ProtectedRoute'; 
+import {setBaseApiUrl} from './utils/Caller'; 
 
 // Component Layout chính của bạn
 const MainLayout = () => {
-  const { t, i18n } = useTranslation();
+  setBaseApiUrl("http://localhost:8080/api/v1")
+  const { t } = useTranslation();
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState("dashboard"); 
@@ -50,9 +52,7 @@ const MainLayout = () => {
     document.documentElement.classList.toggle("dark"); 
   };
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-  };
+  
 
   useEffect(() => {
     const handleResize = () => {

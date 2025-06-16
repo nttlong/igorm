@@ -1,0 +1,92 @@
+
+<!-- Wrapper chính của layout. flex-col để sắp xếp Header và khối Sidebar/Main theo chiều dọc -->
+<div class="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
+
+    <!-- Header Section -->
+    <header class="fixed top-0 z-50 w-full bg-white dark:bg-gray-800 shadow-md h-16 flex items-center justify-between px-4 py-3">
+      <div class="flex items-center space-x-4">
+        <button (click)="toggleSidebar()" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" aria-label="Toggle sidebar">
+          <!-- Menu Icon -->
+          <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <h1 class="text-xl font-bold text-gray-800 dark:text-white">AppName</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <!-- Dark Mode Toggle -->
+        <button (click)="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" aria-label="Toggle dark mode">
+          <ng-container *ngIf="isDarkMode">
+            <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.325 3.325l-.707.707M5.675 5.675l-.707.707m12.728 0l-.707-.707M6.343 17.657l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          </ng-container>
+          <ng-container *ngIf="!isDarkMode">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9 9 0 008.354-5.646z"></path></svg>
+          </ng-container>
+        </button>
+        <!-- Notification Icon -->
+        <button class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" aria-label="Notifications">
+          <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9"></path></svg>
+        </button>
+        <!-- User Profile Icon -->
+        <div class="relative">
+          <button class="flex items-center space-x-2" aria-label="User profile">
+            <svg class="w-8 h-8 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 7zm0 6a.75.75 0 01.75.75v3a.75.75 0 01-1.5 0v-3A.75.75 0 0112 13z" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+  
+    <!-- Container cho Sidebar và Main content. flex-1 để chiếm hết chiều cao còn lại. overflow-hidden để tránh scrollbar kép. -->
+    <div class="flex flex-1 overflow-hidden mt-16"> <!-- mt-16 = 64px để bù đắp chiều cao Header -->
+      <!-- Sidebar Section -->
+      <aside [class.w-16]="isSidebarCollapsed" [class.w-64]="!isSidebarCollapsed"
+        class="fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 overflow-hidden z-40">
+        <nav class="mt-4">
+          <button
+            *ngFor="let item of menuItems"
+            (click)="setActiveMenuItem(item.id)"
+            [attr.aria-label]="item.label"
+            [ngClass]="{
+              'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300': activeMenuItem === item.id,
+              'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700': activeMenuItem !== item.id
+            }"
+            class="w-full flex items-center px-4 py-3 transition-colors"
+          >
+            <span class="flex-shrink-0">
+              <!-- Icons for menu items -->
+              <ng-container *ngIf="item.id === 'dashboard'">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l7 7m-3 7v1a1 1 0 001 1h3a1 1 0 001-1v-4M7 21h10a2 2 0 002-2V8l-7-7-7 7v11a2 2 0 002 2z"></path></svg>
+              </ng-container>
+              <ng-container *ngIf="item.id === 'users'">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h-4v-2H7v2H4v-7L12 5l8 8v7h-3zM7 13v-1H4v1a1 1 0 001 1h1a1 1 0 001-1z"></path></svg>
+              </ng-container>
+              <ng-container *ngIf="item.id === 'projects'">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+              </ng-container>
+              <ng-container *ngIf="item.id === 'settings'">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.381-.722 1.103-1.215 1.962-1.215.86 0 1.582.493 1.962 1.215l.774 1.464c.29.546.786.953 1.353 1.144l1.498.374a2.25 2.25 0 011.087 1.087l.374 1.498c.191.567.598 1.063 1.144 1.353l1.464.774c.722.381 1.215 1.103 1.215 1.962 0 .86-.493 1.582-1.215 1.962l-1.464.774c-.546.29-.953.786-1.144 1.353l-.374 1.498a2.25 2.25 0 01-1.087 1.087l-1.498.374c-.567.191-1.063.598-1.353 1.144l-.774 1.464c-.381.722-1.103 1.215-1.962 1.215-.86 0-1.582-.493-1.962-1.215l-.774-1.464c-.29-.546-.786-.953-1.353-1.144l-1.498-.374a2.25 2.25 0 01-1.087-1.087l-.374-1.498c-.191-.567-.598-1.063-1.144-1.353l-1.464-.774c-.722-.381-1.215-1.103-1.215-1.962 0-.86.493-1.582 1.215-1.962l1.464-.774c.546-.29.953-.786 1.144-1.353l.374-1.498a2.25 2.25 0 011.087-1.087l1.498-.374c.567-.191 1.063-.598 1.353-1.144l.774-1.464zM12 15a3 3 0 100-6 3 3 0 000 6z"></path></svg>
+              </ng-container>
+            </span>
+            <span
+              [ngClass]="{ 'opacity-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }"
+              class="ml-4 transition-opacity duration-300"
+            >
+              {{ item.label }}
+            </span>
+          </button>
+        </nav>
+      </aside>
+  
+      <!-- Main content area -->
+      <main class="flex-1 p-6 transition-all duration-300 overflow-y-auto"
+            [class.ml-16]="isSidebarCollapsed" [class.ml-64]="!isSidebarCollapsed">
+        <!-- Dashboard Content Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 min-h-[calc(100vh-10rem)]">
+          <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+            {{ getActiveMenuLabel() }}
+          </h2>
+          <p class="text-gray-600 dark:text-gray-300">
+            Content for {{ activeMenuItem }} goes here.
+          </p>
+        </div>
+      </main>
+    </div>
+  </div>

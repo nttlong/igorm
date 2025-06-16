@@ -70,7 +70,7 @@ export async function callApi(options: ApiRequestOptions): Promise<any> {
   };
 
   // Thêm body nếu method không phải GET hoặc HEAD và có data
-  if (method !== 'GET' && method !== 'HEAD' && data) {
+  if (method !== 'GET'  && data) {
     // Swagger của bạn hiển thị `data` là `string (formData)`,
     // nhưng giá trị example là JSON stringify.
     // Nếu nó thực sự là form data (application/x-www-form-urlencoded hoặc multipart/form-data),
@@ -78,7 +78,7 @@ export async function callApi(options: ApiRequestOptions): Promise<any> {
     // Nếu nó là JSON stringify trong body, bạn cần đảm bảo 'Content-Type': 'application/json'.
     // Ở đây, tôi giả định `data` là một chuỗi JSON đã được stringify.
     requestOptions.body = data;
-  } else if (method !== 'GET' && method !== 'HEAD' && !data && requestOptions.method === 'POST') {
+  } else if (method !== 'GET'  && !data && requestOptions.method === 'POST') {
      // Đảm bảo body là rỗng nếu không có data nhưng là POST
      requestOptions.body = JSON.stringify({});
   }

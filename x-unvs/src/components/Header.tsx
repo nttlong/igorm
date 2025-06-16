@@ -25,7 +25,7 @@ export interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({
   onSidebarToggle,
-  isSidebarCollapsed,
+  
   isDarkMode,
   isProfileDropdownOpen,
   onLogout, // Giữ onLogout nếu bạn muốn App quản lý nó

@@ -5,7 +5,9 @@ import './Login.css';
 import {Caller} from '../utils/Caller'
 import { useTranslation } from 'react-i18next';
 import type {LoginResponse} from '../interfaces/AuthInterfaces';
+import {setBaseApiUrl} from '../utils/Caller'; 
 const LoginPage = () => {
+  setBaseApiUrl('http://localhost:8080/api/v1');
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();

@@ -1,6 +1,6 @@
 // src/components/MainLayout.tsx (Hoặc Layout.tsx, tùy bạn đặt tên)
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FiMenu, FiHome, FiSettings, FiUsers, FiFolder, FiBell, FiSun, FiMoon } from "react-icons/fi";
 import { FaUserCircle } from "react-icons/fa";
 import { useTranslation } from 'react-i18next'; // <-- Thêm dòng này
@@ -11,7 +11,7 @@ const MainLayout = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState("dashboard");
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Chưa dùng nhưng giữ lại
+  //const [ setIsMobileMenuOpen] = useState(false); // Chưa dùng nhưng giữ lại
 
   const menuItems = [
     // Sử dụng t() để dịch các label

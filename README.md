@@ -7,3 +7,4 @@ npm create vite@latest x-unvs -- --template react
 cd x-unvs
 npm install
 npm run dev
+npm install -D tailwindcss@3 postcss@8 autoprefixer@10

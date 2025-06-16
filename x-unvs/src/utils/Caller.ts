@@ -1,6 +1,6 @@
 // src/utils/Caller.ts
 
-import axios, { type AxiosInstance, type AxiosResponse, type AxiosError } from 'axios';
+import axios, { type AxiosInstance, type AxiosResponse} from 'axios';
 // import type  AxiosInstance, AxiosResponse, AxiosError  from 'axios';
 // Định nghĩa các kiểu dữ liệu cho phản hồi API
 export interface ApiResult<T> {
@@ -40,7 +40,7 @@ export class Caller {
     this.axiosInstance = instance;
     this._headers['Content-Type'] = 'application/json'; // Mặc định
   }
-
+  
   // Phương thức static để tạo một instance mới của Caller
   public static create(apiPath: string): Caller {
     // Đảm bảo axiosInstance được cấu hình ở một nơi tập trung
@@ -144,7 +144,7 @@ export class Caller {
     const module=this._apiPath.split('@')[1];
     const action:string=this._apiPath.split('@')[0];
     const lang=this._lang;
-    const url=`http://localhost:8080/api/v1/invoke?module=${module}&action=${action}&feature=${this._feature}&tenant=${this._tenant}&lan=${lang}`;
+    const url=`${BaseApiUrl}/invoke?module=${module}&action=${action}&feature=${this._feature}&tenant=${this._tenant}&lan=${lang}`;
     console.log(url);
 
     const requestOptions: RequestOptions = {
@@ -163,7 +163,7 @@ export class Caller {
     try {
       const response: AxiosResponse<T> = await this.axiosInstance.request(requestOptions);
      
-      return { success: true, data: response.data, statusCode: response.status };
+      return { success: true, data: response.data as any, statusCode: response.status };
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         return {
@@ -184,6 +184,9 @@ export class Caller {
     }
   }
 }
-
+var BaseApiUrl:string
+export function setBaseApiUrl(endpoint: string) {
+   BaseApiUrl=endpoint;
+}
 // Export Caller class để có thể sử dụng static method `create`
 export default Caller;
