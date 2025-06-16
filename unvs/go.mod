@@ -21,6 +21,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
+	github.com/rs/cors v1.11.1 // indirect
 	golang.org/x/crypto v0.38.0 // indirect
 )
 

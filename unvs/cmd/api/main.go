@@ -114,6 +114,17 @@ func main() {
 	// appLogger.SetLevel(logrus.TraceLevel | logrus.InfoLevel | logrus.ErrorLevel | logrus.DebugLevel | logrus.PanicLevel | logrus.FatalLevel | logrus.WarnLevel) // Chỉ hiển thị Info, Warn, Error, Fatal, Panic
 
 	e := echo.New()
+	// Cấu hình CORS middleware
+	// Đây là nơi bạn kiểm soát các chính sách cross-domain
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		// Đảm bảo tên trường là chính xác: AllowedOrigins
+		// Đây phải là một slice of strings
+		AllowOrigins: []string{
+			"*",
+			"http://localhost:5173",
+			"http://127.0.0.1:5173",
+		},
+	}))
 
 	// Middleware
 

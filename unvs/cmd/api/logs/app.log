@@ -4076,3 +4076,68 @@ ____________________________________O/_______
                                     O\
 ⇨ http server started on [::]:8080
 {"time":"2025-06-15T15:26:09.043774+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"6.0909688s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T15:41:45.3240739+07:00","remote_ip":"::1","method":"GET","uri":"/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=defaualt&lan=en","status":404,"latency_human":"0s"}
+{"time":"2025-06-15T15:41:45.5243833+07:00","remote_ip":"::1","method":"GET","uri":"/favicon.ico","status":404,"latency_human":"0s"}
+{"time":"2025-06-15T15:49:32.3942701+07:00","remote_ip":"::1","method":"OPTIONS","uri":"/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=defaualt&lan=en","status":404,"latency_human":"0s"}
+{"time":"2025-06-15T15:49:47.7829874+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"168.8665ms"}
+{"time":"2025-06-15T15:49:47.7839904+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"124.9925ms"}
+{"time":"2025-06-15T15:49:47.7869924+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"127.9945ms"}
+{"time":"2025-06-15T15:50:00.0415091+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"5.8589683s"}
+{"time":"2025-06-15T15:50:35.4555992+07:00","remote_ip":"::1","method":"OPTIONS","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=defaualt&lan=en","status":204,"latency_human":"0s"}
+{"time":"2025-06-15T15:51:04.5036752+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":405,"latency_human":"0s"}
+{"time":"2025-06-15T15:51:10.3884442+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":405,"latency_human":"0s"}
+{"time":"2025-06-15T15:51:22.0386923+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=defaualt&lan=en","status":405,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T16:06:17.7593473+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=defaualt&lan=en","status":200,"latency_human":"2.5287832s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T16:07:01.5379448+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=defaualt&lan=en","status":200,"latency_human":"1.7621417s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-15T19:33:39.078587+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"2.0905145s"}
+{"time":"2025-06-15T19:36:04.5428998+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=defaualt&lan=en","status":200,"latency_human":"1.6914738s"}

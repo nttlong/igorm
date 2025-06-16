@@ -4,3 +4,4 @@ unvs/cmd/api/unvs/*
 unvs/cmd/api/unvs/*
 bfg-1.15.0.jar
 logs/*
+node_modules/*
