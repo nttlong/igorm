@@ -21,8 +21,10 @@ type OAuth2Token struct {
 	Scope        string `json:"scope"`
 	RefreshToken string `json:"refresh_token"`
 	Message      string `json:"message,omitempty"` // Thêm message nếu bạn muốn giữ lại
-	Role         string `json:"role,omitempty"`    // Thêm role nếu bạn muốn giữ lại
+	RoleId       string `json:"roleId,omitempty"`  // Thêm role nếu bạn muốn giữ lại
 	UserId       string `json:"userId,omitempty"`  // Thêm userID nếu bạn muốn giữ lại
+	Username     string `json:"username,omitempty"`
+	Email        string `json:"email,omitempty"`
 }
 type TokenService struct {
 	CacheService
@@ -136,7 +138,7 @@ func (s *TokenService) DecodeAccessToken(accessToken string) (*OAuth2Token, erro
 		return nil, fmt.Errorf("missing or invalid userId claim")
 	}
 	scope, _ := (*claims)["scope"].(string)
-	role, _ := (*claims)["role"].(string)
+	roleId, _ := (*claims)["roleId"].(string)
 	exp, ok := (*claims)["exp"].(float64)
 	if !ok {
 		return nil, fmt.Errorf("missing or invalid exp claim")
@@ -160,7 +162,7 @@ func (s *TokenService) DecodeAccessToken(accessToken string) (*OAuth2Token, erro
 		Scope:        scope,
 		RefreshToken: "", // RefreshToken không có trong accessToken
 		Message:      "Token decoded successfully",
-		Role:         role,
+		RoleId:       roleId,
 		UserId:       userID,
 	}
 
@@ -168,18 +170,25 @@ func (s *TokenService) DecodeAccessToken(accessToken string) (*OAuth2Token, erro
 }
 
 // generateToken tạo một OAuth2Token với JWT và refresh token
-func (s *TokenService) GenerateToken(userID string, role string) (*OAuth2Token, error) {
+func (s *TokenService) GenerateToken(data struct {
+	UserId   string
+	RoleId   string
+	Username string
+	Email    string
+}) (*OAuth2Token, error) {
 	// Thời gian sống của token (ví dụ: 1 giờ)
 	tokenDuration := 1 * time.Hour
 	expirationTime := time.Now().Add(tokenDuration).Unix()
 
 	// Tạo claims cho JWT
 	claims := jwt.MapClaims{
-		"userId": userID,            // userID là subject
-		"exp":    expirationTime,    // Thời gian hết hạn
-		"iat":    time.Now().Unix(), // Thời gian phát hành
-		"scope":  "read write",      // Scope mặc định
-		"role":   role,              // Role mặc định
+		"userId":   data.UserId,       // userID là subject
+		"exp":      expirationTime,    // Thời gian hết hạn
+		"iat":      time.Now().Unix(), // Thời gian phát hành
+		"scope":    "read write",      // Scope mặc định
+		"role":     data.UserId,       // Role mặc định
+		"username": data.Username,
+		"email":    data.Email,
 	}
 
 	// Tạo token JWT
@@ -203,14 +212,16 @@ func (s *TokenService) GenerateToken(userID string, role string) (*OAuth2Token, 
 
 	// Tạo OAuth2Token
 	oauthToken := &OAuth2Token{
-		AccessToken:  accessToken,
-		TokenType:    "Bearer",
-		ExpiresIn:    int64(tokenDuration.Seconds()),
-		Scope:        "read write",
+		AccessToken: accessToken,
+		TokenType:   "Bearer",
+		ExpiresIn:   int64(tokenDuration.Seconds()),
+
 		RefreshToken: refreshToken,
 		Message:      "Token generated successfully",
-		Role:         role,
-		UserId:       userID,
+		RoleId:       data.RoleId,
+		UserId:       data.UserId,
+		Username:     data.Username,
+		Email:        data.Email,
 	}
 
 	return oauthToken, nil

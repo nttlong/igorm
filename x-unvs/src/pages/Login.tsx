@@ -1,66 +1,76 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import './Login.css';
+import {Caller} from '../utils/Caller'
+import { useTranslation } from 'react-i18next';
+import type {LoginResponse} from '../interfaces/AuthInterfaces';
+const LoginPage = () => {
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+  const currentLang = i18n.language; 
+  // Lấy tenantname từ URL params
+  const { tenantname } = useParams<{ tenantname: string }>();
 
-const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const from = location.state?.from?.pathname || `/${tenantname}/dashboard`;
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Vui lòng nhập email và mật khẩu');
+    setError('');
+
+    if (!tenantname) {
+      setError(t('login.error.tenantname.required'));
       return;
     }
-    // Giả lập đăng nhập thành công
-    setError('');
-    console.log('Đăng nhập với:', { email, password });
-    navigate('/dashboard');
+    try {
+      // Gửi cả tenantname khi gọi hàm login
+      debugger;
+      const ret= await Caller.create(`login@unvs.br.auth.users`)
+      .withTenant(tenantname)
+      .withLanguage(currentLang)
+      .withFeature('login')
+      .withData({ username, password }).postAsync<LoginResponse>();
+      console.log(ret);
+      //save token to local storage
+      if (ret.data == null || ret.data.results == null){
+        setError(t('Login fail, please check your username or password and try again.'));
+        return;
+      }
+      localStorage.setItem('token', ret.data.results.access_token);
+      localStorage.setItem('refresh_token', ret.data.results.refresh_token);
+      localStorage.setItem('username', username);
+      localStorage.setItem('tenantname', tenantname);
+      await login(ret.data.results, tenantname);
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(t('Login fail, please check your username or password and try again.'));
+    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Đăng Nhập</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
+        <h2 className="text-3xl font-bold text-center text-gray-800">
+        {t('Login')}
+        </h2>
+        <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="nhap@email.com"
-            />
+          <label htmlFor="username">{t('Username')}</label>
+            <input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required placeholder="Nhập 'admin'" className="w-full px-4 py-2 mt-2 border rounded-md"/>
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Mật Khẩu
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Nhập mật khẩu"
-            />
+            <label htmlFor="password">{t('password')}</label>
+            <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Nhập '123'" className="w-full px-4 py-2 mt-2 border rounded-md"/>
           </div>
-          <div className="flex items-center justify-between">
-            <a href="#" className="text-sm text-blue-600 hover:underline">
-              Quên mật khẩu?
-            </a>
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Đăng Nhập
+          {error && <p className="text-sm text-center text-red-500">{error}</p>}
+          <button type="submit" className="w-full py-3 font-semibold text-white bg-blue-600 rounded-lg">
+          {t('Login')}
           </button>
         </form>
       </div>
@@ -68,4 +78,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

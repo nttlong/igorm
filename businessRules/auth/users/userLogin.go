@@ -24,9 +24,9 @@ func (u *User) AuthenticateUser(username string, password string) (*service.OAut
 		_user, err := dbx.Query[authModel.User](
 			u.TenantDb,
 			u.Context,
-		).Where(
+		).Select("Email,UserId,Id, Username, PasswordHash, RoleId").Where(
 			"Username = ?",
-			username).Select("Id, Username, PasswordHash, RoleId").First()
+			username).First()
 
 		if err != nil {
 			return nil, err
@@ -43,7 +43,7 @@ func (u *User) AuthenticateUser(username string, password string) (*service.OAut
 		}
 	}
 
-	key := fmt.Sprintf("user_%s %s", username, user.PasswordHash)
+	key := fmt.Sprintf("user_%s %s", username, password)
 	ok := ""
 	if !u.Cache.Get(u.Context, key, &ok) {
 
@@ -68,7 +68,17 @@ func (u *User) AuthenticateUser(username string, password string) (*service.OAut
 		}
 	}
 
-	return u.GenerateToken(user.UserId, defaultRole)
+	return u.GenerateToken(struct {
+		UserId   string
+		RoleId   string
+		Username string
+		Email    string
+	}{
+		UserId:   user.UserId,
+		RoleId:   defaultRole,
+		Username: user.Username,
+		Email:    user.Email,
+	})
 
 }
 func (u *User) Login(login struct {

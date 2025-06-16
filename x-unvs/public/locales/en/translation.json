@@ -1,0 +1,12 @@
+{
+    "welcome": "Welcome to our application!",
+    "greeting": "Hello, {{name}}!",
+    "language_selector": "Select Language",
+    "dashboard": "Dashboard",       
+    "users": "Users",               
+    "projects": "Projects",         
+    "settings": "Settings",         
+    "users_page_content": "This is the content for the Users page.",
+    "projects_page_content": "This is the content for the Projects page.",
+    "settings_page_content": "This is the content for the Settings page."
+  }

@@ -4141,3 +4141,213 @@ ____________________________________O/_______
 ⇨ http server started on [::]:8080
 {"time":"2025-06-15T19:33:39.078587+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"2.0905145s"}
 {"time":"2025-06-15T19:36:04.5428998+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=login&action=login&module=unvs.br.auth.users&tenant=defaualt&lan=en","status":200,"latency_human":"1.6914738s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-16T12:33:57.7668505+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"1.4304ms"}
+{"time":"2025-06-16T12:33:57.7668505+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"1.4304ms"}
+{"time":"2025-06-16T12:33:58.2634082+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"83.0798ms"}
+{"time":"2025-06-16T12:33:58.2669426+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"143.3238ms"}
+{"time":"2025-06-16T12:33:58.2825962+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"159.3083ms"}
+{"time":"2025-06-16T12:34:29.2790107+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=dsada&action=dasd&module=dasd&tenant=dasda&lan=dasdad","status":400,"latency_human":"0s"}
+{"time":"2025-06-16T13:11:12.6115357+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"635.9µs"}
+{"time":"2025-06-16T13:11:12.68561+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-16T13:11:12.6932126+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.0121ms"}
+{"time":"2025-06-16T13:11:12.6997729+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"9.9529ms"}
+{"time":"2025-06-16T13:11:12.7172078+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"0s"}
+{"time":"2025-06-16T13:11:12.7981644+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"6.9389ms"}
+{"time":"2025-06-16T13:11:12.8309457+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"670.1µs"}
+{"time":"2025-06-16T13:11:12.8571001+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"417µs"}
+{"time":"2025-06-16T13:11:12.9597323+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-16T13:11:18.2718551+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"325µs"}
+{"time":"2025-06-16T15:25:10.2208525+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/","status":404,"latency_human":"0s"}
+{"time":"2025-06-16T15:25:22.3415618+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/HNAP1/","status":404,"latency_human":"0s"}
+{"time":"2025-06-16T15:25:22.5493633+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/","status":404,"latency_human":"0s"}
+{"time":"2025-06-16T15:25:22.5557976+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/loginMsg.js","status":404,"latency_human":"0s"}
+{"time":"2025-06-16T15:25:22.5568427+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/cgi/get.cgi?cmd=home_login","status":404,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-16T16:40:36.0932177+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/oauth/token","status":404,"latency_human":"0s"}
+{"time":"2025-06-16T16:40:50.7237406+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=aa&action=aa&module=aa&tenant=aaa&lan=aaa","status":400,"latency_human":"0s"}
+{"time":"2025-06-16T16:40:58.4173012+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?feature=aa&action=aa&module=aa&tenant=aaa&lan=aaa","status":405,"latency_human":"0s"}
+{"time":"2025-06-16T16:40:58.5163459+07:00","remote_ip":"::1","method":"GET","uri":"/favicon.ico","status":404,"latency_human":"0s"}
+{"time":"2025-06-16T16:41:39.4997001+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=undefined&action=auth/login/defaualt&feature=","status":400,"latency_human":"0s"}
+{"time":"2025-06-16T16:42:37.7980871+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"506.2µs"}
+{"time":"2025-06-16T16:43:48.0937275+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=undefined&action=auth/login/defaualt&feature=login","status":400,"latency_human":"0s"}
+{"time":"2025-06-16T16:44:16.8563988+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=undefined&action=auth/login/defaualt&feature=login","status":400,"latency_human":"0s"}
+{"time":"2025-06-16T16:45:22.73068+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=undefined&action=auth/login/defaualt&feature=login","status":400,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-16T16:50:47.4605264+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login","status":400,"latency_human":"8.1796172s"}
+{"time":"2025-06-16T16:50:48.186698+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login","status":400,"latency_human":"726.1943ms"}
+{"time":"2025-06-16T16:51:39.589912+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt","status":400,"latency_human":"5.4124576s"}
+{"time":"2025-06-16T16:56:41.9249975+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?module=$%7Bmodule%7D&action=$%7Baction%7D&feature=$%7Bthis._feature%7D&tenant=$%7Bthis._tenant%7D","status":405,"latency_human":"0s"}
+{"time":"2025-06-16T16:56:41.9272494+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?module=$%7Bmodule%7D&action=$%7Baction%7D&feature=$%7Bthis._feature%7D&tenant=$%7Bthis._tenant%7D","status":405,"latency_human":"0s"}
+{"time":"2025-06-16T17:21:56.5863621+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lang=en-US","status":400,"latency_human":"8.4577961s"}
+time="2025-06-16T17:24:25+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-16T17:24:25.6835144+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":401,"latency_human":"7.8446945s"}
+{"time":"2025-06-16T17:28:55.4082989+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"4.9805432s"}
+{"time":"2025-06-16T17:29:03.3138683+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"1.5199ms"}
+{"time":"2025-06-16T17:29:17.6919416+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"0s"}
+{"time":"2025-06-16T17:29:35.4462388+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"0s"}
+{"time":"2025-06-16T17:30:34.7828382+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"24.6442569s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-16T17:32:19+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-16T17:32:19.1327372+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":401,"latency_human":"7.8247802s"}
+time="2025-06-16T17:32:24+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-16T17:32:24.1769974+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":401,"latency_human":"24.3562731s"}
+{"time":"2025-06-16T17:32:42.128544+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"10.2385372s"}
+{"time":"2025-06-16T17:33:28.3109557+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"32.8680976s"}
+{"time":"2025-06-16T17:34:14.9534693+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"26.8067154s"}
+{"time":"2025-06-16T17:34:20.4327504+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"794.4µs"}
+{"time":"2025-06-16T17:34:50.1108497+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"1.0066ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-16T17:37:14.9266464+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"18.0857347s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-16T17:39:34.6219468+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"13.7756612s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-16T18:02:17.3433813+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"9.696726s"}
+{"time":"2025-06-16T18:22:30.0226748+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"21.806208s"}
+{"time":"2025-06-16T18:22:39.0661957+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"1.0166ms"}
+time="2025-06-16T18:24:55+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-16T18:24:55.1001068+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":401,"latency_human":"57.2994ms"}
+time="2025-06-16T18:25:26+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-16T18:25:26.7789671+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":401,"latency_human":"6.4185ms"}
+time="2025-06-16T18:25:45+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-16T18:25:45.0856312+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":401,"latency_human":"105.7498ms"}
+time="2025-06-16T18:25:53+07:00" level=error msg="dynacall error: INVALID_USERNAME_OR_PASSWORD: Invalid username or password (AUTHENTICATION_FAILED)" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-16T18:25:53.7158875+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":401,"latency_human":"119.3051ms"}
+{"time":"2025-06-16T18:26:16.9511273+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"514.8µs"}
+{"time":"2025-06-16T18:29:35.3840239+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"705.2µs"}
+{"time":"2025-06-16T18:30:25.2085658+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"2.0643ms"}
+{"time":"2025-06-16T18:30:45.0748224+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"812.2µs"}
+{"time":"2025-06-16T18:41:00.4806132+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=defaualt&lan=en-US","status":200,"latency_human":"0s"}
