@@ -1,91 +1,108 @@
-import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Cần cho *ngIf
-import { FormsModule } from '@angular/forms'; // Cần cho [(ngModel)]
-import { ActivatedRoute, Router } from '@angular/router'; // Cần cho Router và ActivatedRoute
-import { Subscription } from 'rxjs'; // Cần để quản lý subscriptions
-// import { AuthService } from '../../services/auth.service'; // Giả định bạn sẽ có một AuthService
-// import { ApiService } from '../../services/api.service'; // Giả định bạn sẽ có một ApiService
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-login', // Selector của component
-  templateUrl: './login.html', // Trỏ đến file HTML
-  styleUrls: ['./login.scss'], // Trỏ đến file SCSS
-  standalone: true, // Đây là một standalone component
+  selector: 'app-login-page',
+  templateUrl: './login.html',
+  styleUrls: ['./login.scss'],
+  standalone: true,
   imports: [
     CommonModule,
-    FormsModule // Import FormsModule để sử dụng [(ngModel)]
+    FormsModule,
+    TranslateModule
   ]
 })
-export class Login implements OnInit, OnDestroy { // Tên lớp là Login
+export class Login implements OnInit, OnDestroy {
   username = '';
   password = '';
   error: string | null = null;
   isLoading = false;
   tenantname: string | null = null;
   private paramSubscription: Subscription | undefined;
+  private langChangeSubscription: Subscription | undefined; // Thêm subscription cho langChange
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    // private authService: AuthService, // Kích hoạt nếu bạn có AuthService
-    // private apiService: ApiService // Kích hoạt nếu bạn có ApiService
-  ) { }
+    private translate: TranslateService
+  ) {
+    console.log('LoginPageComponent constructor called.');
+  }
 
   ngOnInit(): void {
-    // Lấy tenantname từ URL params (được định nghĩa trong app.config.ts)
     this.paramSubscription = this.activatedRoute.paramMap.subscribe(params => {
       this.tenantname = params.get('tenantname');
       console.log('Login Page - Tenantname:', this.tenantname);
-      // Bạn có thể thiết lập base URL cho API service ở đây nếu cần,
-      // tương tự cách setBaseApiUrl trong React/Vue app
-      // if (this.tenantname) {
-      //   this.apiService.setBaseUrl(`http://localhost:8080/api/v1/${this.tenantname}`);
-      // } else {
-      //   this.apiService.setBaseUrl(`http://localhost:8080/api/v1`);
-      // }
     });
+
+    // Thiết lập ngôn ngữ mặc định và sử dụng ngôn ngữ trình duyệt
+    this.translate.setDefaultLang('en');
+    const browserLang = this.translate.getBrowserLang();
+    const initialLang = browserLang?.match(/en|vi/) ? browserLang : 'en';
+    this.translate.use(initialLang); // Sử dụng ngôn ngữ ban đầu
+
+    console.log(`TranslateService: Default lang set to ${this.translate.defaultLang}`);
+    console.log(`TranslateService: Current lang set to ${this.translate.currentLang}`);
+
+    // Lắng nghe sự kiện khi ngôn ngữ thay đổi (và khi bản dịch được tải)
+    this.langChangeSubscription = this.translate.onLangChange.subscribe(() => {
+      console.log(`TranslateService: Language changed to ${this.translate.currentLang}`);
+      // Kiểm tra xem bản dịch cho 'login.title' đã có sẵn chưa
+      const translatedTitle = this.translate.instant('login.title');
+      console.log(`Translated 'login.title' (after lang change):`, translatedTitle);
+      if (translatedTitle === 'login.title') {
+        console.warn("Translation for 'login.title' still returns the key. Check your translation files/API response.");
+      }
+    });
+
+    // Thử lấy bản dịch ngay sau khi thiết lập ngôn ngữ ban đầu
+    const initialTranslatedTitle = this.translate.instant('login.title');
+    console.log(`Translated 'login.title' (initial):`, initialTranslatedTitle);
+    if (initialTranslatedTitle === 'login.title') {
+      console.warn("Translation for 'login.title' initially returns the key. This might be because the translation file hasn't loaded yet.");
+    }
   }
 
   ngOnDestroy(): void {
     if (this.paramSubscription) {
-      this.paramSubscription.unsubscribe(); // Hủy subscription để tránh rò rỉ bộ nhớ
+      this.paramSubscription.unsubscribe();
+    }
+    if (this.langChangeSubscription) { // Hủy bỏ subscription cho langChange
+      this.langChangeSubscription.unsubscribe();
     }
   }
 
   async handleLogin(event: Event): Promise<void> {
-    event.preventDefault(); // Ngăn chặn hành vi submit mặc định của form
+    event.preventDefault();
     this.error = null;
     this.isLoading = true;
 
     if (!this.tenantname) {
-      this.error = 'Không tìm thấy thông tin tenant.'; // Tạm dịch
+      this.error = this.translate.instant('login.error.tenantnameRequired');
       this.isLoading = false;
       return;
     }
 
     try {
-      // --- LOGIC GỌI API ĐĂNG NHẬP CỦA BẠN (SỬ DỤNG AJAX/FETCH HOẶC API SERVICE) ---
-      // Ví dụ mô phỏng:
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
       if (this.username === 'admin' && this.password === '123') {
         console.log('Đăng nhập thành công!');
-        // Lưu thông tin xác thực vào localStorage hoặc AuthService
         localStorage.setItem('authToken', 'mock_angular_token_123');
         localStorage.setItem('username', this.username);
         localStorage.setItem('tenantname', this.tenantname);
 
-        // Sử dụng AuthService để login nếu bạn có
-        // this.authService.login(response.access_token, response.username, this.tenantname);
-
-        // Chuyển hướng đến dashboard của tenant
         this.router.navigate([`/${this.tenantname}/dashboard`]);
       } else {
-        this.error = 'Tên đăng nhập hoặc mật khẩu không đúng.'; // Tạm dịch
+        this.error = this.translate.instant('login.error.authenticationFailed');
       }
     } catch (err) {
       console.error('Lỗi đăng nhập:', err);
-      this.error = 'Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập hoặc mật khẩu.'; // Tạm dịch
+      this.error = this.translate.instant('login.error.networkError');
     } finally {
       this.isLoading = false;
     }

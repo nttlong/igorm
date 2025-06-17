@@ -15,6 +15,90 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/get/{tenant}/{module}/{action}/{optionalPath}": {
+            "get": {
+                "description": "API này cho phép gọi các tính năng cụ thể cho từng tenant và ngôn ngữ, với khả năng mở rộng đường dẫn.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "caller"
+                ],
+                "summary": "Lấy thông tin dựa trên tenant, module, action, feature, ngôn ngữ và các phân đoạn đường dẫn bổ sung.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The specific tenant to invoke (e.g., default, name, ...)",
+                        "name": "tenant",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The module name (e.g., users, products, auth)",
+                        "name": "module",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The action name (e.g., list, create, detail, login)",
+                        "name": "action",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Optional additional path segments (e.g., 'sub/item/id'). This parameter captures all remaining path segments.",
+                        "name": "optionalPath",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The specific ID of the feature. Each UI at frontend will have a unique feature ID and must be approved by the backend team.",
+                        "name": "feature",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The specific language to invoke (e.g., en, vi, pt, ...)",
+                        "name": "lan",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with requested parameters",
+                        "schema": {
+                            "$ref": "#/definitions/internal_app_handler_callers.CallerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/hz": {
             "get": {
                 "description": "Trả về chuỗi \"Hello World!\"",

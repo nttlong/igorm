@@ -13,6 +13,8 @@ import (
 	oauthHandler "unvs/internal/app/handler/oauth"
 	"unvs/internal/config"
 
+	_ "unvs.common"
+
 	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/labstack/echo/v4"
@@ -148,6 +150,10 @@ func main() {
 	apiV1 := e.Group("/api/v1")
 	apiV1.POST("/invoke", callHandler.Call)
 	apiV1.POST("/invoke-form", callHandler.FormSubmit)
+	///get/{tenant}/{module}/{action}/{optionalPath}
+	apiV1.GET("/get/:tenant/:module/:action/*optionalPath", callHandler.CallGet)
+	// e.GET("/get/:tenant/:module/:action/*paramoptionalPaths", handler.CallGet)
+	// apiV1.GET("/get/:tenant/:module/:action/:feature/:lan", callHandler.CallGet)
 	handler.RegisterRoutes(e,
 
 		&inspector.InspectorHandler{},

@@ -4433,3 +4433,367 @@ ____________________________________O/_______
 {"time":"2025-06-17T15:29:00.3159105+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/cgi/get.cgi?cmd=home_login","status":404,"latency_human":"0s"}
 {"time":"2025-06-17T15:29:00.7572815+07:00","remote_ip":"192.168.1.9","method":"POST","uri":"/","status":404,"latency_human":"0s"}
 {"time":"2025-06-17T15:30:50.6808822+07:00","remote_ip":"2600:1900:4040:29b::","method":"GET","uri":"/","status":404,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T20:57:28.5337113+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"654.5µs"}
+{"time":"2025-06-17T20:57:28.6374326+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T20:57:28.6450524+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"1.0265ms"}
+{"time":"2025-06-17T20:57:28.6465415+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"296.2µs"}
+{"time":"2025-06-17T20:57:28.8136608+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"68.817ms"}
+{"time":"2025-06-17T20:57:28.8136608+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"19.3988ms"}
+{"time":"2025-06-17T20:57:28.8157119+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"50.2771ms"}
+{"time":"2025-06-17T20:57:28.8349142+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T20:57:28.8579792+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T20:58:06.1580832+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/aaaa/aaaa?feature=aaa&lan=aa","status":404,"latency_human":"0s"}
+{"time":"2025-06-17T20:58:31.9333477+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/aaaa/aaaa?feature=aaa&lan=aa","status":404,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:00:04.8059016+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/aaaa/aaaa?feature=aaa&lan=aa","status":400,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:05:13.3777838+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"636.3µs"}
+{"time":"2025-06-17T21:05:13.4207687+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:05:13.4237555+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"1.7761ms"}
+{"time":"2025-06-17T21:05:13.4256966+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"563.7µs"}
+{"time":"2025-06-17T21:05:13.5336866+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"67.65ms"}
+{"time":"2025-06-17T21:05:13.5515071+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"2.8009ms"}
+{"time":"2025-06-17T21:05:13.5928213+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"1.9267ms"}
+{"time":"2025-06-17T21:05:13.6314817+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:05:13.6991065+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:06:00.6284327+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dafault/unvs.resource/translate/common/vi","status":400,"latency_human":"0s"}
+{"time":"2025-06-17T21:06:02.4608793+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dafault/unvs.resource/translate/common/vi","status":400,"latency_human":"847.7µs"}
+{"time":"2025-06-17T21:06:03.1540941+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dafault/unvs.resource/translate/common/vi","status":400,"latency_human":"0s"}
+{"time":"2025-06-17T21:06:17.8266586+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dafault/unvs.resource/translate/common/vi","status":400,"latency_human":"5.1731014s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:20:54.3923373+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"504.8µs"}
+{"time":"2025-06-17T21:20:54.4306372+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"506.8µs"}
+{"time":"2025-06-17T21:20:54.4367285+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.6275ms"}
+{"time":"2025-06-17T21:20:54.4378381+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"3.3479ms"}
+{"time":"2025-06-17T21:20:54.5331317+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"76.1789ms"}
+{"time":"2025-06-17T21:20:54.5631315+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"2.161ms"}
+{"time":"2025-06-17T21:20:54.677959+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"966.7µs"}
+{"time":"2025-06-17T21:20:54.7116064+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"1.5918ms"}
+{"time":"2025-06-17T21:20:54.7234681+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:21:04.9623966+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"0s"}
+time="2025-06-17T21:23:00+07:00" level=error msg="Panic occurred: interface conversion: map[string]string is not error: missing method Error\n" callerPath=dictionary@unvs.common pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-17T21:23:00+07:00" level=info msg="Stack Trace:\ngoroutine 20 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).CallGet.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/callert.get.go:165 +0x1ed\npanic({0x18b85a0?, 0xc000114de0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.invoke({{0x17d7136, 0xa}, {0x0, 0x0}, {0x2324780, 0xc0001d4140}, {0xc0001d4140, 0xc0000884b0, 0x13}, 0x0}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:126 +0x1b3e\ndynacall.Call({0xc0002f6030, 0x16}, {0x184f840, 0xc000414370}, {0x1839d80, 0xc000202080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:44 +0xa5\nunvs/internal/app/handler/callers.(*CallerHandler).CallGet(0xc000088c08, {0x2325198, 0xc00025c000})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/callert.get.go:191 +0x1e33\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2325198, 0xc00025c000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2325198, 0xc00025c000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2325198, 0xc00025c000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x2325198, 0xc00025c000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:215 +0x57f\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x2315a60, 0xc0002c4000}, 0xc0002b2000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x2315a60, 0xc0002c4000}, 0xc0002b2000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000144090, {0x2317ca8, 0xc0001d5450})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=dictionary@unvs.common pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-17T21:23:00.9068387+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/common/vi","status":200,"latency_human":"51.7777544s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:31:22.2529666+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"1.0889ms"}
+{"time":"2025-06-17T21:31:22.2963655+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:31:22.2989786+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"1.5732ms"}
+{"time":"2025-06-17T21:31:22.2993583+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"379.7µs"}
+{"time":"2025-06-17T21:31:22.3968313+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"68.4524ms"}
+{"time":"2025-06-17T21:31:22.4254077+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"2.1684ms"}
+{"time":"2025-06-17T21:31:22.5529828+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"512.6µs"}
+{"time":"2025-06-17T21:31:22.5896617+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:31:22.6024117+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:32:24.2836358+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"505.2µs"}
+{"time":"2025-06-17T21:32:24.322061+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"301.1µs"}
+{"time":"2025-06-17T21:32:24.3251074+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"517.9µs"}
+{"time":"2025-06-17T21:32:24.3256435+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.008ms"}
+{"time":"2025-06-17T21:32:24.4099659+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"51.4221ms"}
+{"time":"2025-06-17T21:32:24.4397785+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"2.0874ms"}
+{"time":"2025-06-17T21:32:24.483474+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"508.1µs"}
+{"time":"2025-06-17T21:32:24.5123189+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:32:24.5751613+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+time="2025-06-17T21:33:18+07:00" level=error msg="Panic occurred: interface conversion: map[string]string is not error: missing method Error\n" callerPath=dictionary@unvs.common pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-17T21:33:18+07:00" level=info msg="Stack Trace:\ngoroutine 8 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).CallGet.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/callert.get.go:95 +0x1ed\npanic({0x16d75a0?, 0xc00032e6f0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.invoke({{0x15f6136, 0xa}, {0x0, 0x0}, {0x2143620, 0xc000278140}, {0xc000278140, 0xc0001864a8, 0x13}, 0x0}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:126 +0x1b3e\ndynacall.Call({0xc000401b18, 0x16}, {0x166e840, 0x2911d00}, {0x1658d80, 0xc000588180})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:44 +0xa5\nunvs/internal/app/handler/callers.(*CallerHandler).CallGet(0xc000186c00, {0x2144038, 0xc0002f0f00})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/callert.get.go:121 +0xfa5\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2144038, 0xc0002f0f00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2144038, 0xc0002f0f00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2144038, 0xc0002f0f00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x2144038, 0xc0002f0f00})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:215 +0x57f\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0002698c8, {0x2134900, 0xc000287180}, 0xc0002f6500)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026ce00}, {0x2134900, 0xc000287180}, 0xc0002f6500)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0000bc1b0, {0x2136b48, 0xc000279450})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=dictionary@unvs.common pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-17T21:33:18.0914571+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/common/vi","status":200,"latency_human":"21.2355112s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:33:59.7022355+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"506.1µs"}
+{"time":"2025-06-17T21:33:59.7520614+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"526.2µs"}
+{"time":"2025-06-17T21:33:59.7758901+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"12.656ms"}
+{"time":"2025-06-17T21:33:59.7775016+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"596.6µs"}
+{"time":"2025-06-17T21:34:00.1994395+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"75.6711ms"}
+{"time":"2025-06-17T21:34:00.3241392+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"2.3847ms"}
+{"time":"2025-06-17T21:34:00.4441224+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:34:00.4558574+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:34:00.4966907+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"12.1562ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:36:00.1879353+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"524.3µs"}
+{"time":"2025-06-17T21:36:00.2193803+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T21:36:00.2250571+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.0481ms"}
+{"time":"2025-06-17T21:36:00.2256223+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"2.0749ms"}
+{"time":"2025-06-17T21:36:00.3076821+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"53.8088ms"}
+{"time":"2025-06-17T21:36:00.3332001+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.5399ms"}
+{"time":"2025-06-17T21:36:00.3611786+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"503.6µs"}
+{"time":"2025-06-17T21:36:00.4045969+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"1.9109ms"}
+{"time":"2025-06-17T21:36:00.426063+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:40:32.7690468+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"1.8943ms"}
+{"time":"2025-06-17T21:40:32.7982651+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"642.9µs"}
+{"time":"2025-06-17T21:40:32.8030323+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"3.3689ms"}
+{"time":"2025-06-17T21:40:32.8030323+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.3222ms"}
+{"time":"2025-06-17T21:40:32.9431528+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"121.5763ms"}
+{"time":"2025-06-17T21:40:32.9456167+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"23.9688ms"}
+{"time":"2025-06-17T21:40:32.9848434+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"1.0387ms"}
+{"time":"2025-06-17T21:40:33.0893143+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"998.5µs"}
+{"time":"2025-06-17T21:40:33.0893143+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:42:09.0496941+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"1.0437ms"}
+{"time":"2025-06-17T21:42:09.076366+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"537µs"}
+{"time":"2025-06-17T21:42:09.0792051+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"1.6508ms"}
+{"time":"2025-06-17T21:42:09.0808087+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"1.058ms"}
+{"time":"2025-06-17T21:42:09.1687034+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css.map","status":200,"latency_human":"52.6875ms"}
+{"time":"2025-06-17T21:42:09.1821355+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js.map","status":200,"latency_human":"1.6053ms"}
+{"time":"2025-06-17T21:42:09.1988059+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js.map","status":200,"latency_human":"505µs"}
+{"time":"2025-06-17T21:42:09.2483365+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"533.8µs"}
+{"time":"2025-06-17T21:42:09.3120773+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:44:18.9296428+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dsada/dasd/dsad/dasd?feature=dasda&lan=dasdasd","status":400,"latency_human":"1m27.612922s"}
+{"time":"2025-06-17T21:44:39.2125556+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dsada/dasd/dsad/dasd?feature=dasda&lan=dasdasd","status":400,"latency_human":"4.4596371s"}
+{"time":"2025-06-17T21:45:09.536123+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/defaualt/dasd/dsad/dasd?feature=dasda&lan=dasdasd","status":400,"latency_human":"18.059367s"}
+{"time":"2025-06-17T21:45:27.4722599+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/defaualt/dasd/dsad/dasd/dddd?feature=dasda&lan=dasdasd","status":400,"latency_human":"11.2995002s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:48:09.2065134+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dsada/dasd/dsad/dasd?feature=dasda&lan=dasdasd","status":400,"latency_human":"10.5144215s"}
+{"time":"2025-06-17T21:49:25.6570295+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dsada/dasd/dsad/dasd?feature=dasda&lan=dasdasd","status":400,"latency_human":"1m12.6981892s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T21:56:54.7541399+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dsada/dasd/dsad/dasd%2Fdasd%2Fdasds?feature=dasda&lan=dasdasd","status":400,"latency_human":"13.4938166s"}
+{"time":"2025-06-17T21:57:08.4470671+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/dsada/dasd/dsad/dasd?feature=dasda&lan=dasdasd","status":400,"latency_human":"7.5739824s"}
+{"time":"2025-06-17T21:58:35.173508+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/test-module/test-action/path1%2Fpath2%2Fpath3?feature=testft&lan=vi","status":400,"latency_human":"48.3764072s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T22:02:29.6292844+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/test-module/test-action/p1/p3","status":400,"latency_human":"47.0860594s"}
+{"time":"2025-06-17T22:03:10.2634073+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/test-actiondictionary/vi?feature=testft&lan=vi","status":400,"latency_human":"10.1236074s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T22:04:35.3743994+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/test-actiondictionary/vi?feature=testft&lan=vi","status":400,"latency_human":"2.4113681s"}
+{"time":"2025-06-17T22:05:00.6327301+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/test-actiondictionary/vi?feature=testft&lan=vi","status":400,"latency_human":"15.189572s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T22:09:48.1351639+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/test-actiondictionary/vi?feature=testft&lan=vi","status":400,"latency_human":"3.5717043s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T22:14:41.5430477+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/test-actiondictionary/vi?feature=testft&lan=vi","status":400,"latency_human":"3.2460861s"}
+{"time":"2025-06-17T22:15:16.424899+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"18.8439392s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T22:16:52.7516857+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/test-actiondictionary/vi?feature=testft&lan=vi","status":400,"latency_human":"2.7052123s"}
+time="2025-06-17T22:17:34+07:00" level=error msg="Panic occurred: interface conversion: map[string]string is not error: missing method Error\n" callerPath=dictionary@unvs.common pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-17T22:17:34+07:00" level=info msg="Stack Trace:\ngoroutine 36 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).CallGet.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/callert.get.go:99 +0x1ed\npanic({0x1ba85a0?, 0xc0002e5770?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndynacall.invoke({{0x1ac7136, 0xa}, {0x0, 0x0}, {0x2614840, 0xc00027a140}, {0xc00027a140, 0xc0001864a8, 0x13}, 0x0}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:126 +0x1b3e\ndynacall.Call({0xc00078e9b8, 0x16}, {0x1b2d540, 0xc000b02198}, {0x1c51b60, 0xc0000b64b0})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\nunvs/internal/app/handler/callers.(*CallerHandler).CallGet(0xc000186c00, {0x2615258, 0xc0000b8140})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/callert.get.go:105 +0x10e8\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2615258, 0xc0000b8140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2615258, 0xc0000b8140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2615258, 0xc0000b8140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x2615258, 0xc0000b8140})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:215 +0x57f\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0002698c8, {0x2605b20, 0xc0000000e0}, 0xc0000ba280)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00026ce00}, {0x2605b20, 0xc0000000e0}, 0xc0000ba280)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc000144090, {0x2607d68, 0xc00011a0a0})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=dictionary@unvs.common pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-17T22:17:34.4294235+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/vi?feature=testft&lan=vi","status":200,"latency_human":"11.3983481s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T22:19:29.1607334+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/vi?feature=testft&lan=vi","status":200,"latency_human":"7.4663316s"}
+{"time":"2025-06-17T22:19:56.9281865+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/vi?feature=testft&lan=vi","status":200,"latency_human":"12.79827s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-17T22:35:55.798562+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"2.7920897s"}
+{"time":"2025-06-17T22:36:11.8225167+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T22:36:27.2289959+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T22:36:28.4100667+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"507.2µs"}
+{"time":"2025-06-17T22:36:29.3507391+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T22:36:29.9799407+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"2.3505ms"}
+{"time":"2025-06-17T22:36:30.458521+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T22:36:31.0882782+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"2.5011ms"}
+{"time":"2025-06-17T22:36:32.1318775+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T22:36:33.2583455+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T22:36:33.984724+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"201.3µs"}
+{"time":"2025-06-17T22:36:34.7111661+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T22:36:38.4618753+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T22:36:39.4969041+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"1.0006ms"}
+{"time":"2025-06-17T22:36:40.2548044+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-17T22:36:40.9660528+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"1.1459ms"}
+{"time":"2025-06-17T22:36:42.4915793+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}

@@ -84,6 +84,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	unvs.br.auth v0.0.0-20220223132316-b832511892a9
+	unvs.common v0.0.0-20220223132316-b832511892a9
 )
 
 replace dbx => ../dbx
@@ -91,6 +92,7 @@ replace dbx => ../dbx
 replace dynacall => ../dynacall
 
 replace unvs.br.auth => ../businessRules/auth
+replace unvs.common => ../businessRules/common
 
 replace dbmodels => ../dbmodels
 
