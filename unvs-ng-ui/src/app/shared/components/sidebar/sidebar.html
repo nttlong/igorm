@@ -4,7 +4,7 @@
   <nav class="mt-4">
     <button
       *ngFor="let item of menuItems"
-      (click)="setActiveMenuItem.emit(item.id)"
+      (click)="handleMenuItemClick(item.id)"
       [attr.aria-label]="item.label"
       [ngClass]="{
         'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300': activeMenuItem === item.id,
@@ -14,18 +14,10 @@
     >
       <span class="flex-shrink-0">
         <!-- Icons for menu items -->
-        <ng-container *ngIf="item.id === 'dashboard'">
+        <!-- <ng-container>
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l7 7m-3 7v1a1 1 0 001 1h3a1 1 0 001-1v-4M7 21h10a2 2 0 002-2V8l-7-7-7 7v11a2 2 0 002 2z"></path></svg>
-        </ng-container>
-        <ng-container *ngIf="item.id === 'users'">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h-4v-2H7v2H4v-7L12 5l8 8v7h-3zM7 13v-1H4v1a1 1 0 001 1h1a1 1 0 001-1z"></path></svg>
-        </ng-container>
-        <ng-container *ngIf="item.id === 'projects'">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
-        </ng-container>
-        <ng-container *ngIf="item.id === 'settings'">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.381-.722 1.103-1.215 1.962-1.215.86 0 1.582.493 1.962 1.215l.774 1.464c.29.546.786.953 1.353 1.144l1.498.374a2.25 2.25 0 011.087 1.087l.374 1.498c.191.567.598 1.063 1.144 1.353l1.464.774c.722.381 1.215 1.103 1.215 1.962 0 .86-.493 1.582-1.215 1.962l-1.464.774c-.546.29-.953.786-1.144 1.353l-.374 1.498a2.25 2.25 0 01-1.087 1.087l-1.498.374c-.567.191-1.063.598-1.353 1.144l-.774 1.464c-.381.722-1.103 1.215-1.962 1.215-.86 0-1.582-.493-1.962-1.215l-.774-1.464c-.29-.546-.786-.953-1.353-1.144l-1.498-.374a2.25 2.25 0 01-1.087-1.087l-.374-1.498c-.191-.567-.598-1.063-1.144-1.353l-1.464-.774c-.722-.381-1.215-1.103-1.215-1.962 0-.86.493-1.582 1.215-1.962l1.464-.774c.546-.29.953-.786 1.144-1.353l.374-1.498a2.25 2.25 0 011.087-1.087l1.498-.374c.567-.191 1.063-.598 1.353-1.144l.774-1.464zM12 15a3 3 0 100-6 3 3 0 000 6z"></path></svg>
-        </ng-container>
+        </ng-container> -->
+        
       </span>
       <span
         [ngClass]="{ 'opacity-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }"

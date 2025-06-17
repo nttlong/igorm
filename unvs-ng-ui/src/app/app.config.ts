@@ -1,52 +1,63 @@
-// import { ApplicationConfig } from '@angular/core';
-// import { provideRouter, Routes } from '@angular/router';
-
-// // Import SimpleDashboardComponent của bạn
-// // import { SimpleDashboardComponent } from './simple-dashboard-delete/simple-dashboard.component';
-
-// // Định nghĩa các Routes cho ứng dụng
-// const routes: Routes = [
-//   {
-//     // Đây là route chính để hiển thị SimpleDashboardComponent ngay lập tức.
-//     // Khi truy cập '/' (đường dẫn gốc) sẽ hiển thị SimpleDashboardComponent.
-//     path: '',
-//     component: SimpleDashboardComponent,
-//   },
-//   {
-//     // Route 404 cho bất kỳ đường dẫn nào khác không khớp
-//     path: '**',
-//     component: SimpleDashboardComponent // Sử dụng SimpleDashboardComponent làm placeholder cho 404
-//     // Hoặc tạo một NotFoundPageComponent nếu bạn muốn trang 404 riêng biệt:
-//     // component: NotFoundPageComponent
-//   }
-// ];
-
-// export const appConfig: ApplicationConfig = {
-//   providers: [
-//     provideRouter(routes) // Cung cấp Router với các route đã định nghĩa
-//   ]
-// };
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter, Routes } from '@angular/router';
 
-// Import AppDashboard component (đảm bảo đường dẫn này đúng)
-// Đã điều chỉnh đường dẫn file để không có hậu tố .component
+// Import AppDashboard component (layout component)
 import { AppDashboard } from './shared/components/app-dashboard/app-dashboard';
+
+// Import các trang component thực tế
+import { Dashboard } from './pages/dashboard/dashboard';
+import { User } from './pages/user/user';
+import { Projects } from './pages/projects/projects';
+import { Settings } from './pages/settings/settings';
+import { Login } from './pages/login/login'; // Import Login component
 
 const routes: Routes = [
   {
-    // Đây là route chính để hiển thị AppDashboard ngay lập tức.
-    // Khi truy cập '/' (đường dẫn gốc) sẽ hiển thị AppDashboard.
-    path: '',
-    component: AppDashboard, // <-- Sử dụng AppDashboard ở đây
+    // Route cho trang Login (có thể có tenantname hoặc không)
+    // Ví dụ: /acme/login hoặc /login
+    path: ':tenantname/login', // Route cho login với tenantname
+    component: Login // <-- Đây là route độc lập cho Login
   },
   {
-    // Route 404 cho bất kỳ đường dẫn nào khác không khớp
-    path: '**',
-    component: AppDashboard // <-- Sử dụng AppDashboard làm placeholder cho 404
-    // Hoặc nếu bạn đã tạo NotFoundPageComponent, hãy sử dụng nó:
-    // component: NotFoundPageComponent
-  }
+    path: 'login', // Route login không có tenantname (fallback hoặc mặc định)
+    component: Login // <-- Đây cũng là route độc lập cho Login
+  },
+  {
+    // Route cha cho toàn bộ ứng dụng sau khi đăng nhập
+    // :tenantname là một route parameter, nó sẽ khớp với bất kỳ giá trị nào ở vị trí đó
+    path: ':tenantname', // <-- ĐÃ THÊM :tenantname VÀO PATH CHÍNH
+    component: AppDashboard, // AppDashboard sẽ là layout chính cho tenant này
+    children: [ // Các route con này sẽ được hiển thị trong <router-outlet> của AppDashboard
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Mặc định chuyển hướng đến dashboard của tenant
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.Dashboard) // Lazy load Dashboard
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./pages/user/user').then(m => m.User) // Lazy load User
+      },
+      {
+        path: 'projects',
+        loadComponent: () => import('./pages/projects/projects').then(m => m.Projects) // Lazy load Projects
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./pages/settings/settings').then(m => m.Settings) // Lazy load Settings
+      },
+      // Route 404 cho các đường dẫn không khớp trong layout của tenant
+      { path: '**', redirectTo: 'dashboard' } // Bất kỳ đường dẫn con nào không khớp sẽ về dashboard của tenant
+    ]
+  },
+  {
+    // Route gốc mặc định, có thể chuyển hướng đến một trang chào mừng hoặc login
+    path: '',
+    redirectTo: 'login', // Chuyển hướng về trang login mặc định
+    pathMatch: 'full'
+  },
+  // Route 404 tổng quát cho các đường dẫn không khớp ở cấp độ cao nhất
+  // Sẽ chuyển hướng đến trang login nếu không tìm thấy route nào
+  { path: '**', redirectTo: 'login' }
 ];
 
 export const appConfig: ApplicationConfig = {

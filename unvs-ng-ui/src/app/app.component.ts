@@ -1,27 +1,21 @@
-// import { Component } from '@angular/core';
-// import { CommonModule } from '@angular/common'; // Cần thiết cho các directives như *ngIf, *ngFor
-// import { RouterOutlet } from '@angular/router'; // Cần thiết cho <router-outlet>
-
-// @Component({
-//   selector: 'app-root', // Selector chính của ứng dụng
-//   templateUrl: './app.component.html', // Trỏ đến file HTML template
-//   styleUrls: ['./app.component.css'], // Trỏ đến file CSS style
-//   standalone: true, // Đây là một standalone component
-//   imports: [
-//     CommonModule,   // Cung cấp các directives chung của Angular
-//     RouterOutlet    // Cho phép sử dụng <router-outlet>
-//   ]
-// })
-// export class AppComponent {
-//   // Không cần thêm code nào ở đây, vì logic UI chính được đặt trong SimpleDashboardComponent
-// }
 import { Component } from '@angular/core';
-import { AppDashboard } from './shared/components/app-dashboard/app-dashboard';
+import { CommonModule } from '@angular/common'; // Cần nếu sử dụng các directives chung
+import { RouterOutlet } from '@angular/router'; // <-- Quan trọng: Import RouterOutlet
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [AppDashboard],
-  template: '<app-dashboard></app-dashboard>'
+  selector: 'app-root', // Selector gốc của ứng dụng Angular
+  templateUrl: './app.component.html', // Trỏ đến file HTML (chỉ có <router-outlet>)
+  styleUrls: ['./app.component.css'], // Trỏ đến file CSS (có thể trống)
+  standalone: true, // <-- Đánh dấu đây là một standalone component
+  imports: [
+    CommonModule,   // Cung cấp các directives như *ngIf, *ngFor (nếu có)
+    RouterOutlet    // <-- Cần thiết để sử dụng <router-outlet> trong template
+  ]
 })
-export class AppComponent {}
+export class AppComponent {
+  // AppComponent không cần logic phức tạp vì nó chỉ là host cho router.
+  // Mọi logic của ứng dụng (layout, trang, v.v.) sẽ nằm trong các component được load bởi router.
+  constructor() {
+    // console.log("AppComponent loaded!"); // Có thể thêm log để debug nếu cần
+  }
+}
