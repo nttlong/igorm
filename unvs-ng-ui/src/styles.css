@@ -1,30 +1,14 @@
-/* src/styles.css */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Đảm bảo html, body chiếm toàn bộ chiều cao và không có margin/padding mặc định */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box; /* Quan trọng để padding/border không làm tăng kích thước tổng thể */
-  overflow-x: hidden; /* Ngăn chặn scroll ngang không mong muốn */
+/* Reset input styles */
+input {
+  border-radius: inherit;
 }
-
-/* Đặt màu nền mặc định cho light/dark mode cho toàn bộ body */
-body {
-  background-color: #f3f4f6; /* bg-gray-100 */
+.debug {
+  border: solid 2px red !important;
 }
-
-body.dark {
-  background-color: #1a202c; /* bg-gray-900 */
-  color: #e2e8f0; /* màu chữ mặc định cho dark mode */
-}
-
-/* Đảm bảo phần tử app-root chiếm hết chiều cao */
-app-root {
-  display: block; /* Hoặc flex-col nếu bạn muốn AppComponent là một flex container */
-  height: 100%;
+.main-layout {
+  border: solid 1px  !important;
 }

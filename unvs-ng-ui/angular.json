@@ -5,7 +5,13 @@
   "projects": {
     "unvs-ng-ui": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "prefix": "app",
+          "style": "scss",
+          "skipTests": false
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -90,6 +96,6 @@
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": "05e028d1-9acf-4797-9eeb-21b773024627"
   }
 }

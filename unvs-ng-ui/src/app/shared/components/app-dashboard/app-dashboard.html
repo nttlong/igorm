@@ -1,0 +1,34 @@
+<!-- `src/app/shared/components/app-dashboard/app-dashboard.component.html` -->
+<!-- Wrapper chính của layout. flex-col để sắp xếp Header và khối Sidebar/Main theo chiều dọc -->
+<div class="min-h-screen flex flex-col bg-gray-100 dark:bg-white">
+
+    <!-- Sử dụng Header component -->
+    <!-- Truyền `isDarkMode` xuống Header và lắng nghe các sự kiện toggle -->
+    <app-header
+      [isDarkMode]="isDarkMode"
+      (onSidebarToggle)="toggleSidebar()"
+      (onToggleDarkMode)="toggleDarkMode()"
+    ></app-header>
+  
+    <!-- Container cho Sidebar và Main content. flex-1 để chiếm hết chiều cao còn lại. overflow-hidden để tránh scrollbar kép. -->
+    <div class="flex flex-1 overflow-hidden mt-16"> <!-- mt-16 = 64px để bù đắp chiều cao Header -->
+      <!-- Sử dụng Sidebar component -->
+      <!-- Truyền `isSidebarCollapsed`, `menuItems`, `activeMenuItem` xuống Sidebar và lắng nghe sự kiện setActiveMenuItem -->
+      <app-sidebar
+        [isSidebarCollapsed]="isSidebarCollapsed"
+        [menuItems]="menuItems"
+        [activeMenuItem]="activeMenuItem"
+        (setActiveMenuItem)="setActiveMenuItem($event)"
+      ></app-sidebar>
+  
+      <!-- Main content area -->
+      <main class="flex-1 p-1 transition-all duration-300 overflow-y-auto"
+            [class.ml-16]="isSidebarCollapsed" [class.ml-64]="!isSidebarCollapsed">
+        <!-- Đây là nội dung cụ thể của trang "App Dashboard" -->
+        <div class=" bg-white dark:bg-white-800  shadow-md min-h-[calc(100vh-10rem)]">
+            <ng-content></ng-content>
+        </div>
+      </main>
+    </div>
+  </div>
+  
