@@ -13,7 +13,10 @@ import (
 
 func (u *User) AuthenticateUser(username string, password string) (*service.OAuth2Token, error) {
 	(&u.TokenService).DecodeAccessToken("token")
-	CreateSysAdminUser(u.TenantDb, u.Context)
+	err := CreateSysAdminUser(u.TenantDb, u.Context)
+	if err != nil {
+		return nil, err
+	}
 	if username == "" || password == "" {
 		return nil, fmt.Errorf("username or password is empty")
 	}
@@ -72,7 +75,7 @@ func (u *User) AuthenticateUser(username string, password string) (*service.OAut
 		UserId   string
 		RoleId   string
 		Username string
-		Email    string
+		Email    *string
 	}{
 		UserId:   user.UserId,
 		RoleId:   defaultRole,

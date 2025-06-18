@@ -91,6 +91,7 @@ func (e *executorMySql) createSqlCreateUniqueIndexIfNotExists(indexName string, 
 		ALTER TABLE `products`
 	ADD CONSTRAINT `uc_category_product_code` UNIQUE (`category_id`, `product_code`);
 	*/
+
 	sqlCmdStr := "ALTER TABLE " + e.quote(tableName) + " ADD CONSTRAINT " + e.quote(indexName) + " UNIQUE ("
 	for _, field := range index {
 		sqlCmdStr += e.quote(field.Name) + ","

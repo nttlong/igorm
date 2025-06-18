@@ -3,8 +3,22 @@
 @tailwind utilities;
 
 /* Reset input styles */
-input {
-  border-radius: inherit;
+@layer base {
+  input[type="text"] {
+    @apply px-1 py-1 rounded-[2px]; /* padding 2 + bo góc 2px */
+    height: 34px;
+
+  }
+  button{
+    @apply px-0 px-0  rounded-[2px]; /* padding 2 + bo góc 2px */
+    height: 34px;
+    
+    
+  }
+  button>svg {
+    height: 32px;
+  }
+  
 }
 .debug {
   border: solid 2px red !important;

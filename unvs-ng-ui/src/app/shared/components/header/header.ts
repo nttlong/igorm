@@ -1,25 +1,28 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Cần thiết cho *ngIf trong template
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../services/auth.service'; // <-- Import AuthService
 
 @Component({
-  selector: 'app-header', // Selector của component này, sẽ được sử dụng trong template cha
-  templateUrl: './header.html', // Trỏ đến file HTML template
-  styleUrls: ['./header.scss'], // Trỏ đến file CSS style (có thể để trống)
-  standalone: true, // <-- Đánh dấu component này là standalone
-  imports: [CommonModule] // <-- Import CommonModule để sử dụng directives như *ngIf
+  selector: 'app-header',
+  templateUrl: './header.html',
+  styleUrls: ['./header.scss'],
+  standalone: true,
+  imports: [CommonModule]
 })
-export class Header { // <-- Tên lớp của component
-  // @Input() để nhận dữ liệu từ component cha
-  @Input() isDarkMode: boolean = false; // Nhận trạng thái dark mode từ bên ngoài
-
-  // @Output() để gửi sự kiện lên component cha
-  // Khi nút toggle sidebar được click, sự kiện này sẽ được emit
+export class Header {
+  @Input() isDarkMode: boolean = false;
+  @Input() isProfileDropdownOpen: boolean = false; // Thêm input cho dropdown
+  
   @Output() onSidebarToggle = new EventEmitter<void>();
-  // Khi nút toggle dark mode được click, sự kiện này sẽ được emit
   @Output() onToggleDarkMode = new EventEmitter<void>();
+  @Output() setIsProfileDropdownOpen = new EventEmitter<boolean>(); // Output cho dropdown
+  @Output() onLogout = new EventEmitter<void>(); // Output cho logout
 
-  constructor() {
+  constructor(private authService: AuthService) { } // Inject AuthService
 
-    
-   }
+  // Phương thức để gọi logout từ AuthService
+  logout(): void {
+    this.authService.logout();
+    this.onLogout.emit(); // Emit sự kiện logout lên component cha
+  }
 }

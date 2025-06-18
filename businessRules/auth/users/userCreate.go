@@ -10,26 +10,35 @@ import (
 	"github.com/google/uuid"
 )
 
-func (u *User) Create(username, password, email string) (*authModels.User, error) {
+func (u *User) Create(data struct {
+	Username string  `json:"username" validate:"required,alphanum,min=3,max=255"`
+	Password string  `json:"password" validate:"required,min=8,max=255"`
+	Email    *string `json:"email" validate:"required,email"`
+}) (*authModels.User, error) {
+	tokenInfo, err := u.ValidateAccessToken(u.AccessToken)
+	if err != nil || tokenInfo == nil {
 
-	hasPass, err := (&services.PasswordService{}).HashPassword(password, username)
+		return nil, err
+	}
+	hasPass, err := (&services.PasswordService{}).HashPassword(data.Password, data.Username)
 	if err != nil {
 		return nil, fmt.Errorf("failed to hash password: %w", err)
 	}
 	// Tạo mới user
 	user := &authModels.User{
 		UserId:       uuid.New().String(),
-		Username:     username,
+		Username:     data.Username,
 		PasswordHash: hasPass,
-		Email:        email,
-		CreatedBy:    "system",
+		Email:        data.Email,
+		CreatedBy:    tokenInfo.Username,
 		CreatedAt:    time.Now().UTC(),
 	}
 
 	// Lưu vào cơ sở dữ liệu
 	err = u.TenantDb.InsertWithContext(u.Context, user)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create user: %w", err)
+
+		return nil, err
 	}
 
 	// Trả về user mới

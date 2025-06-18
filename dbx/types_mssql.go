@@ -130,11 +130,43 @@ func (e executorMssql) createSqlCreateUniqueIndexIfNotExists(indexName string, t
 	    ADD [Code] NVARCHAR(50) NOT NULL DEFAULT ''; -- Cần DEFAULT value nếu là NOT NULL
 	END;
 	*/
-	sqlCmdStr := "ALTER TABLE " + e.quote(tableName) + " ADD CONSTRAINT " + e.quote(indexName) + " UNIQUE ("
+	sqlCmdStr := ""
+	strFieldNames := []string{}
+
 	for _, field := range index {
-		sqlCmdStr += e.quote(field.Name) + ","
+		strFieldNames = append(strFieldNames, e.quote(field.Name))
 	}
-	sqlCmdStr = strings.TrimSuffix(sqlCmdStr, ",") + ")"
+	strField := strings.Join(strFieldNames, ",")
+	//check all field is allow null
+	allFieldIsAllowNull := true
+
+	for _, field := range index {
+		if !field.AllowNull {
+			allFieldIsAllowNull = false
+			break
+		}
+	}
+	if allFieldIsAllowNull {
+		/*
+					CREATE UNIQUE NONCLUSTERED INDEX UX_User_Email_NotNull
+			ON [dbo].[User] ([Email])
+			WHERE [Email] IS NOT NULL;
+
+		*/
+		strWhere := ""
+		for _, field := range index {
+			strWhere += e.quote(field.Name) + " IS NOT NULL AND "
+		}
+		strWhere = strings.TrimSuffix(strWhere, " AND ")
+
+		if index[0].AllowNull {
+			sqlCmdStr = "CREATE UNIQUE NONCLUSTERED INDEX " + e.quote(indexName) + " ON " + e.quote(tableName) + " (" + strField + ") WHERE " + strWhere
+
+		}
+	} else {
+		sqlCmdStr = "ALTER TABLE " + e.quote(tableName) + " ADD CONSTRAINT " + e.quote(indexName) + " UNIQUE (" + strField + ")"
+	}
+
 	/**
 		IF NOT EXISTS (
 	    SELECT 1
@@ -147,8 +179,25 @@ func (e executorMssql) createSqlCreateUniqueIndexIfNotExists(indexName string, t
 	    ALTER TABLE [Employees] ADD CONSTRAINT [Code_uk] UNIQUE ([Code]);
 	END;
 	*/
-	sqlCheck := "SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'" + indexName + "') AND parent_object_id = OBJECT_ID(N'" + tableName + "') AND type = 'UQ'"
-	sqlCheck = "IF NOT EXISTS (" + sqlCheck + ") \nBEGIN \n" + sqlCmdStr + "\n END;"
+	sqlCheckNonCLuster := `SELECT  
+					1
+				FROM sys.indexes ind
+				INNER JOIN sys.index_columns ic 
+					ON ind.object_id = ic.object_id AND ind.index_id = ic.index_id
+				INNER JOIN sys.columns col 
+					ON ic.object_id = col.object_id AND ic.column_id = col.column_id
+				LEFT JOIN sys.indexes i 
+					ON ind.object_id = i.object_id AND ind.index_id = i.index_id
+				LEFT JOIN sys.tables t 
+					ON ind.object_id = t.object_id
+				WHERE t.name = '` + tableName + `' and ind.name ='` + indexName + "'"
+	sqlCheckCluster := "SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'" + indexName + "') AND parent_object_id = OBJECT_ID(N'" + tableName + "') AND type = 'UQ'"
+	sqlCheck := ""
+	if allFieldIsAllowNull {
+		sqlCheck = "IF NOT EXISTS (" + sqlCheckNonCLuster + ") \nBEGIN \n" + sqlCmdStr + "\n END;"
+	} else {
+		sqlCheck = "IF NOT EXISTS (" + sqlCheckCluster + ") \nBEGIN \n" + sqlCmdStr + "\n END;"
+	}
 
 	return SqlCommandCreateUnique{
 		string:    sqlCheck,

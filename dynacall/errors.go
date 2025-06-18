@@ -31,6 +31,7 @@ const (
 	CallErrorCodeAuthorizationFailed
 	CallErrorCodeAuthenticationFailed
 	CallErrorCodeAccessDenied
+	CallErrorDuplicateData
 )
 
 func (e CallErrorCode) String() string {
@@ -77,14 +78,18 @@ func (e CallErrorCode) String() string {
 		return "AUTHENTICATION_FAILED"
 	case CallErrorCodeAccessDenied:
 		return "ACCESS_DENIED"
+	case CallErrorDuplicateData:
+		return "DUPLICATE_DATA"
 	default:
 		return "UNKNOWN"
 	}
 }
 
 type CallError struct {
-	Err  error
-	Code CallErrorCode
+	Err    error
+	Code   CallErrorCode
+	Fields []string
+	Values []string
 }
 
 func (e CallError) Error() string {

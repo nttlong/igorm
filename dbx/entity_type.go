@@ -93,10 +93,23 @@ func getTableNameNoCache(t reflect.Type) string {
 }
 func newEntityTypeNoCache(t reflect.Type) (*EntityType, error) {
 	//check cache
+	tableName := getTableName(t)
+	if tableName == "" {
+		if t.Kind() == reflect.Ptr {
+			t = t.Elem()
+		}
+		if t.Kind() == reflect.Slice {
+			t = t.Elem()
+		}
+		if t.Kind() == reflect.Ptr {
+			t = t.Elem()
+		}
+		return nil, fmt.Errorf("The entity type %s is not a valid entity type, please embed EntityModel and  add `db:\"table_name\"` tag to the entity struct", t.PkgPath()+"."+t.Name())
+	}
 
 	ret := EntityType{
 		Type:         t,
-		TableName:    getTableName(t),
+		TableName:    tableName,
 		fieldMap:     sync.Map{},
 		RefEntities:  []*EntityType{},
 		EntityFields: []*EntityField{},

@@ -1,7 +1,8 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideRouter, Routes, ActivatedRoute, Router } from '@angular/router'; // <-- Vẫn import Router ở đây, nhưng không dùng ActivatedRoute trong factory
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { provideRouter, Routes, Router, ActivatedRoute } from '@angular/router';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'; // <-- Thêm withInterceptorsFromDi
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+// import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // Import AppDashboard component (layout component)
 import { AppDashboard } from './shared/components/app-dashboard/app-dashboard';
@@ -16,16 +17,17 @@ import { Login } from './pages/login/login'; // Import Login component
 // Import UnvsTranslateLoader của bạn
 import { UnvsTranslateLoader } from './services/unvs-translate-loader.service'; // <-- Import custom loader
 
-// Hàm factory để tạo instance của UnvsTranslateLoader
-// Nó sẽ nhận HttpClient và Router
-export function createUnvsTranslateLoader(http: HttpClient, router: Router) { // <-- Nhận Router thay vì ActivatedRoute
-  return new UnvsTranslateLoader(http, router); // <-- Truyền Router vào loader
-}
+// Import AuthInterceptor
+import { AuthInterceptor } from './interceptors/auth.interceptor'; // <-- Import AuthInterceptor
+import { HTTP_INTERCEPTORS } from '@angular/common/http'; // <-- Import HTTP_INTERCEPTORS
 
-// Hàm factory để tạo instance của TranslateHttpLoader
-// export function HttpLoaderFactory(http: HttpClient) {
-//   return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
-// }
+// Import AuthGuard
+import { authGuard } from './guards/auth.guard'; // <-- Import authGuard
+
+// Hàm factory để tạo instance của UnvsTranslateLoader
+export function createUnvsTranslateLoader(http: HttpClient, router: Router) {
+  return new UnvsTranslateLoader(http, router);
+}
 
 const routes: Routes = [
   {
@@ -39,6 +41,7 @@ const routes: Routes = [
   {
     path: ':tenantname',
     component: AppDashboard,
+    canActivate: [authGuard], // <-- Áp dụng AuthGuard vào route cha này
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
@@ -71,14 +74,19 @@ const routes: Routes = [
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(),
+    // Cấu hình HttpClient để sử dụng interceptors từ DI
+    provideHttpClient(withInterceptorsFromDi()), // <-- Thêm withInterceptorsFromDi
+    {
+      provide: HTTP_INTERCEPTORS, // Cung cấp interceptor
+      useClass: AuthInterceptor,
+      multi: true // Quan trọng: cho phép nhiều interceptor
+    },
     importProvidersFrom(
       TranslateModule.forRoot({
         loader: {
           provide: TranslateLoader,
-          // Sử dụng useFactory để inject HttpClient và Router
-          useFactory: (http: HttpClient, router: Router) => createUnvsTranslateLoader(http, router), // <-- Truyền Router
-          deps: [HttpClient, Router] // <-- Khai báo Router là một dependency
+          useFactory: (http: HttpClient, router: Router) => createUnvsTranslateLoader(http, router),
+          deps: [HttpClient, Router]
         }
       })
     )

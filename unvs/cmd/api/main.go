@@ -150,6 +150,7 @@ func main() {
 	apiV1 := e.Group("/api/v1")
 	apiV1.POST("/invoke", callHandler.Call)
 	apiV1.POST("/invoke-form", callHandler.FormSubmit)
+	apiV1.POST("/oauth/token", oathHandler.Token)
 	///get/{tenant}/{module}/{action}/{optionalPath}
 	apiV1.GET("/get/:tenant/:module/:action/*optionalPath", callHandler.CallGet)
 	// e.GET("/get/:tenant/:module/:action/*paramoptionalPaths", handler.CallGet)

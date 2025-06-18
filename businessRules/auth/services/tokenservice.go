@@ -3,7 +3,9 @@ package services
 import (
 	"crypto/rand"
 	"dbx"
+	"dynacall"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log"
 	"reflect"
@@ -15,16 +17,16 @@ import (
 )
 
 type OAuth2Token struct {
-	AccessToken  string `json:"access_token"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int64  `json:"expires_in"` // Thời gian sống của token tính bằng giây
-	Scope        string `json:"scope"`
-	RefreshToken string `json:"refresh_token"`
-	Message      string `json:"message,omitempty"` // Thêm message nếu bạn muốn giữ lại
-	RoleId       string `json:"roleId,omitempty"`  // Thêm role nếu bạn muốn giữ lại
-	UserId       string `json:"userId,omitempty"`  // Thêm userID nếu bạn muốn giữ lại
-	Username     string `json:"username,omitempty"`
-	Email        string `json:"email,omitempty"`
+	AccessToken  string  `json:"access_token"`
+	TokenType    string  `json:"token_type"`
+	ExpiresIn    int64   `json:"expires_in"` // Thời gian sống của token tính bằng giây
+	Scope        string  `json:"scope"`
+	RefreshToken string  `json:"refresh_token"`
+	Message      string  `json:"message,omitempty"` // Thêm message nếu bạn muốn giữ lại
+	RoleId       string  `json:"roleId,omitempty"`  // Thêm role nếu bạn muốn giữ lại
+	UserId       string  `json:"userId,omitempty"`  // Thêm userID nếu bạn muốn giữ lại
+	Username     string  `json:"username,omitempty"`
+	Email        *string `json:"email,omitempty"`
 }
 type TokenService struct {
 	CacheService
@@ -72,9 +74,25 @@ func (s *TokenService) ValidateAccessToken(accessToken string) (*OAuth2Token, er
 	tokenInfo, err := s.DecodeAccessToken(accessTokenValidate)
 	if err != nil {
 		if auErr, ok := err.(*authErr.AuthError); ok {
-			return nil, auErr
+			if auErr.Code == authErr.ErrTokenExpired {
+				return nil, &dynacall.CallError{
+					Code: dynacall.CallErrorCodeTokenExpired,
+					Err:  err,
+				}
+			}
+			return nil, &dynacall.CallError{
+				Code: dynacall.CallErrorCodeAccessDenied,
+				Err:  errors.New("Access Deny"),
+			}
 		}
+
 		return nil, err
+	}
+	if tokenInfo == nil {
+		return nil, &dynacall.CallError{
+			Code: dynacall.CallErrorCodeAccessDenied,
+			Err:  errors.New("Access Deny"),
+		}
 	}
 
 	s.Cache.Set(s.Context, cacheKey, tokenInfo, time.Duration(tokenInfo.ExpiresIn)*time.Second)
@@ -174,7 +192,7 @@ func (s *TokenService) GenerateToken(data struct {
 	UserId   string
 	RoleId   string
 	Username string
-	Email    string
+	Email    *string
 }) (*OAuth2Token, error) {
 	// Thời gian sống của token (ví dụ: 1 giờ)
 	tokenDuration := 1 * time.Hour

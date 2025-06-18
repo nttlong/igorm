@@ -12,7 +12,7 @@ type User struct {
 	UserId          string     `db:"varchar(36);uk" json:"userId"`
 	Username        string     `db:"uk;varchar(255)" json:"username"`
 	PasswordHash    string     `db:"varchar(255)" json:"-"` // don't expose password hash in API
-	Email           string     `db:"uk;varchar(320)" json:"email"`
+	Email           *string    `db:"uk;varchar(320)" json:"email"`
 	CreatedAt       time.Time  `json:"createdAt"`
 	UpdatedAt       *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy       string     `db:"varchar(50);idx" json:"createdBy,omitempty"`

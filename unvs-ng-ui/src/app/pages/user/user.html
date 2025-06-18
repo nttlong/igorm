@@ -1,1 +1,35 @@
-<p>user works!</p>
+<!-- `src/app/pages/user/user.html` -->
+
+<div class="p-6">
+  <h2 class="text-2xl font-bold mb-6 text-gray-800">User Information</h2>
+
+  
+
+  <div  class="space-y-6">
+    <!-- Search Bar -->
+    <unvs-search-input/>
+
+    <!-- User Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <div *ngFor="let user of filteredUsers" class="bg-white rounded-lg shadow p-4">
+        <!-- Cột 1: Title -->
+         <h4>{{user.username}}</h4>
+         <div class="grid grid-cols-2 gap-2 text-sm text-gray-600">
+          <div>Email:</div>
+          <div>{{ user.email }}</div>
+    
+          
+    
+          
+        </div>
+      
+        <!-- Cột 2: Description -->
+        
+      
+        <!-- Cột 2: Description -->
+        
+      </div>
+    </div>
+  </div>
+</div>

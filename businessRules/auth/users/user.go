@@ -17,6 +17,7 @@ type User struct {
 	services.TokenService
 	service.PasswordService
 	service.CacheService
+	AccessToken string
 }
 
 func init() {

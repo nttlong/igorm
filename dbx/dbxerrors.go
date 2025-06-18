@@ -7,6 +7,7 @@ const (
 	DBXErrorCodeDuplicate
 	DBXErrorCodeInvalidSize
 	DBXErrorCodeReferenceConstraint
+	DBXErrorCodeMissingRequiredField
 )
 
 func (e DBXErrorCode) String() string {
@@ -19,6 +20,8 @@ func (e DBXErrorCode) String() string {
 		return "INVALID_SIZE"
 	case DBXErrorCodeReferenceConstraint:
 		return "REFERENCE_CONSTRAINT"
+	case DBXErrorCodeMissingRequiredField:
+		return "MISSING_REQUIRED_FIELD"
 	default:
 		return "UNKNOWN"
 	}

@@ -4,11 +4,7 @@ import (
 	_ "dbmodels/auth"
 	dbmodels "dbmodels/auth"
 	"dbx"
-	"dynacall"
-	"errors"
 	"time"
-
-	authErr "unvs.br.auth/errors"
 )
 
 func (r *RoleService) Create(data struct {
@@ -17,28 +13,11 @@ func (r *RoleService) Create(data struct {
 	Description string `json:"description"`
 }) (*dbmodels.Role, error) {
 	tokenInfo, err := r.ValidateAccessToken(r.AccessToken)
-	if err != nil {
-		if auErr, ok := err.(*authErr.AuthError); ok {
-			if auErr.Code == authErr.ErrTokenExpired {
-				return nil, &dynacall.CallError{
-					Code: dynacall.CallErrorCodeTokenExpired,
-					Err:  err,
-				}
-			}
-			return nil, &dynacall.CallError{
-				Code: dynacall.CallErrorCodeAccessDenied,
-				Err:  errors.New("Access Deny"),
-			}
-		}
+	if err != nil || tokenInfo == nil {
 
 		return nil, err
 	}
-	if tokenInfo == nil {
-		return nil, &dynacall.CallError{
-			Code: dynacall.CallErrorCodeAccessDenied,
-			Err:  errors.New("Access Deny"),
-		}
-	}
+
 	role := dbmodels.Role{
 		RoleId:      dbx.NewUUID(),
 		Code:        data.Code,

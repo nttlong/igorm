@@ -72,6 +72,13 @@ func (h *OAuthHandler) Token(c echo.Context) error {
 		TenantDb:      dbTenant,
 	})
 	if err != nil {
+		if strings.Contains(err.Error(), "Invalid username or password") {
+			return c.JSON(http.StatusUnauthorized, ErrorResponse{
+				Code:    "INVALID_CREDENTIALS",
+				Message: "Invalid username or password",
+			})
+
+		}
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{
 			Code:    "INTERNAL_SERVER_ERROR",
 			Message: "Internal server error",

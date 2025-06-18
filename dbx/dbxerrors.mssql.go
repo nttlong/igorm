@@ -33,6 +33,8 @@ func (p *mssqlErrorParser) ParseError(ctx context.Context, db *sql.DB, err error
 			return p.parseError2627(ctx, db, mssqlErr)
 		case 547:
 			return &DBXError{Code: DBXErrorCodeReferenceConstraint, Message: "reference constraint error"}
+		case 515:
+			return p.parseError515(ctx, db, mssqlErr)
 		case 50000:
 			return &DBXError{Code: DBXErrorCodeInvalidSize, Message: "invalid size error"}
 		default:

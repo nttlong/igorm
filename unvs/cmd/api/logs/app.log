@@ -4797,3 +4797,650 @@ ____________________________________O/_______
 {"time":"2025-06-17T22:36:40.2548044+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
 {"time":"2025-06-17T22:36:40.9660528+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"1.1459ms"}
 {"time":"2025-06-17T22:36:42.4915793+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T08:49:28.1134009+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"7.0340305s"}
+{"time":"2025-06-18T08:49:33.8755493+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T08:49:35.9493155+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T08:49:37.0402436+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T08:49:37.8133905+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T08:50:39.6561906+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/tenant1/mod1/act1/extra/segment/dsadsa/dsad","status":400,"latency_human":"37.9184ms"}
+{"time":"2025-06-18T08:50:49.2470875+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1?lang=en","status":404,"latency_human":"0s"}
+{"time":"2025-06-18T09:02:13.1918437+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"142.6839ms"}
+{"time":"2025-06-18T09:02:15.6433179+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T09:02:51.7681862+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T09:03:12.9305497+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T09:03:13.5381804+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T09:05:44.9927397+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"24.6549ms"}
+{"time":"2025-06-18T09:11:42.8739091+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/ddddd/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"2.4831575s"}
+{"time":"2025-06-18T09:11:46.2306462+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"2.557038s"}
+{"time":"2025-06-18T09:11:46.7638996+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T09:12:12.7170861+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/oauth/token","status":404,"latency_human":"0s"}
+{"time":"2025-06-18T09:12:20.3156442+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/oauth/token","status":404,"latency_human":"0s"}
+{"time":"2025-06-18T09:13:51.216599+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"7.9639546s"}
+{"time":"2025-06-18T09:14:20.0042743+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"1.8866ms"}
+{"time":"2025-06-18T09:14:21.6392411+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"0s"}
+{"time":"2025-06-18T09:15:54.3579101+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"3.412096s"}
+{"time":"2025-06-18T09:15:59.5034294+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?feature=common&action=login&module=unvs.br.auth.users&tenant=default&lan=vi","status":405,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T09:24:57.2599674+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"2.7340143s"}
+time="2025-06-18T09:25:04+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T09:25:04.5718679+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=login&module=unvs.br.auth.users&tenant=default&lan=en","status":500,"latency_human":"9.174ms"}
+{"time":"2025-06-18T09:26:11.633455+07:00","remote_ip":"::1","method":"GET","uri":"/oauth/token","status":405,"latency_human":"0s"}
+{"time":"2025-06-18T09:30:03.3270364+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"1.9748002s"}
+time="2025-06-18T09:30:09+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T09:30:09.0365046+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=login&module=unvs.br.auth.users&tenant=aaa&lan=en","status":500,"latency_human":"335.7069ms"}
+{"time":"2025-06-18T09:31:35.3359414+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"35.6091ms"}
+{"time":"2025-06-18T09:31:35.5442377+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-18T09:33:36+07:00" level=error msg="username or password is empty" callerPath=login@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T09:33:36.1191118+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=login&module=unvs.br.auth.users&tenant=aaa&lan=en","status":500,"latency_human":"5.4872475s"}
+{"time":"2025-06-18T09:34:35.9484693+07:00","remote_ip":"::1","method":"GET","uri":"/oauth/token","status":405,"latency_human":"0s"}
+{"time":"2025-06-18T09:35:03.7198301+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/aaa/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"505.1µs"}
+{"time":"2025-06-18T09:35:06.3047733+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"2.1715706s"}
+{"time":"2025-06-18T09:35:19.6223676+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/oauth/token","status":500,"latency_human":"9.2249ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T09:37:40.4447469+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/oauth/token","status":401,"latency_human":"5.8593233s"}
+{"time":"2025-06-18T09:37:55.4491149+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/oauth/token","status":200,"latency_human":"3.3434391s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T11:14:09.2303267+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T11:20:11.3781148+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/oauth/token","status":200,"latency_human":"8.1500998s"}
+{"time":"2025-06-18T11:21:32.4793402+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":400,"latency_human":"586µs"}
+{"time":"2025-06-18T11:21:40.0401545+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":400,"latency_human":"0s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T11:25:14.6037793+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":400,"latency_human":"0s"}
+{"time":"2025-06-18T11:25:26.5526749+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":400,"latency_human":"0s"}
+{"time":"2025-06-18T11:25:48.0403657+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"505.4µs"}
+time="2025-06-18T11:26:31+07:00" level=error msg="mssql: Invalid object name 'Users'." callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T11:26:31.6222193+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"4.0594512s"}
+{"time":"2025-06-18T11:26:36.0974091+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":400,"latency_human":"0s"}
+{"time":"2025-06-18T11:26:43.3615238+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":400,"latency_human":"2.308ms"}
+{"time":"2025-06-18T11:27:04.9348124+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":400,"latency_human":"0s"}
+{"time":"2025-06-18T11:27:09.4290298+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":405,"latency_human":"0s"}
+time="2025-06-18T11:27:39+07:00" level=error msg="mssql: Invalid object name 'Users'." callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T11:27:39.0056057+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"21.6781461s"}
+time="2025-06-18T11:27:55+07:00" level=error msg="mssql: Invalid object name 'Users'." callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T11:27:55.8457208+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"12.6272823s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T11:28:35.1408553+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"9.4655252s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-18T11:30:05+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *sql.DB\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-18T11:30:05+07:00" level=info msg="Stack Trace:\ngoroutine 37 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:177 +0x1ed\npanic({0x1ad2a40?, 0xc0002c0490?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x1c54bc0)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndbx.getTableNameNoCache({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:77 +0x5d\ndbx.getTableName({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.newEntityTypeNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:99 +0x6b\ndbx.newEntityType({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.newEntityTypeNoCache({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:143 +0x938\ndbx.newEntityType({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.Query[...](0xc00015fd60, {0x259bb88, 0xc00011a280})\n\tE:/Docker/go/unvs/igorm/dbx/queryBuilder.go:18 +0x88\nunvs.br.auth/users.(*User).List(0xc0003101c0, {})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/user.list.go:6 +0x85\nreflect.Value.call({0xc0002c4720, 0xc0001869f8, 0x13}, {0x1c79e28, 0x4}, {0xc000042c00, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc0002c4720, 0xc0001869f8, 0x13}, {0xc000042c00, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x1a4dbcb, 0x4}, {0x0, 0x0}, {0x25a8740, 0xc0002c4720}, {0xc0002c4720, 0xc0001869f8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:117 +0x1925\ndynacall.Call({0xc00012cdc8, 0x17}, {0x1b0dc60, 0x2d759e0}, {0x1abcec0, 0xc000054980})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:44 +0xa5\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc0001220c0, {0x25a9158, 0xc00015fae0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:203 +0x1e58\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x25a9158, 0xc00015fae0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x25a9158, 0xc00015fae0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x25a9158, 0xc00015fae0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x25a9158, 0xc00015fae0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:280 +0xd86\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001606c8, {0x2599940, 0xc000310000}, 0xc000162640)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00010a700}, {0x2599940, 0xc000310000}, 0xc000162640)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0001442d0, {0x259bb88, 0xc00011a230})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T11:30:05.9696816+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"3.4071692s"}
+time="2025-06-18T11:30:18+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *sql.DB\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-18T11:30:18+07:00" level=info msg="Stack Trace:\ngoroutine 37 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:177 +0x1ed\npanic({0x1ad2a40?, 0xc0002c0590?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x1c54bc0)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndbx.getTableNameNoCache({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:77 +0x5d\ndbx.getTableName({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.newEntityTypeNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:99 +0x6b\ndbx.newEntityType({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.newEntityTypeNoCache({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:143 +0x938\ndbx.newEntityType({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.Query[...](0xc00015fd60, {0x259bb88, 0xc0001f02d0})\n\tE:/Docker/go/unvs/igorm/dbx/queryBuilder.go:18 +0x88\nunvs.br.auth/users.(*User).List(0xc0002869a0, {})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/user.list.go:6 +0x85\nreflect.Value.call({0xc0002c4720, 0xc0001869f8, 0x13}, {0x1c79e28, 0x4}, {0xc00047c9c0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc0002c4720, 0xc0001869f8, 0x13}, {0xc00047c9c0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x1a4dbcb, 0x4}, {0x0, 0x0}, {0x25a8740, 0xc0002c4720}, {0xc0002c4720, 0xc0001869f8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:117 +0x1925\ndynacall.Call({0xc0001cc1c8, 0x17}, {0x1b0dc60, 0x2d759e0}, {0x1abcec0, 0xc000126080})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:44 +0xa5\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc0001220c0, {0x25a9158, 0xc000226280})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:203 +0x1e58\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x25a9158, 0xc000226280})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x25a9158, 0xc000226280})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x25a9158, 0xc000226280})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x25a9158, 0xc000226280})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:280 +0xd86\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001606c8, {0x2599940, 0xc0002860e0}, 0xc0001623c0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00010a700}, {0x2599940, 0xc0002860e0}, 0xc0001623c0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0001442d0, {0x259bb88, 0xc00011a230})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T11:30:20.1352426+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"8.5241768s"}
+time="2025-06-18T11:30:35+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *sql.DB\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-18T11:30:35+07:00" level=info msg="Stack Trace:\ngoroutine 37 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:177 +0x1ed\npanic({0x1ad2a40?, 0xc000195330?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x1c54bc0)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndbx.getTableNameNoCache({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:77 +0x5d\ndbx.getTableName({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.newEntityTypeNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:99 +0x6b\ndbx.newEntityType({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.newEntityTypeNoCache({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:143 +0x938\ndbx.newEntityType({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.Query[...](0xc00015fd60, {0x259bb88, 0xc0002780f0})\n\tE:/Docker/go/unvs/igorm/dbx/queryBuilder.go:18 +0x88\nunvs.br.auth/users.(*User).List(0xc000178000, {})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/user.list.go:6 +0x85\nreflect.Value.call({0xc0002c4720, 0xc0001869f8, 0x13}, {0x1c79e28, 0x4}, {0xc000302ea0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc0002c4720, 0xc0001869f8, 0x13}, {0xc000302ea0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x1a4dbcb, 0x4}, {0x0, 0x0}, {0x25a8740, 0xc0002c4720}, {0xc0002c4720, 0xc0001869f8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:117 +0x1925\ndynacall.Call({0xc000030210, 0x17}, {0x1b0dc60, 0x2d759e0}, {0x1abcec0, 0xc0002a8000})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:44 +0xa5\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc0001220c0, {0x25a9158, 0xc0002be0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:203 +0x1e58\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x25a9158, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x25a9158, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x25a9158, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x25a9158, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:280 +0xd86\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001606c8, {0x2599940, 0xc00027fc00}, 0xc000228000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00010a700}, {0x2599940, 0xc00027fc00}, 0xc000228000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0001442d0, {0x259bb88, 0xc00011a230})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T11:30:35.0301224+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"8.7478645s"}
+time="2025-06-18T11:30:59+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *sql.DB\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-18T11:30:59+07:00" level=info msg="Stack Trace:\ngoroutine 37 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:177 +0x1ed\npanic({0x1ad2a40?, 0xc000195920?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x1c54bc0)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndbx.getTableNameNoCache({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:77 +0x5d\ndbx.getTableName({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.newEntityTypeNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:99 +0x6b\ndbx.newEntityType({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.newEntityTypeNoCache({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:143 +0x938\ndbx.newEntityType({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.Query[...](0xc00015fd60, {0x259bb88, 0xc000278500})\n\tE:/Docker/go/unvs/igorm/dbx/queryBuilder.go:18 +0x88\nunvs.br.auth/users.(*User).List(0xc000178540, {})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/user.list.go:6 +0x85\nreflect.Value.call({0xc0002c4720, 0xc0001869f8, 0x13}, {0x1c79e28, 0x4}, {0xc0003ae6f0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc0002c4720, 0xc0001869f8, 0x13}, {0xc0003ae6f0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x1a4dbcb, 0x4}, {0x0, 0x0}, {0x25a8740, 0xc0002c4720}, {0xc0002c4720, 0xc0001869f8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:117 +0x1925\ndynacall.Call({0xc0000302a0, 0x17}, {0x1b0dc60, 0x2d759e0}, {0x1abcec0, 0xc0002a8580})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:44 +0xa5\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc0001220c0, {0x25a9158, 0xc0002be0a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:203 +0x1e58\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x25a9158, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x25a9158, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x25a9158, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x25a9158, 0xc0002be0a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:280 +0xd86\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001606c8, {0x2599940, 0xc000178460}, 0xc0002283c0)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00010a700}, {0x2599940, 0xc000178460}, 0xc0002283c0)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0001442d0, {0x259bb88, 0xc00011a230})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T11:30:59.1425559+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"13.6902248s"}
+time="2025-06-18T11:31:23+07:00" level=error msg="Panic occurred: reflect: NumField of non-struct type *sql.DB\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-18T11:31:23+07:00" level=info msg="Stack Trace:\ngoroutine 37 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:177 +0x1ed\npanic({0x1ad2a40?, 0xc0002c0980?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\nreflect.(*rtype).NumField(0x1c54bc0)\n\tC:/Program Files/Go/src/reflect/type.go:782 +0xb0\ndbx.getTableNameNoCache({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:77 +0x5d\ndbx.getTableName({0x25a8740, 0x1c54bc0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c5b480})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.getTableNameNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:86 +0x19e\ndbx.getTableName({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:72 +0x1ad\ndbx.newEntityTypeNoCache({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:99 +0x6b\ndbx.newEntityType({0x25a8740, 0x1c558c0})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.newEntityTypeNoCache({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:143 +0x938\ndbx.newEntityType({0x25a8740, 0x1bfe540})\n\tE:/Docker/go/unvs/igorm/dbx/entity_type.go:57 +0x1cc\ndbx.Query[...](0xc00015fd60, {0x259bb88, 0xc0000a4870})\n\tE:/Docker/go/unvs/igorm/dbx/queryBuilder.go:18 +0x88\nunvs.br.auth/users.(*User).List(0xc000310a80, {})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/user.list.go:6 +0x85\nreflect.Value.call({0xc0002c4720, 0xc0001869f8, 0x13}, {0x1c79e28, 0x4}, {0xc000043890, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc0002c4720, 0xc0001869f8, 0x13}, {0xc000043890, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x1a4dbcb, 0x4}, {0x0, 0x0}, {0x25a8740, 0xc0002c4720}, {0xc0002c4720, 0xc0001869f8, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:117 +0x1925\ndynacall.Call({0xc00012c120, 0x17}, {0x1b0dc60, 0x2d759e0}, {0x1abcec0, 0xc000054d80})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:44 +0xa5\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc0001220c0, {0x25a9158, 0xc00015fae0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:203 +0x1e58\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x25a9158, 0xc00015fae0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x25a9158, 0xc00015fae0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x25a9158, 0xc00015fae0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x25a9158, 0xc00015fae0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:280 +0xd86\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001606c8, {0x2599940, 0xc0003109a0}, 0xc0002ec000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00010a700}, {0x2599940, 0xc0003109a0}, 0xc0002ec000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0001442d0, {0x259bb88, 0xc00011a230})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T11:31:23.0621985+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"20.7501457s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-18T11:37:43+07:00" level=error msg="Panic occurred: The entity type unvs.br.auth/users.User is not a valid entity type, please embed EntityModel and  add `db:\"table_name\"` tag to the entity struct\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+time="2025-06-18T11:37:43+07:00" level=info msg="Stack Trace:\ngoroutine 37 [running]:\nruntime/debug.Stack()\n\tC:/Program Files/Go/src/runtime/debug/stack.go:26 +0x6b\nunvs/internal/app/handler/callers.(*CallerHandler).Call.func1()\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:177 +0x1ed\npanic({0x13ae2a0?, 0xc0002982f0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndbx.Query[...](0xc000292b40, {0x1e2cca8, 0xc00024d360})\n\tE:/Docker/go/unvs/igorm/dbx/queryBuilder.go:20 +0x26f\nunvs.br.auth/users.(*User).List(0xc000230700, {})\n\tE:/Docker/go/unvs/igorm/businessRules/auth/users/user.list.go:6 +0x85\nreflect.Value.call({0xc000296120, 0xc000210620, 0x13}, {0x150ae28, 0x4}, {0xc00041a8d0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:584 +0xec5\nreflect.Value.Call({0xc000296120, 0xc000210620, 0x13}, {0xc00041a8d0, 0x2, 0x2})\n\tC:/Program Files/Go/src/reflect/value.go:368 +0xb3\ndynacall.invoke({{0x12debcb, 0x4}, {0x0, 0x0}, {0x1e39860, 0xc000296120}, {0xc000296120, 0xc000210620, 0x13}, 0x6}, ...)\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.invoker.go:117 +0x1925\ndynacall.Call({0xc00021e570, 0x17}, {0x139ec60, 0x26069e0}, {0x134dec0, 0xc000054980})\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.go:108 +0x3db\ndynacall.(*Invoker).Injector.func1()\n\tE:/Docker/go/unvs/igorm/dynacall/dynacall.RequestType.go:44 +0xa5\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc0001220c0, {0x1e3a278, 0xc000292820})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:203 +0x1e58\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x1e3a278, 0xc000292820})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x1e3a278, 0xc000292820})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x1e3a278, 0xc000292820})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x1e3a278, 0xc000292820})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:280 +0xd86\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001606c8, {0x1e2aa60, 0xc0002308c0}, 0xc0002c4000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc00010a700}, {0x1e2aa60, 0xc0002308c0}, 0xc0002c4000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0001442d0, {0x1e2cca8, 0xc00024d310})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n" callerPath=list@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T11:37:44.1920223+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"8.2472309s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T11:39:41.037366+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"6.4980169s"}
+{"time":"2025-06-18T11:39:54.7161205+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":400,"latency_human":"0s"}
+{"time":"2025-06-18T11:40:08.075319+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":405,"latency_human":"0s"}
+{"time":"2025-06-18T11:40:17.2188063+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?feature=unvs.br.auth.roles&action=list&module=unvs.br.auth.roles&tenant=aaa&lan=undefined","status":405,"latency_human":"0s"}
+{"time":"2025-06-18T11:40:22.378529+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":405,"latency_human":"0s"}
+{"time":"2025-06-18T11:40:58.1799294+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.user&action=list&module=unvs.br.auth.user&tenant=aaa&lan=undefined","status":400,"latency_human":"0s"}
+{"time":"2025-06-18T11:40:58.4662304+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.user&action=list&module=unvs.br.auth.user&tenant=aaa&lan=undefined","status":400,"latency_human":"0s"}
+{"time":"2025-06-18T11:41:12.8365209+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.user&action=list&module=unvs.br.auth.user&tenant=aaa&lan=undefined","status":400,"latency_human":"1.5208ms"}
+{"time":"2025-06-18T11:41:42.2046533+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] interface conversion: interface {} is **dbx.DBXTenant, not *dbx.DBXTenant goroutine 245 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x1958680?, 0xc0002208a0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndbx.DBX.GetTenant({0x0, {{0xc0001c14b0, 0x5}, {0xc0001c14c0, 0x9}, 0x0, {0xc0001c14e0, 0x2}, {0xc0001c14f0, 0x6}, ...}, ...}, ...)\n\tE:/Docker/go/unvs/igorm/dbx/dbcontext.go:182 +0x2e5\nunvs/internal/config.CreateTenantDbx({0xc0002c82dc, 0x3})\n\tE:/Docker/go/unvs/igorm/unvs/internal/config/config_db.go:31 +0xd8\nunvs/internal/app/handler/callers.(*CallerHandler).Call(0xc000088c60, {0x23c54b8, 0xc0000e65a0})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/callers/caller.go:143 +0x151d\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x23c54b8, 0xc0000e65a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x23c54b8, 0xc0000e65a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x23c54b8, 0xc0000e65a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x23c54b8, 0xc0000e65a0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:280 +0xd86\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x23b5d80, 0xc0001540e0}, 0xc000196000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x23b5d80, 0xc0001540e0}, 0xc000196000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0001370e0, {0x23b7fc8, 0xc00013ae10})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x1ed658d7990, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001ad0b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001acf20, 0xc000284ee0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001acf08, 0x364, {0xc000566780, 0x2, 0x2}, 0xc0001acf20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001acf08, 0xc0002853a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001acf08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc000205580)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc000205580)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc000205580})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x23b5c30, 0xc000088cc8})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c78c8, {0xc0002348c0, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:166 +0xdcd\n\ngoroutine 7 [IO wait, 2 minutes]:\ninternal/poll.runtime_pollWait(0x1ed658d7878, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001321b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc000132020, 0xc000289440)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc000132008, 0x228, {0xc000138000, 0x2, 0x2}, 0xc000132020)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc000132008, 0xc000289908)\n\tC:/Program Files/\n"}
+{"time":"2025-06-18T11:41:46.0965223+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"4.5396393s"}
+{"time":"2025-06-18T11:44:27.2208198+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"8.6805182s"}
+{"time":"2025-06-18T11:44:27.259304+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"39.6084ms"}
+{"time":"2025-06-18T11:45:12.8372117+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"5.2031ms"}
+{"time":"2025-06-18T11:45:13.3868775+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.9551ms"}
+{"time":"2025-06-18T11:45:17.0746556+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.218ms"}
+{"time":"2025-06-18T11:49:54.3000382+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"3.2183507s"}
+{"time":"2025-06-18T11:49:57.915129+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"2.945ms"}
+{"time":"2025-06-18T11:49:58.8740668+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"2.3358ms"}
+{"time":"2025-06-18T11:49:59.6905653+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"2.0746ms"}
+{"time":"2025-06-18T11:50:00.1049471+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"5.2809ms"}
+{"time":"2025-06-18T11:50:04.7089601+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"2.0123ms"}
+{"time":"2025-06-18T11:50:05.1629847+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"1.978ms"}
+{"time":"2025-06-18T12:01:14.3098611+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.9922ms"}
+{"time":"2025-06-18T12:01:14.4400781+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.0175ms"}
+{"time":"2025-06-18T12:01:24.3477561+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.1679ms"}
+{"time":"2025-06-18T12:02:11.9239235+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.905ms"}
+{"time":"2025-06-18T12:04:17.6936557+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5677ms"}
+{"time":"2025-06-18T12:04:17.6936557+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.9285ms"}
+{"time":"2025-06-18T12:04:23.7367703+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.8835ms"}
+{"time":"2025-06-18T12:07:09.3024169+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.9136ms"}
+{"time":"2025-06-18T12:07:10.0470002+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"7.2693ms"}
+{"time":"2025-06-18T12:07:24.7907393+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.5386ms"}
+{"time":"2025-06-18T12:07:39.2738994+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.2859ms"}
+{"time":"2025-06-18T12:07:44.0947558+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.9374ms"}
+{"time":"2025-06-18T12:08:52.224183+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.4617ms"}
+{"time":"2025-06-18T12:08:52.733795+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.2355ms"}
+{"time":"2025-06-18T12:08:56.5027759+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.3625ms"}
+{"time":"2025-06-18T12:08:57.1436241+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.1132ms"}
+{"time":"2025-06-18T12:08:57.6715819+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.595ms"}
+{"time":"2025-06-18T12:09:36.0870293+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.1436ms"}
+{"time":"2025-06-18T12:10:01.6692738+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.0047ms"}
+{"time":"2025-06-18T13:33:27.6087343+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"14.0076ms"}
+{"time":"2025-06-18T13:34:57.8573769+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.0985ms"}
+{"time":"2025-06-18T13:36:23.1797486+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T13:36:31.0737703+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.0594ms"}
+{"time":"2025-06-18T13:36:38.1378569+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"51.5985ms"}
+{"time":"2025-06-18T13:37:07.3387743+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.232ms"}
+{"time":"2025-06-18T13:37:23.2296458+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.1324ms"}
+{"time":"2025-06-18T13:38:06.1520885+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.6696ms"}
+{"time":"2025-06-18T13:38:07.4472999+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.2136ms"}
+{"time":"2025-06-18T13:38:17.97118+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"5.6113ms"}
+{"time":"2025-06-18T13:38:19.5690236+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.5629ms"}
+{"time":"2025-06-18T13:38:20.8817536+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"5.1741ms"}
+{"time":"2025-06-18T13:39:01.854692+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5713ms"}
+{"time":"2025-06-18T13:39:33.3103696+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.7818ms"}
+{"time":"2025-06-18T13:39:40.5632106+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.6202ms"}
+{"time":"2025-06-18T13:39:57.1546863+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.0172ms"}
+{"time":"2025-06-18T13:40:52.0559325+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.6027ms"}
+{"time":"2025-06-18T13:41:57.2369664+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.8427ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T14:01:23.7188984+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.6557482s"}
+{"time":"2025-06-18T14:04:43.209784+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.9636ms"}
+{"time":"2025-06-18T14:06:13.7236349+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.0328ms"}
+{"time":"2025-06-18T14:07:37.8229221+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.5798ms"}
+{"time":"2025-06-18T14:12:16.0727352+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.3717ms"}
+{"time":"2025-06-18T14:14:13.1497041+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.8232ms"}
+{"time":"2025-06-18T14:14:15.1409536+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.0006ms"}
+{"time":"2025-06-18T14:16:45.6130236+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.9241ms"}
+{"time":"2025-06-18T14:20:53.0179383+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.5372ms"}
+{"time":"2025-06-18T14:20:53.0328588+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"621.6µs"}
+{"time":"2025-06-18T14:20:53.1203161+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.48ms"}
+{"time":"2025-06-18T14:20:53.124715+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.186ms"}
+{"time":"2025-06-18T14:20:58.5814047+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.2848ms"}
+{"time":"2025-06-18T14:20:59.8357971+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.509ms"}
+{"time":"2025-06-18T14:21:00.4923701+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5925ms"}
+{"time":"2025-06-18T14:21:01.0070648+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.8851ms"}
+{"time":"2025-06-18T14:21:43.2786558+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"582.5µs"}
+{"time":"2025-06-18T14:21:43.3032281+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.6539ms"}
+{"time":"2025-06-18T14:22:05.3443222+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.0035ms"}
+{"time":"2025-06-18T14:22:05.3522504+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.8416ms"}
+{"time":"2025-06-18T14:22:57.3233334+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.6386ms"}
+{"time":"2025-06-18T14:23:30.4017794+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.427ms"}
+{"time":"2025-06-18T14:23:40.5281356+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.9993ms"}
+{"time":"2025-06-18T14:23:44.3044855+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.0207ms"}
+{"time":"2025-06-18T14:24:11.1693739+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.5176ms"}
+{"time":"2025-06-18T14:24:11.200965+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.1369ms"}
+{"time":"2025-06-18T14:24:23.3440564+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.2441ms"}
+{"time":"2025-06-18T14:24:23.3662597+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"23.9253ms"}
+{"time":"2025-06-18T14:24:29.6927241+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.7856ms"}
+{"time":"2025-06-18T14:24:36.0526713+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"1.9743192s"}
+{"time":"2025-06-18T14:24:41.0441773+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.4088ms"}
+{"time":"2025-06-18T14:25:05.0430403+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"8.4602ms"}
+{"time":"2025-06-18T14:25:05.0563135+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"7.5629ms"}
+{"time":"2025-06-18T14:25:22.5185558+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"6.7389ms"}
+{"time":"2025-06-18T14:25:22.5374917+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"506µs"}
+{"time":"2025-06-18T14:25:32.2089842+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.2041ms"}
+{"time":"2025-06-18T14:25:32.2090363+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.7027ms"}
+{"time":"2025-06-18T14:25:39.6493804+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.1833ms"}
+{"time":"2025-06-18T14:27:32.9711204+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.1624ms"}
+{"time":"2025-06-18T14:27:32.9788157+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T14:27:41.9663884+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5239ms"}
+{"time":"2025-06-18T14:31:15.539354+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5308ms"}
+{"time":"2025-06-18T14:35:34.4300135+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.4155ms"}
+{"time":"2025-06-18T14:36:10.014549+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.643ms"}
+{"time":"2025-06-18T14:38:43.8739855+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"6.9994ms"}
+{"time":"2025-06-18T14:43:02.1931386+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"4.8739ms"}
+{"time":"2025-06-18T14:43:38.9057003+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.6495ms"}
+{"time":"2025-06-18T14:45:29.3230875+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"5.473ms"}
+{"time":"2025-06-18T14:45:52.5468632+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.6844ms"}
+{"time":"2025-06-18T14:46:25.8277743+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.6383ms"}
+{"time":"2025-06-18T14:47:16.154432+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.4071ms"}
+{"time":"2025-06-18T14:48:31.873914+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"4.0023ms"}
+{"time":"2025-06-18T14:48:32.5174398+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"4.0002ms"}
+{"time":"2025-06-18T14:55:02.8277827+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"4.3949ms"}
+{"time":"2025-06-18T14:56:06.614867+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5167ms"}
+{"time":"2025-06-18T14:56:41.3375594+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.2887ms"}
+{"time":"2025-06-18T15:00:54.9088393+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5985ms"}
+{"time":"2025-06-18T15:01:40.1295003+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"13.1716ms"}
+{"time":"2025-06-18T15:02:34.0267039+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.9811ms"}
+{"time":"2025-06-18T15:04:02.2399499+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5059ms"}
+{"time":"2025-06-18T15:05:19.5899914+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"36.0253ms"}
+{"time":"2025-06-18T15:06:51.5235211+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.6702ms"}
+{"time":"2025-06-18T15:08:18.4337567+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.7456ms"}
+{"time":"2025-06-18T15:08:46.0938002+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.0067ms"}
+{"time":"2025-06-18T15:12:47.5671833+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.044ms"}
+{"time":"2025-06-18T15:14:28.3143132+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.5253ms"}
+{"time":"2025-06-18T15:16:00.432243+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.104ms"}
+{"time":"2025-06-18T15:16:49.7883845+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"506.3µs"}
+{"time":"2025-06-18T15:17:11.0657923+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.0547ms"}
+{"time":"2025-06-18T15:17:26.914448+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.4457ms"}
+{"time":"2025-06-18T15:17:52.4584472+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5534ms"}
+{"time":"2025-06-18T15:18:14.5141012+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.5734ms"}
+{"time":"2025-06-18T15:18:15.4576301+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.0326ms"}
+{"time":"2025-06-18T15:18:21.554742+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.9181ms"}
+{"time":"2025-06-18T15:22:59.6526721+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.4511ms"}
+{"time":"2025-06-18T15:23:01.041671+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.2784ms"}
+{"time":"2025-06-18T15:23:03.2972915+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.036ms"}
+{"time":"2025-06-18T15:24:51.6290045+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.2597ms"}
+{"time":"2025-06-18T15:24:51.9201137+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.0854ms"}
+{"time":"2025-06-18T15:25:34.1935519+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.7162ms"}
+{"time":"2025-06-18T15:26:17.0849175+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.778ms"}
+{"time":"2025-06-18T15:27:39.2364265+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.8975ms"}
+{"time":"2025-06-18T15:27:40.264235+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.9954ms"}
+{"time":"2025-06-18T15:27:50.6790789+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.0602ms"}
+{"time":"2025-06-18T15:28:46.5505822+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.445ms"}
+{"time":"2025-06-18T15:29:44.5222154+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"3.4603957s"}
+{"time":"2025-06-18T15:30:22.7116662+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"2.2408274s"}
+{"time":"2025-06-18T15:30:31.3806824+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"10.4723ms"}
+{"time":"2025-06-18T15:30:32.0876854+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"4.7671ms"}
+{"time":"2025-06-18T15:30:32.4517906+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"4.6113ms"}
+{"time":"2025-06-18T15:30:32.6014337+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"3.211ms"}
+{"time":"2025-06-18T15:30:32.8925486+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"13.1915ms"}
+{"time":"2025-06-18T15:30:33.1353983+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"4.0207ms"}
+{"time":"2025-06-18T15:30:48.7931236+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.7683ms"}
+{"time":"2025-06-18T15:31:02.4406403+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"1.8347ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T15:34:27.8029152+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/inspector/list","status":201,"latency_human":"673.4µs"}
+{"time":"2025-06-18T15:35:20.5135872+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"1.8809062s"}
+{"time":"2025-06-18T15:35:21.0931016+07:00","remote_ip":"2600:1900:4040:29b::","method":"GET","uri":"/","status":404,"latency_human":"0s"}
+{"time":"2025-06-18T15:35:32.8929503+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"1.8222ms"}
+{"time":"2025-06-18T15:35:43.1400127+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=list&module=unvs.br.auth.users&tenant=create&lan=vi","status":200,"latency_human":"5.3897ms"}
+{"time":"2025-06-18T15:36:09.7184563+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"3.8855615s"}
+time="2025-06-18T15:36:18+07:00" level=error msg="failed to create user: duplicate error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T15:36:18.8350606+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"4.2493662s"}
+{"time":"2025-06-18T15:36:35.440525+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"1.8014981s"}
+{"time":"2025-06-18T15:36:49.7781881+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.9999ms"}
+{"time":"2025-06-18T15:36:50.515729+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"2.7467ms"}
+{"time":"2025-06-18T15:36:56.4160255+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"3.2954ms"}
+time="2025-06-18T15:37:49+07:00" level=error msg="failed to create user: duplicate error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T15:37:49.0176853+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"32.979575s"}
+{"time":"2025-06-18T15:38:17.5189435+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"11.4639747s"}
+{"time":"2025-06-18T15:39:10.4792084+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"39.7421822s"}
+{"time":"2025-06-18T15:39:52.894468+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"513.5272ms"}
+time="2025-06-18T15:40:20+07:00" level=error msg="failed to create user: duplicate error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T15:40:20.424759+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"14.7334676s"}
+{"time":"2025-06-18T15:41:01.9833903+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"6.0300854s"}
+{"time":"2025-06-18T15:41:22.969665+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=aaa&lan=undefined","status":200,"latency_human":"9.9384789s"}
+{"time":"2025-06-18T15:41:46.2743013+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"42.6185ms"}
+{"time":"2025-06-18T15:41:51.2151959+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"0s"}
+{"time":"2025-06-18T15:41:53.157392+07:00","remote_ip":"::1","method":"GET","uri":"/api/v1/get/default/unvs.common/dictionary/en?feature=translation&lan=en","status":200,"latency_human":"1.5441ms"}
+{"time":"2025-06-18T15:42:10.2055669+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/oauth/token","status":200,"latency_human":"875.5µs"}
+{"time":"2025-06-18T15:42:24.9465331+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=default&lan=en","status":200,"latency_human":"6.9936565s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-18T15:48:28+07:00" level=error msg="failed to create user: duplicate error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T15:48:28.3134372+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":500,"latency_human":"2.0295992s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-18T15:56:19+07:00" level=error msg="dynacall error: Duplicate data &%!(EXTRA string=) (DUPLICATE_DATA)" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T15:56:19.5178681+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"4.8290931s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-18T16:00:02+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:00:27.2706082+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":409,"latency_human":"30.4911348s"}
+time="2025-06-18T16:01:43+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:01:45.9594009+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":409,"latency_human":"12.2385826s"}
+{"time":"2025-06-18T16:02:08.443887+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"3.6251505s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T16:07:42.8030071+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"2.1377142s"}
+{"time":"2025-06-18T16:08:04.4594568+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=default&lan=undefined","status":200,"latency_human":"6.7096ms"}
+{"time":"2025-06-18T16:08:43.5126136+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=default&lan=undefined","status":200,"latency_human":"4.3036ms"}
+{"time":"2025-06-18T16:09:58.621263+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=default&lan=undefined","status":200,"latency_human":"15.4378ms"}
+time="2025-06-18T16:10:47+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:10:47.2874426+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":409,"latency_human":"3.3119921s"}
+time="2025-06-18T16:11:04+07:00" level=error msg="unknown error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:11:04.8679827+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"169.2083ms"}
+time="2025-06-18T16:12:03+07:00" level=error msg="unknown error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:12:03.5195664+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"42.3293527s"}
+time="2025-06-18T16:12:30+07:00" level=error msg="unknown error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:12:30.1279174+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"21.6708813s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-18T16:23:27+07:00" level=error msg="invalid size error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:23:27.7298739+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"7.4894018s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+time="2025-06-18T16:24:53+07:00" level=error msg="Required field is missing" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:24:53.7985692+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"7.397651s"}
+time="2025-06-18T16:25:11+07:00" level=error msg="Required field is missing" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:25:11.7963731+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":400,"latency_human":"7.1428806s"}
+{"time":"2025-06-18T16:26:31.2786912+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":500,"latency_human":"356.8703ms"}
+{"time":"2025-06-18T16:26:44.9059214+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":500,"latency_human":"116.3061ms"}
+{"time":"2025-06-18T16:27:29.4737556+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":500,"latency_human":"33.3791ms"}
+{"time":"2025-06-18T16:28:28.4417613+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":500,"latency_human":"42.1809569s"}
+{"time":"2025-06-18T16:29:26.8464971+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":500,"latency_human":"54.2951914s"}
+{"time":"2025-06-18T16:29:59.609673+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":500,"latency_human":"29.9972876s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T16:34:22.5466886+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"1m0.731143s"}
+{"time":"2025-06-18T16:34:22.5697095+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"7.6667441s"}
+time="2025-06-18T16:34:30+07:00" level=error msg="duplicate error" callerPath=create@unvs.br.auth.users pkgPath=unvs/internal/app/handler/callers/Call
+{"time":"2025-06-18T16:34:30.9524656+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=common&action=create&module=unvs.br.auth.users&tenant=default&lan=vi","status":409,"latency_human":"160.0227ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T16:46:40.3068507+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"5.1969382s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T17:25:39.4231929+07:00","level":"-","prefix":"echo","file":"recover.go","line":"119","message":"[PANIC RECOVER] interface conversion: interface {} is **dbx.DBXTenant, not *dbx.DBXTenant goroutine 51 [running]:\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1.1()\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:99 +0x2ef\npanic({0x2109700?, 0xc00060c1b0?})\n\tC:/Program Files/Go/src/runtime/panic.go:792 +0x136\ndbx.DBX.GetTenant({0x0, {{0xc0001c1480, 0x5}, {0xc0001c1490, 0x9}, 0x0, {0xc0001c14b0, 0x2}, {0xc0001c14c0, 0x6}, ...}, ...}, ...)\n\tE:/Docker/go/unvs/igorm/dbx/dbcontext.go:182 +0x2e5\nunvs/internal/config.CreateTenantDbx({0xc000616105, 0xa})\n\tE:/Docker/go/unvs/igorm/unvs/internal/config/config_db.go:31 +0xd8\nunvs/internal/app/handler/oauth.(*OAuthHandler).Token(0x33429e0, {0x2b76c58, 0xc000634000})\n\tE:/Docker/go/unvs/igorm/unvs/internal/app/handler/oauth/token.go:52 +0x518\ngithub.com/labstack/echo/v4.(*Echo).add.func1({0x2b76c58, 0xc000634000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:581 +0x85\ngithub.com/labstack/echo/v4/middleware.LoggerWithConfig.func2.1({0x2b76c58, 0xc000634000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/logger.go:125 +0x153\ngithub.com/labstack/echo/v4/middleware.RecoverWithConfig.func1.1({0x2b76c58, 0xc000634000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/recover.go:130 +0x202\ngithub.com/labstack/echo/v4/middleware.CORSWithConfig.func1.1({0x2b76c58, 0xc000634000})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/middleware/cors.go:280 +0xd86\ngithub.com/labstack/echo/v4.(*Echo).ServeHTTP(0xc0001c78c8, {0x2b67520, 0xc00062e000}, 0xc00059a000)\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:668 +0x295\nnet/http.serverHandler.ServeHTTP({0xc0001c8e00}, {0x2b67520, 0xc00062e000}, 0xc00059a000)\n\tC:/Program Files/Go/src/net/http/server.go:3301 +0x257\nnet/http.(*conn).serve(0xc0002ba120, {0x2b69768, 0xc000590000})\n\tC:/Program Files/Go/src/net/http/server.go:2102 +0x1b75\ncreated by net/http.(*Server).Serve in goroutine 1\n\tC:/Program Files/Go/src/net/http/server.go:3454 +0xa9a\n\ngoroutine 1 [IO wait]:\ninternal/poll.runtime_pollWait(0x1f265646150, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001ad0b0, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001acf20, 0xc000186ee0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001acf08, 0x2a0, {0xc0002e0000, 0x2, 0x2}, 0xc0001acf20)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001acf08, 0xc00010f3a8)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:980 +0x445\nnet.(*netFD).accept(0xc0001acf08)\n\tC:/Program Files/Go/src/net/fd_windows.go:182 +0xcf\nnet.(*TCPListener).accept(0xc0002054c0)\n\tC:/Program Files/Go/src/net/tcpsock_posix.go:159 +0x65\nnet.(*TCPListener).AcceptTCP(0xc0002054c0)\n\tC:/Program Files/Go/src/net/tcpsock.go:367 +0x67\ngithub.com/labstack/echo/v4.tcpKeepAliveListener.Accept({0xc0002054c0})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:988 +0x45\nnet/http.(*Server).Serve(0xc0001c8e00, {0x2b673d0, 0xc000088ca8})\n\tC:/Program Files/Go/src/net/http/server.go:3424 +0x50b\ngithub.com/labstack/echo/v4.(*Echo).Start(0xc0001c78c8, {0xc000230880, 0xc})\n\tC:/Users/MSI CYBORG/go/pkg/mod/github.com/labstack/echo/v4@v4.13.4/echo.go:685 +0x159\nmain.main()\n\tE:/Docker/go/unvs/igorm/unvs/cmd/api/main.go:166 +0xdcd\n\ngoroutine 7 [IO wait]:\ninternal/poll.runtime_pollWait(0x1f265646038, 0x72)\n\tC:/Program Files/Go/src/runtime/netpoll.go:351 +0x3c\ninternal/poll.(*pollDesc).wait(0xc0001ad330, 0x72, 0x0)\n\tC:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x7a\ninternal/poll.execIO(0xc0001ad1a0, 0xc000113440)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x2bb\ninternal/poll.(*FD).acceptOne(0xc0001ad188, 0x22c, {0xc0002440f0, 0x2, 0x2}, 0xc0001ad1a0)\n\tC:/Program Files/Go/src/internal/poll/fd_windows.go:946 +0x10d\ninternal/poll.(*FD).Accept(0xc0001ad188, 0xc000113908)\n\tC:/Program Files/Go/src/internal/poll/f\n"}
+{"time":"2025-06-18T17:26:37.8530633+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"1m4.8998267s"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-18T17:27:32.9457952+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"10.2009284s"}
