@@ -30,7 +30,7 @@ func CreateSysAdminUser(db *dbx.DBXTenant, ctx context.Context) error {
 
 func createSysAdminUserNoCache(db *dbx.DBXTenant, ctx context.Context) error {
 
-	c, err := dbx.CountWithContext[authModels.User](ctx, db, "username = ?", "root")
+	c, err := dbx.CountWithContext[authModels.User](ctx, db, "Username = ?", "root")
 	if err != nil {
 		return err
 	}

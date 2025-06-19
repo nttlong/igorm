@@ -71,7 +71,10 @@ export class User implements OnInit, OnDestroy { // Implement OnInit, OnDestroy
   }
   private getListOfUsers(): void {
     this.apiCallerService.Api("list@unvs.br.auth.users")
-      .Call<ApiResponse<any[]>>({})
+      .Call<ApiResponse<any[]>>({
+        pageIndex: 0,
+        pageSize: 50
+      })
       .subscribe({
         next: (response) => {
           this.data = response;

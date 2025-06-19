@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './Login.css';
 import {Caller} from '../utils/Caller'
 import { useTranslation } from 'react-i18next';
 import type {LoginResponse} from '../interfaces/AuthInterfaces';
 import {setBaseApiUrl} from '../utils/Caller'; 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const LoginPage = () => {
-  setBaseApiUrl('http://localhost:8080/api/v1');
+  setBaseApiUrl(apiBaseUrl);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();

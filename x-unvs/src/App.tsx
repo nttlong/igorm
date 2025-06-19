@@ -1,13 +1,13 @@
 // src/App.tsx
 
-import { useState, useEffect } from "react";
+import { useState,useRef, useEffect } from "react";
 import { FiHome, FiSettings, FiUsers, FiFolder } from "react-icons/fi"; // Đảm bảo import đầy đủ icon nếu dùng ở đây
 
 // BỎ BrowserRouter khỏi đây. Chỉ giữ lại Routes, Route, Outlet
 import { Routes, Route, Outlet } from 'react-router-dom'; 
 import { useTranslation } from 'react-i18next'; 
 
-import Header from "./components/Header";
+import HeaderComponent from "./components/Header";
 import AsideBar from "./components/AsideBar";
 import type { MenuItem } from "./components/AsideBar"; 
 
@@ -20,11 +20,12 @@ import LoginPage from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute'; 
 import {setBaseApiUrl} from './utils/Caller'; 
 
+
 // Component Layout chính của bạn
 const MainLayout = () => {
   setBaseApiUrl("http://localhost:8080/api/v1")
   const { t } = useTranslation();
-
+  const layoutRef = useRef<HTMLDivElement>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState("dashboard"); 
   const [isDarkMode, setIsDarkMode] = useState(false); 
@@ -52,36 +53,44 @@ const MainLayout = () => {
     document.documentElement.classList.toggle("dark"); 
   };
 
-  
-
+  const doResize = () => {
+    handleResize();
+    return "OK"
+  }
+  const handleResize = () => {
+    if (layoutRef.current) {
+       const height=window.document.body.getBoundingClientRect().height-66
+      // const height=700;
+      layoutRef.current.style.height = `${height}px`; // Đặt chiều cao
+      layoutRef.current.style.minHeight = `${height}px`; // Đặt chiều cao tối thiểu
+      layoutRef.current.style.maxHeight = `${height}px`; // Đặt chiều cao tối đa
+      // layoutRef.current.style.width = `${window.innerHeight}`; // Đặt độ cao
+      layoutRef.current.style.position = 'relative'; // Đặt vị trí
+      layoutRef.current.style.top = '64px'; // Đặt vị trí
+      console.log(window.innerWidth);
+    }
+    if (window.innerWidth <= 768) {
+      setIsSidebarCollapsed(true);
+    } else {
+      setIsSidebarCollapsed(false); 
+    }
+  };
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsSidebarCollapsed(true);
-      } else {
-        setIsSidebarCollapsed(false); 
-      }
-    };
+    
+    handleResize()
     window.addEventListener("resize", handleResize);
     handleResize(); 
+    
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const profileDropdownElement = document.querySelector(".profile-dropdown");
-      if (profileDropdownElement && !profileDropdownElement.contains(event.target as Node)) {
-        setIsProfileDropdownOpen(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
+ 
 
   return (
     <div className={`main-layout min-h-screen ${isDarkMode ? "dark" : ""}`}>
+      {/* {doResize()} */}
       <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
-        <Header 
+        <HeaderComponent 
           onSidebarToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           isDarkMode={isDarkMode}
           toggleDarkMode={toggleDarkMode}
@@ -99,11 +108,12 @@ const MainLayout = () => {
           setActiveMenuItem={setActiveMenuItem}
         />
 
-        <main
-          className={`flex-1  transition-all duration-300 ${
+        <main ref={layoutRef}
+          className={`flex-1  p-2 transition-all duration-300 bg-white ${
             isSidebarCollapsed ? "ml-16" : "ml-64"
           }`}
         >
+           
           <Outlet /> 
         </main>
       </div>

@@ -60,6 +60,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json" // Đặt ở đây
+          },
           "configurations": {
             "production": {
               "buildTarget": "unvs-ng-ui:build:production"

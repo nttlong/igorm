@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"reflect"
 	"runtime/debug"
+	"time"
 	"unvs/internal/config"
 
 	"github.com/labstack/echo/v4"
@@ -55,6 +56,7 @@ type CallerResponse struct {
 // @Success 201 {object} CallerResponse "Response"
 // @Security OAuth2Password
 func (h *CallerHandler) Call(c echo.Context) error {
+	start := time.Now()
 	info, err := ExtractRequireQueryStrings(c)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -204,6 +206,10 @@ func (h *CallerHandler) Call(c echo.Context) error {
 	if err != nil {
 		return h.CallHandlerErr(c, err, callerPath)
 	}
+	appDuration := time.Since(start).Milliseconds()
+
+	serverTiming := fmt.Sprintf("miss, api-exec;dur=%.d", appDuration)
+	c.Response().Header().Set("Server-Timing", serverTiming)
 	return c.JSON(http.StatusOK, CallerResponse{
 		Results: retCall,
 	})

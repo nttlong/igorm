@@ -116,8 +116,30 @@ func main() {
 	// appLogger.SetLevel(logrus.TraceLevel | logrus.InfoLevel | logrus.ErrorLevel | logrus.DebugLevel | logrus.PanicLevel | logrus.FatalLevel | logrus.WarnLevel) // Chỉ hiển thị Info, Warn, Error, Fatal, Panic
 
 	e := echo.New()
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	angularDistPath := `E:\Docker\go\unvs\igorm\unvs-ng-ui\dist\unvs-ng-ui\browser`
+	e.Static("/", angularDistPath)
+	e.GET("/*", func(c echo.Context) error {
+		//check if url has a file extension
+		if filepath.Ext(c.Request().URL.Path) != "" {
+			return c.File(filepath.Join(angularDistPath, c.Request().URL.Path))
+		} else {
+			return c.File(filepath.Join(angularDistPath, "index.html"))
+		}
+	})
+	// Fallback cho tất cả các route không khớp với file tĩnh về index.html
+	// Điều này là cần thiết cho Angular Router (Single Page Application)
+	// CATCH-ALL ROUTE CHO ANGULAR ROUTER (SPA Fallback).
+	// Đây phải là route CUỐI CÙNG được định nghĩa.
+	// Nếu không có API, Swagger, hoặc file tĩnh nào khớp, nó sẽ trả về index.html
+	// để Angular Router xử lý client-side routing.
+	// e.GET("/*", func(c echo.Context) error {
+	// 	return c.File(filepath.Join(angularDistPath, "index.html"))
+	// })
+
 	// Cấu hình CORS middleware
 	// Đây là nơi bạn kiểm soát các chính sách cross-domain
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		// Đảm bảo tên trường là chính xác: AllowedOrigins
 		// Đây phải là một slice of strings
@@ -126,6 +148,7 @@ func main() {
 			"http://localhost:5173",
 			"http://127.0.0.1:5173",
 		},
+		MaxAge: 86400,
 	}))
 
 	// Middleware
@@ -139,15 +162,19 @@ func main() {
 			`"latency_human":"${latency_human}"}` + "\n",
 		Output: mw,
 	}))
+	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+		Level: 5, // Cấp độ nén từ 1 (nhanh nhất) đến 9 (tốt nhất). Mặc định là -1 (LevelDefault).
+	}))
 	// Route để phục vụ Swagger UI
 	// Sau khi chạy 'swag init', các file docs sẽ được tạo và route này sẽ hiển thị UI.
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+
 	oathHandler := &oauthHandler.OAuthHandler{}
 	callHandler := &caller.CallerHandler{
 		AppLogger: appLogger,
 	}
 	e.POST("/oauth/token", oathHandler.Token)
 	apiV1 := e.Group("/api/v1")
+
 	apiV1.POST("/invoke", callHandler.Call)
 	apiV1.POST("/invoke-form", callHandler.FormSubmit)
 	apiV1.POST("/oauth/token", oathHandler.Token)
@@ -155,6 +182,7 @@ func main() {
 	apiV1.GET("/get/:tenant/:module/:action/*optionalPath", callHandler.CallGet)
 	// e.GET("/get/:tenant/:module/:action/*paramoptionalPaths", handler.CallGet)
 	// apiV1.GET("/get/:tenant/:module/:action/:feature/:lan", callHandler.CallGet)
+
 	handler.RegisterRoutes(e,
 
 		&inspector.InspectorHandler{},

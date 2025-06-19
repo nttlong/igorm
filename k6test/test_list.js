@@ -2,14 +2,14 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 export let options = {
-  vus: 200, // 200 virtual users
+  vus: 25, // 200 virtual users
   duration: '30s', // Test duration of 30 seconds
 };
 
 export default function () {
     
   
-    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlMzQ3M2UwMS1kYmFkLTQxYzktOTRjMS01N2Q2YjdmODE5MzAiLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJzdWIiOiJlMzQ3M2UwMS1kYmFkLTQxYzktOTRjMS01N2Q2YjdmODE5MzAiLCJleHAiOjE3NDk2Mzc5NzgsImlhdCI6MTc0OTU1MTU3OH0.eHMVbY_eup7EBoXN0E-33SKts7IX2HSq5EkGoYGzpNM`
+    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6bnVsbCwiZXhwIjoxNzUwMzA5NTQ5LCJpYXQiOjE3NTAzMDU5NDksInJvbGUiOiIyNjVmNzg5Ny1mZGY5LTRkYWMtYTdkMC0yZWQyN2EwNzAzYzIiLCJzY29wZSI6InJlYWQgd3JpdGUiLCJ1c2VySWQiOiIyNjVmNzg5Ny1mZGY5LTRkYWMtYTdkMC0yZWQyN2EwNzAzYzIiLCJ1c2VybmFtZSI6InJvb3QifQ.TVl-2mpYWhvL5pryEPMPB-NPQzgoAdsRknTpKpIp_3Y`
   const params = {
     headers: {
       'Content-Type': 'application/json',
@@ -21,18 +21,11 @@ export default function () {
   };
 
   const payload = JSON.stringify({
-    "action": "list",
-  "language": "string",
-  "params": {
-    "sort":"username desc",
-"page":10,
-"size":20
-  },
-  "tenant": "test001",
-  "viewId": "auth/users"
-  });
+    "pageIndex": 0,
+    "pageSize": 50
+});
 
-  const res = http.post('http://localhost:8080/api/v1/callers/call', payload, params);
+  const res = http.post('http://localhost:8080/api/v1/invoke?feature=unvs.br.auth.users&action=list&module=unvs.br.auth.users&tenant=default&lan=en', payload,params);
 
   check(res, {
     'status is 200': (r) => r.status === 200,

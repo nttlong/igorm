@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
+import {Renderer2, Component, OnInit, OnDestroy, HostBinding, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Cần thiết cho *ngIf, *ngFor, ngClass
 import { RouterOutlet, Router, NavigationEnd, ActivatedRoute } from '@angular/router'; // Import Router, NavigationEnd, ActivatedRoute
 import { filter } from 'rxjs/operators'; // Import filter
@@ -31,7 +31,7 @@ interface MenuItem {
     Sidebar       // <-- Đảm bảo Sidebar được import
   ]
 })
-export class AppDashboard implements OnInit, OnDestroy {
+export class AppDashboard implements OnInit, OnDestroy, AfterViewInit {
   isSidebarCollapsed: boolean = false;
   isDarkMode: boolean = false;
   activeMenuItem: string = "dashboard";
@@ -43,17 +43,18 @@ export class AppDashboard implements OnInit, OnDestroy {
     { id: "projects", label: "Projects", path: "projects" },
     { id: "settings", label: "Settings", path: "settings" }
   ];
-
+  @ViewChild('mainContent') mainContentElementRef!: ElementRef; // Sử dụng `!` để đảm bảo nó sẽ được gán
   @HostBinding('class.dark') get themeClass() {
     return this.isDarkMode;
   }
-
+  
   private routerSubscription: Subscription | undefined;
   private tenantSubscription: Subscription | undefined;
 
   constructor(
     private router: Router,
-    private activatedRoute: ActivatedRoute // Cần ActivatedRoute để lấy tenantname
+    private activatedRoute: ActivatedRoute, // Cần ActivatedRoute để lấy tenantname
+    private renderer: Renderer2
   ) { }
 
   ngOnInit(): void {
@@ -98,6 +99,61 @@ export class AppDashboard implements OnInit, OnDestroy {
       this.activeMenuItem = initialPathSegment || 'dashboard';
     }
   }
+  
+  // Phương thức để lấy và log chiều cao của phần tử <main>
+  logMainContentHeight(): void {
+   
+    if (this.mainContentElementRef) {
+      const mainElement: HTMLElement = this.mainContentElementRef.nativeElement;
+      this.setMainContentHeight(window.innerHeight-70);
+      // offsetHeight: bao gồm padding, border, và chiều cao nội dung (đã làm tròn)
+      // clientHeight: bao gồm padding và chiều cao nội dung (không bao gồm border, scrollbar)
+      // getBoundingClientRect().height: chiều cao chính xác của phần tử (bao gồm padding)
+      console.log('Chiều cao của Main Content (offsetHeight):', mainElement.offsetHeight + 'px');
+      console.log('Chiều cao của Main Content (clientHeight):', mainElement.clientHeight + 'px');
+      console.log('Chiều cao của Main Content (getBoundingClientRect().height):', mainElement.getBoundingClientRect().height + 'px');
+    }
+  }
+  /**
+   * Phương thức để đặt chiều cao của phần tử main content.
+   * @param height Chiều cao mong muốn tính bằng pixel (số).
+   */
+  setMainContentHeight(height: number): void {
+    if (this.mainContentElementRef) {
+      const mainElement: HTMLElement = this.mainContentElementRef.nativeElement;
+      // Cách 1: Sử dụng Renderer2 (được khuyến nghị)
+      this.renderer.setStyle(mainElement, 'height', `${height}px`);
+      console.log(`Chiều cao của mainContentElementRef được đặt thành ${height}px bằng Renderer2.`);
+
+      
+    } else {
+      console.warn('Không thể đặt chiều cao: mainContentElementRef không tồn tại.');
+    }
+  }
+  private handleResize = () => {
+    if (window.innerWidth <= 768) {
+      this.isSidebarCollapsed = true;
+    } else {
+      this.isSidebarCollapsed = false;
+    }
+    // Gọi lại logMainContentHeight khi kích thước cửa sổ thay đổi
+    if (this.mainContentElementRef) {
+      this.logMainContentHeight();
+    }
+    
+  };
+
+// --- Lifecycle Hook: ngAfterViewInit ---
+  // Được gọi sau khi Angular đã khởi tạo các view của component và các view con.
+  // Đây là nơi an toàn để truy cập các phần tử DOM đã được render.
+  ngAfterViewInit(): void {
+    // Đảm bảo phần tử tồn tại trước khi truy cập
+    if (this.mainContentElementRef) {
+      this.logMainContentHeight();
+      // Bạn cũng có thể lắng nghe sự kiện resize để cập nhật chiều cao động
+      window.addEventListener('resize', () => this.logMainContentHeight());
+    }
+  }
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.handleResize);
@@ -140,11 +196,7 @@ export class AppDashboard implements OnInit, OnDestroy {
     return item ? item.label : 'Nội dung';
   }
 
-  private handleResize = () => {
-    if (window.innerWidth <= 768) {
-      this.isSidebarCollapsed = true;
-    } else {
-      this.isSidebarCollapsed = false;
-    }
-  };
+  
+  
+
 }

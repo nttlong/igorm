@@ -1,18 +1,52 @@
-// src/pages/UsersPage.tsx
-
+import { useRef, useEffect,useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import SearchBox from '../components/SearchBox';
+import BaseComponent, { type IBaseComponent } from '../components/BaseComponent';
 
 const UsersPage = () => {
   const { t } = useTranslation();
+  const baseRef = useRef<IBaseComponent>(null);
+  const [users, setUsers] = useState([]);
+  const getUsers= async ()=>{
+    debugger
+    const res = await baseRef.current?.callAPIAsync("list@unvs.br.auth.users", {
+      pageIndex: 0,
+      pageSize: 100
+    });
+    setUsers(res.results || []); // nếu API kiểu { results: [...] }
+  }
+  
+
+  useEffect(() => {
+    // Gọi hàm callAPI() trong BaseComponent nếu cần
+    if (baseRef.current) {
+      baseRef.current.setFeatureId('users-manager');
+      getUsers();
+     
+    }
+  }, []);
+
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-        {t('users')}
-      </h2>
-      <p className="text-gray-600 dark:text-gray-300">
-        {t('users_page_content')}
-      </p>
+    <BaseComponent ref={baseRef}>
+      <div className='dock-full bg-white'>
+      <h1 className=''>
+        <SearchBox />
+      </h1>
+      <div className='dock-full  overflow-y-scroll'>
+      <div className='grid grid-cols-3 gap-2'>
+          {users.map((user:any, index) => (
+            <div key={user.userId || index} className="p-4 bg-white rounded shadow">
+              <p><strong>{t('Username')}:</strong> {user.username}</p>
+              <p><strong>{t('Email')}:</strong> {user.email || 'N/A'}</p>
+              <p><strong>{t('Create by')}:</strong> {user.createdBy}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
+    </BaseComponent>
   );
 };
 

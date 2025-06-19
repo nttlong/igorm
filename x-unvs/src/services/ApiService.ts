@@ -2,7 +2,7 @@
 
 // Định nghĩa base URL của API từ biến môi trường
 // Đảm bảo bạn đã định nghĩa VITE_API_BASE_URL trong file .env (ví dụ: http://localhost:8080)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.API_BASE_URL || 'http://localhost:8080';
 
 /**
  * Định nghĩa interface cho các tham số query chung của API Swagger.

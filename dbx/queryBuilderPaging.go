@@ -125,6 +125,36 @@ func (q *QrPager[T]) toSQL() (string, error) {
 	return execSQl, nil
 
 }
+func (q *QrPager[T]) toSQLCount() (string, error) {
+	if len(q.selectFields) > 0 {
+		q.selector = strings.Join(q.selectFields, ",")
+	}
+	sqlRet := "SELECT count(*)  FROM " + q.from
+
+	if q.where != "" {
+		sqlRet += " WHERE " + q.where
+		// q.where += " AND `index`>=" + fromIndex + " AND `index`<" + toIndex
+	} else {
+		// q.where += "`index`>=" + fromIndex + " AND `index`<" + toIndex
+	}
+
+	// if q.limit == 0 {
+	// 	q.limit = 50
+	// }
+	// if q.limit > 0 {
+	// 	sqlRet += " LIMIT " + strconv.Itoa(q.limit)
+	// }
+	// if q.offset > 0 {
+	// 	sqlRet += " OFFSET " + strconv.Itoa(q.offset)
+	// }
+	// fromIndex := q.offset
+	execSQl, err := q.dbx.compiler.Parse(sqlRet, q.args...)
+	if err != nil {
+		return "", err
+	}
+	return execSQl, nil
+
+}
 func (q *QrPager[T]) Query() ([]T, error) {
 	execSQl, err := q.toSQL()
 	if err != nil {
@@ -158,4 +188,96 @@ func (q *QrPager[T]) Query() ([]T, error) {
 	// 	ret = append(ret, item)
 	// }
 	// return ret, nil
+}
+func (q *QrPager[T]) Count() (int64, error) {
+	execSQl, err := q.toSQLCount()
+	if err != nil {
+		return 0, err
+	}
+	rows, err := q.dbx.QueryContext(q.ctx, execSQl, q.args...)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+	count := int64(0)
+	for rows.Next() {
+		err = rows.Scan(
+			&count,
+		)
+		if err != nil {
+			return 0, err
+		}
+	}
+	return count, nil
+}
+func (q *QrPager[T]) Select(args ...interface{}) *QrPager[T] {
+	if len(args) == 0 {
+		return q
+	}
+	if len(args) == 1 {
+		if strField, ok := args[0].(string); ok {
+			q.selectFields = strings.Split(strField, ",")
+			return q
+		} else {
+			return q.SelectByEntity(args[0])
+
+		}
+	}
+	for _, field := range args {
+		if strField, ok := field.(string); ok {
+			q.selectFields = append(q.selectFields, strField)
+		} else {
+			panic("all fields in select must be string or only one entity")
+		}
+	}
+
+	return q
+}
+func (q *QrPager[T]) SelectByEntity(entity interface{}) *QrPager[T] {
+
+	for fieldName, _ := range q.getNonZeroFields(entity) {
+		q.selectFields = append(q.selectFields, fieldName)
+	}
+	return q
+}
+func (q *QrPager[T]) getNonZeroFields(entity interface{}) map[string]interface{} {
+	val := reflect.ValueOf(entity).Elem()
+	typ := val.Type()
+
+	result := make(map[string]interface{})
+
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		fieldName := typ.Field(i).Name
+
+		// Check field đã set khác zero value chưa
+		zero := reflect.Zero(field.Type()).Interface()
+		actual := field.Interface()
+
+		if !reflect.DeepEqual(actual, zero) {
+			result[fieldName] = actual
+		}
+	}
+
+	return result
+}
+func (q *QrPager[T]) GetFields(entity interface{}, fields ...interface{}) []string {
+	val := reflect.ValueOf(entity).Elem()
+	typ := val.Type()
+
+	result := []string{}
+
+	for _, f := range fields {
+		ptrVal := reflect.ValueOf(f).Elem().Interface()
+
+		for i := 0; i < val.NumField(); i++ {
+			fieldVal := val.Field(i).Interface()
+			if reflect.DeepEqual(fieldVal, ptrVal) {
+				result = append(result, typ.Field(i).Name)
+				break
+			}
+		}
+	}
+
+	return result
 }

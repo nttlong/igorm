@@ -1,7 +1,7 @@
 // src/components/Header.tsx
 
 import React from 'react';
-import { FiMenu, FiBell, FiSun, FiMoon, FiLogOut } from "react-icons/fi";
+import { FiMenu, FiBell, FiSun, FiMoon, FiLogOut,FiSearch } from "react-icons/fi";
 import { FaUserCircle } from "react-icons/fa";
 import { useTranslation } from 'react-i18next'; // <-- Vẫn giữ import này
 import { useNavigate } from 'react-router-dom'; // <-- Thêm useNavigate để điều hướng
@@ -23,7 +23,7 @@ export interface HeaderProps {
   setIsProfileDropdownOpen: (isOpen: boolean) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({
+const HeaderComponent: React.FC<HeaderProps> = ({
   onSidebarToggle,
   
   isDarkMode,
@@ -47,24 +47,24 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="fixed top-0 z-50 w-full bg-white dark:bg-gray-800 shadow-md">
+    <header className="fixed top-0 z-50 w-full bg-white dark:bg-gray-50 shadow-md">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-4">
           <button
             onClick={onSidebarToggle}
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="p-2 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-700"
             aria-label="Toggle sidebar"
           >
-            <FiMenu size={24} className="text-gray-600 dark:text-gray-300" />
+            <FiMenu size={24} className="text-gray-950 dark:text-gray-950" />
           </button>
           <h1 className="text-xl font-bold text-gray-800 dark:text-white">{t('appName')}</h1>
         </div>
         <div className="flex items-center space-x-4">
           {/* Language Selector */}
-          <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
+          <div className="flex items-center space-x-2 text-gray-950 dark:text-gray-950">
             <button
               onClick={() => i18n.changeLanguage('en')} // <-- Dùng i18n.changeLanguage
-              className={`px-2 py-1 rounded-md text-sm ${i18n.language === 'en' ? 'bg-blue-600 text-white' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+              className={`px-2 py-1 rounded-md text-sm ${i18n.language === 'en' ? 'bg-blue-600 text-black' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
             >
               EN
             </button>
@@ -77,18 +77,7 @@ const Header: React.FC<HeaderProps> = ({
             {/* Bạn có thể thêm các ngôn ngữ khác nếu muốn */}
           </div>
 
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label="Toggle dark mode"
-          >
-            {isDarkMode ? (
-              <FiSun size={24} className="text-gray-300" />
-            ) : (
-              <FiMoon size={24} className="text-gray-600" />
-            )}
-          </button>
+         
           <button
             className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
             aria-label="Notifications"
@@ -120,4 +109,4 @@ const Header: React.FC<HeaderProps> = ({
   );
 };
 
-export default Header;
+export default HeaderComponent;

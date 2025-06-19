@@ -21,8 +21,13 @@
   
 }
 .debug {
-  border: solid 2px red !important;
+  border: solid 4px red !important;
 }
 .main-layout {
   border: solid 1px  !important;
+}
+@layer utilities {
+  .dock-full {
+    @apply flex flex-col h-full min-h-0;
+  }
 }

@@ -56,9 +56,9 @@ func (s *TokenService) ValidateAccessToken(accessToken string) (*OAuth2Token, er
 
 	path := s.getPath()
 	if accessToken == "" {
-		e := &authErr.AuthError{
-			Code:    authErr.ErrInvalidToken,
-			Message: "access token is missing",
+		e := &dynacall.CallError{
+			Code: dynacall.CallErrorCodeAuthenticationFailed,
+			Err:  errors.New("Access Deny"),
 		}
 		return nil, e
 	}
