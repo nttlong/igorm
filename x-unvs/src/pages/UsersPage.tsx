@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import SearchBox from '../components/SearchBox';
 import BaseComponent, { type IBaseComponent } from '../components/BaseComponent';
-
+import { VirtualScroller } from 'primereact/virtualscroller';
 const UsersPage = () => {
   const { t } = useTranslation();
   const baseRef = useRef<IBaseComponent>(null);
@@ -12,9 +12,16 @@ const UsersPage = () => {
     debugger
     const res = await baseRef.current?.callAPIAsync("list@unvs.br.auth.users", {
       pageIndex: 0,
-      pageSize: 100
+      pageSize: 90
     });
     setUsers(res.results || []); // nếu API kiểu { results: [...] }
+  }
+  const userItem=(user:any, index:number)=>{
+    return <div key={user.userId || index} className="p-4 bg-white rounded shadow">
+    <p><strong>{t('Username')}:</strong> {user.username}</p>
+    <p><strong>{t('Email')}:</strong> {user.email || 'N/A'}</p>
+    <p><strong>{t('Create by')}:</strong> {user.createdBy}</p>
+  </div>
   }
   
 
@@ -35,12 +42,9 @@ const UsersPage = () => {
       </h1>
       <div className='dock-full  overflow-y-scroll'>
       <div className='grid grid-cols-3 gap-2'>
+        
           {users.map((user:any, index) => (
-            <div key={user.userId || index} className="p-4 bg-white rounded shadow">
-              <p><strong>{t('Username')}:</strong> {user.username}</p>
-              <p><strong>{t('Email')}:</strong> {user.email || 'N/A'}</p>
-              <p><strong>{t('Create by')}:</strong> {user.createdBy}</p>
-            </div>
+            userItem(user, index)
           ))}
         </div>
       </div>

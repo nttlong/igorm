@@ -15,7 +15,7 @@ import { I18nextProvider } from 'react-i18next'; // <-- Import I18nextProvider
 // import { LanguageProvider } from './context/LanguageContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  
     <BrowserRouter>
       <AuthProvider>
         {/* Bọc I18nextProvider ở đây, cung cấp đối tượng i18n đã cấu hình */}
@@ -24,5 +24,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </I18nextProvider>
       </AuthProvider>
     </BrowserRouter>
-  </React.StrictMode>
+  
 );

@@ -2,14 +2,14 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 export let options = {
-  vus: 25, // 200 virtual users
+  vus: 50, // 200 virtual users
   duration: '30s', // Test duration of 30 seconds
 };
 
 export default function () {
     
   
-    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6bnVsbCwiZXhwIjoxNzUwMzA5NTQ5LCJpYXQiOjE3NTAzMDU5NDksInJvbGUiOiIyNjVmNzg5Ny1mZGY5LTRkYWMtYTdkMC0yZWQyN2EwNzAzYzIiLCJzY29wZSI6InJlYWQgd3JpdGUiLCJ1c2VySWQiOiIyNjVmNzg5Ny1mZGY5LTRkYWMtYTdkMC0yZWQyN2EwNzAzYzIiLCJ1c2VybmFtZSI6InJvb3QifQ.TVl-2mpYWhvL5pryEPMPB-NPQzgoAdsRknTpKpIp_3Y`
+    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6bnVsbCwiZXhwIjoxNzUwMzg3MjUzLCJpYXQiOjE3NTAzODM2NTMsInJvbGUiOiI0MTJmNTIwZC1lYzM0LTQyZGItYTRiOC1lMzBiYTIwZTZjM2QiLCJzY29wZSI6InJlYWQgd3JpdGUiLCJ1c2VySWQiOiI0MTJmNTIwZC1lYzM0LTQyZGItYTRiOC1lMzBiYTIwZTZjM2QiLCJ1c2VybmFtZSI6InJvb3QifQ.hq0Z-69tlew0mzPeMmUc2Us35hKXzJx4HvKataRWeWs`
   const params = {
     headers: {
       'Content-Type': 'application/json',

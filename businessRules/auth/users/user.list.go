@@ -25,8 +25,18 @@ func (u *User) List(filter struct {
 		filter.Sort = "Id asc"
 	}
 	qr.Page(filter.PageIndex).Size(filter.PageSize).Sort(filter.Sort)
+	// var wg sync.WaitGroup
+	resultChan := make(chan dbx.QueryResult[authModels.User], 1) // Generic theo kiểu User
+	defer close(resultChan)
+	// ret, err := qr.Query()
 
-	ret, err := qr.Query()
-	return ret, err
+	// return ret, err
+	//wg.Add(1)
+	go qr.QueryAsync(resultChan)
+
+	//wg.Wait()
+
+	result := <-resultChan
+	return result.Data, result.Err
 
 }

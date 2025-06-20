@@ -281,3 +281,15 @@ func (q *QrPager[T]) GetFields(entity interface{}, fields ...interface{}) []stri
 
 	return result
 }
+
+type QueryResult[T any] struct {
+	Data []T
+	Err  error
+}
+
+func (q *QrPager[T]) QueryAsync(resultChan chan<- QueryResult[T]) {
+	//defer wg.Done()
+
+	ret, err := q.Query() // Gọi lại hàm Query gốc của bạn
+	resultChan <- QueryResult[T]{Data: ret, Err: err}
+}
