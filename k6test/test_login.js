@@ -13,10 +13,9 @@ export default function () {
   const username = `${code}${userIndex}`;
   const password = `123456`;
   const payload = JSON.stringify({
-    "args": {"username":"root","password":"root"},
-    "language": "string",
-    "tenant": "string"
-  });
+    "username": "root",
+    "password": "root"
+});
 
   const params = {
     headers: {
@@ -24,7 +23,7 @@ export default function () {
     },
   };
 
-  const res = http.post('http://localhost:8080/api/v1/invoke/login2@unvs.br.auth.users', payload, params);
+  const res = http.post('http://localhost:8080/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=default&lan=vi', payload, params);
   check(res, {
     'status is 200': (r) => r.status === 200,
     // SỬA DÒNG NÀY: Thay đổi chuỗi kiểm tra để khớp với tiếng Việt
@@ -35,5 +34,5 @@ export default function () {
 //     'response contains success': (r) => r.json().message === 'Login successful',
 //   });
 
-  //sleep(1); // Add a 1-second delay between iterations
+  sleep(1); // Add a 1-second delay between iterations
 }

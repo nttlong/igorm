@@ -5,11 +5,23 @@ import (
 	"dbx"
 	"dynacall"
 	"fmt"
+	"time"
 
+	"github.com/google/uuid"
 	service "unvs.br.auth/services"
 
 	authError "unvs.br.auth/errors"
 )
+
+type LoginInfo struct {
+	dbx.EntityModel
+	Id           string  `db:"varchar(36);pk"`
+	UserId       string  `db:"varchar(36);idx"` // user id
+	RefreshToken string  `db:"varchar(255);idx"`
+	AccessToken  *string `db:"varchar(500);idx"`
+
+	CreatedAt time.Time
+}
 
 func (u *User) AuthenticateUser(username string, password string) (*service.OAuth2Token, error) {
 	(&u.TokenService).DecodeAccessToken("token")
@@ -71,7 +83,7 @@ func (u *User) AuthenticateUser(username string, password string) (*service.OAut
 		}
 	}
 
-	return u.GenerateToken(struct {
+	ret, err := u.GenerateToken(struct {
 		UserId   string
 		RoleId   string
 		Username string
@@ -82,6 +94,18 @@ func (u *User) AuthenticateUser(username string, password string) (*service.OAut
 		Username: user.Username,
 		Email:    user.Email,
 	})
+	if err != nil {
+		return nil, err
+	}
+	info := &LoginInfo{
+		Id:           uuid.New().String(),
+		UserId:       ret.UserId,
+		RefreshToken: ret.RefreshToken,
+		AccessToken:  &ret.AccessToken,
+		CreatedAt:    time.Now(),
+	}
+	u.producer(info)
+	return ret, nil
 
 }
 func (u *User) Login(login struct {
@@ -103,4 +127,39 @@ func (u *User) Login(login struct {
 		return nil, err
 	}
 	return ret, nil
+}
+
+type LoginChanItem struct {
+	info *LoginInfo
+	db   *dbx.DBXTenant
+}
+
+var loginChange = make(chan LoginChanItem, 1000)
+
+func (u *User) producer(info *LoginInfo) {
+	item := LoginChanItem{
+		info: info,
+		db:   u.TenantDb,
+	}
+	select {
+	case loginChange <- item:
+	default:
+		fmt.Println("loginChange channel is full, dropping item")
+	}
+}
+func consumer() {
+	for {
+		item := <-loginChange
+		err := item.db.Insert(item.info)
+		if err != nil {
+			fmt.Println("error inserting login info", err)
+		}
+
+	}
+}
+
+func init() {
+	dbx.AddEntities(&LoginInfo{})
+	go consumer()
+
 }

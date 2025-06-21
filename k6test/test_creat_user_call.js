@@ -27,13 +27,13 @@ export default function () {
 
 
     const userIndex = __VU; // Hoặc dùng __ITER nếu muốn tăng theo lần lặp
-  const code="a000"
+  const code=`uer-${Date.now()}`
   const email = `${code}${__VU}_${Date.now()}@example.com`;
   const username = `${code}${userIndex}`;
   const password = `123456`;
   
     const token1 = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlMzQ3M2UwMS1kYmFkLTQxYzktOTRjMS01N2Q2YjdmODE5MzAiLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJzdWIiOiJlMzQ3M2UwMS1kYmFkLTQxYzktOTRjMS01N2Q2YjdmODE5MzAiLCJleHAiOjE3NDk2Mzc5NzgsImlhdCI6MTc0OTU1MTU3OH0.eHMVbY_eup7EBoXN0E-33SKts7IX2HSq5EkGoYGzpNM`;
-  const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6bnVsbCwiZXhwIjoxNzUwMzQ2NjU5LCJpYXQiOjE3NTAzNDMwNTksInJvbGUiOiI0MTJmNTIwZC1lYzM0LTQyZGItYTRiOC1lMzBiYTIwZTZjM2QiLCJzY29wZSI6InJlYWQgd3JpdGUiLCJ1c2VySWQiOiI0MTJmNTIwZC1lYzM0LTQyZGItYTRiOC1lMzBiYTIwZTZjM2QiLCJ1c2VybmFtZSI6InJvb3QifQ.rANW_mvLPFyPGaXIY6tCXD30tAJZEzf6k7-SagpskT8"
+  const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6bnVsbCwiZXhwIjoxNzUwNDg3OTc2LCJpYXQiOjE3NTA0ODQzNzYsInJvbGUiOiI0MTJmNTIwZC1lYzM0LTQyZGItYTRiOC1lMzBiYTIwZTZjM2QiLCJzY29wZSI6InJlYWQgd3JpdGUiLCJ1c2VySWQiOiI0MTJmNTIwZC1lYzM0LTQyZGItYTRiOC1lMzBiYTIwZTZjM2QiLCJ1c2VybmFtZSI6InJvb3QifQ.7tmaC9YUqQL2LY-lciEcXJHpgPOF4i9UQuBP2tL4Jv4"
     const params = {
     headers: {
       'Content-Type': 'application/json',

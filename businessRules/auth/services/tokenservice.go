@@ -1,10 +1,8 @@
 package services
 
 import (
-	"crypto/rand"
 	"dbx"
 	"dynacall"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"log"
@@ -220,14 +218,16 @@ func (s *TokenService) GenerateToken(data struct {
 		return nil, fmt.Errorf("failed to sign JWT: %w", err)
 	}
 
-	// Tạo refresh token ngẫu nhiên
-	refreshTokenBytes := make([]byte, 32)
-	_, err = rand.Read(refreshTokenBytes)
+	refreshToken, err := (&RefreshTokenService{
+		Size:          32,
+		Cache:         s.Cache,
+		TenantDb:      s.TenantDb,
+		EncryptionKey: s.EncryptionKey,
+		Context:       s.Context,
+	}).GenerateRefreshToken()
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate refresh token: %w", err)
 	}
-	refreshToken := base64.URLEncoding.EncodeToString(refreshTokenBytes)
-
 	// Tạo OAuth2Token
 	oauthToken := &OAuth2Token{
 		AccessToken: accessToken,

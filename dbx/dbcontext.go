@@ -3,83 +3,18 @@ package dbx
 import (
 	"context"
 	"database/sql"
+
 	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
 	"strings"
 	"sync"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
 )
-
-type Cfg struct {
-	Driver   string
-	Host     string
-	Port     int
-	User     string
-	Password string
-	SSL      bool
-}
-
-func (c *Cfg) makeDnsPostgres(dbname string) string {
-	ret := ""
-	if c.SSL {
-		if dbname == "" {
-			ret = fmt.Sprintf("postgres://%s:%s@%s:%d", c.User, c.Password, c.Host, c.Port)
-		} else {
-			ret = fmt.Sprintf("postgres://%s:%s@%s:%d/%s", c.User, c.Password, c.Host, c.Port, dbname)
-		}
-	} else {
-		if dbname == "" {
-			ret = fmt.Sprintf("postgres://%s:%s@%s:%d?sslmode=disable", c.User, c.Password, c.Host, c.Port)
-		} else {
-			ret = fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", c.User, c.Password, c.Host, c.Port, dbname)
-		}
-	}
-	return ret
-}
-func (c *Cfg) makeDnsMySql(dbname string) string {
-	ret := ""
-	if dbname == "" {
-		ret = fmt.Sprintf("%s:%s@tcp(%s:%d)/?multiStatements=true&parseTime=true&loc=Local", c.User, c.Password, c.Host, c.Port)
-	} else {
-		ret = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?multiStatements=true&parseTime=true&loc=Local", c.User, c.Password, c.Host, c.Port, dbname)
-	}
-	return ret
-}
-func (c *Cfg) makeDnsMssql(dbname string) string {
-	ret := ""
-	if dbname == "" {
-		if c.Port > 0 {
-			ret = fmt.Sprintf("sqlserver://%s:%s@%s:%d", c.User, c.Password, c.Host, c.Port)
-		} else {
-			ret = fmt.Sprintf("sqlserver://%s:%s@%s", c.User, c.Password, c.Host)
-		}
-	} else {
-		if c.Port > 0 {
-			ret = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", c.User, c.Password, c.Host, c.Port, dbname)
-		} else {
-			ret = fmt.Sprintf("sqlserver://%s:%s@%s?database=%s", c.User, c.Password, c.Host, dbname)
-		}
-
-	}
-	return ret
-}
-func (c *Cfg) dns(dbname string) string {
-
-	if c.Driver == "postgres" {
-
-		return c.makeDnsPostgres(dbname)
-	} else if c.Driver == "mysql" {
-		return c.makeDnsMySql(dbname)
-	} else if c.Driver == "mssql" {
-		return c.makeDnsMssql(dbname)
-	} else {
-		panic(fmt.Errorf("unsupported driver %s", c.Driver))
-	}
-
-}
 
 type parseInsertInfo struct {
 	TableName        string
@@ -122,7 +57,13 @@ func (dbx *DBX) GetCompiler() ICompiler {
 var dbxCache = sync.Map{}
 
 func NewDBX(cfg Cfg) *DBX {
-	key := cfg.dns("")
+	key := ""
+	if cfg.IsMultiTenancy {
+		key = cfg.dns("")
+	} else {
+		key = cfg.dns(cfg.DbName)
+	}
+
 	if v, ok := dbxCache.Load(key); ok {
 		ret := v.(DBX)
 		return &ret
@@ -135,8 +76,12 @@ func NewDBX(cfg Cfg) *DBX {
 func newDBXNoCache(cfg Cfg) *DBX {
 
 	ret := &DBX{cfg: cfg}
+	if cfg.IsMultiTenancy {
+		ret.dns = ret.cfg.dns("")
+	} else {
 
-	ret.dns = ret.cfg.dns("")
+		ret.dns = ret.cfg.dns(ret.cfg.DbName)
+	}
 	if cfg.Driver == "postgres" {
 		ret.executor = newExecutorPostgres()
 	} else if cfg.Driver == "mysql" {
@@ -149,13 +94,19 @@ func newDBXNoCache(cfg Cfg) *DBX {
 	}
 	return ret
 }
+
 func (dbx *DBX) Open() error {
-	if dbx.isOpen {
+
+	if dbx.isOpen && dbx.DB != nil {
 		return nil
 	}
 
 	if dbx.dns == "" {
-		dbx.dns = dbx.cfg.dns("")
+		if dbx.cfg.IsMultiTenancy {
+			dbx.dns = dbx.cfg.dns("")
+		} else {
+			dbx.dns = dbx.cfg.dns(dbx.cfg.DbName)
+		}
 	}
 
 	db, err := sql.Open(dbx.cfg.Driver, dbx.dns)
@@ -176,23 +127,74 @@ func (dbx *DBX) Ping() error {
 
 var cacheDBXTenant = sync.Map{}
 
-func (dbx DBX) GetTenant(dbName string) (*DBXTenant, error) {
+func (db DBX) GetTenant(dbName string) (*DBXTenant, error) {
 	//check cache
 	if v, ok := cacheDBXTenant.Load(dbName); ok {
-		return v.(*DBXTenant), nil
+		ret := v.(*DBXTenant)
+		if ret.DB == nil {
+			ret.Open()
+		}
+		return ret, nil
 	}
+	if !db.cfg.IsMultiTenancy {
+		dbName = db.cfg.DbName
+	}
+	tenantData := &Tenants{
+		Id:        uuid.NewString(),
+		Name:      dbName,
+		DbName:    dbName,
+		CreatedAt: time.Now().UTC(),
+		CreatedBy: "system",
+	}
+
 	//create new tenant
-	dbTenant, err := dbx.getTenant(dbName)
+	if !db.cfg.IsMultiTenancy {
+		dbName = db.cfg.DbName
+
+		// return nil, fmt.Errorf("this is not a multi tenancy database")
+	} else {
+		//In case multi tenancy database must have manage db
+		// manage =db is database with name is cfg.DbName
+		manageDB, err := db.getManagerDb()
+		if err != nil {
+			return nil, err
+		}
+		manageDB.Open()
+		defer manageDB.Close()
+		err = Insert(manageDB, tenantData)
+		if err != nil {
+			if dbErr, ok := err.(*DBXError); ok {
+				if dbErr.Code != DBXErrorCodeDuplicate {
+					return nil, err
+
+				} else {
+					goto create_tenant_db
+
+				}
+			} else {
+				return nil, err
+			}
+
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+create_tenant_db:
+	dbTenant, err := db.getTenant(dbName)
+
 	if err != nil {
 		return nil, err
 	}
 	cacheDBXTenant.Store(dbName, dbTenant)
+
 	return dbTenant, nil
 
 }
 
 func createDbTenantNoCache(dbx DBX, dbName string) *DBXTenant {
-	dbTenant := DBXTenant{
+	dbTenant := &DBXTenant{
 		DBX: DBX{
 			cfg:      dbx.cfg,
 			dns:      dbx.cfg.dns(dbName),
@@ -201,7 +203,7 @@ func createDbTenantNoCache(dbx DBX, dbName string) *DBXTenant {
 		TenantDbName: dbName,
 	}
 
-	return &dbTenant
+	return dbTenant
 }
 func createDbTenant(dbx DBX, dbName string) *DBXTenant {
 	//check cache
@@ -211,10 +213,41 @@ func createDbTenant(dbx DBX, dbName string) *DBXTenant {
 	}
 	//create new tenant
 	dbTenant := createDbTenantNoCache(dbx, dbName)
-	cacheDBXTenant.Store(dbName, &dbTenant)
+	cacheDBXTenant.Store(dbName, *dbTenant)
 	return dbTenant
 }
+func (dbx DBX) getManagerDb() (*DBXTenant, error) {
+	err := dbx.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer dbx.Close()
+	dbName := dbx.cfg.DbName
+	dbTenant := createDbTenant(dbx, dbName)
+	fnCreate := dbx.executor.createDb(dbName)
+	err = fnCreate(dbx, *dbTenant)
 
+	if err != nil {
+		return nil, err
+	}
+	err = dbTenant.Open()
+	if err != nil {
+		return nil, err
+	}
+
+	if dbx.cfg.Driver == "postgres" {
+		dbTenant.compiler = newCompilerPostgres(dbName, dbTenant.DB)
+	} else if dbx.cfg.Driver == "mysql" {
+		dbTenant.compiler = newCompilerMysql(dbName, dbTenant.DB)
+	} else if dbx.cfg.Driver == "mssql" {
+		dbTenant.compiler = newCompilerMssql(dbName, dbTenant.DB)
+	} else {
+		panic(fmt.Errorf("unsupported driver %s", dbx.cfg.Driver))
+	}
+	dbTenant.TenantDbName = dbName
+
+	return dbTenant, nil
+}
 func (dbx DBX) getTenant(dbName string) (*DBXTenant, error) {
 
 	err := dbx.Open()
@@ -223,7 +256,8 @@ func (dbx DBX) getTenant(dbName string) (*DBXTenant, error) {
 	}
 	defer dbx.Close()
 	dbTenant := createDbTenant(dbx, dbName)
-	err = dbx.executor.createDb(dbName)(dbx, *dbTenant)
+	fnCreateTenantDb := dbx.executor.createDb(dbName)
+	err = fnCreateTenantDb(dbx, *dbTenant)
 	if err != nil {
 		return nil, err
 	}

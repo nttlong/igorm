@@ -11,12 +11,14 @@ var cfg *dbx.Cfg
 func createCfg() *dbx.Cfg {
 	onceConfig.Do(func() {
 		cfg = &dbx.Cfg{
-			Driver:   AppConfigInstance.Database.Driver,
-			Host:     AppConfigInstance.Database.Host,
-			Port:     AppConfigInstance.Database.Port,
-			User:     AppConfigInstance.Database.User,
-			Password: AppConfigInstance.Database.Password,
-			SSL:      AppConfigInstance.Database.SSL,
+			Driver:         AppConfigInstance.Database.Driver,
+			Host:           AppConfigInstance.Database.Host,
+			Port:           AppConfigInstance.Database.Port,
+			User:           AppConfigInstance.Database.User,
+			Password:       AppConfigInstance.Database.Password,
+			SSL:            AppConfigInstance.Database.SSL,
+			DbName:         AppConfigInstance.Database.Name,
+			IsMultiTenancy: AppConfigInstance.Database.IsMultiTenancy,
 		}
 
 	})

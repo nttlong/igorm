@@ -232,7 +232,10 @@ func (e executorMssql) makeSQlCreateTable(primaryKey []*EntityField, tableName s
 		if field.DefaultValue == "auto" {
 			fieldType = "INT IDENTITY(1,1) "
 		}
-		if field.MaxLen > 0 && fieldType == "TEXT" {
+		// if field.MaxLen > 0 && fieldType == "TEXT" {
+		// 	fieldType = "NVARCHAR(" + strconv.Itoa(field.MaxLen) + ")"
+		// }
+		if field.MaxLen > 0 {
 			fieldType = "NVARCHAR(" + strconv.Itoa(field.MaxLen) + ")"
 		}
 		strKeyColName := e.quote(field.Name) + " " + fieldType + " PRIMARY KEY "

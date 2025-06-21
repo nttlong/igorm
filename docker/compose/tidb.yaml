@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  pd:
+    image: pingcap/pd:latest
+    container_name: pd
+    ports:
+      - "2379:2379"
+    command:
+      - --name=pd
+      - --data-dir=/pd/data
+      - --client-urls=http://0.0.0.0:2379
+      - --peer-urls=http://0.0.0.0:2380
+      - --initial-cluster=pd=http://pd:2380
+
+  tikv:
+    image: pingcap/tikv:latest
+    container_name: tikv
+    ports:
+      - "20160:20160"
+    depends_on:
+      - pd
+    entrypoint: ["/bin/sh", "-c", "sleep 10; /tikv-server --addr=0.0.0.0:20160 --pd=pd:2379"]
+
+  tidb:
+    image: pingcap/tidb:latest
+    container_name: tidb
+    ports:
+      - "4000:4000"
+    depends_on:
+      - pd
+      - tikv
+    entrypoint: ["/bin/sh", "-c", "sleep 20; /tidb-server --store=tikv --path=pd:2379"]

@@ -29,6 +29,8 @@ type EntityType struct {
 	defaultValueColsNames           []string
 	primaryKeyNames                 []string
 	hasGetDefaultValueColsName      bool // list of field names that have default value
+	pkAutoCols                      []string
+	hasPkAutoCols                   bool // list of field names that have primary key and auto value
 }
 type EntityField struct {
 	TableName string
@@ -78,10 +80,7 @@ func getTableNameNoCache(t reflect.Type) string {
 		f := t.Field(i)
 		if f.Anonymous {
 			if f.Type == reflect.TypeOf(EntityModel{}) {
-				tag := f.Tag.Get("db")
-				if tag != "" {
-					return tag
-				}
+				return t.Name()
 			} else {
 				return getTableName(f.Type)
 
@@ -393,6 +392,21 @@ func (e *EntityType) GetPrimaryKey() []*EntityField {
 		}
 	}
 	return ret
+}
+func (e *EntityType) GetPkAutoCos() []string {
+	if !e.hasPkAutoCols {
+		ret := []string{}
+		for _, field := range e.EntityFields {
+			if field.IsPrimaryKey && field.DefaultValue == "auto" {
+				ret = append(ret, field.Name)
+			}
+		}
+		e.pkAutoCols = ret
+		e.hasPkAutoCols = true
+		return ret
+	}
+	return e.pkAutoCols
+
 }
 func (e *EntityType) GetPrimaryKeyName() []string {
 	if !e.hasGetPrimaryKeyName {

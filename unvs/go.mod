@@ -4,25 +4,30 @@ go 1.24.3
 
 require (
 	dbx v0.0.0-20220223132316-b832511892a9
+	github.com/99designs/gqlgen v0.17.75
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.20.1
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.4
+	github.com/vektah/gqlparser/v2 v2.5.28
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 
 )
 
 require (
 	dbmodels v0.0.0-00010101000000-000000000000 // indirect
+	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/bradfitz/gomemcache v0.0.0-20250403215159-8d39553ac7cf // indirect
 	github.com/dgraph-io/badger/v4 v4.7.0 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
-	github.com/rs/cors v1.11.1 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
+	github.com/sosodev/duration v1.3.1 // indirect
+	golang.org/x/crypto v0.39.0 // indirect
 )
 
 require (
@@ -74,11 +79,11 @@ require (
 	go.opentelemetry.io/otel/trace v1.35.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
-	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/genproto v0.0.0-20250512202823-5a2f75b736a9 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -92,6 +97,7 @@ replace dbx => ../dbx
 replace dynacall => ../dynacall
 
 replace unvs.br.auth => ../businessRules/auth
+
 replace unvs.common => ../businessRules/common
 
 replace dbmodels => ../dbmodels

@@ -24,10 +24,11 @@ func validateSize(entity interface{}) *DBXError {
 	}
 	if typ.Kind() == reflect.Array {
 		typ = typ.Elem()
+		isMultiple = true
 	}
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
-		isMultiple = true
+
 	}
 	et, err := CreateEntityType(typ)
 	if err != nil {

@@ -1,3 +1,7 @@
+/*
+This file contains convert all sql statement to mssql statement
+It also convert function to mssql function
+*/
 package dbx
 
 import (

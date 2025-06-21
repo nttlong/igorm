@@ -8,14 +8,15 @@ type AppConfig struct {
 }
 
 type DatabaseConfig struct {
-	Driver   string `mapstructure:"driver"` // Thêm trường Driver
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	Name     string `mapstructure:"name"`
-	Timeout  int    `mapstructure:"timeout"`
-	SSL      bool   `mapstructure:"ssl"` // Thêm trường SSL
+	Driver         string `mapstructure:"driver"` // Thêm trường Driver
+	Host           string `mapstructure:"host"`
+	Port           int    `mapstructure:"port"`
+	User           string `mapstructure:"user"`
+	Password       string `mapstructure:"password"`
+	Name           string `mapstructure:"name"`
+	Timeout        int    `mapstructure:"timeout"`
+	SSL            bool   `mapstructure:"ssl"` // Thêm trường SSL
+	IsMultiTenancy bool   `mapstructure:"isMultiTenancy"`
 }
 
 type ServerConfig struct {

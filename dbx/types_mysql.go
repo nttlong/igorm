@@ -337,21 +337,24 @@ func (e *executorMySql) createDb(dbName string) func(dbMaster DBX, dbTenant DBXT
 	}
 	retFunc := func(dbMaster DBX, dbTenant DBXTenant) error {
 		// Create the database
-		_, err := dbMaster.Exec("CREATE DATABASE IF NOT EXISTS " + dbName + " CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;")
+		sqlCreateDb := "CREATE DATABASE IF NOT EXISTS `" + dbName + "` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;"
+		_, err := dbMaster.Exec(sqlCreateDb)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create database: %v\n%s", err, sqlCreateDb)
 		}
 		// Switch to the new database
 		dbTenant.TenantDbName = dbName
-		err = dbTenant.Open()
+		// err = dbTenant.Open()
 		if err != nil {
 			return err
 		}
-		defer dbTenant.Close()
+		// defer dbTenant.Close()
 		// _, err = dbTenant.DB.Exec("DROP FUNCTION IF EXISTS dbx_HighlightText")
 		// if err != nil {
 		// 	return err
 		// }
+		dbTenant.Open()
+		defer dbTenant.Close()
 		_, err = dbTenant.DB.Exec(mysql_create_dbx_HighlightText_function())
 		if err != nil {
 			if mysqlErr, ok := err.(*mysql.MySQLError); ok {

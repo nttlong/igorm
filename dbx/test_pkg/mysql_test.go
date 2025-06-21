@@ -17,17 +17,23 @@ var TenantMysql dbx.DBXTenant
 func TestMysql(t *testing.T) {
 	dbx.AddEntities(&Employees{}, &Departments{}, &Users{})
 	DbxMysql = dbx.NewDBX(dbx.Cfg{
-		Driver:   "mysql",
-		Host:     "localhost",
-		Port:     3306,
-		User:     "root",
-		Password: "123456",
-		SSL:      false,
+		Driver:         "mysql",
+		Host:           "localhost",
+		Port:           3306,
+		User:           "root",
+		Password:       "123456",
+		SSL:            false,
+		DbName:         "db_manager_test", // run on single tenant mode
+		IsMultiTenancy: true,
 	})
-	DbxMysql.Open()
-	defer DbxMysql.Close()
-	err := DbxMysql.Ping()
+	err := DbxMysql.Open()
 	assert.NoError(t, err)
+	defer DbxMysql.Close()
+	err = DbxMysql.Ping()
+	assert.NoError(t, err)
+	db, err := DbxMysql.GetTenant("tenant3")
+	assert.Error(t, err)
+	assert.Empty(t, db)
 
 }
 func TestMysqlGetTenant(t *testing.T) {
