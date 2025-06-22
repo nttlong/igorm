@@ -3,14 +3,9 @@ package dbx
 import (
 	"fmt"
 	"reflect"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
-	"time"
-
-	"github.com/google/uuid"
-	"google.golang.org/genproto/googleapis/type/decimal"
 )
 
 type EntityType struct {
@@ -49,137 +44,7 @@ type EntityField struct {
 	IsBSON           bool
 }
 
-var newEntityTypeCache = sync.Map{}
-
-func newEntityType(t reflect.Type) (*EntityType, error) {
-	key := t.PkgPath() + t.Name()
-	if v, ok := newEntityTypeCache.Load(key); ok {
-		return v.(*EntityType), nil
-	}
-	ret, err := newEntityTypeNoCache(t)
-	if err != nil {
-		return nil, err
-	}
-	newEntityTypeCache.Store(key, ret)
-	return ret, nil
-}
-
-var getTableNameCache = sync.Map{}
-
-func getTableName(t reflect.Type) string {
-	key := t.PkgPath() + t.Name()
-	if v, ok := getTableNameCache.Load(key); ok {
-		return v.(string)
-	}
-	ret := getTableNameNoCache(t)
-	getTableNameCache.Store(key, ret)
-	return ret
-}
-func getTableNameNoCache(t reflect.Type) string {
-	for i := 0; i < t.NumField(); i++ {
-		f := t.Field(i)
-		if f.Anonymous {
-			if f.Type == reflect.TypeOf(EntityModel{}) {
-				return t.Name()
-			} else {
-				return getTableName(f.Type)
-
-			}
-		}
-	}
-	return ""
-
-}
-func newEntityTypeNoCache(t reflect.Type) (*EntityType, error) {
-	//check cache
-	tableName := getTableName(t)
-	if tableName == "" {
-		if t.Kind() == reflect.Ptr {
-			t = t.Elem()
-		}
-		if t.Kind() == reflect.Slice {
-			t = t.Elem()
-		}
-		if t.Kind() == reflect.Ptr {
-			t = t.Elem()
-		}
-		return nil, fmt.Errorf("The entity type %s is not a valid entity type, please embed EntityModel and  add `db:\"table_name\"` tag to the entity struct", t.PkgPath()+"."+t.Name())
-	}
-
-	ret := EntityType{
-		Type:         t,
-		TableName:    tableName,
-		fieldMap:     sync.Map{},
-		RefEntities:  []*EntityType{},
-		EntityFields: []*EntityField{},
-	}
-	fields, refTable := getAllFields(ret.Type)
-
-	ret.EntityFields = make([]*EntityField, 0)
-	for _, f := range fields {
-		nf := f.Type
-		if nf.Kind() == reflect.Ptr {
-			nf = nf.Elem()
-		}
-		if nf.Kind() == reflect.Slice {
-			nf = nf.Elem()
-		}
-		if nf.Kind() == reflect.Ptr {
-			nf = nf.Elem()
-		}
-
-		ef := EntityField{
-			TableName:       ret.TableName,
-			StructField:     f,
-			AllowNull:       true,
-			NonPtrFieldType: nf,
-		}
-		err := ef.initPropertiesByTags()
-		if err != nil {
-			return nil, err
-		}
-
-		ret.EntityFields = append(ret.EntityFields, &ef)
-	}
-	for _, ref := range refTable {
-		refType := ref.Type
-		if refType.Kind() == reflect.Ptr {
-			refType = refType.Elem()
-		}
-		if refType.Kind() == reflect.Slice {
-			refType = refType.Elem()
-		}
-		if refType.Kind() == reflect.Ptr {
-			refType = refType.Elem()
-		}
-		refEntity, err := newEntityType(refType)
-		if err != nil {
-			return nil, err
-		}
-		refEntityField := EntityField{
-			StructField: ref,
-		}
-		err = refEntityField.initPropertiesByTags()
-
-		fkNameList := strings.Split(refEntityField.ForeignKey, ",")
-		name := refEntityField
-		fmt.Println(name)
-		for _, fkName := range fkNameList {
-			fx := refEntity.GetFieldByName(fkName)
-			if fx == nil {
-				return nil, fmt.Errorf("invalid foreign key: %s.%s tag in models %s is %s", refEntity.TableName, fkName, t.Name(), ref.Tag)
-			}
-			refEntity.RefFields = append(refEntity.RefFields, fx)
-		}
-
-		if err != nil {
-			return nil, err
-		}
-		ret.RefEntities = append(ret.RefEntities, refEntity)
-	}
-
-	return &ret, nil
-}
+//var newEntityTypeCache = sync.Map{}
 
 func (f *EntityField) initPropertiesByTags() error {
 	if f.Type.Kind() == reflect.Ptr {
@@ -289,77 +154,56 @@ func (f *EntityField) initPropertiesByTags() error {
 
 }
 
-var hashCheckIsDbFieldAble = map[reflect.Type]bool{
-	reflect.TypeOf(int(0)):      true,
-	reflect.TypeOf(int8(0)):     true,
-	reflect.TypeOf(int16(0)):    true,
-	reflect.TypeOf(int32(0)):    true,
-	reflect.TypeOf(int64(0)):    true,
-	reflect.TypeOf(uint(0)):     true,
-	reflect.TypeOf(uint8(0)):    true,
-	reflect.TypeOf(uint16(0)):   true,
-	reflect.TypeOf(uint32(0)):   true,
-	reflect.TypeOf(uint64(0)):   true,
-	reflect.TypeOf(float32(0)):  true,
-	reflect.TypeOf(float64(0)):  true,
-	reflect.TypeOf(string("")):  true,
-	reflect.TypeOf(bool(false)): true,
-	reflect.TypeOf(time.Time{}): true,
+// func (e *EntityType) getAllFieldsDelete() ([]*EntityField, error) {
+// 	// if e.IsLoaded {
+// 	// 	return e.EntityFields, nil
+// 	// }
+// 	//check cache
 
-	reflect.TypeOf(decimal.Decimal{}): true,
-	reflect.TypeOf(uuid.UUID{}):       true,
-}
+// 	fields, refFields := getAllFields(e.Type)
 
-func (e *EntityType) getAllFieldsDelete() ([]*EntityField, error) {
-	// if e.IsLoaded {
-	// 	return e.EntityFields, nil
-	// }
-	//check cache
+// 	// sort fields by field index
+// 	sort.Slice(fields, func(i, j int) bool {
+// 		return fields[i].Index[0] < fields[j].Index[0]
+// 	})
+// 	ret := make([]*EntityField, 0)
+// 	for _, field := range fields {
 
-	fields, refFields := getAllFields(e.Type)
+// 		ef := EntityField{
+// 			StructField: field,
+// 		}
+// 		err := ef.initPropertiesByTags()
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		ret = append(ret, &ef)
+// 	}
+// 	eRefEntity := make([]*EntityType, 0)
+// 	for _, field := range refFields {
+// 		ft := field.Type
+// 		if ft.Kind() == reflect.Ptr {
+// 			ft = ft.Elem()
+// 		}
+// 		if ft.Kind() == reflect.Slice {
+// 			ft = ft.Elem()
+// 		}
+// 		if ft.Kind() == reflect.Ptr {
+// 			ft = ft.Elem()
+// 		}
+// 		ef := EntityType{
+// 			Type:        ft,
+// 			TableName:   ft.Name(),
+// 			fieldMap:    sync.Map{},
+// 			RefEntities: []*EntityType{},
+// 		}
+// 		eRefEntity = append(eRefEntity, &ef)
 
-	// sort fields by field index
-	sort.Slice(fields, func(i, j int) bool {
-		return fields[i].Index[0] < fields[j].Index[0]
-	})
-	ret := make([]*EntityField, 0)
-	for _, field := range fields {
-
-		ef := EntityField{
-			StructField: field,
-		}
-		err := ef.initPropertiesByTags()
-		if err != nil {
-			return nil, err
-		}
-		ret = append(ret, &ef)
-	}
-	eRefEntity := make([]*EntityType, 0)
-	for _, field := range refFields {
-		ft := field.Type
-		if ft.Kind() == reflect.Ptr {
-			ft = ft.Elem()
-		}
-		if ft.Kind() == reflect.Slice {
-			ft = ft.Elem()
-		}
-		if ft.Kind() == reflect.Ptr {
-			ft = ft.Elem()
-		}
-		ef := EntityType{
-			Type:        ft,
-			TableName:   ft.Name(),
-			fieldMap:    sync.Map{},
-			RefEntities: []*EntityType{},
-		}
-		eRefEntity = append(eRefEntity, &ef)
-
-	}
-	e.RefEntities = eRefEntity
-	//save to cache
-	e.IsLoaded = true
-	return ret, nil
-}
+// 	}
+// 	e.RefEntities = eRefEntity
+// 	//save to cache
+// 	e.IsLoaded = true
+// 	return ret, nil
+// }
 
 var (
 	lockGetFieldByName sync.Map
@@ -611,147 +455,7 @@ func (e *EntityType) GetForeignKeyRef() map[string]fkInfoEntry {
 
 }
 
-// load all fields of the entity type, including embedded fields. all fields can be used for database operation.
-// @return all fields, all reference fields, error
-func getAllFields(typ reflect.Type) ([]reflect.StructField, []reflect.StructField) {
-	ret := make([]reflect.StructField, 0)
-	check := map[string]bool{}
-	anonymousFields := []reflect.StructField{}
-	refField := []reflect.StructField{}
-	for i := 0; i < typ.NumField(); i++ {
-		field := typ.Field(i)
-		if field.Type == reflect.TypeOf(FullTextSearchColumn("")) { //loi  FullTextSearchColumn (type) is not an expressioncompiler
-			ret = append(ret, field)
-			continue
-		}
-		if field.Anonymous {
-
-			anonymousFields = append(anonymousFields, field)
-
-			continue
-		} else {
-			ft := field.Type
-
-			if field.Type.Kind() == reflect.Ptr {
-				ft = field.Type.Elem()
-			}
-			if ft.Kind() == reflect.Slice {
-				ft = ft.Elem()
-			}
-			if field.Type.Kind() == reflect.Ptr {
-				ft = field.Type.Elem()
-			}
-			if _, ok := hashCheckIsDbFieldAble[ft]; !ok {
-
-				refField = append(refField, field)
-				continue
-			}
-			check[field.Name] = true
-			ret = append(ret, field)
-		}
-	}
-	for _, field := range anonymousFields {
-		fields, _ := getAllFields(field.Type)
-
-		for _, f := range fields {
-			if _, ok := check[f.Name]; !ok { //check if field is not exist
-				check[f.Name] = true
-				ret = append(ret, f)
-			}
-
-		}
-	}
-
-	return ret, refField
-}
-
-var cacheCreateEntityType sync.Map
-var cacheTableNameEntity = map[string]*EntityType{}
-
-func GetEntityTypeByTableName(tableName string) *EntityType {
-	if ret, ok := cacheTableNameEntity[tableName]; ok {
-		return ret
-	}
-	return nil
-}
-
 // Get all fields of the entity type, including embedded fields.
-func CreateEntityType(entity interface{}) (*EntityType, error) {
-	if entity == nil {
-		return nil, fmt.Errorf("entity type must not be nil")
-	}
-	if ft, ok := entity.(reflect.Type); ok {
-		if ft.Kind() == reflect.Ptr {
-			ft = ft.Elem()
-		}
-		if ft.Kind() == reflect.Slice { //in case of slice
-			ft = ft.Elem()
-
-		}
-		if ft.Kind() == reflect.Ptr { // in case of slice of pointer
-			ft = ft.Elem()
-		}
-		if ft.Kind() != reflect.Struct { //in case of slice of non-struct
-			return nil, fmt.Errorf("entity type must be a struct or a slice of struct, but got %v", ft.Kind())
-		}
-		key := ft.PkgPath() + "-" + ft.Name()
-		//check cache
-		if retEntity, ok := cacheCreateEntityType.Load(key); ok {
-			return retEntity.(*EntityType), nil
-		}
-
-		retEntity, err := newEntityType(ft)
-		if err != nil {
-			return nil, err
-		}
-		//save to cache
-		cacheCreateEntityType.Store(ft, retEntity)
-
-		return retEntity, nil
-	}
-	typ := reflect.TypeOf(entity)
-	if typ.Kind() == reflect.Ptr { // in case of pointer
-		typ = typ.Elem()
-	}
-	if typ.Kind() == reflect.Slice { //in case of slice
-		typ = typ.Elem()
-
-	}
-	if typ.Kind() == reflect.Ptr { // in case of slice of pointer
-		typ = typ.Elem()
-	}
-	if typ.Kind() != reflect.Struct { //in case of slice of non-struct
-		return nil, fmt.Errorf("entity type must be a struct or a slice of struct, but got %v", typ.Kind())
-	}
-	key := typ.PkgPath() + "-" + typ.Name()
-	//check cache
-	if retEntity, ok := cacheCreateEntityType.Load(key); ok {
-		return retEntity.(*EntityType), nil
-	}
-	ret, err := newEntityType(typ)
-	if err != nil {
-		return nil, err
-	}
-	cacheTableNameEntity[ret.TableName] = ret
-	//save to cache
-	cacheCreateEntityType.Store(key, ret)
-	uk := map[string][]string{}
-	for _, f := range ret.EntityFields {
-		if f.UkName != "" {
-			if _, ok := uk[f.UkName]; !ok {
-				uk[f.UkName] = []string{f.Name}
-			} else {
-				uk[f.UkName] = append(uk[f.UkName], f.Name)
-			}
-
-		}
-	}
-	for k, v := range uk {
-		dbxEntityCache.set_uk(ret.TableName+"_"+k, v)
-	}
-
-	return ret, nil
-}
 
 var replacerConstraint = map[string][]string{
 	// "nvarchar": {"varchar"},

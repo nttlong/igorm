@@ -33,7 +33,7 @@ type QrPager[T any] struct {
 
 // }
 func Pager[T any](dbx *DBXTenant, ctx context.Context) *QrPager[T] {
-	entityType, err := newEntityType(reflect.TypeFor[T]())
+	entityType, err := Entities.newEntityType(reflect.TypeFor[T]())
 	if err != nil {
 		panic(err)
 	}

@@ -5,7 +5,7 @@ import "reflect"
 func (q *QrBuilder[T]) Items() ([]T, error) {
 	var zero T
 	et := reflect.TypeOf(zero)
-	entityType, err := newEntityType(et)
+	entityType, err := Entities.newEntityType(et)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (q *QrBuilder[T]) Items() ([]T, error) {
 func (q *QrBuilder[T]) Item() ([]T, error) {
 	var zero T
 	et := reflect.TypeOf(zero)
-	entityType, err := newEntityType(et)
+	entityType, err := Entities.newEntityType(et)
 	if err != nil {
 		return nil, err
 	}

@@ -133,7 +133,7 @@ func createInsertCommand(entity interface{}, entityType *EntityType) (*sqlWithPa
 }
 func Count[T any](ctx *DBXTenant, where string, args ...interface{}) (int64, error) {
 	entityType := reflect.TypeFor[T]()
-	e, err := CreateEntityType(entityType)
+	e, err := Entities.CreateEntityType(entityType)
 	if err != nil {
 		return 0, err
 	}
@@ -158,7 +158,7 @@ func Count[T any](ctx *DBXTenant, where string, args ...interface{}) (int64, err
 }
 func CountWithContext[T any](ctx context.Context, db *DBXTenant, where string, args ...interface{}) (int64, error) {
 	entityType := reflect.TypeFor[T]()
-	e, err := CreateEntityType(entityType)
+	e, err := Entities.CreateEntityType(entityType)
 	if err != nil {
 		return 0, err
 	}

@@ -9,7 +9,7 @@ func (q QrBuilder[T]) Delete() error {
 	if q.where == "" {
 		return fmt.Errorf("where clause is required")
 	}
-	entityType, err := newEntityType(reflect.TypeFor[T]())
+	entityType, err := Entities.newEntityType(reflect.TypeFor[T]())
 	if err != nil {
 		return err
 	}

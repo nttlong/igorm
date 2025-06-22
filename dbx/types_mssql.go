@@ -40,7 +40,7 @@ func (e executorMssql) createTable(dbName string, entity interface{}) func(db *s
 
 		entityType = &_entityType
 	} else {
-		_entityType, err := CreateEntityType(entity)
+		_entityType, err := Entities.CreateEntityType(entity)
 		if err != nil {
 			return func(db *sql.DB) error { return err }
 		}

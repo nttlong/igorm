@@ -45,7 +45,7 @@ func (p *postgresErrorParser) ParseError(ctx context.Context, db *sql.DB, err er
 				if len(items) > 2 {
 					if items[0] == pgErr.Table {
 						dbField = items[1]
-						entity := GetEntityTypeByTableName(pgErr.Table)
+						entity := Entities.GetEntityTypeByTableName(pgErr.Table)
 						if entity != nil {
 							entityField := entity.GetFieldByName(dbField)
 							if entityField != nil {

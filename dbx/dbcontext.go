@@ -625,7 +625,7 @@ func Find[T any](args ...interface{}) func(dbx *DBXTenant) ([]T, error) {
 func doFindEntities[T any](where string, args ...interface{}) func(dbx *DBXTenant) ([]T, error) {
 	var zero T
 	et := reflect.TypeOf(zero)
-	entityType, err := newEntityType(et)
+	entityType, err := Entities.newEntityType(et)
 	if err != nil {
 		return func(dbx *DBXTenant) ([]T, error) { return nil, err }
 	}
@@ -717,7 +717,7 @@ func GetOne[T any](dbx *DBXTenant, args ...interface{}) (*T, error) {
 func getOneNoCondition[T any](dbx *DBXTenant) (*T, error) {
 	var zero T
 	et := reflect.TypeOf(zero)
-	entityType, err := newEntityType(et)
+	entityType, err := Entities.newEntityType(et)
 	if err != nil {
 		return nil, err
 	}
@@ -742,7 +742,7 @@ func getOneNoCondition[T any](dbx *DBXTenant) (*T, error) {
 func getOneByCondition[T any](dbx *DBXTenant, where string, args ...interface{}) (*T, error) {
 	var zero T
 	et := reflect.TypeOf(zero)
-	entityType, err := newEntityType(et)
+	entityType, err := Entities.newEntityType(et)
 	if err != nil {
 		return nil, err
 	}

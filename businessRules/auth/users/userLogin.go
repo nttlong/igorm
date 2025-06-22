@@ -34,8 +34,8 @@ func (u *User) AuthenticateUser(username string, password string) (*service.OAut
 	}
 	// get user from db
 	var user authModel.User
-
-	if !u.Cache.Get(u.Context, "user_"+username, &user) {
+	cacheKey := fmt.Sprintf("%s_user_%s", u.TenantDb.TenantDbName, username)
+	if !u.Cache.Get(u.Context, cacheKey, &user) {
 		_user, err := dbx.Query[authModel.User](
 			u.TenantDb,
 			u.Context,
@@ -58,7 +58,7 @@ func (u *User) AuthenticateUser(username string, password string) (*service.OAut
 		}
 	}
 
-	key := fmt.Sprintf("user_%s %s", username, password)
+	key := fmt.Sprintf("%s_user_%s %s", u.TenantDb.TenantDbName, username, password)
 	ok := ""
 	if !u.Cache.Get(u.Context, key, &ok) {
 
@@ -139,7 +139,7 @@ var loginChange = make(chan LoginChanItem, 1000)
 func (u *User) producer(info *LoginInfo) {
 	item := LoginChanItem{
 		info: info,
-		db:   u.TenantDb,
+		db:   u.TenantDb.Clone("loginInfoDB"),
 	}
 	select {
 	case loginChange <- item:
@@ -151,8 +151,13 @@ func consumer() {
 	for {
 		item := <-loginChange
 		err := item.db.Insert(item.info)
+
 		if err != nil {
 			fmt.Println("error inserting login info", err)
+		}
+		item.db.Update(&authModel.User{}).Where("UserId = ?", item.info.UserId).Set("LastLoginAt = ?", time.Now()).Exec()
+		if err != nil {
+			fmt.Println("error updating user last login at", err)
 		}
 
 	}

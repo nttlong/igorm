@@ -382,7 +382,7 @@ func (e *executorPostgres) createTable(dbname string, entity interface{}) func(d
 
 		entityType = &_entityType
 	} else {
-		_entityType, err := CreateEntityType(entity)
+		_entityType, err := Entities.CreateEntityType(entity)
 		if err != nil {
 			return func(db *sql.DB) error { return err }
 		}

@@ -24,7 +24,7 @@ func (e *entities) AddEntities(entities ...interface{}) error {
 		if typ.Kind() == reflect.Ptr {
 			typ = typ.Elem()
 		}
-		et, err := CreateEntityType(typ)
+		et, err := Entities.CreateEntityType(typ)
 		if err != nil {
 			return err
 		}

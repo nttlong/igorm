@@ -30,7 +30,7 @@ func (ctx *DBXTenant) Insert(entity interface{}) error {
 	if typ.Kind() != reflect.Struct {
 		return fmt.Errorf("entity must be a struct or a pointer to a struct")
 	}
-	tblInfo, err := newEntityType(typ)
+	tblInfo, err := Entities.newEntityType(typ)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (ctx *DBXTenant) InsertWithContext(cntx context.Context, entity interface{}
 	if typ.Kind() != reflect.Struct {
 		return fmt.Errorf("entity must be a struct or a pointer to a struct")
 	}
-	tblInfo, err := newEntityType(typ)
+	tblInfo, err := Entities.newEntityType(typ)
 	if err != nil {
 		return err
 	}

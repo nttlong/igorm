@@ -30,7 +30,7 @@ func validateSize(entity interface{}) *DBXError {
 		typ = typ.Elem()
 
 	}
-	et, err := CreateEntityType(typ)
+	et, err := Entities.CreateEntityType(typ)
 	if err != nil {
 		return nil
 	}

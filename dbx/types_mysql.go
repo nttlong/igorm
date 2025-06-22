@@ -47,7 +47,7 @@ func (e *executorMySql) createTable(dbname string, entity interface{}) func(db *
 
 		entityType = &_entityType
 	} else {
-		_entityType, err := CreateEntityType(entity)
+		_entityType, err := Entities.CreateEntityType(entity)
 		if err != nil {
 			return func(db *sql.DB) error { return err }
 		}

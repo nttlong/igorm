@@ -15,7 +15,7 @@ type QrBuilder[T any] struct {
 }
 
 func Query[T any](dbx *DBXTenant, ctx context.Context) *QrBuilder[T] {
-	entityType, err := newEntityType(reflect.TypeFor[T]())
+	entityType, err := Entities.newEntityType(reflect.TypeFor[T]())
 	if err != nil {
 		panic(err)
 	}
@@ -31,7 +31,7 @@ func Query[T any](dbx *DBXTenant, ctx context.Context) *QrBuilder[T] {
 func (q QrBuilder[T]) First() (*T, error) {
 	var zero T
 	et := reflect.TypeOf(zero)
-	entityType, err := newEntityType(et)
+	entityType, err := Entities.newEntityType(et)
 	if err != nil {
 		return nil, err
 	}
