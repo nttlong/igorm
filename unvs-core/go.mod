@@ -5,7 +5,15 @@ go 1.24.3
 require dbx v0.0.0-20241012123456-abcdef123456 // pseudo-version for local development
 
 require (
+	github.com/bradfitz/gomemcache v0.0.0-20250403215159-8d39553ac7cf
+	github.com/go-redis/redis/v8 v8.11.5
+	github.com/patrickmn/go-cache v2.1.0+incompatible
+)
+
+require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/go-sql-driver/mysql v1.9.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
