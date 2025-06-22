@@ -17,6 +17,7 @@ type entitiesStruct struct {
 	cacheCreateEntityType  sync.Map
 	cacheTableNameEntity   map[string]*EntityType
 	hashCheckIsDbFieldAble map[reflect.Type]bool
+	cacheTableAndField     map[string]*EntityField
 }
 
 // extract type from entity, entity can be a struct or a pointer to a struct or even an instance of a struct
@@ -60,6 +61,7 @@ func (e *entitiesStruct) GetEntityType(entity interface{}) (*EntityType, error) 
 // create or get (if exists)new EntityType from reflect.Type
 func (e *entitiesStruct) newEntityType(t reflect.Type) (*EntityType, error) {
 	key := t.PkgPath() + t.Name()
+	fmt.Println("newEntityType", key)
 	if v, ok := e.EntityTypeCache.Load(key); ok {
 		return v.(*EntityType), nil
 	}
@@ -68,6 +70,7 @@ func (e *entitiesStruct) newEntityType(t reflect.Type) (*EntityType, error) {
 		return nil, err
 	}
 	e.EntityTypeCache.Store(key, ret)
+	e.cacheTableNameEntity[ret.TableName] = ret
 	return ret, nil
 }
 func (e *entitiesStruct) GetTableNameByType(t reflect.Type) string {
@@ -77,9 +80,21 @@ func (e *entitiesStruct) GetTableNameByType(t reflect.Type) string {
 	}
 	ret := e.getTableNameNoCache(t)
 	e.TableNameCache.Store(key, ret)
+
 	return ret
 }
+func (e *entitiesStruct) GetTableName(entity interface{}) (string, error) {
+
+	typ, err := e.GetType(entity)
+
+	if err != nil {
+		return "", err
+	}
+
+	return e.GetTableNameByType(*typ), nil
+}
 func (e *entitiesStruct) getTableNameNoCache(t reflect.Type) string {
+
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
 		if f.Anonymous {
@@ -323,6 +338,54 @@ func (e *entitiesStruct) CreateEntityType(entity interface{}) (*EntityType, erro
 	return ret, nil
 }
 
+// get all field info of entity
+//
+// @param entity can be a struct or a pointer to a struct or a string of table name
+//
+// @return all field info, error
+func (e *entitiesStruct) GetAllFieldInfo(entity interface{}) ([]*EntityField, error) {
+	if tableName, ok := entity.(string); ok {
+		en := e.GetEntityTypeByTableName(tableName)
+		return en.EntityFields, nil
+	}
+	typ, err := e.GetEntityType(entity)
+
+	if err != nil {
+		return nil, err
+	}
+	return typ.EntityFields, nil
+
+}
+func (e *entitiesStruct) CheckField(entity interface{}, fieldName string) bool {
+	tableName := ""
+	if _tblName, ok := entity.(string); ok {
+		tableName = _tblName
+	} else {
+		_tblName, err := e.GetTableName(entity)
+		if err != nil {
+			return false
+		}
+		tableName = _tblName
+	}
+
+	check_key := fieldName + "@" + tableName
+	if _, ok := e.cacheTableAndField[check_key]; ok {
+		return true
+	}
+	fields, err := e.GetAllFieldInfo(entity)
+	if err != nil {
+		return false
+	}
+	for _, f := range fields {
+		if f.Name == fieldName {
+			e.cacheTableAndField[check_key] = f
+			return true
+		}
+	}
+	return false
+
+}
+
 // Entities is a global variable of entitiesStruct a utility struct for managing entity types and their fields.
 var Entities *entitiesStruct
 
@@ -332,6 +395,7 @@ func init() {
 		TableNameCache:        sync.Map{},
 		cacheCreateEntityType: sync.Map{},
 		cacheTableNameEntity:  map[string]*EntityType{},
+		cacheTableAndField:    map[string]*EntityField{},
 	}
 	Entities.hashCheckIsDbFieldAble = map[reflect.Type]bool{
 		reflect.TypeOf(int(0)):      true,

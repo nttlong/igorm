@@ -291,6 +291,7 @@ func (dbx DBX) getTenant(dbName string) (*DBXTenant, error) {
 func (dbx *DBXTenant) Exec(query string, args ...interface{}) (sql.Result, error) {
 	sqlExec, err := dbx.compiler.Parse(query)
 	if err != nil {
+
 		return nil, err
 	}
 	return dbx.DB.Exec(sqlExec, args...)

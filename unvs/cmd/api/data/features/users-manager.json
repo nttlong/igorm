@@ -1,0 +1,8 @@
+{
+  "featureId": "users-manager",
+  "refModules": {
+    "unvs.br.auth.users": {
+      "list": true
+    }
+  }
+}

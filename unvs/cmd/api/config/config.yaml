@@ -53,6 +53,7 @@ redis:
   timeout: 50
 logs: ./logs/app.log
 encryptionKey: 78U+eSy0l4+Iegiy  
+isDebug: true
 
 
 #docker run -d --name=cockroach-single  -p 26257:26257   -p 8081:8080   cockroachdb/cockroach:v24.1.0 start-single-node --insecure

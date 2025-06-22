@@ -13,10 +13,11 @@ type User struct {
 	dynacall.Caller
 	Tenant   string
 	TenantDb *dbx.DBXTenant
-
+	service.FeatureService
 	services.TokenService
 	service.PasswordService
 	service.CacheService
+
 	AccessToken string
 }
 

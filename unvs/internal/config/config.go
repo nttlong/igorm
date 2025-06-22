@@ -36,6 +36,7 @@ type Config struct {
 	Redis           RedisCache `mapstructure:"redis"`
 	Logs            string     `mapstructure:"logs"`
 	EncryptionKey   string     `mapstructure:"encryptionKey"`
+	IsDebug         bool       `mapstructure:"isDebug"`
 }
 type RedisCache struct {
 	Host     string `mapstructure:"host"`

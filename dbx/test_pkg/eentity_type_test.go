@@ -16,24 +16,24 @@ import (
 )
 
 func TestEntityType(t *testing.T) {
-	entityType, err := dbx.CreateEntityType(reflect.TypeOf(&Employees{}))
+	entityType, err := dbx.Entities.CreateEntityType(reflect.TypeOf(&Employees{}))
 	assert.NoError(t, err)
 	assert.Equal(t, reflect.TypeOf(Employees{}), entityType.Type)
-	entityType, err = dbx.CreateEntityType(&Employees{})
+	entityType, err = dbx.Entities.CreateEntityType(&Employees{})
 	assert.NoError(t, err)
 	assert.Equal(t, reflect.TypeOf(Employees{}), entityType.Type)
-	entityType, err = dbx.CreateEntityType([]Employees{})
+	entityType, err = dbx.Entities.CreateEntityType([]Employees{})
 	assert.NoError(t, err)
 	assert.Equal(t, reflect.TypeOf(Employees{}), entityType.Type)
-	entityType, err = dbx.CreateEntityType([]*Employees{})
+	entityType, err = dbx.Entities.CreateEntityType([]*Employees{})
 	assert.NoError(t, err)
 	assert.Equal(t, reflect.TypeOf(Employees{}), entityType.Type)
-	entityType, err = dbx.CreateEntityType(nil)
+	entityType, err = dbx.Entities.CreateEntityType(nil)
 	assert.Error(t, err)
 
 }
 func TestGetAllFields(t *testing.T) {
-	entityType, err := dbx.CreateEntityType(reflect.TypeOf(&Departments{}))
+	entityType, err := dbx.Entities.CreateEntityType(reflect.TypeOf(&Departments{}))
 
 	assert.NoError(t, err)
 	fields := entityType.EntityFields

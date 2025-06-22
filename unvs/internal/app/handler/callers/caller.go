@@ -190,6 +190,9 @@ func (h *CallerHandler) Call(c echo.Context) error {
 		Cache       cache.Cache
 		AccessToken string
 		FeatureId   string
+		Module      string
+		Action      string
+		IsDebug     bool
 	}{
 		Tenant:        info.Tenant,
 		TenantDb:      tenantDb,
@@ -200,6 +203,9 @@ func (h *CallerHandler) Call(c echo.Context) error {
 		Cache:       config.GetCache(),
 		AccessToken: c.Request().Header.Get("Authorization"),
 		FeatureId:   info.Feature,
+		Action:      info.Action,
+		Module:      info.Module,
+		IsDebug:     config.AppConfigInstance.IsDebug,
 	})
 
 	retCall, err := fn()

@@ -155,9 +155,15 @@ func consumer() {
 		if err != nil {
 			fmt.Println("error inserting login info", err)
 		}
-		item.db.Update(&authModel.User{}).Where("UserId = ?", item.info.UserId).Set("LastLoginAt = ?", time.Now()).Exec()
+		_, err = item.db.Update(&authModel.User{}).Where(
+			"UserId = ?", item.info.UserId).Set(
+			"LastLoginAt", time.Now(),
+		).Execute()
 		if err != nil {
 			fmt.Println("error updating user last login at", err)
+		} else {
+
+			fmt.Println("updated user last login")
 		}
 
 	}

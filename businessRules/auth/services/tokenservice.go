@@ -28,6 +28,7 @@ type OAuth2Token struct {
 }
 type TokenService struct {
 	CacheService
+
 	TenantDb      *dbx.DBXTenant
 	EncryptionKey string
 	Language      string

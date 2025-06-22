@@ -3,6 +3,7 @@ package auth
 import (
 	authModels "dbmodels/auth"
 	"dbx"
+	"errors"
 )
 
 func (u *User) List(filter struct {
@@ -10,7 +11,25 @@ func (u *User) List(filter struct {
 	PageSize  int
 	Sort      string
 }) (interface{}, error) {
+
 	tokenInfo, err := u.ValidateAccessToken(u.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+	user, err := u.GetUser(tokenInfo.UserId)
+	if err != nil {
+		return nil, err
+	}
+	if user.IsSupperUser {
+		if u.FeatureService.FeatureId == "" {
+			return nil, errors.New("Feature is empty")
+		}
+		if u.FeatureService.IsDebug {
+			u.FeatureService.RegisterFeature()
+		}
+
+	}
+
 	if err != nil || tokenInfo == nil {
 
 		return nil, err
