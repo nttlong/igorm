@@ -908,3 +908,29 @@ https://echo.labstack.com
 ____________________________________O/_______
                                     O\
 ⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+{"time":"2025-06-22T17:49:05.0983476+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//index.html","status":200,"latency_human":"3.0088ms"}
+{"time":"2025-06-22T17:49:05.1314096+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui.css","status":200,"latency_human":"10.9288ms"}
+{"time":"2025-06-22T17:49:05.1585102+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-standalone-preset.js","status":200,"latency_human":"26.4806ms"}
+{"time":"2025-06-22T17:49:05.2385676+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//swagger-ui-bundle.js","status":200,"latency_human":"111.5358ms"}
+{"time":"2025-06-22T17:49:05.3637479+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//doc.json","status":200,"latency_human":"1.4997ms"}
+{"time":"2025-06-22T17:49:05.4363376+07:00","remote_ip":"::1","method":"GET","uri":"/swagger//favicon-32x32.png","status":200,"latency_human":"1.4937ms"}
+{"time":"2025-06-22T17:49:25.0972297+07:00","remote_ip":"::1","method":"POST","uri":"/oauth/token","status":200,"latency_human":"2.3062501s"}
+{"time":"2025-06-22T17:52:32.2774246+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/","status":404,"latency_human":"1.1141ms"}
+{"time":"2025-06-22T17:52:44.3907976+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/HNAP1/","status":404,"latency_human":"581.8µs"}
+{"time":"2025-06-22T17:52:44.6409645+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/","status":404,"latency_human":"0s"}
+{"time":"2025-06-22T17:52:44.6665033+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/loginMsg.js","status":404,"latency_human":"617.9µs"}
+{"time":"2025-06-22T17:52:44.6844613+07:00","remote_ip":"192.168.1.9","method":"GET","uri":"/cgi/get.cgi?cmd=home_login","status":404,"latency_human":"0s"}
+{"time":"2025-06-22T17:54:43.0659078+07:00","remote_ip":"2600:1900:4040:29b::","method":"GET","uri":"/","status":404,"latency_human":"0s"}
+{"time":"2025-06-22T17:54:49.0196114+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=default&lan=vi","status":200,"latency_human":"2.413ms"}
+{"time":"2025-06-22T17:54:52.1179879+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=users-manager&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"39.151ms"}
+{"time":"2025-06-22T17:54:55.3467459+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=users-manager&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"21.2371ms"}
