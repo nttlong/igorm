@@ -77,22 +77,15 @@ func resolveByType(typ reflect.Type, retVal reflect.Value, visited map[reflect.T
 	}
 	// init owner
 
-	for fieldName, field := range meta.injectorFields {
+	for fieldName, field := range meta.mappingFields {
 
 		// Handle embedded (anonymous) fields
-
 		if field.Anonymous {
-			fieldValue := meta.sampleFieldValues[fieldName]
-
-			ft := field.Type
-			if ft.Kind() == reflect.Ptr {
-				ft = ft.Elem()
-				fieldValue = fieldValue.Elem()
+			embeddedValue := retVal.Field(field.Index[0])
+			if embeddedValue.CanAddr() {
+				resolveByType(field.Type, embeddedValue, visited)
 			}
-			_, err := resolveByType(ft, fieldValue, visited)
-			if err != nil {
-				return nil, err
-			}
+			continue
 		}
 
 		if field.Type.Kind() == reflect.Struct {
@@ -110,28 +103,9 @@ func resolveByType(typ reflect.Type, retVal reflect.Value, visited map[reflect.T
 				sampleValueFieldInitFn := sampleFieldValue.FieldByName("Init")
 				initField := retVal.Field(field.Index[0]).FieldByName("Init")
 				initField.Set(sampleValueFieldInitFn)
-				// // Copy Init function from registered sample if available
-				// // 如果有已注册的样本，则复制 Init 函数
-				// // 登録されたサンプルから Init 関数をコピー（可能な場合）
-				// // Nếu có sample đã đăng ký, copy hàm Init từ sample
-				// if meta.sampleValue != nil {
-				// 	fieldInSample := (*sampleValue).FieldByName(field.Name)
-				// 	if fieldInSample.IsValid() {
-				// 		fnVal := fieldInSample.FieldByName("Init")
-				// 		if fnVal.IsValid() && fnVal.Type().Kind() == reflect.Func {
-				// 			initField := val.FieldByName("Init")
-				// 			if initField.IsValid() && initField.CanSet() {
-				// 				initField.Set(fnVal)
-				// 			}
-				// 		}
-				// 	}
-				// }
 
 			} else {
-				// Continue resolving normal (non-injector) struct fields
-				// 继续解析普通（非注入器）结构字段
-				// 通常の（Injectorではない）構造体フィールドの解決を継続
-				// Tiếp tục resolve field kiểu struct bình thường (không phải injector)
+
 				fieldValue := retVal.Field(field.Index[0])
 				if fieldValue.CanAddr() {
 					resolveByType(fieldType, fieldValue, visited)

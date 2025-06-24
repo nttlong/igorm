@@ -11,13 +11,6 @@ import (
 	di "unvs.di"
 )
 
-type BaseTestService struct {
-	Name di.Singleton[BaseTestService, string]
-}
-type TestService struct {
-	BaseTestService
-	Name di.Singleton[TestService, string]
-}
 type TestStructHasFunction struct {
 	data string
 	Init func(owner *TestStructHasFunction) string
@@ -63,11 +56,26 @@ func TestWriteFileIfExist(t *testing.T) {
 		fmt.Printf("Content of %s:\n%s\n", _filePath, string(readContent))
 	}
 }
-func TestDI(t *testing.T) {
-	container, err := di.RegisterContainer(func(obj *BaseTestService) error {
 
-		obj.Name.Init = func(owner *BaseTestService) string {
-			return "base"
+func TestDI(t *testing.T) {
+	type BaseTestService struct {
+		Code di.Singleton[BaseTestService, string]
+	}
+
+	container, err := di.RegisterContainer(func(obj *BaseTestService) error {
+		obj.Code.Init = func(owner *BaseTestService) string {
+			return "code from base"
+		}
+		return nil
+	})
+
+	type TestService struct {
+		BaseTestService
+		Name di.Singleton[TestService, string]
+	}
+	_, err = di.RegisterContainer(func(obj *TestService) error {
+		obj.Name.Init = func(owner *TestService) string {
+			return "test"
 		}
 		return nil
 	})
@@ -75,10 +83,10 @@ func TestDI(t *testing.T) {
 		assert.NoError(t, err)
 	}
 	fmt.Println(container.GetInitFun("Name"))
-	svc, err := di.Resolve[BaseTestService]()
+	svc, err := di.Resolve[TestService]()
 	assert.NoError(t, err)
 
 	assert.NotEmpty(t, svc)
-	value := svc.Name.Get()
+	value := svc.Code.Get()
 	assert.Equal(t, "base", value)
 }

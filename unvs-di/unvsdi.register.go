@@ -8,7 +8,7 @@ import (
 
 type metaInfo struct {
 	sampleInstanceReflectValue reflect.Value
-	injectorFields             map[string]reflect.StructField // Cache injector fields
+	mappingFields              map[string]reflect.StructField // Cache injector fields
 	sampleFieldValues          map[string]reflect.Value       // Cache sample field values
 	initFuncs                  map[string]reflect.Value       // Cache Init functions
 }
@@ -37,8 +37,11 @@ func (r *containerInfo[T]) init(resolver func(obj *T) error) error {
 	for i := 0; i < objVal.NumField(); i++ {
 		field := objVal.Type().Field(i)
 		if utils.isInjector(field) {
-			r.meta.injectorFields[field.Name] = field
+			r.meta.mappingFields[field.Name] = field
 			r.meta.initFuncs[field.Name] = objVal.FieldByName("Init")
+			r.meta.sampleFieldValues[field.Name] = objVal.Field(i)
+		} else {
+			r.meta.mappingFields[field.Name] = field
 			r.meta.sampleFieldValues[field.Name] = objVal.Field(i)
 		}
 	}
@@ -103,7 +106,7 @@ func RegisterContainer[T any](resolver func(svc *T) error) (*containerInfo[T], e
 
 	ret := &containerInfo[T]{
 		meta: metaInfo{
-			injectorFields:             make(map[string]reflect.StructField),
+			mappingFields:              make(map[string]reflect.StructField),
 			initFuncs:                  make(map[string]reflect.Value),
 			sampleFieldValues:          make(map[string]reflect.Value),
 			sampleInstanceReflectValue: reflect.ValueOf(t),
