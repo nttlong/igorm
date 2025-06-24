@@ -934,3 +934,23 @@ ____________________________________O/_______
 {"time":"2025-06-22T17:54:49.0196114+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?module=unvs.br.auth.users&action=login&feature=login&tenant=default&lan=vi","status":200,"latency_human":"2.413ms"}
 {"time":"2025-06-22T17:54:52.1179879+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=users-manager&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"39.151ms"}
 {"time":"2025-06-22T17:54:55.3467459+07:00","remote_ip":"::1","method":"POST","uri":"/api/v1/invoke?feature=users-manager&action=list&module=unvs.br.auth.users&tenant=default&lan=vi","status":200,"latency_human":"21.2371ms"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.13.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080

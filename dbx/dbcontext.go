@@ -128,6 +128,10 @@ func (dbx *DBX) Ping() error {
 var cacheDBXTenant = sync.Map{}
 
 func (db DBX) GetTenant(dbName string) (*DBXTenant, error) {
+	if db.DB == nil {
+		return nil, fmt.Errorf("Call Open() before GetTenant()")
+	}
+
 	//check cache
 	if v, ok := cacheDBXTenant.Load(dbName); ok {
 		ret := v.(*DBXTenant)
@@ -136,6 +140,9 @@ func (db DBX) GetTenant(dbName string) (*DBXTenant, error) {
 		}
 		return ret, nil
 	}
+	db.Open()
+	defer db.Close()
+
 	if !db.cfg.IsMultiTenancy {
 		dbName = db.cfg.DbName
 	}
@@ -217,15 +224,11 @@ func createDbTenant(dbx DBX, dbName string) *DBXTenant {
 	return dbTenant
 }
 func (dbx DBX) getManagerDb() (*DBXTenant, error) {
-	err := dbx.Open()
-	if err != nil {
-		return nil, err
-	}
-	defer dbx.Close()
+
 	dbName := dbx.cfg.DbName
 	dbTenant := createDbTenant(dbx, dbName)
 	fnCreate := dbx.executor.createDb(dbName)
-	err = fnCreate(dbx, *dbTenant)
+	err := fnCreate(dbx, *dbTenant)
 
 	if err != nil {
 		return nil, err

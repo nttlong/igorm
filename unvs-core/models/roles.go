@@ -18,5 +18,5 @@ type Role struct {
 
 	Description dbx.FullTextSearchColumn `json:"description" swag:"-"`
 	Users       []User                   `db:"fk:RoleId" json:"users,omitempty"`
-	ViewRoles   []ViewRole               `db:"fk:RoleId" json:"viewRoles,omitempty"`
+	// ViewRoles   []ViewRole               `db:"fk:RoleId" json:"viewRoles,omitempty"`
 }

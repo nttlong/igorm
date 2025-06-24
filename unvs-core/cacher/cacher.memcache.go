@@ -42,7 +42,7 @@ func (m *MemcachedCache) Set(ctx context.Context, key string, value interface{},
 		typ = typ.Elem()
 	}
 	key = m.prefixKey + key + ":" + typ.PkgPath() + "." + typ.Name()
-	hashedKey := getHashedKey(key)
+	hashedKey := Utils.getHashedKey(key)
 
 	var byteValue []byte
 	var errMarshal error
@@ -69,7 +69,7 @@ func (m *MemcachedCache) Set(ctx context.Context, key string, value interface{},
 // Delete xóa một key khỏi cache.
 func (m *MemcachedCache) Delete(ctx context.Context, key string) {
 
-	hashedKey := getHashedKey(key)
+	hashedKey := Utils.getHashedKey(key)
 	err := m.client.Delete(hashedKey)
 	if err != nil {
 		if err == memcache.ErrCacheMiss {

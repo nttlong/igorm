@@ -1,0 +1,59 @@
+app:
+  name: MyGoAPI
+  version: 1.0.0
+database:
+  driver: "mssql"
+  host: "localhost"
+  port: 0
+  user: "sa"
+  password: "123456"
+  ssl: false
+  name: "mygoapi"
+  isMultiTenancy : true
+database3:
+  driver: "mysql"
+  host: "localhost"
+  port: 3306
+  user: "root"
+  password: "123456"
+  name: "mygoapi"
+  ssl: false
+  isMultiTenancy : true
+database7:
+  driver: "postgres"
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "123456"
+  name: "mygoapi"
+  ssl: false
+  isMultiTenancy : true
+database8: #cockroachdb
+  driver: "postgres"
+  host: "localhost"
+  port: 26257
+  user: "root"
+  password: ""
+  name: "mygoapi"
+  ssl: false
+  isMultiTenancy : true
+server:
+  bind: "0.0.0.0"
+  port: 8080
+  debug_mode: true
+cache: bagger
+barger: unvs
+memcached:
+  - localhost:11211
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
+  timeout: 50
+logs: ./logs/app.log
+encryptionKey: 78U+eSy0l4+Iegiy  
+isDebug: true
+
+
+#docker run -d --name=cockroach-single  -p 26257:26257   -p 8081:8080   cockroachdb/cockroach:v24.1.0 start-single-node --insecure

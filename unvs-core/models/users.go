@@ -31,5 +31,5 @@ type User struct {
 }
 
 func init() {
-	dbx.AddEntities(&User{}, &Role{}, &View{}, &ViewRole{})
+	dbx.AddEntities(&User{}, &Role{})
 }
