@@ -84,6 +84,7 @@ type SampleModel struct {
 	Test5 DbField[*bool]
 	Test6 DbField[time.Time]
 	Test7 DbField[*time.Time]
+	Test8 DbField[time.Time] `db:"default:now()"`
 }
 
 func TestGetMetaInfo(t *testing.T) {

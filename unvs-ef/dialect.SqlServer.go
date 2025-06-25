@@ -282,6 +282,7 @@ func NewSqlServerDialect(db *sql.DB) *SqlServerDialect {
 			"time.Time": "now()",
 			"true":      "1",
 			"false":     "0",
+			"now()":     "GETDATE()",
 		},
 	}
 }
