@@ -147,9 +147,9 @@ func (d *SqlServerDialect) GenerateCreateTableSQL(typ reflect.Type) (string, err
 			if field.AutoIncrement {
 				colDef = append(colDef, "IDENTITY(1,1)")
 			}
-			if field.Unique {
-				colDef = append(colDef, "UNIQUE")
-			}
+			// if field.Unique {
+			// 	colDef = append(colDef, "UNIQUE") kh check unique constraint, unique index se duoc tao sau
+			// }
 			if field.Nullable {
 				colDef = append(colDef, "NULL")
 			} else {
@@ -245,6 +245,34 @@ func (d SqlServerDialect) GenerateAlterTableSQL(typ reflect.Type) ([]string, err
 
 	return alters, nil
 }
+func (d SqlServerDialect) UniqueConstraints(typ reflect.Type) []string {
+	tableName := utils.TableNameFromStruct(typ)
+	tableName = utils.Quote("[]", tableName)
+	mapUniqueConstraints := utils.GetUniqueConstraintsFromMetaByType(typ)
+	var ret []string
+	for constraintName, constraints := range mapUniqueConstraints {
+		//CREATE UNIQUE NONCLUSTERED INDEX idx_email ON [users] ([email]) WHERE [email] IS NOT NULL;
+		cols := []string{}
+		wheres := []string{}
+		for fieldName := range constraints {
+			cols = append(cols, utils.Quote("[]", fieldName))
+			wheres = append(wheres, fmt.Sprintf("%s IS NOT NULL", utils.Quote("[]", fieldName)))
+
+		}
+		constraintName = utils.Quote("[]", constraintName)
+
+		//CREATE UNIQUE NONCLUSTERED INDEX idx_email ON [users] ([email]) WHERE [email] IS NOT NULL;
+		ret = append(ret, fmt.Sprintf("CREATE UNIQUE NONCLUSTERED INDEX %s ON %s (%s) WHERE %s", constraintName, tableName, strings.Join(cols, ", "), strings.Join(wheres, " AND ")))
+		// ret = append(ret, fmt.Sprintf("ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)", tableName, constraintName, constraint.Field.Name))
+	}
+	return ret
+
+}
+func (d SqlServerDialect) IndexConstraints(typ reflect.Type) []string {
+	panic("unimplemented")
+
+}
+
 func NewSqlServerDialect(db *sql.DB) *SqlServerDialect {
 	return &SqlServerDialect{
 		DB:     db,

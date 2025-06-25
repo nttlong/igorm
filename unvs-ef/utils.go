@@ -1,6 +1,7 @@
 package unvsef
 
 import (
+	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -30,9 +31,10 @@ type FieldTag struct {
 	Default       string
 }
 type utilsPackage struct {
-	cacheGetMetaInfo         sync.Map
-	CacheTableNameFromStruct sync.Map
-	cacheGetPkFromMeta       sync.Map
+	cacheGetMetaInfo                        sync.Map
+	CacheTableNameFromStruct                sync.Map
+	cacheGetPkFromMeta                      sync.Map
+	cacheGetUniqueConstraintsFromMetaByType sync.Map
 	// future: add cache or shared state here
 }
 
@@ -62,11 +64,13 @@ func (u *utilsPackage) ParseDBTag(field reflect.StructField) FieldTag {
 			t.AutoIncrement = true
 		case p == "unique":
 			t.Unique = true
+			t.UniqueName = u.ToSnakeCase(field.Name)
 		case strings.HasPrefix(p, "unique("):
 			t.Unique = true
-			t.UniqueName = u.extractName(p)
+			t.UniqueName = u.extractName(p) + "_uk"
 		case p == "index":
 			t.Index = true
+			t.IndexName = u.ToSnakeCase(field.Name) + "_idx"
 		case strings.HasPrefix(p, "index("):
 			t.Index = true
 			t.IndexName = u.extractName(p)
@@ -225,5 +229,29 @@ func (u *utilsPackage) GetPkFromMetaByType(typ reflect.Type) map[string]map[stri
 			}
 		}
 	}
+	return ret
+}
+func (u *utilsPackage) GetUniqueConstraintsFromMetaByType(typ reflect.Type) map[string]map[string]FieldTag {
+	// 1. Kiểm tra cache trước (check cache first)
+	if unique, ok := u.cacheGetUniqueConstraintsFromMetaByType.Load(typ); ok {
+		return unique.(map[string]map[string]FieldTag)
+	}
+	metaInfo := u.GetMetaInfo(typ)
+	ret := make(map[string]map[string]FieldTag)
+
+	for _, fields := range metaInfo {
+		for fieldName, fieldTag := range fields {
+			fmt.Println(fieldName)
+			if fieldTag.Unique {
+				if _, ok := ret[fieldTag.UniqueName]; !ok {
+					ret[fieldTag.UniqueName] = make(map[string]FieldTag)
+
+				}
+				ret[fieldTag.UniqueName][fieldName] = fieldTag
+
+			}
+		}
+	}
+	u.cacheGetUniqueConstraintsFromMetaByType.Store(typ, ret)
 	return ret
 }

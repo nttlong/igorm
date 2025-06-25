@@ -37,8 +37,8 @@ type Dialect interface {
 	ColumnExists(table string, column string) bool // Kiểm tra cột có tồn tại trong bảng không (Check if a column exists in a table)
 	RefreshSchemaCache() error                     // Tải lại toàn bộ schema từ DB vào bộ nhớ đệm (Reload schema metadata into cache)
 	SchemaMap() map[string]TableSchema             // Trả về toàn bộ bảng đã cached cùng cột của chúng (Return schema cache with all known tables/columns)
-	UniqueConstraints(table string) []string       // Danh sách constraint UNIQUE trên bảng (List of UNIQUE constraints on a table)
-	IndexConstraints(table string) []string        // Danh sách constraint INDEX trên bảng (List of INDEX constraints on a table)
+	UniqueConstraints(ttyp reflect.Type) []string  // Danh sách constraint UNIQUE trên bảng (List of UNIQUE constraints on a table)
+	IndexConstraints(typ reflect.Type) []string    // Danh sách constraint INDEX trên bảng (List of INDEX constraints on a table)
 
 	// Generate CREATE TABLE SQL
 	GenerateCreateTableSQL(typ reflect.Type) (string, error)

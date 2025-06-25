@@ -71,12 +71,15 @@ func TestMySql(t *testing.T) {
 }
 
 type SampleModel struct {
+	_         DbField[any]     `db:"table(custom_users_test5)"`
 	NullField DbField[*string] `db:"length(50);index(idx_test1)"`
-	_         DbField[any]     `db:"table(custom_users_test3)"`
-	Id        DbField[uint64]  `db:"primaryKey;autoIncrement"`
-	Id2       DbField[uint64]  `db:"primaryKey"`
-	Name      DbField[string]  `db:"length(50);index"`
-	Code      DbField[string]  `db:"length(50);unique"`
+
+	Id   DbField[uint64] `db:"primaryKey"`
+	Id2  DbField[uint64] `db:"primaryKey"`
+	Name DbField[string] `db:"length(50);index"`
+	Code DbField[string] `db:"length(50);unique"`
+	Unk1 DbField[string] `db:"unique(uk1);length(50)"`
+	Unk2 DbField[string] `db:"unique(uk2);length(50)"`
 
 	Test2 DbField[string]   `db:"length(50);index(idx_test1)"`
 	Test3 DbField[*float64] `db:"type:decimal(10,2)"`
@@ -85,6 +88,9 @@ type SampleModel struct {
 	Test6 DbField[time.Time]
 	Test7 DbField[*time.Time]
 	Test8 DbField[time.Time] `db:"default:now()"`
+	Unk3  DbField[string]    `db:"unique(uk_test);length(50)"`
+	Unk4  DbField[string]    `db:"unique(uk_test);length(50)"`
+	Unk5  DbField[bool]      `db:"unique(uk_test)"`
 }
 
 func TestGetMetaInfo(t *testing.T) {
@@ -122,6 +128,13 @@ func TestSQLServerGenerateMakeTableSQL(t *testing.T) {
 	t.Log(r)
 	sqls, err := d.GenerateAlterTableSQL(reflect.TypeOf(SampleModel{}))
 	assert.NoError(t, err)
+	for _, sql := range sqls {
+		t.Log(sql)
+		r, err := db.Exec(sql)
+		assert.NoError(t, err)
+		t.Log(r)
+	}
+	sqls = d.UniqueConstraints(reflect.TypeOf(SampleModel{}))
 	for _, sql := range sqls {
 		t.Log(sql)
 		r, err := db.Exec(sql)
