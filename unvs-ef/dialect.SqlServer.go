@@ -19,8 +19,9 @@ func (d *SqlServerDialect) Func(name string, args ...Expr) Expr {
 Implementation of Dialect
 Example: input "aaa","bbb"->[aaa].[bbb]
 */
-func (d *SqlServerDialect) QuoteIdent(table, column string) string {
-	return fmt.Sprintf(`[%s].[%s]`, table, column)
+func (d *SqlServerDialect) QuoteIdent(args ...string) string {
+	ret := "[" + strings.Join(args, "].[") + "]"
+	return ret
 }
 
 /*

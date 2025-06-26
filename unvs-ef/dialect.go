@@ -46,7 +46,7 @@ type Dialect interface {
 	/* depends on bd driver type the function will be implement in
 	dialect.<driver name>.go
 	*/
-	QuoteIdent(table, column string) string
+	QuoteIdent(args ...string) string
 
 	// Schema management methods
 	/*

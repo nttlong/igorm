@@ -19,7 +19,7 @@ func (d *PostgresDialect) Func(name string, args ...Expr) Expr {
 
 dialect.<driver name>.go
 */
-func (d *PostgresDialect) QuoteIdent(table, column string) string {
+func (d *PostgresDialect) QuoteIdent(args ...string) string {
 	panic("unimplemented")
 
 }
@@ -60,12 +60,16 @@ func (d *PostgresDialect) RefreshSchemaCache(db *sql.DB, dbName string) error {
 	panic("unimplemented")
 
 }
-func (d *PostgresDialect) GetSchema(db *sql.DB, dbName string) (map[string]TableSchema, error)
+func (d *PostgresDialect) GetSchema(db *sql.DB, dbName string) (map[string]TableSchema, error) {
+	panic("unimplemented")
+}
 
 /*
 Get schema info from cache. Call after RefreshSchemaCache
 */
-func (d *PostgresDialect) SchemaMap(dbName string) map[string]TableSchema
+func (d *PostgresDialect) SchemaMap(dbName string) map[string]TableSchema {
+	panic("unimplemented")
+}
 
 /*
 Based on the metadata information, the system will generate SQL statements to create Unique Constraints appropriately.
@@ -81,7 +85,9 @@ Based on the metadata information, the system will generate SQL statements to cr
 
 # return map [constraint name] [ sql create constraint]
 */
-func (d *PostgresDialect) GenerateUniqueConstraintsSql(typ reflect.Type) map[string]string
+func (d *PostgresDialect) GenerateUniqueConstraintsSql(typ reflect.Type) map[string]string {
+	panic("unimplemented")
+}
 
 /*
 Based on the metadata information, the system will generate SQL statements to create
@@ -97,7 +103,9 @@ Index Constraints appropriately.
 
 # return map [constraint name] [ sql create constraint]
 */
-func (d *PostgresDialect) GenerateIndexConstraintsSql(typ reflect.Type) map[string]string
+func (d *PostgresDialect) GenerateIndexConstraintsSql(typ reflect.Type) map[string]string {
+	panic("unimplemented")
+}
 
 /*
 # Purpose:
@@ -110,7 +118,9 @@ func (d *PostgresDialect) GenerateIndexConstraintsSql(typ reflect.Type) map[stri
 	including only the primary key and columns,
 	with additional table-level constraints such as Required or Nullable combined with Default.
 */
-func (d *PostgresDialect) GenerateCreateTableSql(dbName string, typ reflect.Type) (string, error)
+func (d *PostgresDialect) GenerateCreateTableSql(dbName string, typ reflect.Type) (string, error) {
+	panic("unimplemented")
+}
 
 /*
 Generate all SQL ALTER TABLE ADD COLUMN statements for columns that exist in the model but are missing in the database.

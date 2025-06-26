@@ -17,6 +17,72 @@ import (
 	// ef "unvs.ef"
 )
 
+type SysUser struct {
+	Id          DbField[uint64]  `db:"primaryKey;autoIncrement"`
+	Code        DbField[string]  `db:"length(50);primaryKey"`
+	Email       DbField[string]  `db:"length(50);unique"`
+	Description DbField[*string] `db:"length(200)"`
+}
+
+func TestSQl(t *testing.T) {
+	n := utils.TableNameFromStruct(reflect.TypeOf(SampleModel{}))
+	assert.Equal(t, "custom_users", n)
+	dsn := "sqlserver://sa:123456@localhost?database=aaa"
+	db, err := sql.Open("sqlserver", dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	d := NewSqlServerDialect(db)
+	u := Entity[SysUser]()
+	query := NewQuery().
+		Select(d.Func("LEN", u.Email)).
+		From(FromStruct[SysUser]())
+	sql, _ := query.ToSQL(d)
+	fmt.Println(sql)
+}
+func TestInsert(t *testing.T) {
+	dsn := "user=postgres password=123456 host=localhost port=5432 dbname=fx001 sslmode=disable"
+	db, err := sql.Open("postgres", dsn)
+	d := NewSqlServerDialect(db)
+	if err != nil {
+		t.Fatal(err)
+	}
+	test := "ccccc"
+	u := &SysUser{}
+	u.Id.Set(1)
+	u.Code.Set("U001")
+	u.Email.Set("abc@test.com")
+	u.Description.Set(&string("test"))
+
+	sql, args := Insert(u).ToSQL(d)
+	fmt.Println(sql)
+	fmt.Println(args)
+
+}
+func TestFTS(t *testing.T) {
+	dsn := "user=postgres password=123456 host=localhost port=5432 dbname=fx001 sslmode=disable"
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	type Article struct {
+		_       DbField[any]    `db:"table(articles)"`
+		Title   DbField[string] `db:"FTS(title_idx)"`
+		Content DbField[string] `db:"FTS(content_idx)"`
+	}
+	a := Entity[Article]()
+	Funcs.Dialect = NewSqlServerDialect(db)
+
+	query := NewQuery().
+		Select(a.Title, a.Content).
+		From("articles").
+		Where(Funcs.FullTextContains(a.Content, "machine learning"))
+
+	sql, args := query.ToSQL(Funcs.Dialect)
+	fmt.Println(sql)
+	fmt.Println(args)
+}
 func TestSqlServer(t *testing.T) {
 	dsn := "sqlserver://sa:123456@localhost?database=aaa"
 	db, err := sql.Open("sqlserver", dsn)
@@ -37,11 +103,9 @@ func TestPostgres(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	d := &PostgresDialect{
-		DB: db,
-	}
+	d := &PostgresDialect{}
 
-	err = d.RefreshSchemaCache()
+	err = d.RefreshSchemaCache(db, "fx001")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -56,11 +120,9 @@ func TestMySql(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	d := &MySQLDialect{
-		DB: db,
-	}
+	d := &MySqlDialect{}
 
-	err = d.RefreshSchemaCache()
+	err = d.RefreshSchemaCache(db, "root")
 	if err != nil {
 		t.Fatal(err)
 	}

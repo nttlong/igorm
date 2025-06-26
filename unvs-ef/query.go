@@ -5,6 +5,7 @@ package unvsef
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 )
 
@@ -254,4 +255,8 @@ func toExpr(val interface{}) Expr {
 	default:
 		return Literal[interface{}]{Value: v}
 	}
+}
+func FromStruct[T any]() string {
+	var zero T
+	return utils.TableNameFromStruct(reflect.TypeOf(zero))
 }
