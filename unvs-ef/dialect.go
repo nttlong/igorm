@@ -1,23 +1,34 @@
 package unvsef
 
 import (
+	"database/sql"
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 )
 
 // TableSchema represents a table and its columns in the database.
+
 type TableSchema struct {
 	UniqueConstraints []string
 	IndexConstraints  []string
 	Name              string
 	Columns           map[string]ColumnSchema
 }
+type baseDialect struct {
+	schema          map[string]map[string]TableSchema
+	mapGoTypeToDb   map[string]string
+	mapDefaultValue map[string]string
+	schemaOnce      sync.Once
+	schemaError     error
+}
 
 // ColumnSchema holds metadata about a column.
+// metadata obtains by exec SQL from db
 type ColumnSchema struct {
-	Name          string
-	Type          string
+	Name          string // real column name in db
+	Type          string // real column name in db
 	Nullable      bool
 	PrimaryKey    bool
 	AutoIncrement bool
@@ -27,24 +38,114 @@ type ColumnSchema struct {
 	Comment       string
 }
 
-// Dialect allows different SQL dialects (e.g., PostgreSQL, MSSQL, MySQL) to be supported.
+/*
+#Dialect allows different SQL dialects (e.g., PostgreSQL, MSSQL, MySQL) to be supported.
+*/
 type Dialect interface {
 	Func(name string, args ...Expr) Expr
+	/* depends on bd driver type the function will be implement in
+	dialect.<driver name>.go
+	*/
 	QuoteIdent(table, column string) string
 
 	// Schema management methods
-	TableExists(name string) bool                  // Kiểm tra xem bảng có tồn tại trong cơ sở dữ liệu không (Check if a table exists in the database)
-	ColumnExists(table string, column string) bool // Kiểm tra cột có tồn tại trong bảng không (Check if a column exists in a table)
-	RefreshSchemaCache() error                     // Tải lại toàn bộ schema từ DB vào bộ nhớ đệm (Reload schema metadata into cache)
-	SchemaMap() map[string]TableSchema             // Trả về toàn bộ bảng đã cached cùng cột của chúng (Return schema cache with all known tables/columns)
-	UniqueConstraints(ttyp reflect.Type) []string  // Danh sách constraint UNIQUE trên bảng (List of UNIQUE constraints on a table)
-	IndexConstraints(typ reflect.Type) []string    // Danh sách constraint INDEX trên bảng (List of INDEX constraints on a table)
+	/*
+		Check is table existing in Db, call after call RefreshSchemaCache
+		Purpose: for Database migration only
+	*/
+	TableExists(dbName, name string) bool // Kiểm tra xem bảng có tồn tại trong cơ sở dữ liệu không (Check if a table exists in the database)
+	/*
+		Check is a column of a table  existing in Db, call after call RefreshSchemaCache
+		Purpose: for Database migration only
+	*/
+	ColumnExists(dbName, table string, column string) bool // Kiểm tra cột có tồn tại trong bảng không (Check if a column exists in a table)
+	/*
+		Gathering all info in a specific database
+		The info is including:
+			table and columns
+			all indexes
+			all unique key
+			all foreign key
+		Method also store that info in cache
 
-	// Generate CREATE TABLE SQL
-	GenerateCreateTableSQL(typ reflect.Type) (string, error)
-	// Generate ALTER TABLE ADD COLUMN statements if fields are missing
-	GenerateAlterTableSQL(typ reflect.Type) ([]string, error)
-	GetPkConstraint(typ reflect.Type) (string, error) // Lấy ra constraint PRIMARY KEY của bảng (Get PRIMARY KEY constraint of a table)
+		# Purpose: for Database migration only
+	*/
+	RefreshSchemaCache(db *sql.DB, dbName string) error // Tải lại toàn bộ schema từ DB vào bộ nhớ đệm (Reload schema metadata into cache)
+	GetSchema(db *sql.DB, dbName string) (map[string]TableSchema, error)
+	/*
+		Get schema info from cache. Call after RefreshSchemaCache
+	*/
+	SchemaMap(dbName string) map[string]TableSchema
+	/*
+		Based on the metadata information, the system will generate SQL statements to create Unique Constraints appropriately.
+
+		# Purpose:
+			for Database migration only
+
+		# Note:
+
+			1- Meta information is obtained by calling RefreshSchemaCache
+			2- All constraint names are obtained by combining the table name, a double underscore ("__"), and the constraint name
+		# return map [constraint name] [ sql create constraint]
+
+
+	*/
+	GenerateUniqueConstraintsSql(typ reflect.Type) map[string]string
+	/*
+		Based on the metadata information, the system will generate SQL statements to create
+		Index Constraints appropriately.
+		# Purpose:
+			for Database migration only
+		# Note:
+
+			1- Meta information is obtained by calling RefreshSchemaCache
+			2- All constraint names are obtained by combining the table name, a double underscore ("__"), and the constraint name
+		# return map [constraint name] [ sql create constraint]
+
+	*/
+	GenerateIndexConstraintsSql(typ reflect.Type) map[string]string
+
+	/*
+
+		# Purpose:
+			for Database migration only
+		# Note:
+			This function purely generates SQL statements to create a table,
+			including only the primary key and columns,
+			with additional table-level constraints such as Required or Nullable combined with Default.
+
+	*/
+	GenerateCreateTableSql(dbName string, typ reflect.Type) (string, error)
+	/*
+		Generate all SQL ALTER TABLE ADD COLUMN statements for columns that exist in the model but are missing in the database.
+
+		# Purpose:
+			for Database migration only
+		# Note:
+			This method refer to GetPkConstraint
+
+	*/
+	GenerateAlterTableSql(dbName string, typ reflect.Type) ([]string, error)
+	/*
+		Generate all Primary Key Constraint . The method will be called by GenerateCreateTableSQL
+
+		Example:
+			struct UserRole Struct {
+				UserId DbFlied[int] `db:primaryKey`
+				RoleId DbFlied[int] `db:primaryKey`
+			}
+		# Requirement: Constraint name is "primary____user_roles___user_id__role_id"
+		Constraint name Primary key is the combination of "primary", four underscores, table name triple underscore and list of filed name join by double underscore
+
+	*/
+	GetPkConstraint(typ reflect.Type) (string, error)
+}
+type BaseDialect struct {
+	schema          map[string]TableSchema
+	schemaError     error
+	mapGoTypeToDb   map[string]string
+	mapDefaultValue map[string]string
+	schemaOnce      sync.Once
 }
 
 // rawFunc allows wrapping generic functions like FUNC(arg1, arg2, ...)
@@ -57,9 +158,9 @@ func (f rawFunc) ToSQL(d Dialect) (string, []interface{}) {
 	parts := []string{}
 	args := []interface{}{}
 	for _, a := range f.args {
-		sql, aargs := a.ToSQL(d)
+		sql, aArgs := a.ToSQL(d)
 		parts = append(parts, sql)
-		args = append(args, aargs...)
+		args = append(args, aArgs...)
 	}
 	return fmt.Sprintf("%s(%s)", f.name, strings.Join(parts, ", ")), args
 }

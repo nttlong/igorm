@@ -24,11 +24,10 @@ func TestSqlServer(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	d := &SqlServerDialect{
-		DB: db,
-	}
+	d := &SqlServerDialect{}
 
-	d.RefreshSchemaCache()
+	d.RefreshSchemaCache(db, "aaa")
+	assert.NoError(t, err)
 	t.Log(d.schema)
 }
 func TestPostgres(t *testing.T) {
@@ -71,10 +70,10 @@ func TestMySql(t *testing.T) {
 }
 
 type SampleModel struct {
-	_         DbField[any]     `db:"table(custom_users_test5)"`
+	_         DbField[any]     `db:"table(table_test001)"`
 	NullField DbField[*string] `db:"length(50);index(idx_test1)"`
 
-	Id   DbField[uint64] `db:"primaryKey"`
+	Id   DbField[uint64] `db:"primaryKey;autoIncrement"`
 	Id2  DbField[uint64] `db:"primaryKey"`
 	Name DbField[string] `db:"length(50);index"`
 	Code DbField[string] `db:"length(50);unique"`
@@ -116,17 +115,17 @@ func TestSQLServerGenerateMakeTableSQL(t *testing.T) {
 	defer db.Close()
 	d := NewSqlServerDialect(db)
 
-	err = d.RefreshSchemaCache()
+	err = d.RefreshSchemaCache(db, "aaa")
 	if err != nil {
 		t.Fatal(err)
 	}
-	sql, err := d.GenerateCreateTableSQL(reflect.TypeOf(SampleModel{}))
+	sql, err := d.GenerateCreateTableSql("aaa", reflect.TypeOf(SampleModel{}))
 	assert.NoError(t, err)
 	t.Log(sql)
 	r, err := db.Exec(sql)
 	assert.NoError(t, err)
 	t.Log(r)
-	sqls, err := d.GenerateAlterTableSQL(reflect.TypeOf(SampleModel{}))
+	sqls, err := d.GenerateAlterTableSql("aaa", reflect.TypeOf(SampleModel{}))
 	assert.NoError(t, err)
 	for _, sql := range sqls {
 		t.Log(sql)
@@ -134,8 +133,8 @@ func TestSQLServerGenerateMakeTableSQL(t *testing.T) {
 		assert.NoError(t, err)
 		t.Log(r)
 	}
-	sqls = d.UniqueConstraints(reflect.TypeOf(SampleModel{}))
-	for _, sql := range sqls {
+	sqlMap := d.GenerateUniqueConstraintsSql(reflect.TypeOf(SampleModel{}))
+	for _, sql := range sqlMap {
 		t.Log(sql)
 		r, err := db.Exec(sql)
 		assert.NoError(t, err)
@@ -144,6 +143,28 @@ func TestSQLServerGenerateMakeTableSQL(t *testing.T) {
 	t.Log(sqls)
 
 }
+func TestMigrate(t *testing.T) {
+	dsn := "sqlserver://sa:123456@localhost?database=aaa"
+	db, err := sql.Open("sqlserver", dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	mssql := NewSqlServerDialect(db)
+
+	sqls, err := utils.GetScriptMigrate(db, "aaa", mssql, reflect.TypeOf(SampleModel{}))
+	assert.NoError(t, err)
+	for _, sql := range sqls {
+		t.Log(sql)
+		r, err := db.Exec(sql)
+
+		assert.NoError(t, err)
+		t.Log(r)
+	}
+	t.Log(sqls)
+
+}
+
 func TestToSnakeCase(t *testing.T) {
 	testSample := map[string]string{
 		"Id":        "id",
