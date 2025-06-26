@@ -2,125 +2,146 @@ package unvsef
 
 import (
 	"database/sql"
-	"fmt"
 	"reflect"
-	"strings"
 )
 
 type PostgresDialect struct {
-	DB     *sql.DB
-	schema map[string]TableSchema
+	baseDialect
 }
 
 func (d *PostgresDialect) Func(name string, args ...Expr) Expr {
-	return rawFunc{name, args}
-}
-
-func (d *PostgresDialect) QuoteIdent(table, column string) string {
-	return fmt.Sprintf(`"%s"."%s"`, table, column)
-}
-
-func (d *PostgresDialect) TableExists(name string) bool {
-	tbl, ok := d.schema[strings.ToLower(name)]
-	return ok && tbl.Name != ""
-}
-
-func (d *PostgresDialect) ColumnExists(table, column string) bool {
-	tbl, ok := d.schema[strings.ToLower(table)]
-	if !ok {
-		return false
-	}
-	_, colExists := tbl.Columns[strings.ToLower(column)]
-	return colExists
-}
-
-func (d *PostgresDialect) SchemaMap() map[string]TableSchema {
-	return d.schema
-}
-
-func (d *PostgresDialect) RefreshSchemaCache() error {
-	d.schema = map[string]TableSchema{}
-
-	// Load columns
-	rows, err := d.DB.Query(`
-		SELECT table_name, column_name, data_type, is_nullable
-		FROM information_schema.columns
-		WHERE table_schema = 'public'
-	`)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var tableName, columnName, dataType, isNullable string
-		if err := rows.Scan(&tableName, &columnName, &dataType, &isNullable); err != nil {
-			return err
-		}
-
-		key := strings.ToLower(tableName)
-		tbl := d.schema[key]
-		if tbl.Name == "" {
-			tbl.Name = tableName
-			tbl.Columns = map[string]ColumnSchema{}
-		}
-		tbl.Columns[strings.ToLower(columnName)] = ColumnSchema{
-			Name:     columnName,
-			Type:     dataType,
-			Nullable: isNullable == "YES",
-		}
-		d.schema[key] = tbl
-	}
-
-	// Load UNIQUE constraints
-	uniqueRows, err := d.DB.Query(`
-		SELECT tc.table_name, tc.constraint_name
-		FROM information_schema.table_constraints tc
-		WHERE tc.constraint_type = 'UNIQUE' AND tc.table_schema = 'public'
-	`)
-	if err != nil {
-		return err
-	}
-	defer uniqueRows.Close()
-
-	for uniqueRows.Next() {
-		var tableName, constraintName string
-		if err := uniqueRows.Scan(&tableName, &constraintName); err != nil {
-			return err
-		}
-		key := strings.ToLower(tableName)
-		tbl := d.schema[key]
-		tbl.UniqueConstraints = append(tbl.UniqueConstraints, constraintName)
-		d.schema[key] = tbl
-	}
-
-	// Load index constraints (excluding primary and unique)
-	indexRows, err := d.DB.Query(`
-		SELECT t.relname AS table_name, i.relname AS index_name
-		FROM pg_class t
-		JOIN pg_index ix ON t.oid = ix.indrelid
-		JOIN pg_class i ON i.oid = ix.indexrelid
-		WHERE NOT ix.indisprimary AND NOT ix.indisunique
-	`)
-	if err != nil {
-		return err
-	}
-	defer indexRows.Close()
-
-	for indexRows.Next() {
-		var tableName, indexName string
-		if err := indexRows.Scan(&tableName, &indexName); err != nil {
-			return err
-		}
-		key := strings.ToLower(tableName)
-		tbl := d.schema[key]
-		tbl.IndexConstraints = append(tbl.IndexConstraints, indexName)
-		d.schema[key] = tbl
-	}
-
-	return nil
-}
-func (d *PostgresDialect) GenerateCreateTableSQL(typ reflect.Type) (string, error) {
-	// TODO: implement this
 	panic("unimplemented")
+
+}
+
+/*
+	depends on bd driver type the function will be implement in
+
+dialect.<driver name>.go
+*/
+func (d *PostgresDialect) QuoteIdent(table, column string) string {
+	panic("unimplemented")
+
+}
+
+// Schema management methods
+/*
+	Check is table existing in Db, call after call RefreshSchemaCache
+	Purpose: for Database migration only
+*/
+func (d *PostgresDialect) TableExists(dbName, name string) bool {
+	panic("unimplemented")
+
+}
+
+/*
+Check is a column of a table  existing in Db, call after call RefreshSchemaCache
+Purpose: for Database migration only
+*/
+func (d *PostgresDialect) ColumnExists(dbName, table string, column string) bool {
+	panic("unimplemented")
+
+}
+
+/*
+Gathering all info in a specific database
+The info is including:
+
+	table and columns
+	all indexes
+	all unique key
+	all foreign key
+
+# Method also store that info in cache
+
+# Purpose: for Database migration only
+*/
+func (d *PostgresDialect) RefreshSchemaCache(db *sql.DB, dbName string) error {
+	panic("unimplemented")
+
+}
+func (d *PostgresDialect) GetSchema(db *sql.DB, dbName string) (map[string]TableSchema, error)
+
+/*
+Get schema info from cache. Call after RefreshSchemaCache
+*/
+func (d *PostgresDialect) SchemaMap(dbName string) map[string]TableSchema
+
+/*
+Based on the metadata information, the system will generate SQL statements to create Unique Constraints appropriately.
+
+# Purpose:
+
+	for Database migration only
+
+# Note:
+
+	1- Meta information is obtained by calling RefreshSchemaCache
+	2- All constraint names are obtained by combining the table name, a double underscore ("__"), and the constraint name
+
+# return map [constraint name] [ sql create constraint]
+*/
+func (d *PostgresDialect) GenerateUniqueConstraintsSql(typ reflect.Type) map[string]string
+
+/*
+Based on the metadata information, the system will generate SQL statements to create
+Index Constraints appropriately.
+# Purpose:
+
+	for Database migration only
+
+# Note:
+
+	1- Meta information is obtained by calling RefreshSchemaCache
+	2- All constraint names are obtained by combining the table name, a double underscore ("__"), and the constraint name
+
+# return map [constraint name] [ sql create constraint]
+*/
+func (d *PostgresDialect) GenerateIndexConstraintsSql(typ reflect.Type) map[string]string
+
+/*
+# Purpose:
+
+	for Database migration only
+
+# Note:
+
+	This function purely generates SQL statements to create a table,
+	including only the primary key and columns,
+	with additional table-level constraints such as Required or Nullable combined with Default.
+*/
+func (d *PostgresDialect) GenerateCreateTableSql(dbName string, typ reflect.Type) (string, error)
+
+/*
+Generate all SQL ALTER TABLE ADD COLUMN statements for columns that exist in the model but are missing in the database.
+
+# Purpose:
+
+	for Database migration only
+
+# Note:
+
+	This method refer to GetPkConstraint
+*/
+func (d *PostgresDialect) GenerateAlterTableSql(dbName string, typ reflect.Type) ([]string, error) {
+	panic("unimplemented")
+
+}
+
+/*
+Generate all Primary Key Constraint . The method will be called by GenerateCreateTableSQL
+
+Example:
+
+	struct UserRole Struct {
+		UserId DbFlied[int] `db:primaryKey`
+		RoleId DbFlied[int] `db:primaryKey`
+	}
+
+# Requirement: Constraint name is "primary____user_roles___user_id__role_id"
+Constraint name Primary key is the combination of "primary", four underscores, table name triple underscore and list of filed name join by double underscore
+*/
+func (d *PostgresDialect) GetPkConstraint(typ reflect.Type) (string, error) {
+	panic("unimplemented")
+
 }
