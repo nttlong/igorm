@@ -2,6 +2,8 @@ package unvsef
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -10,6 +12,21 @@ import (
 	"unicode"
 
 	"github.com/jinzhu/inflection"
+)
+
+type DBType string
+
+const (
+	DBPostgres  DBType = "postgres"
+	DBMySQL     DBType = "mysql"
+	DBMariaDB   DBType = "mariadb"
+	DBMSSQL     DBType = "sqlserver"
+	DBSQLite    DBType = "sqlite"
+	DBOracle    DBType = "oracle"
+	DBTiDB      DBType = "tidb"
+	DBCockroach DBType = "cockroach"
+	DBGreenplum DBType = "greenplum"
+	DBUnknown   DBType = "unknown"
 )
 
 // --------------------- Tag Metadata ---------------------
@@ -499,7 +516,7 @@ func (u *utilsPackage) extractSchema(db *sql.DB, dbName string, dialect Dialect)
 
 }
 
-func (u *utilsPackage) GetScriptMigrate(db *sql.DB, dbName string, dialect Dialect, typ ...reflect.Type) ([]string, error) {
+func (u *utilsPackage) GetScriptMigrate(db *sql.DB, dbName string, dialect Dialect, typ ...*reflect.Type) ([]string, error) {
 	dbSchema, err := utils.extractSchema(db, dbName, dialect)
 	if err != nil {
 		return nil, err
@@ -507,20 +524,20 @@ func (u *utilsPackage) GetScriptMigrate(db *sql.DB, dbName string, dialect Diale
 
 	ret := []string{}
 	for _, t := range typ {
-		sqlCmds, err := dialect.GenerateCreateTableSql(dbName, t)
+		sqlCmds, err := dialect.GenerateCreateTableSql(dbName, *t)
 		if err != nil {
 			return nil, err
 		}
 		if sqlCmds != "" {
 			ret = append(ret, sqlCmds)
 		} else { //<--- table is existing in Database, just add columns
-			sqlAddCols, err := dialect.GenerateAlterTableSql(dbName, t)
+			sqlAddCols, err := dialect.GenerateAlterTableSql(dbName, *t)
 			if err != nil {
 				return nil, err
 			}
 			ret = append(ret, sqlAddCols...)
 		}
-		sqlUniqueConstraints := dialect.GenerateUniqueConstraintsSql(t)
+		sqlUniqueConstraints := dialect.GenerateUniqueConstraintsSql(*t)
 
 		if err != nil {
 			return nil, err
@@ -531,7 +548,7 @@ func (u *utilsPackage) GetScriptMigrate(db *sql.DB, dbName string, dialect Diale
 				ret = append(ret, sql)
 			}
 		}
-		sqlIndexConstraints := dialect.GenerateIndexConstraintsSql(t)
+		sqlIndexConstraints := dialect.GenerateIndexConstraintsSql(*t)
 		if err != nil {
 			return nil, err
 		}
@@ -544,4 +561,102 @@ func (u *utilsPackage) GetScriptMigrate(db *sql.DB, dbName string, dialect Diale
 
 	}
 	return ret, nil
+}
+func (u *utilsPackage) DetectDatabaseType(db *sql.DB) (DBType, string, error) {
+	var version string
+
+	queries := []struct {
+		query string
+	}{
+		{"SELECT version();"},        // PostgreSQL, MySQL, Cockroach, Greenplum
+		{"SELECT @@VERSION;"},        // SQL Server, Sybase
+		{"SELECT sqlite_version();"}, // SQLite
+		{"SELECT tidb_version();"},   // TiDB
+		{"SELECT * FROM v$version"},  // Oracle
+	}
+
+	for _, q := range queries {
+		err := db.QueryRow(q.query).Scan(&version)
+		if err == nil && version != "" {
+			v := strings.ToLower(version)
+
+			switch {
+			case strings.Contains(v, "postgres"):
+				if strings.Contains(v, "greenplum") {
+					return DBGreenplum, version, nil
+				}
+				return DBPostgres, version, nil
+			case strings.Contains(v, "cockroach"):
+				return DBCockroach, version, nil
+			case strings.Contains(v, "mysql"):
+				if strings.Contains(v, "mariadb") {
+					return DBMariaDB, version, nil
+				}
+				return DBMySQL, version, nil
+			case strings.Contains(v, "mariadb"):
+				return DBMariaDB, version, nil
+			case strings.Contains(v, "microsoft") || strings.Contains(v, "sql server"):
+				return DBMSSQL, version, nil
+			case strings.Contains(v, "sqlite"):
+				return DBSQLite, version, nil
+			case strings.Contains(v, "tidb"):
+				return DBTiDB, version, nil
+			case strings.Contains(v, "oracle"):
+				return DBOracle, version, nil
+			}
+		}
+	}
+
+	return DBUnknown, version, errors.New("unable to detect database type")
+}
+func (u *utilsPackage) GetCurrentDatabaseName(db *sql.DB, dbType DBType) (string, error) {
+	var query string
+	var dbName string
+
+	switch dbType {
+	case DBPostgres, DBGreenplum, DBCockroach:
+		query = "SELECT current_database();"
+	case DBMySQL, DBMariaDB, DBTiDB:
+		query = "SELECT DATABASE();"
+	case DBMSSQL:
+		query = "SELECT DB_NAME();"
+	case DBSQLite:
+		query = "PRAGMA database_list;" // SQLite đặc biệt hơn, xem dưới
+	case DBOracle:
+		query = "SELECT SYS_CONTEXT('USERENV','DB_NAME') FROM dual;"
+	default:
+		return "", fmt.Errorf("unsupported db type: %s", dbType)
+	}
+
+	if dbType == DBSQLite {
+		type sqliteEntry struct {
+			Seq  int
+			Name string
+			File string
+		}
+		rows, err := db.Query(query)
+		if err != nil {
+			return "", err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var entry sqliteEntry
+			if err := rows.Scan(&entry.Seq, &entry.Name, &entry.File); err != nil {
+				return "", err
+			}
+			if entry.Seq == 0 {
+				return entry.Name, nil // thường là "main"
+			}
+		}
+		return "", fmt.Errorf("no database found in sqlite PRAGMA list")
+	}
+
+	// Các DB bình thường chỉ cần query trả 1 giá trị
+	err := db.QueryRow(query).Scan(&dbName)
+	if err != nil {
+		return "", err
+	}
+
+	return dbName, nil
 }

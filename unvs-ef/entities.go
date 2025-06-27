@@ -19,7 +19,10 @@ func Entity[T any]() T {
 	// Get the type name of T to use as table name
 	typ := reflect.TypeOf(v)
 
-	// Create a new zero value of type T
+	ret := EntityFromType(typ)
+	return ret.Interface().(T)
+}
+func EntityFromType(typ reflect.Type) reflect.Value {
 	val := reflect.New(typ).Elem()
 
 	for i := 0; i < typ.NumField(); i++ {
@@ -35,7 +38,5 @@ func Entity[T any]() T {
 			columnNameField.SetString(utils.ToSnakeCase(typ.Field(i).Name))
 		}
 	}
-
-	// Return the populated instance of T
-	return val.Interface().(T)
+	return val
 }

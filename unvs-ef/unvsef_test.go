@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
@@ -53,12 +54,210 @@ func TestInsert(t *testing.T) {
 	u.Id.Set(1)
 	u.Code.Set("U001")
 	u.Email.Set("abc@test.com")
-	u.Description.Set(&string("test"))
+	u.Description.Set(&test)
 
 	sql, args := Insert(u).ToSQL(d)
 	fmt.Println(sql)
 	fmt.Println(args)
 
+}
+
+type Base struct {
+	Id DbField[uint64] `db:"primaryKey;autoIncrement"`
+}
+type Article struct {
+	Base
+
+	Title   DbField[string] `db:"FTS(title_idx)"`
+	Content DbField[string] `db:"FTS(content_idx)"`
+}
+type Comment struct {
+	Base
+
+	ArticleId DbField[uint64] `db:"index"`
+	Content   DbField[string] `db:"FTS(content_idx)"`
+}
+type DbSchema struct {
+	DB         *sql.DB
+	Dialect    Dialect
+	DBType     DBType
+	DBTypeName string
+	SqlMigrate []string
+	DbName     string
+}
+
+func newSchema(db *sql.DB) (*DbSchema, error) {
+	ret := &DbSchema{}
+	ret.DB = db
+	dbDetect, dbTypeName, err := utils.DetectDatabaseType(db)
+
+	if err != nil {
+		return nil, err
+	}
+	dbName, err := utils.GetCurrentDatabaseName(db, dbDetect)
+	if err != nil {
+		return nil, err
+	}
+	ret.DbName = dbName
+	if dbDetect == DBMSSQL {
+		ret.Dialect = NewSqlServerDialect(db)
+		ret.DBType = DBMSSQL
+		ret.DBTypeName = dbTypeName
+	} else if dbDetect == DBMySQL {
+		ret.Dialect = NewSqlServerDialect(db)
+		ret.DBType = DBMySQL
+		ret.DBTypeName = dbTypeName
+	} else if dbDetect == DBPostgres {
+		ret.DBType = DBPostgres
+		ret.DBTypeName = dbTypeName
+	} else {
+		return nil, fmt.Errorf("Unsupported database type '%s'", dbTypeName)
+
+	}
+	return ret, nil
+}
+
+type Repository struct {
+	DbSchema
+	Articles *Article
+	Comments *Comment
+}
+
+func getDbSchema(db *sql.DB, typ reflect.Type) (*DbSchema, error) {
+	baseType := reflect.TypeOf(DbSchema{})
+
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		if baseType.String() == field.Type.String() {
+			_dbSchema, err := newSchema(db)
+			if err != nil {
+				return nil, err
+			}
+			return _dbSchema, nil
+
+		} else {
+			_dbSchema, err := getDbSchema(db, field.Type)
+			if err != nil {
+				return nil, err
+			} else if _dbSchema != nil {
+				return _dbSchema, nil
+			} else {
+				continue
+			}
+		}
+	}
+	return nil, nil
+}
+
+func buildRepositoryFromType(db *sql.DB, typ reflect.Type) (*reflect.Value, []*reflect.Type, error) {
+	ret := reflect.New(typ).Elem()
+
+	baseType := reflect.TypeOf(DbSchema{})
+	entityTypes := []*reflect.Type{}
+	for i := 0; i < typ.NumField(); i++ {
+
+		field := typ.Field(i)
+		if field.Anonymous {
+			fmt.Println(field.Type.Name())
+			if baseType.Name() == field.Type.Name() {
+
+				continue
+
+			} else {
+				fieldVal, _entitiesTypes, err := buildRepositoryFromType(db, field.Type) //<-- do not gen sql migrate for inner entity
+				if err != nil {
+					return nil, nil, err
+				}
+				entityTypes = append(entityTypes, _entitiesTypes...)
+				ret.Field(i).Set(fieldVal.Addr())
+				entityType := field.Type
+				if entityType.Kind() == reflect.Ptr {
+					entityType = entityType.Elem()
+				}
+
+				continue
+			}
+		}
+		fieldType := field.Type
+		if fieldType.Kind() == reflect.Ptr {
+			fieldType = fieldType.Elem()
+		}
+
+		entityVal := EntityFromType(fieldType)
+
+		ret.Field(i).Set(entityVal.Addr())
+		entityType := field.Type
+		if entityType.Kind() == reflect.Ptr {
+			entityType = entityType.Elem()
+		}
+		entityTypes = append(entityTypes, &entityType)
+	}
+
+	// if genSQLMigrate {
+	// 	sqlMigrates, err := utils.GetScriptMigrate(db, dbSchema.DbName, dbSchema.Dialect, entityTypes...)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	dbSchema.SqlMigrate = sqlMigrates
+	// }
+	return &ret, entityTypes, nil
+}
+func Build[T any](db *sql.DB) (*T, error) {
+	var v T
+	typ := reflect.TypeOf(v)
+	if typ == nil {
+		typ = reflect.TypeOf((*T)(nil)).Elem()
+	}
+	dbSchema, err := getDbSchema(db, typ)
+	if err != nil {
+		return nil, err
+	}
+	if dbSchema == nil {
+		example := `type YourSchema struct {
+						DbSchema
+						}`
+		return nil, fmt.Errorf("no db schema found in %s,'%s' must have at least one db schema looks like this\n%s", typ.String(), typ.String(), example)
+	}
+
+	ret, entityTypes, err := buildRepositoryFromType(db, typ)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(entityTypes) == 0 {
+		example := `\n  type User struct {
+						Id   DbField[uint64] 'db:"primaryKey;autoIncrement"'
+						Code DbField[string] 'db:"length(50)"'
+					}`
+		example = strings.ReplaceAll(example, "''", "`")
+
+		return nil, fmt.Errorf("no entity type found in %s,'%s' must have at least one entity type looks like this\n:%s", typ.String(), typ.String(), example)
+	}
+	sqlMigrates, err := utils.GetScriptMigrate(db, dbSchema.DbName, dbSchema.Dialect, entityTypes...)
+	if err != nil {
+		return nil, err
+	}
+	dbSchema.SqlMigrate = sqlMigrates
+	ret.FieldByName("DbSchema").Set(reflect.ValueOf(*dbSchema))
+
+	retVal := ret.Interface().(T)
+
+	return &retVal, nil
+
+}
+func TestBuildEntity(t *testing.T) {
+	dsn := "sqlserver://sa:123456@localhost?database=aaa"
+	db, err := sql.Open("sqlserver", dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	r, err := Build[Repository](db)
+	assert.NoError(t, err)
+	// NewQuery().From(FromStruct[Article]()).Select(r.Articles.Id, r.Articles.Title)
+
+	fmt.Println(r)
 }
 func TestFTS(t *testing.T) {
 	dsn := "user=postgres password=123456 host=localhost port=5432 dbname=fx001 sslmode=disable"
@@ -66,11 +265,7 @@ func TestFTS(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	type Article struct {
-		_       DbField[any]    `db:"table(articles)"`
-		Title   DbField[string] `db:"FTS(title_idx)"`
-		Content DbField[string] `db:"FTS(content_idx)"`
-	}
+
 	a := Entity[Article]()
 	Funcs.Dialect = NewSqlServerDialect(db)
 
@@ -86,6 +281,7 @@ func TestFTS(t *testing.T) {
 func TestSqlServer(t *testing.T) {
 	dsn := "sqlserver://sa:123456@localhost?database=aaa"
 	db, err := sql.Open("sqlserver", dsn)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -213,8 +409,8 @@ func TestMigrate(t *testing.T) {
 	}
 	defer db.Close()
 	mssql := NewSqlServerDialect(db)
-
-	sqls, err := utils.GetScriptMigrate(db, "aaa", mssql, reflect.TypeOf(SampleModel{}))
+	et := reflect.TypeOf(SampleModel{})
+	sqls, err := utils.GetScriptMigrate(db, "aaa", mssql, &et)
 	assert.NoError(t, err)
 	for _, sql := range sqls {
 		t.Log(sql)
