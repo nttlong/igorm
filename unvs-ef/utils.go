@@ -60,6 +60,7 @@ type utilsPackage struct {
 	cacheGetUniqueConstraintsFromMetaByType sync.Map
 	cacheGetIndexConstraintsFromMetaByType  sync.Map
 	schemaCache                             sync.Map
+	cacheGetOrCreateRepository              sync.Map
 	// future: add cache or shared state here
 }
 
@@ -516,7 +517,7 @@ func (u *utilsPackage) extractSchema(db *sql.DB, dbName string, dialect Dialect)
 
 }
 
-func (u *utilsPackage) GetScriptMigrate(db *sql.DB, dbName string, dialect Dialect, typ ...*reflect.Type) ([]string, error) {
+func (u *utilsPackage) GetScriptMigrate(db *sql.DB, dbName string, dialect Dialect, typ ...reflect.Type) ([]string, error) {
 	dbSchema, err := utils.extractSchema(db, dbName, dialect)
 	if err != nil {
 		return nil, err
@@ -524,20 +525,20 @@ func (u *utilsPackage) GetScriptMigrate(db *sql.DB, dbName string, dialect Diale
 
 	ret := []string{}
 	for _, t := range typ {
-		sqlCmds, err := dialect.GenerateCreateTableSql(dbName, *t)
+		sqlCmds, err := dialect.GenerateCreateTableSql(dbName, t)
 		if err != nil {
 			return nil, err
 		}
 		if sqlCmds != "" {
 			ret = append(ret, sqlCmds)
 		} else { //<--- table is existing in Database, just add columns
-			sqlAddCols, err := dialect.GenerateAlterTableSql(dbName, *t)
+			sqlAddCols, err := dialect.GenerateAlterTableSql(dbName, t)
 			if err != nil {
 				return nil, err
 			}
 			ret = append(ret, sqlAddCols...)
 		}
-		sqlUniqueConstraints := dialect.GenerateUniqueConstraintsSql(*t)
+		sqlUniqueConstraints := dialect.GenerateUniqueConstraintsSql(t)
 
 		if err != nil {
 			return nil, err
@@ -548,7 +549,7 @@ func (u *utilsPackage) GetScriptMigrate(db *sql.DB, dbName string, dialect Diale
 				ret = append(ret, sql)
 			}
 		}
-		sqlIndexConstraints := dialect.GenerateIndexConstraintsSql(*t)
+		sqlIndexConstraints := dialect.GenerateIndexConstraintsSql(t)
 		if err != nil {
 			return nil, err
 		}
@@ -659,4 +660,152 @@ func (u *utilsPackage) GetCurrentDatabaseName(db *sql.DB, dbType DBType) (string
 	}
 
 	return dbName, nil
+}
+func (u *utilsPackage) GetDbName(db *sql.DB) (string, error) {
+	dbType, _, err := u.DetectDatabaseType(db)
+	if err != nil {
+		return "", err
+	}
+	return u.GetCurrentDatabaseName(db, dbType)
+}
+
+func (u *utilsPackage) getTenantDb(db *sql.DB, typ reflect.Type) (*TenantDb, error) {
+	baseType := reflect.TypeOf(TenantDb{})
+
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		if baseType.String() == field.Type.String() {
+			_dbSchema, err := u.newTenantDb(db)
+			if err != nil {
+				return nil, err
+			}
+			return _dbSchema, nil
+
+		} else {
+			_dbSchema, err := u.getTenantDb(db, field.Type)
+			if err != nil {
+				return nil, err
+			} else if _dbSchema != nil {
+				return _dbSchema, nil
+			} else {
+				continue
+			}
+		}
+	}
+	return nil, nil
+}
+func (u *utilsPackage) newTenantDb(db *sql.DB) (*TenantDb, error) {
+	ret := &TenantDb{}
+	ret.DB = db
+	dbDetect, dbTypeName, err := utils.DetectDatabaseType(db)
+
+	if err != nil {
+		return nil, err
+	}
+	dbName, err := utils.GetCurrentDatabaseName(db, dbDetect)
+	if err != nil {
+		return nil, err
+	}
+	ret.DbName = dbName
+	if dbDetect == DBMSSQL {
+		ret.Dialect = NewSqlServerDialect(db)
+		ret.DBType = DBMSSQL
+		ret.DBTypeName = dbTypeName
+	} else if dbDetect == DBMySQL {
+		ret.Dialect = NewSqlServerDialect(db)
+		ret.DBType = DBMySQL
+		ret.DBTypeName = dbTypeName
+	} else if dbDetect == DBPostgres {
+		ret.DBType = DBPostgres
+		ret.DBTypeName = dbTypeName
+	} else {
+		return nil, fmt.Errorf("Unsupported database type '%s'", dbTypeName)
+
+	}
+	return ret, nil
+}
+
+/*
+This struct is only used for the function buildRepositoryFromType of the "utilsPackage"
+*/
+type repositoryValueStruct struct {
+	/*
+		The buildRepositoryFromType function of utilsPackage
+		will analyze the type of repo: During the analysis process,
+		it will use reflect.New(type) to create a value for this field
+	*/
+	ValueOfRepo reflect.Value
+	/*
+		During the analysis of the entity type, these are fields that have struct types,
+		and those structs have fields declared with types like DbField[<type>], including in embedded struct
+	*/
+	EntityTypes []reflect.Type
+}
+
+/*
+This function will read information from @typ and create a structure similar to the one described in
+"repositoryValueStruct" if no error occurs
+*/
+func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type) (*repositoryValueStruct, error) {
+	valueOfRepo := reflect.New(typ).Elem()
+
+	baseType := reflect.TypeOf(TenantDb{})
+	entityTypes := []reflect.Type{}
+	for i := 0; i < typ.NumField(); i++ {
+
+		field := typ.Field(i)
+		if field.Anonymous {
+			fmt.Println(field.Type.Name())
+			if baseType.Name() == field.Type.Name() {
+
+				continue
+
+			} else {
+				repoVal, err := u.buildRepositoryFromType(field.Type) //<-- do not gen sql migrate for inner entity
+				if err != nil {
+					return nil, err
+				}
+				entityTypes = append(entityTypes, repoVal.EntityTypes...)
+				valueOfRepo.Field(i).Set(repoVal.ValueOfRepo.Addr())
+				entityType := field.Type
+				if entityType.Kind() == reflect.Ptr {
+					entityType = entityType.Elem()
+				}
+
+				continue
+			}
+		}
+		fieldType := field.Type
+		if fieldType.Kind() == reflect.Ptr {
+			fieldType = fieldType.Elem()
+		}
+
+		entityVal := EntityFromType(fieldType)
+
+		valueOfRepo.Field(i).Set(entityVal.Addr())
+		entityType := field.Type
+		if entityType.Kind() == reflect.Ptr {
+			entityType = entityType.Elem()
+		}
+		entityTypes = append(entityTypes, entityType)
+	}
+	ret := &repositoryValueStruct{
+		ValueOfRepo: valueOfRepo,
+		EntityTypes: entityTypes,
+	}
+	return ret, nil
+}
+
+func (u *utilsPackage) GetOrCreateRepository(typ reflect.Type) (*repositoryValueStruct, error) {
+	//check cache
+	key := typ.String()
+	if val, ok := u.cacheGetOrCreateRepository.Load(key); ok {
+		return val.(*repositoryValueStruct), nil
+	}
+	repoVal, err := u.buildRepositoryFromType(typ)
+	if err != nil {
+		return nil, err
+	}
+	u.cacheGetOrCreateRepository.Store(key, repoVal)
+	return repoVal, nil
 }

@@ -159,6 +159,7 @@ type Query struct {
 	where   Expr
 	groupBy []Expr
 	having  Expr
+	dialect Dialect
 }
 
 // NewQuery creates an empty query builder.
