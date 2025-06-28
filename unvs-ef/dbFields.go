@@ -301,7 +301,9 @@ func (f *FieldDateTime) Second() *Field[int] {
 		},
 	}
 }
-
+func (f *BinaryField) ToSqlExpr(d Dialect) (string, []interface{}) {
+	return compiler.Compile(f, d)
+}
 func (f *Field[TField]) ToSqlExpr(d Dialect) (string, []interface{}) {
 	return compiler.Compile(f, d)
 }

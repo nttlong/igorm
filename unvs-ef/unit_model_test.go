@@ -16,7 +16,7 @@ type Repository struct {
 	Comments *Comment
 }
 type Article struct {
-	Id         Field[uint64]  `db:"primaryKey;autoIncrement"`
+	Id         FieldUint64    `db:"primaryKey;autoIncrement"`
 	Title      FieldString    `db:"FTS(title_idx);length(50)"`
 	Content    FieldString    `db:"FTS(content_idx);length(50)"`
 	CreatedOn  FieldDateTime  `db:"default:now()"`
@@ -29,9 +29,14 @@ func TestRepository(t *testing.T) {
 
 	qr := Queryable[Article]()
 	d := &PostgresDialect{}
+	sql, args := "", []interface{}{}
+
+	wid := qr.Id.Eq(1)
+	sql, args = wid.ToSqlExpr(d)
+	t.Log(sql, args)
 	//sql, args := qr.Content.Len().Eq(qr.CreatedBy).ToSqlExpr(d)
 	w1 := qr.Content.Len()
-	sql, args := w1.ToSqlExpr(d)
+	sql, args = w1.ToSqlExpr(d)
 	t.Log(sql, args)
 	where := qr.Content.Len().Eq(qr.CreatedBy)
 	sql, args = where.ToSqlExpr(d)

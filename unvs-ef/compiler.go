@@ -13,6 +13,9 @@ type compilerInfo struct {
 	AliasField  *AliasField
 	DbField     *DbField
 	Op          string
+	Left        interface{}
+	Right       interface{}
+	Args        []interface{}
 }
 
 func (c *sqlCompiler) extract(expr interface{}) *compilerInfo {
@@ -21,14 +24,14 @@ func (c *sqlCompiler) extract(expr interface{}) *compilerInfo {
 		"FuncField",
 		"AliasField",
 		"DbField",
-		"Op",
+		//"Op",
 	}
 	ret := compilerInfo{}
 	if expr == nil {
 		return nil
 	}
 	getter := reflect.ValueOf(expr)
-	getterType := reflect.TypeOf(expr)
+	getterType := getter.Type()
 	if getterType.Kind() == reflect.Ptr {
 		getterType = getterType.Elem()
 	}
@@ -36,26 +39,34 @@ func (c *sqlCompiler) extract(expr interface{}) *compilerInfo {
 		getter = getter.Elem()
 	}
 	setter := reflect.ValueOf(&ret).Elem()
-
+	hasSetField := false
 	for _, fieldName := range fieldNames {
-		if _, ok := getterType.FieldByName(fieldName); !ok {
-			continue
-		}
-		getterField := getter.FieldByName(fieldName)
-		setterField := setter.FieldByName(fieldName)
+		if _, ok := getterType.FieldByName(fieldName); ok {
+			getterField := getter.FieldByName(fieldName)
+			setterField := setter.FieldByName(fieldName)
 
-		if !getterField.IsValid() || !setterField.IsValid() {
-			continue
+			if !getterField.IsValid() || !setterField.IsValid() {
+				continue
+			}
+
+			// Nếu là con trỏ thì deref để gán đúng
+			if getterField.Kind() == reflect.Ptr && !getterField.IsNil() {
+				setterField.Set(getterField)
+
+				hasSetField = true
+			} else if getterField.Kind() != reflect.Ptr {
+				setterField.Set(getterField)
+				hasSetField = true
+			}
 		}
 
-		// Nếu là con trỏ thì deref để gán đúng
-		if getterField.Kind() == reflect.Ptr && !getterField.IsNil() {
-			setterField.Set(getterField)
-		} else if getterField.Kind() != reflect.Ptr {
-			setterField.Set(getterField)
-		}
 	}
-	return &ret
+	if hasSetField {
+		return &ret
+	} else {
+		return nil
+	}
+
 }
 func (c *sqlCompiler) exprToSQL(v interface{}, d Dialect) (string, []interface{}) {
 	val := reflect.ValueOf(v)
@@ -96,41 +107,51 @@ func (c *sqlCompiler) exprToSQL(v interface{}, d Dialect) (string, []interface{}
 	}
 	return "?", []interface{}{v}
 }
+func (c *sqlCompiler) compileBinaryField(bf *BinaryField, d Dialect) (string, []interface{}) {
+	if bf.Op == "IS NULL" {
+		leftExpr, leftArgs := c.exprToSQL(bf.Left, d)
+		sql := fmt.Sprintf("(%s %s )", leftExpr, bf.Op)
+		return sql, leftArgs
+	}
+	if bf.Left == nil {
+		rightExpr, rightArgs := c.exprToSQL(bf.Right, d)
+		sql := fmt.Sprintf("(%s %s)", bf.Op, rightExpr)
+		return sql, rightArgs
+	}
+
+	leftExpr, leftArgs := c.exprToSQL(bf.Left, d)
+	rightExpr, rightArgs := c.exprToSQL(bf.Right, d)
+	if bf.Op == "BETWEEN" {
+		typOfRightArgs := reflect.ValueOf(rightArgs)
+		if typOfRightArgs.Kind() == reflect.Slice {
+
+			leftArgs = []interface{}{typOfRightArgs.Index(0).Elem().Index(0).Interface()}
+			rightArgs = []interface{}{typOfRightArgs.Index(0).Elem().Index(1).Interface()}
+			sql := fmt.Sprintf("(%s %s %s)", leftExpr, "BETWEEN ? AND ?", rightExpr)
+			args := append(leftArgs, rightArgs...)
+			return sql, args
+		}
+
+	}
+	// Nếu cả trái và phải đều là cột (không có args), không truyền tham số
+	sql := fmt.Sprintf("(%s %s %s)", leftExpr, bf.Op, rightExpr)
+	args := append(leftArgs, rightArgs...)
+	return sql, args
+}
 func (c *sqlCompiler) Compile(expr interface{}, d Dialect) (string, []interface{}) {
 
 	f := c.extract(expr)
+	if f == nil {
+		if bf, ok := expr.(*BinaryField); ok {
+			return c.compileBinaryField(bf, d)
+
+		}
+
+	}
 
 	if f.BinaryField != nil {
 
-		if f.Op == "IS NULL" {
-			leftExpr, leftArgs := c.exprToSQL(f.BinaryField.Left, d)
-			sql := fmt.Sprintf("(%s %s )", leftExpr, f.BinaryField.Op)
-			return sql, leftArgs
-		}
-		if f.BinaryField.Left == nil {
-			rightExpr, rightArgs := c.exprToSQL(f.BinaryField.Right, d)
-			sql := fmt.Sprintf("(%s %s)", f.BinaryField.Op, rightExpr)
-			return sql, rightArgs
-		}
-
-		leftExpr, leftArgs := c.exprToSQL(f.BinaryField.Left, d)
-		rightExpr, rightArgs := c.exprToSQL(f.BinaryField.Right, d)
-		if f.Op == "BETWEEN" {
-			typOfRightArgs := reflect.ValueOf(rightArgs)
-			if typOfRightArgs.Kind() == reflect.Slice {
-
-				leftArgs = []interface{}{typOfRightArgs.Index(0).Elem().Index(0).Interface()}
-				rightArgs = []interface{}{typOfRightArgs.Index(0).Elem().Index(1).Interface()}
-				sql := fmt.Sprintf("(%s %s %s)", leftExpr, "BETWEEN ? AND ?", rightExpr)
-				args := append(leftArgs, rightArgs...)
-				return sql, args
-			}
-
-		}
-		// Nếu cả trái và phải đều là cột (không có args), không truyền tham số
-		sql := fmt.Sprintf("(%s %s %s)", leftExpr, f.BinaryField.Op, rightExpr)
-		args := append(leftArgs, rightArgs...)
-		return sql, args
+		return c.compileBinaryField(f.BinaryField, d)
 	}
 	if f.FuncField != nil {
 		args := make([]string, len(f.FuncField.Args))
@@ -150,6 +171,7 @@ func (c *sqlCompiler) Compile(expr interface{}, d Dialect) (string, []interface{
 	if f.DbField != nil {
 		return d.QuoteIdent(f.DbField.TableName, f.DbField.ColName), nil
 	}
+
 	// if f.ValueField != nil {
 	// 	return "?", []interface{}{f.ValueField.Value}
 	// }
