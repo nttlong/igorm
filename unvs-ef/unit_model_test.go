@@ -30,22 +30,32 @@ func TestRepository(t *testing.T) {
 	qr := Queryable[Article]()
 	d := &PostgresDialect{}
 	sql, args := "", []interface{}{}
-
+	w1 := qr.Content.Len()
+	sql, args = w1.ToSqlExpr(d)
+	t.Log(sql, args)
 	wid := qr.Id.Eq(1)
 	sql, args = wid.ToSqlExpr(d)
 	t.Log(sql, args)
 	//sql, args := qr.Content.Len().Eq(qr.CreatedBy).ToSqlExpr(d)
-	w1 := qr.Content.Len()
-	sql, args = w1.ToSqlExpr(d)
-	t.Log(sql, args)
+
 	where := qr.Content.Len().Eq(qr.CreatedBy)
 	sql, args = where.ToSqlExpr(d)
 	//sql= "[articles].[content] = ?"
 	//mong muon la "[articles].[content] = [articles].[CreatedBy]"
 	t.Log(sql, args)
-	where = qr.CreatedOn.Between(2020, 2025).And(qr.ModifiedOn.Between(2020, 2025))
-	sql, args = where.ToSqlExpr(d)
+	bw1 := qr.CreatedOn.Between(2020, 2025)
+	sql, args = bw1.ToSqlExpr(d)
+
 	//sql= "[articles].[content] = ?"
 	//mong muon la "[articles].[content] = [articles].[CreatedBy]"
+	t.Log(sql, args)
+	bw2 := (qr.ModifiedOn.Between(2020, 2025))
+	sql, args = bw1.ToSqlExpr(d)
+
+	//sql= "[articles].[content] = ?"
+	//mong muon la "[articles].[content] = [articles].[CreatedBy]"
+	t.Log(sql, args)
+	bw := bw1.And(bw2)
+	sql, args = bw.ToSqlExpr(d)
 	t.Log(sql, args)
 }

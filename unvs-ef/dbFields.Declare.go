@@ -2,9 +2,6 @@ package unvsef
 
 import "time"
 
-type FieldDateTime Field[time.Time]
-type FieldString Field[string]
-
 type FieldFloat Field[float64]
 type FieldBool Field[bool]
 type FieldTime Field[time.Time]
