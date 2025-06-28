@@ -111,3 +111,6 @@ func (f *FieldUint64) Max() *FuncField {
 func (f *FieldUint64) ToSqlExpr(d Dialect) (string, []interface{}) {
 	return compiler.Compile(f, d)
 }
+func (f FieldUint64) ToSqlExpr2(d Dialect) (string, []interface{}) {
+	return compiler.Compile(f, d)
+}

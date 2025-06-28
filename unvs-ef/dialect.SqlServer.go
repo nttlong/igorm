@@ -336,7 +336,18 @@ func (d *SqlServerDialect) GenerateIndexConstraintsSql(typ reflect.Type) map[str
 	return ret
 
 }
-
+func (d *SqlServerDialect) MakeLimitOffset(limit *int, offset *int) string {
+	if limit == nil && offset == nil {
+		return ""
+	}
+	if limit == nil {
+		return fmt.Sprintf("OFFSET %d ROWS", *offset)
+	}
+	if offset == nil {
+		return fmt.Sprintf("FETCH NEXT %d ROWS ONLY", *limit)
+	}
+	return fmt.Sprintf("OFFSET %d ROWS FETCH NEXT %d ROWS ONLY", *offset, *limit)
+}
 func NewSqlServerDialect(db *sql.DB) Dialect {
 	return &SqlServerDialect{
 

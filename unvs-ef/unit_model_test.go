@@ -1,6 +1,7 @@
 package unvsef
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -64,4 +65,25 @@ func TestRepository(t *testing.T) {
 	bw := bw1.And(bw2)
 	sql, args = bw.ToSqlExpr(d)
 	t.Log(sql, args)
+}
+func TestQuery(t *testing.T) {
+	d := &PostgresDialect{}
+	article := Queryable[Article]()
+	comment := Queryable[Comment]()
+	joinExpr, args := compiler.Compile(comment.ArticleId.Eq(article.Id), d)
+	fmt.Println(joinExpr, args)
+	sql := From(article).Select(article.Content, article.CreatedBy).Where(article.Content.Len().Gt(100))
+	sqlStr, args := sql.ToSQL(d)
+	t.Log(sqlStr, args)
+	conditional := comment.ArticleId.Eq(article.Id).And(comment.Content.Len().Gt(100))
+	joinExpr, args = compiler.Compile(conditional, d)
+	fmt.Println(joinExpr, args)
+	//jonnExpr la
+	//"((\"comments\".\"article_id\" = ?) AND (LEN(\"comments\".\"content\") > ?))"
+	// va args la 100
+
+	sql3 := From(LeftJoin(conditional)).Select(comment.Content)
+	sqlStr, args = sql3.ToSQL(d)
+	t.Log(sqlStr, args)
+
 }

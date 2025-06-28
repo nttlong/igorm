@@ -161,6 +161,14 @@ func (c *sqlCompiler) Compile(expr interface{}, d Dialect) (string, []interface{
 			return c.CompileFuncField(ff, d)
 
 		}
+		typ := reflect.TypeOf(expr)
+		if typ.Kind() == reflect.Ptr {
+			typ = typ.Elem()
+		}
+
+		tableName := utils.TableNameFromStruct(typ)
+
+		return d.QuoteIdent(tableName), nil
 
 	}
 

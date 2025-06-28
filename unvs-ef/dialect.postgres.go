@@ -370,7 +370,18 @@ func (d *PostgresDialect) GenerateIndexConstraintsSql(typ reflect.Type) map[stri
 	}
 	return ret
 }
+func (d *PostgresDialect) MakeLimitOffset(limit *int, offset *int) string {
+	if limit != nil && offset != nil {
+		return fmt.Sprintf("LIMIT %d OFFSET %d", *limit, *offset)
+	} else if limit != nil {
+		return fmt.Sprintf("LIMIT %d", *limit)
+	} else if offset != nil {
+		return fmt.Sprintf("OFFSET %d", *offset)
+	}
+	return ""
+}
 
+// func NewPostgresDialect(db *sql.DB) {
 func NewPostgresDialect(db *sql.DB) Dialect {
 	return &PostgresDialect{
 		baseDialect: baseDialect{

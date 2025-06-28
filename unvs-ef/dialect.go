@@ -45,6 +45,7 @@ type Dialect interface {
 	/* depends on bd driver type the function will be implement in
 	dialect.<driver name>.go
 	*/
+	MakeLimitOffset(limit *int, offset *int) string
 	QuoteIdent(args ...string) string
 
 	// Schema management methods

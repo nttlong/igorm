@@ -122,6 +122,14 @@ func (f *Field[TField]) Div(other interface{}) *Field[TField] {
 		},
 	}
 }
+func (f *Field[TField]) Len() *Field[int] {
+	return &Field[int]{
+		FuncField: &FuncField{
+			FuncName: "LEN",
+			Args:     []interface{}{f},
+		},
+	}
+}
 
 /*
 Logic Operand

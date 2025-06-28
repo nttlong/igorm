@@ -860,7 +860,9 @@ func (u *utilsPackage) exprToSQLDelete(v interface{}, d Dialect) (string, []inte
 		return "?", []interface{}{val}
 	}
 }
-
+func (u *utilsPackage) Join(parts []string, sep string) string {
+	return u.join(parts, sep)
+}
 func (u *utilsPackage) join(parts []string, sep string) string {
 	out := ""
 	for i, p := range parts {
