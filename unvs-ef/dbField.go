@@ -30,13 +30,6 @@ type Field[TField any] struct {
 	// *ValueField[TField]
 }
 
-//	func Lit[T any](val T) *Field[T] {
-//		return &Field[T]{
-//			ValueField: &ValueField[T]{
-//				Value: val,
-//			},
-//		}
-//	}
 func (f *Field[TField]) Eq(other interface{}) *FieldBool {
 	return &FieldBool{
 		BinaryField: &BinaryField{
@@ -130,70 +123,6 @@ func (f *Field[TField]) Div(other interface{}) *Field[TField] {
 	}
 }
 
-func (f *Field[TField]) Mod(other interface{}) *Field[TField] {
-	return &Field[TField]{
-		BinaryField: &BinaryField{
-			Left:  f,
-			Op:    "%",
-			Right: other,
-		},
-	}
-}
-func (f *Field[TField]) Like(other interface{}) *Field[TField] {
-	return &Field[TField]{
-		BinaryField: &BinaryField{
-			Left:  f,
-			Op:    "LIKE",
-			Right: other,
-		},
-	}
-}
-func (f *Field[TField]) NotLike(other interface{}) *Field[TField] {
-	return &Field[TField]{
-		BinaryField: &BinaryField{
-			Left:  f,
-			Op:    "LIKE",
-			Right: other,
-		},
-	}
-}
-func (f *Field[TField]) In(other interface{}) *Field[TField] {
-	return &Field[TField]{
-		BinaryField: &BinaryField{
-			Left:  f,
-			Op:    "IN",
-			Right: other,
-		},
-	}
-}
-func (f *Field[TField]) NotIn(other interface{}) *Field[TField] {
-	return &Field[TField]{
-		BinaryField: &BinaryField{
-			Left:  f,
-			Op:    "NOT IN",
-			Right: other,
-		},
-	}
-}
-func (f *Field[TField]) Between(left interface{}, right interface{}) *Field[TField] {
-	return &Field[TField]{
-		BinaryField: &BinaryField{
-			Left:  f,
-			Op:    "BETWEEN",
-			Right: []interface{}{left, right},
-		},
-	}
-}
-func (f *FieldDateTime) Between(left interface{}, right interface{}) *FieldBool {
-	return &FieldBool{
-		BinaryField: &BinaryField{
-			Left:  f,
-			Op:    "BETWEEN",
-			Right: []interface{}{left, right},
-		},
-	}
-}
-
 /*
 Logic Operand
 */
@@ -235,14 +164,6 @@ func (f *Field[TField]) IsNull() *Field[TField] {
 		},
 	}
 }
-func (f *Field[TField]) Case(cases []interface{}, elseVal interface{}) *Field[TField] {
-	return &Field[TField]{
-		FuncField: &FuncField{
-			FuncName: "CASE",
-			Args:     cases,
-		},
-	}
-}
 
 func (f *FieldString) Len() *Field[int] {
 	return &Field[int]{
@@ -252,62 +173,34 @@ func (f *FieldString) Len() *Field[int] {
 		},
 	}
 }
+func (f *Field[TField]) Sum() *FuncField {
+	return &FuncField{
+		FuncName: "SUM",
+		Args:     []interface{}{f},
+	}
+}
+func (f *Field[TField]) Min() *FuncField {
+	return &FuncField{
+		FuncName: "MIN",
+		Args:     []interface{}{f},
+	}
+}
+func (f *Field[TField]) Max() *FuncField {
+	return &FuncField{
+		FuncName: "MAX",
+		Args:     []interface{}{f},
+	}
 
-func (f *FieldDateTime) Year() *Field[int] {
-	return &Field[int]{
-		FuncField: &FuncField{
-			FuncName: "YEAR",
-			Args:     []interface{}{f},
-		},
+}
+func (f *Field[TField]) Avg() *FuncField {
+	return &FuncField{
+		FuncName: "AVG",
+		Args:     []interface{}{f},
 	}
 }
-func (f *FieldDateTime) Month() *Field[int] {
-	return &Field[int]{
-		FuncField: &FuncField{
-			FuncName: "MONTH",
-			Args:     []interface{}{f},
-		},
+func (f *Field[TField]) Count() *FuncField {
+	return &FuncField{
+		FuncName: "COUNT",
+		Args:     []interface{}{f},
 	}
-}
-func (f *FieldDateTime) Day() *Field[int] {
-	return &Field[int]{
-		FuncField: &FuncField{
-			FuncName: "DAY",
-			Args:     []interface{}{f},
-		},
-	}
-}
-func (f *FieldDateTime) Hour() *Field[int] {
-	return &Field[int]{
-		FuncField: &FuncField{
-			FuncName: "HOUR",
-			Args:     []interface{}{f},
-		},
-	}
-}
-func (f *FieldDateTime) Minute() *Field[int] {
-	return &Field[int]{
-		FuncField: &FuncField{
-			FuncName: "MINUTE",
-			Args:     []interface{}{f},
-		},
-	}
-}
-func (f *FieldDateTime) Second() *Field[int] {
-	return &Field[int]{
-		FuncField: &FuncField{
-			FuncName: "SECOND",
-			Args:     []interface{}{f},
-		},
-	}
-}
-func (f *BinaryField) ToSqlExpr(d Dialect) (string, []interface{}) {
-	return compiler.Compile(f, d)
-}
-
-func (where *FieldBool) ToSqlExpr(d Dialect) (string, []interface{}) {
-	return compiler.Compile(where, d)
-}
-func (f Field[TField]) ToSqlExpr2(d Dialect) (string, []interface{}) {
-	return (&f).ToSqlExpr(d)
 }

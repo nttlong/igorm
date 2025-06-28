@@ -77,6 +77,37 @@ func (f *FieldUint64) Mod(other interface{}) *BinaryField {
 	}
 
 }
+func (f *FieldUint64) Sum() *FuncField {
+	return &FuncField{
+		FuncName: "SUM",
+		Args:     []interface{}{f},
+	}
+}
+func (f *FieldUint64) Count() *FuncField {
+	return &FuncField{
+		FuncName: "COUNT",
+		Args:     []interface{}{f},
+	}
+}
+func (f *FieldUint64) Avg() *FuncField {
+	return &FuncField{
+		FuncName: "AVG",
+		Args:     []interface{}{f},
+	}
+}
+func (f *FieldUint64) Min() *FuncField {
+	return &FuncField{
+		FuncName: "MIN",
+		Args:     []interface{}{f},
+	}
+}
+func (f *FieldUint64) Max() *FuncField {
+	return &FuncField{
+		FuncName: "MAX",
+		Args:     []interface{}{f},
+	}
+}
+
 func (f *FieldUint64) ToSqlExpr(d Dialect) (string, []interface{}) {
 	return compiler.Compile(f, d)
 }

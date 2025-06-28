@@ -138,12 +138,27 @@ func (c *sqlCompiler) compileBinaryField(bf *BinaryField, d Dialect) (string, []
 	args := append(leftArgs, rightArgs...)
 	return sql, args
 }
+func (c *sqlCompiler) CompileFuncField(expr *FuncField, d Dialect) (string, []interface{}) {
+	args := make([]string, len(expr.Args))
+	params := []interface{}{}
+	for i, a := range expr.Args {
+		expr, p := c.exprToSQL(a, d)
+		args[i] = expr
+		params = append(params, p...)
+	}
+	sql := fmt.Sprintf("%s(%s)", expr.FuncName, utils.join(args, ", "))
+	return sql, params
+}
 func (c *sqlCompiler) Compile(expr interface{}, d Dialect) (string, []interface{}) {
 
 	f := c.extract(expr)
 	if f == nil {
 		if bf, ok := expr.(*BinaryField); ok {
 			return c.compileBinaryField(bf, d)
+
+		}
+		if ff, ok := expr.(*FuncField); ok {
+			return c.CompileFuncField(ff, d)
 
 		}
 
@@ -154,15 +169,7 @@ func (c *sqlCompiler) Compile(expr interface{}, d Dialect) (string, []interface{
 		return c.compileBinaryField(f.BinaryField, d)
 	}
 	if f.FuncField != nil {
-		args := make([]string, len(f.FuncField.Args))
-		params := []interface{}{}
-		for i, a := range f.FuncField.Args {
-			expr, p := c.exprToSQL(a, d)
-			args[i] = expr
-			params = append(params, p...)
-		}
-		sql := fmt.Sprintf("%s(%s)", f.FuncField.FuncName, utils.join(args, ", "))
-		return sql, params
+		return c.CompileFuncField(f.FuncField, d)
 	}
 	if f.AliasField != nil {
 		sql, args := c.exprToSQL(f.AliasField.Field, d)

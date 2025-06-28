@@ -3,7 +3,7 @@ package unvsef
 import "time"
 
 type FieldFloat Field[float64]
-type FieldBool Field[bool]
+
 type FieldTime Field[time.Time]
 type FieldBytes Field[[]byte]
 type FieldJSON Field[interface{}]

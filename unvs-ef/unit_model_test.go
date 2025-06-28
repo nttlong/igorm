@@ -30,6 +30,12 @@ func TestRepository(t *testing.T) {
 	qr := Queryable[Article]()
 	d := &PostgresDialect{}
 	sql, args := "", []interface{}{}
+	wsum := qr.Content.Len().Sum()
+	sql, args = wsum.ToSqlExpr(d)
+	t.Log(sql, args)
+	wsum = qr.Id.Sum()
+	sql, args = wsum.ToSqlExpr(d)
+	t.Log(sql, args)
 	w1 := qr.Content.Len()
 	sql, args = w1.ToSqlExpr(d)
 	t.Log(sql, args)
