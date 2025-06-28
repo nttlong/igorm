@@ -173,14 +173,6 @@ func (f *Field[TField]) IsNull() *Field[TField] {
 	}
 }
 
-func (f *FieldString) Len() *Field[int] {
-	return &Field[int]{
-		FuncField: &FuncField{
-			FuncName: "LEN",
-			Args:     []interface{}{f},
-		},
-	}
-}
 func (f *Field[TField]) Sum() *FuncField {
 	return &FuncField{
 		FuncName: "SUM",

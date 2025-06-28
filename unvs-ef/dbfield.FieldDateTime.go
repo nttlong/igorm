@@ -55,6 +55,18 @@ func (f *FieldDateTime) Second() *Field[int] {
 		},
 	}
 }
+func (f *FieldDateTime) Between(left interface{}, right interface{}) *FieldBool {
+	return &FieldBool{
+		BinaryField: &BinaryField{
+			Left:  f,
+			Op:    "BETWEEN",
+			Right: []interface{}{left, right},
+		},
+	}
+}
 func (f *BinaryField) ToSqlExpr(d Dialect) (string, []interface{}) {
+	return compiler.Compile(f, d)
+}
+func (f BinaryField) ToSqlExpr2(d Dialect) (string, []interface{}) {
 	return compiler.Compile(f, d)
 }
