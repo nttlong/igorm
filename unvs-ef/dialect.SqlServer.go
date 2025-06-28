@@ -11,10 +11,6 @@ type SqlServerDialect struct {
 	baseDialect
 }
 
-func (d *SqlServerDialect) Func(name string, args ...Expr) Expr {
-	return rawFunc{name, args}
-}
-
 /*
 Implementation of Dialect
 Example: input "aaa","bbb"->[aaa].[bbb]

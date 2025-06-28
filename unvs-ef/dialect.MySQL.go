@@ -9,11 +9,6 @@ type MySqlDialect struct {
 	baseDialect
 }
 
-func (d *MySqlDialect) Func(name string, args ...Expr) Expr {
-	panic("unimplemented")
-
-}
-
 /*
 	depends on bd driver type the function will be implement in
 

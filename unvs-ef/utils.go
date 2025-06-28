@@ -61,6 +61,7 @@ type utilsPackage struct {
 	cacheGetIndexConstraintsFromMetaByType  sync.Map
 	schemaCache                             sync.Map
 	cacheGetOrCreateRepository              sync.Map
+	cacheDbFunctions                        sync.Map
 	// future: add cache or shared state here
 }
 
@@ -74,7 +75,7 @@ func (u *utilsPackage) ParseDBTag(field reflect.StructField) FieldTag {
 		Field: field,
 	}
 
-	t.Nullable = strings.Contains(field.Type.String(), ".DbField[*")
+	t.Nullable = field.Type.Kind() == reflect.Ptr
 	tag = strings.TrimSpace(tag)
 	if tag == "" {
 		return t
@@ -780,7 +781,7 @@ func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type) (*repositoryVal
 			fieldType = fieldType.Elem()
 		}
 
-		entityVal := EntityFromType(fieldType)
+		entityVal := u.EntityFromType(fieldType)
 
 		valueOfRepo.Field(i).Set(entityVal.Addr())
 		entityType := field.Type
@@ -808,4 +809,90 @@ func (u *utilsPackage) GetOrCreateRepository(typ reflect.Type) (*repositoryValue
 	}
 	u.cacheGetOrCreateRepository.Store(key, repoVal)
 	return repoVal, nil
+}
+func (u *utilsPackage) EntityFromType(typ reflect.Type) reflect.Value {
+	val := reflect.New(typ).Elem()
+
+	for i := 0; i < typ.NumField(); i++ {
+		valField := val.Field(i)
+		typField := typ.Field(i).Type
+
+		if valField.Kind() == reflect.Ptr {
+			typField = typField.Elem()
+			valField = reflect.New(typField)
+			val.Field(i).Set(valField)
+			valField = valField.Elem()
+
+		}
+		// Locate and set the "TableName" field inside each struct field
+		tableNameField := valField.FieldByName("TableName")
+		if tableNameField.IsValid() && tableNameField.CanSet() {
+			tableNameField.SetString(utils.TableNameFromStruct(typ))
+		}
+
+		// Locate and set the "ColName" field inside each struct field
+		columnNameField := valField.FieldByName("ColName")
+		if columnNameField.IsValid() && columnNameField.CanSet() {
+			columnNameField.SetString(utils.ToSnakeCase(typ.Field(i).Name))
+		}
+	}
+	return val
+}
+
+func (u *utilsPackage) exprToSQLDelete(v interface{}, d Dialect) (string, []interface{}) {
+
+	switch val := v.(type) {
+	case *Field[any]:
+		return val.ToSqlExpr(d)
+	case *Field[string]:
+		return val.ToSqlExpr(d)
+	case *Field[int]:
+		return val.ToSqlExpr(d)
+	case *Field[float64]:
+		return val.ToSqlExpr(d)
+	case *Field[float32]:
+		return val.ToSqlExpr(d)
+	case *Field[uint64]:
+		return val.ToSqlExpr(d)
+	case *Field[bool]:
+		return val.ToSqlExpr(d)
+	default:
+		return "?", []interface{}{val}
+	}
+}
+
+func (u *utilsPackage) join(parts []string, sep string) string {
+	out := ""
+	for i, p := range parts {
+		if i > 0 {
+			out += sep
+		}
+		out += p
+	}
+	return out
+}
+func (u *utilsPackage) PtrToInterface(v interface{}) interface{} {
+	val := reflect.ValueOf(v)
+	ptr := reflect.New(reflect.TypeOf((*interface{})(nil)).Elem()) // tạo interface{}
+	ptr.Elem().Set(val)                                            // gán giá trị
+	return ptr.Interface()                                         // trả *interface{}
+}
+
+// Entity creates an instance of struct T and auto-populates any fields
+// named "TableName" and "ColName" with the corresponding struct and field names.
+
+// This is useful for initializing DbField[TTable, TField] fields in a model,
+// so that the table and column names can be inferred via reflection without manual assignment.
+
+// Requirements:
+// - Each field inside struct T must be a struct that contains fields named "TableName" and "ColName".
+// - Those inner fields must be settable (exported and addressable).
+func Entity[T any]() T {
+	var v T
+
+	// Get the type name of T to use as table name
+	typ := reflect.TypeOf(v)
+
+	ret := utils.EntityFromType(typ)
+	return ret.Interface().(T)
 }

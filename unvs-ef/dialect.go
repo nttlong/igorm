@@ -2,19 +2,18 @@ package unvsef
 
 import (
 	"database/sql"
-	"fmt"
 	"reflect"
-	"strings"
 	"sync"
 )
 
 // TableSchema represents a table and its columns in the database.
 
 type TableSchema struct {
-	UniqueConstraints []string
-	IndexConstraints  []string
-	Name              string
-	Columns           map[string]ColumnSchema
+	UniqueConstraints     []string
+	IndexConstraints      []string
+	ForeignKeyConstraints []string
+	Name                  string
+	Columns               map[string]ColumnSchema
 }
 type baseDialect struct {
 	schema          map[string]map[string]TableSchema
@@ -42,7 +41,7 @@ type ColumnSchema struct {
 #Dialect allows different SQL dialects (e.g., PostgreSQL, MSSQL, MySQL) to be supported.
 */
 type Dialect interface {
-	Func(name string, args ...Expr) Expr
+
 	/* depends on bd driver type the function will be implement in
 	dialect.<driver name>.go
 	*/
@@ -149,24 +148,3 @@ type BaseDialect struct {
 }
 
 // rawFunc allows wrapping generic functions like FUNC(arg1, arg2, ...)
-type rawFunc struct {
-	name string
-	args []Expr
-}
-
-func (f rawFunc) ToSQL(d Dialect) (string, []interface{}) {
-	parts := []string{}
-	args := []interface{}{}
-	for _, a := range f.args {
-		sql, aArgs := a.ToSQL(d)
-		parts = append(parts, sql)
-		args = append(args, aArgs...)
-	}
-	return fmt.Sprintf("%s(%s)", f.name, strings.Join(parts, ", ")), args
-}
-
-// --------------------- Literal Expression ---------------------
-
-func (l Literal[T]) ToSQL(d Dialect) (string, []interface{}) {
-	return "?", []interface{}{l.Value}
-}

@@ -50,6 +50,7 @@ func buildRepositoryFromStruct[T any](db *sql.DB, autoMigrate bool) (*T, error) 
 			return nil, err
 		}
 	}
+
 	ret.ValueOfRepo.FieldByName("TenantDb").Set(reflect.ValueOf(*tenantDb))
 
 	retVal := ret.ValueOfRepo.Interface().(T)
