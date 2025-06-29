@@ -8,6 +8,19 @@ import (
 	"sync"
 )
 
+/*
+While create repository looks like
+
+	type Repository struct {
+		*TenantDb //<-- Should I user pointer here
+		Articles  *Article
+		Comments  *Comment
+	}
+	func (r *Repository) Init() { // the relationship set up herr
+			r.NewRelationship().From(r.Articles.Id).To(r.Comments.ArticleId, r.Comments.Id)
+
+	}
+*/
 func buildRepositoryFromStruct[T any](db *sql.DB, autoMigrate bool) (*T, error) {
 	var v T
 	typ := reflect.TypeOf(v)
@@ -20,7 +33,7 @@ func buildRepositoryFromStruct[T any](db *sql.DB, autoMigrate bool) (*T, error) 
 	}
 	if tenantDb == nil {
 		example := `type YourSchema struct {
-						TenantDb
+						TenantDb //or *TenantDb
 						}`
 		return nil, fmt.Errorf("Repository struct '%s' must have embedded TenantDb struct, looks like this:\n:%s", typ.String(), example)
 	}
@@ -50,9 +63,21 @@ func buildRepositoryFromStruct[T any](db *sql.DB, autoMigrate bool) (*T, error) 
 			return nil, err
 		}
 	}
+	tenantDbField := ret.ValueOfRepo.FieldByName("TenantDb")
+	if tenantDbField.Kind() == reflect.Ptr { //<-- important!: if repository struct has pointer to TenantDb, we need to set it to point to the actual TenantDb struct
+		// tenantDbField = tenantDbField.Elem()
+		tenantDbField.Set(reflect.ValueOf(tenantDb))
+	} else { //<-- if repository struct has TenantDb struct directly, we need to set it to point to the actual TenantDb struct
+		tenantDbField.Set(reflect.ValueOf(*tenantDb))
+	}
 
-	ret.ValueOfRepo.FieldByName("TenantDb").Set(reflect.ValueOf(*tenantDb))
-
+	method := ret.PtrValueOfRepo.MethodByName("Init")
+	if method.IsValid() && method.Type().NumIn() == 0 { //<-- check has init function for Repository
+		method.Call([]reflect.Value{})
+	}
+	if tenantDb.buildRepositoryError != nil {
+		return nil, tenantDb.buildRepositoryError
+	}
 	retVal := ret.ValueOfRepo.Interface().(T)
 
 	return &retVal, nil
@@ -61,6 +86,19 @@ func buildRepositoryFromStruct[T any](db *sql.DB, autoMigrate bool) (*T, error) 
 
 var repoCache sync.Map
 
+/*
+While create repository looks like
+
+	type Repository struct {
+		*TenantDb //<-- Should I user pointer here
+		Articles  *Article
+		Comments  *Comment
+	}
+		func (r *Repository) Init() { // the relationship set up herr
+				r.NewRelationship().From(r.Articles.Id).To(r.Comments.ArticleId, r.Comments.Id)
+
+		}
+*/
 func Repo[T any](db *sql.DB, autoMigrate bool) (*T, error) {
 	typ := reflect.TypeOf((*T)(nil)).Elem()
 	dbName, err := utils.GetDbName(db)

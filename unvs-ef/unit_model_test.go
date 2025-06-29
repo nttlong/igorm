@@ -3,6 +3,8 @@ package unvsef
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type Comment struct {
@@ -11,11 +13,6 @@ type Comment struct {
 	Content   Field[string] `db:"FTS(content_idx)"`
 }
 
-type Repository struct {
-	TenantDb
-	// Articles *Article
-	Comments *Comment
-}
 type Article struct {
 	Id         FieldUint64    `db:"primaryKey;autoIncrement"`
 	Title      FieldString    `db:"FTS(title_idx);length(50)"`
@@ -26,6 +23,16 @@ type Article struct {
 	ModifiedBy *FieldString   `db:"length(50)"`
 }
 
+type Repository struct {
+	*TenantDb //<-- Should I user pointer here
+	Articles  *Article
+	Comments  *Comment
+}
+
+func (r *Repository) Init() {
+	r.NewRelationship().From(r.Articles.Id).To(r.Comments.ArticleId, r.Comments.Id)
+
+}
 func TestRepository(t *testing.T) {
 
 	qr := Queryable[Article]()
@@ -33,10 +40,12 @@ func TestRepository(t *testing.T) {
 	sql, args := "", []interface{}{}
 	wsum := qr.Content.Len().Sum()
 	sql, args = wsum.ToSqlExpr(d)
+	assert.Equal(t, "SUM(LEN(\"articles\".\"content\"))", sql)
 	t.Log(sql, args)
 	wlike := qr.Content.Like("%a%")
 	sql, args = wlike.ToSqlExpr(d)
-	t.Log(sql, args)
+	assert.Equal(t, "(\"articles\".\"content\" LIKE ?)", sql)
+	assert.Equal(t, []interface{}{"%a%"}, args)
 	nwlike := qr.Content.Len().NotLike("%a%")
 	sql, args = nwlike.ToSqlExpr(d)
 	t.Log(sql, args)
