@@ -40,6 +40,13 @@ func buildRepositoryFromStruct[T any](db *sql.DB, autoMigrate bool) (*T, error) 
 
 	ret, err := utils.buildRepositoryFromType(typ)
 	if err != nil {
+		if repositoryErr, ok := err.(buildRepositoryError); ok {
+			example := `type ` + repositoryErr.FieldName + ` struct {
+					Entity[` + repositoryErr.FieldName + `] // or Entity[` + repositoryErr.FieldName + `] 'db:"table(orders)"' if you want to specify table name
+				}`
+			example = strings.ReplaceAll(example, "'", "`")
+			return nil, fmt.Errorf("build repository error for %s: embedded Entity was not found in    %s \n\t\tclarification looks like this:\n:%s", typ.String(), repositoryErr.FieldTypeName, example)
+		}
 		return nil, err
 	}
 
@@ -52,12 +59,13 @@ func buildRepositoryFromStruct[T any](db *sql.DB, autoMigrate bool) (*T, error) 
 
 		return nil, fmt.Errorf("no entity type found in %s,'%s' must have at least one entity type looks like this\n:%s", typ.String(), typ.String(), example)
 	}
-	sqlMigrates, err := utils.GetScriptMigrate(db, tenantDb.DbName, tenantDb.Dialect, ret.EntityTypes...)
-	if err != nil {
-		return nil, err
-	}
-	tenantDb.SqlMigrate = sqlMigrates
 	if autoMigrate {
+		sqlMigrates, err := utils.GetScriptMigrate(db, tenantDb.DbName, tenantDb.Dialect, ret.EntityTypes...)
+		if err != nil {
+			return nil, err
+		}
+		tenantDb.SqlMigrate = sqlMigrates
+
 		err = tenantDb.DoMigrate()
 		if err != nil {
 			return nil, err
@@ -99,22 +107,59 @@ While create repository looks like
 
 		}
 */
-func Repo[T any](db *sql.DB, autoMigrate bool) (*T, error) {
+func createErrorRepo(typ reflect.Type, err error) interface{} {
+	if tenantFieldStruct, ok := typ.FieldByName("TenantDb"); ok {
+
+		typeOfTenantFieldStruct := tenantFieldStruct.Type
+		if typeOfTenantFieldStruct.Kind() == reflect.Ptr {
+			typeOfTenantFieldStruct = typeOfTenantFieldStruct.Elem()
+		}
+
+		ret := reflect.New(typ).Elem()
+
+		tenantField := ret.FieldByName("TenantDb")
+		if tenantField.Kind() == reflect.Ptr {
+			tenantFieldVal := reflect.New(typeOfTenantFieldStruct)
+			tenantFieldIns := tenantFieldVal.Elem()
+			tenantFieldIns.FieldByName("Err").Set(reflect.ValueOf(err))
+			tenantField.Set(tenantFieldIns.Addr())
+		} else {
+			tenantField.FieldByName("Err").Set(reflect.ValueOf(err))
+
+		}
+
+		return ret.Interface()
+	} else {
+		panic(fmt.Sprintf("Repository struct '%s' must have embedded TenantDb struct", typ.String()))
+	}
+}
+func Repo[T any](db *sql.DB, autoMigrate bool) *T {
 	typ := reflect.TypeOf((*T)(nil)).Elem()
+	if db == nil {
+		err := fmt.Errorf("db is nil")
+		ret := createErrorRepo(typ, err).(T)
+		return &ret
+
+	}
 	dbName, err := utils.GetDbName(db)
-	if err != nil {
-		return nil, err
+
+	if err != nil { //<-- error getting db name return  repository with error status
+
+		ret := createErrorRepo(typ, err).(T)
+		return &ret
+
 	}
 	key := fmt.Sprintf("%s_%s", dbName, typ.String())
 	if v, ok := repoCache.Load(key); ok {
-		return v.(*T), nil
+		return v.(*T)
 	}
 
 	ret, err := buildRepositoryFromStruct[T](db, autoMigrate)
 	if err != nil {
-		return nil, err
+		ret := createErrorRepo(typ, err).(T)
+		return &ret
 	}
 
 	repoCache.Store(key, ret)
-	return ret, nil
+	return ret
 }

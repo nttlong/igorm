@@ -9,6 +9,8 @@ import (
 
 type PostgresDialect struct {
 	baseDialect
+	db               *sql.DB
+	paramPlaceholder string
 }
 
 /*
@@ -380,10 +382,31 @@ func (d *PostgresDialect) MakeLimitOffset(limit *int, offset *int) string {
 	}
 	return ""
 }
+func (d *PostgresDialect) BuildSqlInsert(TableName string, AutoKeyField string, fields ...string) string {
+	ret := "INSERT INTO "
+	ret += d.QuoteIdent(TableName)
+	val := "VALUES ("
+	for _, field := range fields {
+		ret += ", " + d.QuoteIdent(field)
+		val += ", ?"
+	}
+	ret += ")"
+	val += ")"
+	if AutoKeyField != "" {
+		ret += " RETURNING " + d.QuoteIdent(AutoKeyField)
+	}
+	ret += val
+	return ret
+
+}
+func (d *PostgresDialect) GetParamPlaceholder() string {
+	return d.paramPlaceholder
+}
 
 // func NewPostgresDialect(db *sql.DB) {
 func NewPostgresDialect(db *sql.DB) Dialect {
 	return &PostgresDialect{
+		paramPlaceholder: "$",
 		baseDialect: baseDialect{
 			schema: map[string]map[string]TableSchema{},
 			mapGoTypeToDb: map[string]string{

@@ -10,7 +10,7 @@ import (
 This struct is definition of tenant db
 */
 type TenantDb struct {
-	DB                   *sql.DB
+	DB                   sql.DB
 	Dialect              Dialect
 	DBType               DBType
 	DBTypeName           string
@@ -18,6 +18,7 @@ type TenantDb struct {
 	DbName               string
 	Relationships        []*RelationshipRegister
 	buildRepositoryError error
+	Err                  error
 }
 type MigrateError struct {
 	Errs          []error
@@ -54,10 +55,12 @@ func (t *TenantDb) DoMigrate() error {
 }
 
 type RelationshipRegister struct {
-	owner *TenantDb
-	err   error
-	from  map[string][]string
-	to    map[string][]string
+	owner      *TenantDb
+	err        error
+	fromTable  string
+	fromFields []string
+	toTable    string
+	toFields   []string
 }
 
 func (r *RelationshipRegister) From(fields ...interface{}) *RelationshipRegister {
@@ -73,17 +76,26 @@ func (r *RelationshipRegister) From(fields ...interface{}) *RelationshipRegister
 			r.owner.buildRepositoryError = r.err
 			return r
 		}
+		if r.fromTable == "" {
+			r.fromTable = tableName
+		}
+
 		fieldNameField := valField.FieldByName("ColName")
+
 		if fieldNameField.IsValid() {
 			fieldName = fieldNameField.String()
 		} else {
 			r.err = fmt.Errorf("TableName not found in field in field at RelationshipRegister.From '%s'", field)
 			return r
 		}
-		if _, ok := r.from[tableName]; !ok {
-			r.from[tableName] = []string{}
+		if r.fromTable != "" && r.fromTable != tableName {
+
+			r.owner.buildRepositoryError = fmt.Errorf("%s must belong to the same table name '%s' but got '%s'", fieldName, r.fromTable, tableName)
+			return r
 		}
-		r.from[tableName] = append(r.from[tableName], fieldName)
+
+		r.fromFields = append(r.fromFields, fieldName)
+		r.fromTable = tableName
 
 	}
 	return r
@@ -112,24 +124,19 @@ func (r *RelationshipRegister) To(fields ...interface{}) error {
 			r.owner.buildRepositoryError = fmt.Errorf("TableName not found in field at RelationshipRegister.To '%s'", field)
 			return r.owner.buildRepositoryError
 		}
-		if _, ok := r.to[tableName]; !ok {
-			r.to[tableName] = []string{}
+		if r.toTable == "" {
+			r.toTable = tableName
 		}
-		r.to[tableName] = append(r.from[tableName], fieldName)
+		if r.toTable != tableName {
+			r.err = fmt.Errorf("%s must belong to the same table name '%s' but got '%s'", fieldName, r.fromTable, tableName)
+			return r.err
+		}
 
 	}
 	// check the balance of num of field in from and to
-	for tableName, fields := range r.from {
-		if _, ok := r.to[tableName]; !ok {
-			r.owner.buildRepositoryError = fmt.Errorf("number of fields were not balance, from %d to %d", len(fields), 0)
-			return r.owner.buildRepositoryError
-
-		}
-		if len(fields) != len(r.to[tableName]) {
-			r.owner.buildRepositoryError = fmt.Errorf("number of fields were not balance, from %d to %d", len(fields), len(r.to[tableName]))
-			return r.owner.buildRepositoryError
-
-		}
+	if len(r.fromFields) != len(r.toFields) {
+		r.err = fmt.Errorf("number of fields were not balance, from %d to %d", len(r.fromFields), len(r.toFields))
+		return r.err
 	}
 
 	return nil
@@ -151,11 +158,33 @@ While create repository looks like
 */
 func (t *TenantDb) NewRelationship() *RelationshipRegister {
 	ret := &RelationshipRegister{
-		owner: t,
-		from:  make(map[string][]string),
-		to:    make(map[string][]string),
+		owner:      t,
+		fromFields: []string{},
+		toFields:   []string{},
+		fromTable:  "",
+		toTable:    "",
 	}
 	t.Relationships = append(t.Relationships, ret)
 	return ret
 
+}
+func (t *TenantDb) From(table interface{}) *Query {
+	return &Query{
+		table:    table,
+		tenantDb: t,
+	}
+}
+func (t *TenantDb) InsertInto(entity any) *InsertQuery {
+	typ := reflect.TypeOf(entity)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+
+	tableName := utils.TableNameFromStruct(typ)
+	return &InsertQuery{
+		tableName:  tableName,
+		entityType: typ,
+		dialect:    t.Dialect,
+		tenantDb:   t,
+	}
 }

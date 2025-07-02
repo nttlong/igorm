@@ -12,6 +12,7 @@ type compilerInfo struct {
 	FuncField   *FuncField
 	AliasField  *AliasField
 	DbField     *DbField
+	SortField   *SortField
 	Op          string
 	Left        interface{}
 	Right       interface{}
@@ -19,11 +20,15 @@ type compilerInfo struct {
 }
 
 func (c *sqlCompiler) extract(expr interface{}) *compilerInfo {
+	if typ := reflect.TypeOf(expr); typ.Kind() != reflect.Struct {
+		return nil
+	}
 	fieldNames := []string{
 		"BinaryField",
 		"FuncField",
 		"AliasField",
 		"DbField",
+		"SortField",
 		//"Op",
 	}
 	ret := compilerInfo{}
@@ -70,13 +75,16 @@ func (c *sqlCompiler) extract(expr interface{}) *compilerInfo {
 }
 func (c *sqlCompiler) exprToSQL(v interface{}, d Dialect) (string, []interface{}) {
 	val := reflect.ValueOf(v)
+	if val.Kind() == reflect.Ptr && !val.IsNil() {
+		val = val.Elem()
+	}
 
 	// typ := reflect.TypeOf(v)
 	// fmt.Println(typ.Name())
 	if val.Kind() == reflect.Struct {
 		fmt.Println(reflect.TypeOf(v).String())
 
-		method := val.MethodByName("ToSqlExpr2")
+		method := val.MethodByName("ToSqlExpr")
 		if method.IsValid() && method.Type().NumIn() == 1 {
 			// fmt.Println(method.Type().NumIn())
 			res := method.Call([]reflect.Value{reflect.ValueOf(d)})
@@ -106,6 +114,9 @@ func (c *sqlCompiler) exprToSQL(v interface{}, d Dialect) (string, []interface{}
 		}
 	}
 	return "?", []interface{}{v}
+}
+func (c *sqlCompiler) compilerField(expr *DbField, d Dialect) (string, []interface{}) {
+	panic("not support")
 }
 func (c *sqlCompiler) compileBinaryField(bf *BinaryField, d Dialect) (string, []interface{}) {
 	if bf.Op == "IS NULL" {
@@ -151,46 +162,65 @@ func (c *sqlCompiler) CompileFuncField(expr *FuncField, d Dialect) (string, []in
 }
 func (c *sqlCompiler) Compile(expr interface{}, d Dialect) (string, []interface{}) {
 
-	f := c.extract(expr)
-	if f == nil {
-		if bf, ok := expr.(*BinaryField); ok {
-			return c.compileBinaryField(bf, d)
-
-		}
-		if ff, ok := expr.(*FuncField); ok {
-			return c.CompileFuncField(ff, d)
-
-		}
-		typ := reflect.TypeOf(expr)
-		if typ.Kind() == reflect.Ptr {
-			typ = typ.Elem()
-		}
-
-		tableName := utils.TableNameFromStruct(typ)
-
-		return d.QuoteIdent(tableName), nil
+	if bf, ok := expr.(*FieldBool); ok {
+		left, argsLeft := c.Compile(bf.Left, d)
+		right, argsRight := c.Compile(bf.Right, d)
+		sql := fmt.Sprintf("(%s %s %s)", left, bf.Op, right)
+		return sql, append(argsLeft, argsRight...)
 
 	}
+	if bf, ok := expr.(*BinaryField); ok {
+		return c.compileBinaryField(bf, d)
 
-	if f.BinaryField != nil {
+	}
+	if bf, ok := expr.(BinaryField); ok {
+		return c.compileBinaryField(&bf, d)
 
-		return c.compileBinaryField(f.BinaryField, d)
 	}
-	if f.FuncField != nil {
-		return c.CompileFuncField(f.FuncField, d)
+	if ff, ok := expr.(*FuncField); ok {
+		return c.CompileFuncField(ff, d)
+
 	}
-	if f.AliasField != nil {
-		sql, args := c.exprToSQL(f.AliasField.Field, d)
-		return fmt.Sprintf("%s AS %s", sql, d.QuoteIdent(f.AliasField.Alias)), args
+	if df, ok := expr.(*DbField); ok {
+		tableName := d.QuoteIdent(df.TableName)
+		colName := d.QuoteIdent(df.ColName)
+
+		return tableName + "." + colName, nil
 	}
-	if f.DbField != nil {
-		return d.QuoteIdent(f.DbField.TableName, f.DbField.ColName), nil
+	if df, ok := expr.(*SortField); ok {
+		sqlText, args := c.Compile(df.Field, d)
+
+		return sqlText + " " + df.Sort, args
+	}
+	if df, ok := expr.(*AliasField); ok {
+		sqlText, args := c.Compile(df.Field, d)
+
+		return sqlText + " AS " + d.QuoteIdent(df.Alias), args
+	}
+	if df, ok := expr.(AliasField); ok {
+		sqlText, args := c.Compile(df.Field, d)
+
+		return sqlText + " AS " + d.QuoteIdent(df.Alias), args
+	}
+	typ := reflect.TypeOf(expr)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
 	}
 
-	// if f.ValueField != nil {
-	// 	return "?", []interface{}{f.ValueField.Value}
-	// }
-	return "NULL", nil
+	tableName := utils.TableNameFromStruct(typ)
+
+	return d.QuoteIdent(tableName), nil
+}
+func (c *sqlCompiler) ToSqlJoinClause(expr interface{}, d Dialect) (string, []interface{}) {
+	if expr == nil {
+		return "", nil
+	}
+	if bf, ok := expr.(*BinaryField); ok {
+		return c.compileBinaryField(bf, d)
+
+	}
+	panic("Not support join clause")
+
 }
 
 var compiler = &sqlCompiler{}

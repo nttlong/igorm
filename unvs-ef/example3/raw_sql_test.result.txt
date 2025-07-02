@@ -1,0 +1,7 @@
+goos: windows
+goarch: amd64
+pkg: unvs.ef/example3
+cpu: 12th Gen Intel(R) Core(TM) i7-12650H
+BenchmarkSelect-16    	      43	  24446395 ns/op	 9486415 B/op	  166127 allocs/op
+PASS
+ok  	unvs.ef/example3	1.915s

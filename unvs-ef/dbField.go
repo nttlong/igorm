@@ -1,5 +1,23 @@
 package unvsef
 
+type imp struct {
+	Key string
+}
+type DbField struct {
+	TableName string
+	FieldName string
+	ColName   string
+}
+
+func (dbd *DbField) ToSqlExpr(d Dialect) (string, []interface{}) {
+
+	return d.QuoteIdent(dbd.TableName, dbd.ColName), nil
+}
+func (dbd DbField) ToSqlExpr2(d Dialect) (string, []interface{}) {
+
+	return d.QuoteIdent(dbd.TableName, dbd.ColName), nil
+}
+
 type BinaryField struct {
 	Left  interface{}
 	Op    string
@@ -13,34 +31,47 @@ type FuncField struct {
 	FuncName string
 	Args     []interface{}
 }
-type DbField struct {
-	TableName string
-	ColName   string
-}
 
-//	type ValueField[TField any] struct {
-//		Value TField
-//	}
+type SortField struct {
+	Field interface{}
+	Sort  string
+}
 type Field[TField any] struct {
 	*DbField
 	*AliasField
 	*BinaryField
 	*FuncField
+	*SortField
 	Op string
-	// *ValueField[TField]
+
+	val *TField
 }
 
-func (f *Field[TField]) Eq(other interface{}) *FieldBool {
-	return &FieldBool{
-		BinaryField: &BinaryField{
-			Left:  f,
-			Op:    "=",
-			Right: other,
-		},
+func (f *DbField) clone() *DbField {
+	return &DbField{
+		TableName: f.TableName,
+		ColName:   f.ColName,
+		FieldName: f.FieldName,
+	}
+}
+func (f *Field[TField]) Set(val *TField) {
+	f.val = val
+}
+func (f *Field[TField]) Get() *TField {
+	return f.val
+}
+
+func (f *Field[TField]) Eq(other interface{}) *BinaryField {
+	return &BinaryField{
+
+		Left:  f,
+		Op:    "=",
+		Right: other,
 	}
 }
 func (f *Field[TField]) Ne(other interface{}) *Field[TField] {
 	return &Field[TField]{
+		DbField: f.DbField,
 		BinaryField: &BinaryField{
 			Left:  f,
 			Op:    "!=",
@@ -50,6 +81,7 @@ func (f *Field[TField]) Ne(other interface{}) *Field[TField] {
 }
 func (f *Field[TField]) Gt(other interface{}) *Field[TField] {
 	return &Field[TField]{
+		DbField: f.DbField,
 		BinaryField: &BinaryField{
 			Left:  f,
 			Op:    ">",
@@ -68,6 +100,7 @@ func (f *Field[TField]) Lt(other interface{}) *Field[TField] {
 }
 func (f *Field[TField]) Gte(other interface{}) *Field[TField] {
 	return &Field[TField]{
+		DbField: f.DbField,
 		BinaryField: &BinaryField{
 			Left:  f,
 			Op:    ">=",
@@ -77,6 +110,7 @@ func (f *Field[TField]) Gte(other interface{}) *Field[TField] {
 }
 func (f *Field[TField]) Lte(other interface{}) *Field[TField] {
 	return &Field[TField]{
+		DbField: f.DbField,
 		BinaryField: &BinaryField{
 			Left:  f,
 			Op:    "<=",
@@ -86,6 +120,7 @@ func (f *Field[TField]) Lte(other interface{}) *Field[TField] {
 }
 func (f *Field[TField]) Add(other interface{}) *Field[TField] {
 	return &Field[TField]{
+		DbField: f.DbField,
 		BinaryField: &BinaryField{
 			Left:  f,
 			Op:    "+",
@@ -95,6 +130,7 @@ func (f *Field[TField]) Add(other interface{}) *Field[TField] {
 }
 func (f *Field[TField]) Sub(other interface{}) *Field[TField] {
 	return &Field[TField]{
+		DbField: f.DbField,
 		BinaryField: &BinaryField{
 			Left:  f,
 			Op:    "-",
@@ -105,6 +141,7 @@ func (f *Field[TField]) Sub(other interface{}) *Field[TField] {
 
 func (f *Field[TField]) Mul(other interface{}) *Field[TField] {
 	return &Field[TField]{
+		DbField: f.DbField,
 		BinaryField: &BinaryField{
 			Left:  f,
 			Op:    "*",
@@ -115,6 +152,7 @@ func (f *Field[TField]) Mul(other interface{}) *Field[TField] {
 
 func (f *Field[TField]) Div(other interface{}) *Field[TField] {
 	return &Field[TField]{
+		DbField: f.DbField,
 		BinaryField: &BinaryField{
 			Left:  f,
 			Op:    "/",
@@ -124,6 +162,7 @@ func (f *Field[TField]) Div(other interface{}) *Field[TField] {
 }
 func (f *Field[TField]) Len() *Field[int] {
 	return &Field[int]{
+		DbField: f.DbField,
 		FuncField: &FuncField{
 			FuncName: "LEN",
 			Args:     []interface{}{f},
@@ -203,4 +242,7 @@ func (f *Field[TField]) Count() *FuncField {
 		FuncName: "COUNT",
 		Args:     []interface{}{f},
 	}
+}
+func Lit[TField any](val TField) *TField {
+	return &val
 }

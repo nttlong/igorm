@@ -41,11 +41,19 @@ type ColumnSchema struct {
 #Dialect allows different SQL dialects (e.g., PostgreSQL, MSSQL, MySQL) to be supported.
 */
 type Dialect interface {
-
+	GetParamPlaceholder() string
 	/* depends on bd driver type the function will be implement in
 	dialect.<driver name>.go
 	*/
+	BuildSqlInsert(TableName string, AutoKeyField string, fields ...string) string
 	MakeLimitOffset(limit *int, offset *int) string
+	/*
+		Example:
+			QuoteIdent("table_name")
+			=> [table_name] if dialect is MSSQL
+			QuoteIdent("table_name","column_name")
+			=> [table_name].[column_name] if dialect is MSSQL
+	*/
 	QuoteIdent(args ...string) string
 
 	// Schema management methods

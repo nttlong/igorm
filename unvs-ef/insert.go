@@ -1,52 +1,117 @@
 package unvsef
 
 import (
-	"fmt"
+	"context"
 	"reflect"
-	"strings"
 )
 
 type InsertQuery struct {
-	Entity any
+	tableName   string
+	dialect     Dialect
+	entityType  reflect.Type
+	tenantDb    *TenantDb
+	Err         error
+	fieldMap    map[string]interface{}
+	autoKey     *autoNumberKey
+	data        interface{}
+	autoKeyType reflect.Type
 }
 
-func Insert(entity any) *InsertQuery {
-	return &InsertQuery{Entity: entity}
-}
-func (q *InsertQuery) ToSQL(d Dialect) (string, []interface{}) {
-	val := reflect.ValueOf(q.Entity)
-	typ := reflect.TypeOf(q.Entity)
+func (q *InsertQuery) Values(data interface{}) *InsertQuery {
 
-	if val.Kind() == reflect.Pointer {
-		val = val.Elem()
-		typ = typ.Elem()
+	autoKey, autoKeyType, fieldMap, err := utils.extractValue(q.entityType, data)
+	if err != nil {
+		q.Err = err
+		return q
 	}
+	q.fieldMap = fieldMap
+	q.autoKey = autoKey
+	q.data = data
+	q.autoKeyType = autoKeyType
+	return q
 
-	tableName := utils.TableNameFromStruct(typ)
-	meta := utils.GetMetaInfo(typ)
+}
 
-	columns := []string{}
-	placeholders := []string{}
+// var cacheInsertQuery sync.Map
+
+func (q *InsertQuery) ToSQL() (string, []interface{}, error) {
+	// key := fmt.Sprintf("%s_%s_%s", q.tenantDb.DbName, q.tableName, q.entityType.String())
+
+	if q.Err != nil {
+		return "", nil, q.Err
+	}
 	args := []interface{}{}
+	fields := []string{}
 
-	for fieldName, tag := range meta[tableName] {
-		field := val.FieldByName(tag.Field.Name)
-		if field.Kind() == reflect.Struct {
-			// field is DbField[T], check Value field
-			v := field.FieldByName("Value")
-			if !v.IsNil() {
-				columns = append(columns, d.QuoteIdent(tableName, fieldName))
-				placeholders = append(placeholders, "?")
-				args = append(args, v.Elem().Interface())
-			}
+	for fieldNAme, arg := range q.fieldMap {
+		args = append(args, arg)
+		fields = append(fields, utils.ToSnakeCase(fieldNAme))
+
+	}
+	autoKeyFieldName := ""
+	if q.autoKey != nil {
+		autoKeyFieldName = q.autoKey.FieldName
+	}
+	// sql := ""
+	// if v, ok := cacheInsertQuery.Load(key); ok {
+	// 	sql = v.(string)
+	// } else {
+
+	// }
+	sql := q.dialect.BuildSqlInsert(q.tableName, autoKeyFieldName, fields...)
+	// cacheInsertQuery.Store(key, sql)
+	return sql, args, nil
+}
+func (q *InsertQuery) ExecWithContext(context context.Context) (interface{}, error) {
+	sql, args, err := q.ToSQL()
+	if err != nil {
+		return nil, err
+	}
+	// start := time.Now()
+
+	row := q.tenantDb.DB.QueryRowContext(context, sql, args...)
+	if row.Err() != nil {
+		return nil, row.Err()
+	}
+	if q.autoKeyType != nil {
+		retId := reflect.New(q.autoKeyType)
+		err = row.Scan(retId.Interface())
+		if err != nil {
+			return nil, err
 		}
+		valueOfqData := reflect.ValueOf(q.data)
+		valueOfqData.Elem().FieldByName(q.autoKey.fieldTag.Field.Name).Set(retId.Elem())
+
+	}
+	// n := time.Since(start).Microseconds()
+	// fmt.Printf("exec time %d us\n", n)
+
+	return q.data, nil
+
+}
+func (q *InsertQuery) Exec() (interface{}, error) {
+	sql, args, err := q.ToSQL()
+	if err != nil {
+		return nil, err
+	}
+	// start := time.Now()
+	row := q.tenantDb.DB.QueryRow(sql, args...)
+	if row.Err() != nil {
+		return nil, row.Err()
+	}
+	if q.autoKeyType != nil {
+		retId := reflect.New(q.autoKeyType)
+		err = row.Scan(retId.Interface())
+		// n := time.Since(start).Nanoseconds()
+		// fmt.Printf("exec sql time :\t\t%d \t\tnns\n", n)
+		if err != nil {
+			return nil, err
+		}
+		valueOfqData := reflect.ValueOf(q.data)
+		valueOfqData.Elem().FieldByName(q.autoKey.fieldTag.Field.Name).Set(retId.Elem())
+
 	}
 
-	sql := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s)",
-		d.QuoteIdent(tableName),
-		strings.Join(columns, ", "),
-		strings.Join(placeholders, ", "),
-	)
+	return q.data, nil
 
-	return sql, args
 }

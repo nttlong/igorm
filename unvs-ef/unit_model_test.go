@@ -1,104 +1,59 @@
 package unvsef
 
 import (
-	"fmt"
+	"database/sql"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
-type Comment struct {
-	Id        Field[uint64] `db:"primaryKey;autoIncrement"`
-	ArticleId Field[uint64] `db:"index"`
-	Content   Field[string] `db:"FTS(content_idx)"`
+type Order struct {
+	Entity[Order]
+	OrderId   FieldNumber[uint64] `db:"primaryKey;autoIncrement"`
+	Version   FieldNumber[int]    `db:"primaryKey"`
+	Note      FieldString         `db:"length(200)"`
+	CreatedAt FieldDateTime
+	UpdatedAt *FieldDateTime
+	CreatedBy FieldString  `db:"length(100)"`
+	UpdatedBy *FieldString `db:"length(100)"`
+}
+type OrderItem struct {
+	Entity[OrderItem]
+	Id        FieldNumber[uint64] `db:"primaryKey;autoIncrement"`
+	OrderId   FieldNumber[uint64] `db:"index(order_ref_idx)"`
+	Version   FieldNumber[int]    `db:"index(order_ref_idx)"`
+	Product   FieldString         `db:"length(100)"`
+	Quantity  FieldNumber[int]
+	CreatedAt FieldDateTime
+	UpdatedAt *FieldDateTime
+	CreatedBy FieldString  `db:"length(100)"`
+	UpdatedBy *FieldString `db:"length(100)"`
+}
+type OrderRepository struct {
+	*TenantDb
+	Orders     *Order
+	OrderItems *OrderItem
 }
 
-type Article struct {
-	Id         FieldUint64    `db:"primaryKey;autoIncrement"`
-	Title      FieldString    `db:"FTS(title_idx);length(50)"`
-	Content    FieldString    `db:"FTS(content_idx);length(50)"`
-	CreatedOn  FieldDateTime  `db:"default:now()"`
-	CreatedBy  FieldString    `db:"length(50)"`
-	ModifiedOn *FieldDateTime `db:"default:now();"`
-	ModifiedBy *FieldString   `db:"length(50)"`
+func (r *OrderRepository) Init() {
+	r.NewRelationship().
+		From(r.Orders.OrderId, r.Orders.Version).
+		To(r.OrderItems.OrderId, r.OrderItems.Version)
 }
+func TestBinaryField(t *testing.T) {
 
-type Repository struct {
-	*TenantDb //<-- Should I user pointer here
-	Articles  *Article
-	Comments  *Comment
-}
+	sqlServerDns := "sqlserver://sa:123456@localhost?database=aaa&fetchSize=10000&encrypt=disable"
+	db, err := sql.Open("sqlserver", sqlServerDns)
 
-func (r *Repository) Init() {
-	r.NewRelationship().From(r.Articles.Id).To(r.Comments.ArticleId, r.Comments.Id)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	repo := Repo[OrderRepository](db, true) // create repos
+	expr := repo.Orders.OrderId.Gt(1000).And(*repo.Orders.Version.Lt(1000))
+	sql, args := expr.ToSqlExpr(repo.Dialect)
 
-}
-func TestRepository(t *testing.T) {
+	t.Log(sql, args)
+	expr = expr.Or(repo.Orders.Note.Eq("test"))
+	sql, args = expr.ToSqlExpr(repo.Dialect)
 
-	qr := Queryable[Article]()
-	d := &PostgresDialect{}
-	sql, args := "", []interface{}{}
-	wsum := qr.Content.Len().Sum()
-	sql, args = wsum.ToSqlExpr(d)
-	assert.Equal(t, "SUM(LEN(\"articles\".\"content\"))", sql)
 	t.Log(sql, args)
-	wlike := qr.Content.Like("%a%")
-	sql, args = wlike.ToSqlExpr(d)
-	assert.Equal(t, "(\"articles\".\"content\" LIKE ?)", sql)
-	assert.Equal(t, []interface{}{"%a%"}, args)
-	nwlike := qr.Content.Len().NotLike("%a%")
-	sql, args = nwlike.ToSqlExpr(d)
-	t.Log(sql, args)
-	wsum = qr.Id.Sum()
-	sql, args = wsum.ToSqlExpr(d)
-	t.Log(sql, args)
-	w1 := qr.Content.Len()
-	sql, args = w1.ToSqlExpr(d)
-	t.Log(sql, args)
-	wid := qr.Id.Eq(1)
-	sql, args = wid.ToSqlExpr(d)
-	t.Log(sql, args)
-	//sql, args := qr.Content.Len().Eq(qr.CreatedBy).ToSqlExpr(d)
-
-	where := qr.Content.Len().Eq(qr.CreatedBy)
-	sql, args = where.ToSqlExpr(d)
-	//sql= "[articles].[content] = ?"
-	//mong muon la "[articles].[content] = [articles].[CreatedBy]"
-	t.Log(sql, args)
-	bw1 := qr.CreatedOn.Between(2020, 2025)
-	sql, args = bw1.ToSqlExpr(d)
-
-	//sql= "[articles].[content] = ?"
-	//mong muon la "[articles].[content] = [articles].[CreatedBy]"
-	t.Log(sql, args)
-	bw2 := (qr.ModifiedOn.Between(2020, 2025))
-	sql, args = bw1.ToSqlExpr(d)
-
-	//sql= "[articles].[content] = ?"
-	//mong muon la "[articles].[content] = [articles].[CreatedBy]"
-	t.Log(sql, args)
-	bw := bw1.And(bw2)
-	sql, args = bw.ToSqlExpr(d)
-	t.Log(sql, args)
-}
-func TestQuery(t *testing.T) {
-	d := &PostgresDialect{}
-	article := Queryable[Article]()
-	comment := Queryable[Comment]()
-	joinExpr, args := compiler.Compile(comment.ArticleId.Eq(article.Id), d)
-	fmt.Println(joinExpr, args)
-	sql := From(article).Select(article.Content, article.CreatedBy).Where(article.Content.Len().Gt(100))
-	sqlStr, args := sql.ToSQL(d)
-	t.Log(sqlStr, args)
-	conditional := comment.ArticleId.Eq(article.Id).And(comment.Content.Len().Gt(100))
-	joinExpr, args = compiler.Compile(conditional, d)
-	fmt.Println(joinExpr, args)
-	//jonnExpr la
-	//"((\"comments\".\"article_id\" = ?) AND (LEN(\"comments\".\"content\") > ?))"
-	// va args la 100
-
-	sql3 := From(LeftJoin(conditional)).Select(comment.Content)
-	sqlStr, args = sql3.ToSQL(d)
-	t.Log(sqlStr, args)
-
 }

@@ -1,0 +1,7 @@
+goos: windows
+goarch: amd64
+pkg: gorm_app
+cpu: 12th Gen Intel(R) Core(TM) i7-12650H
+BenchmarkGormWithFindTimeMeasure-16    	      56	  21238000 ns/op	30159273 B/op	  246575 allocs/op
+PASS
+ok  	gorm_app	2.256s

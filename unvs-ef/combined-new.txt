@@ -10,9 +10,11 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 	"unicode"
+	"unsafe"
 
-	_ "github.com/microsoft/go-mssqldb"
+	"github.com/jinzhu/inflection"
 )
 
 type DBType string
@@ -68,9 +70,6 @@ type utilsPackage struct {
 	currentPackagePath                      string //<-- cache current package path
 	cacheGetRequireFields                   sync.Map
 	cacheGetAutoPkKey                       sync.Map
-	entityTypeName                          string
-
-	cacheReplacePlaceHolder sync.Map
 }
 
 // ParseDBTag parses the `db` struct tag into a FieldTag struct.
@@ -184,24 +183,17 @@ func (u *utilsPackage) TableNameFromStruct(typ reflect.Type) string {
 		return v.(string)
 	}
 	for i := 0; i < typ.NumField(); i++ {
-		fType := typ.Field(i).Type
-		if fType.Kind() == reflect.Ptr {
-			fType = fType.Elem()
-		}
-
-		if strings.HasPrefix(fType.String(), u.entityTypeName) {
+		if typ.Field(i).Name == "_" {
 			parsed := u.ParseDBTag(typ.Field(i))
 			if parsed.TableName != "" {
-				u.CacheTableNameFromStruct.Store(typ, parsed.TableName)
 				return parsed.TableName
-			} else {
-				u.CacheTableNameFromStruct.Store(typ, u.ToSnakeCase(typ.Name()))
-				return u.ToSnakeCase(typ.Name())
-
 			}
 		}
 	}
-	return ""
+	base := u.ToSnakeCase(typ.Name())
+	ret := inflection.Plural(base)
+	u.CacheTableNameFromStruct.Store(typ, ret)
+	return ret
 }
 
 /*
@@ -302,15 +294,10 @@ func (u *utilsPackage) GetMetaInfo(typ reflect.Type) map[string]map[string]Field
 	tableName := utils.TableNameFromStruct(typ)
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
-		ftType := field.Type
-		if ftType.Kind() == reflect.Ptr {
-			ftType = ftType.Elem()
-		}
 
 		// Bỏ qua field đặc biệt "_" (used for table(...) override)
-		if strings.HasPrefix(ftType.String(), u.entityTypeName) {
+		if field.Name == "_" {
 
-			fmt.Println("Skip: ", ftType.String())
 			continue
 		}
 
@@ -802,15 +789,6 @@ type repositoryValueStruct struct {
 This function will read information from @typ and create a structure similar to the one described in
 "repositoryValueStruct" if no error occurs
 */
-type buildRepositoryError struct {
-	FieldName     string
-	FieldTypeName string
-	err           error
-}
-
-func (e buildRepositoryError) Error() string {
-	return fmt.Sprintf("build repository from type %s error: %s", e.FieldTypeName, e.FieldName)
-}
 func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type) (*repositoryValueStruct, error) {
 
 	retValueOfRepo := reflect.New(typ)
@@ -849,16 +827,8 @@ func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type) (*repositoryVal
 		if fieldType.Kind() == reflect.Ptr {
 			fieldType = fieldType.Elem()
 		}
-		tableName := utils.TableNameFromStruct(fieldType)
-		if tableName == "" {
 
-			return nil, buildRepositoryError{
-				FieldName:     field.Name,
-				FieldTypeName: fieldType.String(),
-				err:           fmt.Errorf("field %s of type %s is not a struct or not a pointer to struct", field.Name, fieldType),
-			}
-		}
-		queryableVal := entityUtils.QueryableFromType(fieldType, tableName)
+		queryableVal := entityUtils.QueryableFromType(fieldType, utils.TableNameFromStruct(fieldType))
 		queryableValField := valueOfRepo.Field(i)
 
 		queryableValField.Set(queryableVal)
@@ -891,6 +861,27 @@ func (u *utilsPackage) GetOrCreateRepository(typ reflect.Type) (*repositoryValue
 	return repoVal, nil
 }
 
+func (u *utilsPackage) exprToSQLDelete(v interface{}, d Dialect) (string, []interface{}) {
+
+	switch val := v.(type) {
+	case *Field[any]:
+		return val.ToSqlExpr(d)
+	case *Field[string]:
+		return val.ToSqlExpr(d)
+	case *Field[int]:
+		return val.ToSqlExpr(d)
+	case *Field[float64]:
+		return val.ToSqlExpr(d)
+	case *Field[float32]:
+		return val.ToSqlExpr(d)
+	case *Field[uint64]:
+		return val.ToSqlExpr(d)
+	case *Field[bool]:
+		return val.ToSqlExpr(d)
+	default:
+		return "?", []interface{}{val}
+	}
+}
 func (u *utilsPackage) Join(parts []string, sep string) string {
 	return u.join(parts, sep)
 }
@@ -911,6 +902,114 @@ func (u *utilsPackage) PtrToInterface(v interface{}) interface{} {
 	return ptr.Interface()                                         // trả *interface{}
 }
 
+type FieldMeta struct {
+	Offset uintptr
+	Typ    reflect.Type
+}
+
+func (u *utilsPackage) buildFieldMapNoCache(t reflect.Type) map[string]FieldMeta {
+	m := map[string]FieldMeta{}
+	fmt.Println(t.Kind())
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	if t.Kind() == reflect.Slice {
+		t = t.Elem()
+	}
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		if f.Anonymous {
+			m2 := u.buildFieldMap(f.Type)
+			for k, v := range m2 {
+				m[k] = v
+			}
+		}
+		m[f.Name] = FieldMeta{
+			Offset: f.Offset,
+			Typ:    f.Type,
+		}
+	}
+	return m
+}
+func (u *utilsPackage) buildFieldMap(t reflect.Type) map[string]FieldMeta {
+	if v, ok := u.cacheBuildFieldMap.Load(t); ok {
+		return v.(map[string]FieldMeta)
+	}
+	m := u.buildFieldMapNoCache(t)
+	u.cacheBuildFieldMap.Store(t, m)
+	return m
+}
+
+// fastest fetchAllRows unsafe mode
+func (u *utilsPackage) fetchAllRows(rows *sql.Rows, typ reflect.Type) (interface{}, error) {
+	defer rows.Close()
+
+	const defaultCap = 4096
+	slice := reflect.MakeSlice(reflect.SliceOf(typ), 0, defaultCap)
+
+	cols, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	fieldMap := u.buildFieldMap(typ)
+
+	for rows.Next() {
+		ptr := reflect.New(typ)
+		mem := unsafe.Pointer(ptr.Pointer()) // lấy địa chỉ trước khi gọi Elem
+		val := ptr.Elem()
+
+		scanArgs := make([]interface{}, len(cols))
+		for i, col := range cols {
+			if meta, ok := fieldMap[col]; ok {
+				fieldPtr := unsafe.Pointer(uintptr(mem) + meta.Offset)
+
+				switch meta.Typ.Kind() {
+				case reflect.String:
+					scanArgs[i] = (*string)(fieldPtr)
+				case reflect.Int:
+					scanArgs[i] = (*int)(fieldPtr)
+				case reflect.Int64:
+					scanArgs[i] = (*int64)(fieldPtr)
+				case reflect.Float32:
+					scanArgs[i] = (*float32)(fieldPtr)
+				case reflect.Float64:
+					scanArgs[i] = (*float64)(fieldPtr)
+				case reflect.Bool:
+					scanArgs[i] = (*bool)(fieldPtr)
+				case reflect.Struct:
+					// time.Time, uuid.UUID, etc.
+					switch meta.Typ.String() {
+					case "time.Time":
+						scanArgs[i] = (*time.Time)(fieldPtr)
+					case "uuid.UUID":
+						scanArgs[i] = (*[16]byte)(fieldPtr) // hoặc dùng gorm UUID
+					default:
+						var dummy interface{}
+						scanArgs[i] = &dummy
+					}
+				default:
+					var dummy interface{}
+					scanArgs[i] = &dummy
+				}
+			} else {
+				var dummy interface{}
+				scanArgs[i] = &dummy
+			}
+		}
+
+		if err := rows.Scan(scanArgs...); err != nil {
+			return nil, err
+		}
+
+		slice = reflect.Append(slice, val)
+	}
+
+	return slice.Interface(), nil
+}
 func (u *utilsPackage) getRequireFields(typ reflect.Type) map[string]FieldTag {
 	//check cache
 	if v, ok := u.cacheGetRequireFields.Load(typ.String()); ok {
@@ -987,7 +1086,7 @@ func (u *utilsPackage) extractValue(entityType reflect.Type, data interface{}) (
 			if fieldTag.Length != nil {
 				if fieldValue.Kind() == reflect.String {
 					if len(val.(string)) == 0 {
-						return nil, nil, nil, fmt.Errorf("%s is require but value is empty in %s/nFields: %d", fieldName, typ.String(), fieldTag.Length)
+						return nil, nil, nil, fmt.Errorf("%s is require but value is empty in %s/nFields: %s", fieldName, typ.String())
 					}
 					if len(val.(string)) > *fieldTag.Length {
 						return nil, nil, nil, fmt.Errorf("size of '%s' in value of '%s' is exceed of %d", fieldName, typ.String(), *fieldTag.Length)
@@ -1010,55 +1109,24 @@ func (u *utilsPackage) extractValue(entityType reflect.Type, data interface{}) (
 
 }
 
-/*
-this function will find any ? in the sql and replace it with placeholder+found index in the args
-for example:
-sql: "SELECT * FROM table WHERE id =? AND name =?"
-placeholder: $
-return: "SELECT * FROM table WHERE id = $1 AND name = $2"
-*/
-func (u *utilsPackage) replacePlaceHolder(placeholder string, sql string) string {
-	key := placeholder + ":" + sql
-	if v, ok := u.cacheReplacePlaceHolder.Load(key); ok {
-		return v.(string)
-	}
-	var result strings.Builder
-	paramIndex := 1
-	for i := 0; i < len(sql); i++ {
-		if sql[i] == '?' {
-			result.WriteString(placeholder)
-			result.WriteString(strconv.Itoa(paramIndex))
-			paramIndex++
-		} else {
-			result.WriteByte(sql[i])
-		}
-	}
-	ret := result.String()
-	u.cacheReplacePlaceHolder.Store(key, ret)
-	return ret
-
-}
-
 var utils = &utilsPackage{
-	entityTypeName:     strings.Split(reflect.TypeOf(Entity[any]{}).String(), "[")[0] + "[",
 	currentPackagePath: reflect.TypeOf(utilsPackage{}).PkgPath(),
 	mapType: map[reflect.Type]string{
-		reflect.TypeOf(FieldNumber[int64]{}):   "int64",
-		reflect.TypeOf(FieldNumber[int]{}):     "int",
-		reflect.TypeOf(FieldNumber[float32]{}): "float32",
-		reflect.TypeOf(FieldNumber[float64]{}): "float64",
-		reflect.TypeOf(FieldString{}):          "string",
-		reflect.TypeOf(FieldBool{}):            "bool",
+		reflect.TypeOf(FieldBigInt{}): "int64",
+		reflect.TypeOf(FieldInt{}):    "int",
+		reflect.TypeOf(FieldFloat{}):  "float64",
+		reflect.TypeOf(FieldString{}): "string",
+		reflect.TypeOf(FieldBool{}):   "bool",
 
-		// reflect.TypeOf(FieldUUID{}):     "uuid.UUID",
-		reflect.TypeOf(FieldNumber[int16]{}):  "int16",
-		reflect.TypeOf(FieldNumber[int32]{}):  "int32",
-		reflect.TypeOf(FieldNumber[int64]{}):  "int64",
-		reflect.TypeOf(FieldNumber[uint]{}):   "uint",
-		reflect.TypeOf(FieldNumber[uint16]{}): "uint16",
-		reflect.TypeOf(FieldNumber[uint32]{}): "uint32",
-		reflect.TypeOf(FieldNumber[uint64]{}): "uint64",
-		reflect.TypeOf(FieldDateTime{}):       "time.Time",
+		reflect.TypeOf(FieldUUID{}):     "uuid.UUID",
+		reflect.TypeOf(FieldInt16{}):    "int16",
+		reflect.TypeOf(FieldInt32{}):    "int32",
+		reflect.TypeOf(FieldInt64{}):    "int64",
+		reflect.TypeOf(FieldUint{}):     "uint",
+		reflect.TypeOf(FieldUint16{}):   "uint16",
+		reflect.TypeOf(FieldUint32{}):   "uint32",
+		reflect.TypeOf(FieldUint64{}):   "uint64",
+		reflect.TypeOf(FieldDateTime{}): "time.Time",
 	},
 }
 
@@ -1089,14 +1157,7 @@ func GetRows[T any](cmd interface{}) ([]T, error) {
 		if err != nil {
 			return nil, err
 		}
-		if ret == nil {
-			return []T{}, nil
-		}
 		return ret.([]T), nil
 	}
 	return nil, fmt.Errorf("%s must be *SelectQuery or *SelectQueryWithOrder", cmd)
-}
-
-func FetchAllRows(rows *sql.Rows, typ reflect.Type) (interface{}, error) {
-	return utils.fetchAllRows(rows, typ)
 }

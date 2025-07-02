@@ -1,7 +1,12 @@
 package unvsef
 
+import (
+	"reflect"
+)
+
 type Query struct {
-	table interface{}
+	table    interface{}
+	tenantDb *TenantDb
 }
 
 func From(table interface{}) *Query {
@@ -11,40 +16,38 @@ func From(table interface{}) *Query {
 }
 
 func LeftJoin(table interface{}) interface{} {
-	return &JoinExpr{
+	return &joinExpr{
 		JoinType: "LEFT JOIN",
 		Table:    table,
 	}
 }
 
 func RightJoin(table interface{}) interface{} {
-	return &JoinExpr{
+	return &joinExpr{
 		JoinType: "RIGHT JOIN",
 		Table:    table,
 	}
 }
 
-func InnerJoin(table interface{}) interface{} {
-	return &JoinExpr{
-		JoinType: "INNER JOIN",
-		Table:    table,
-	}
+func InnerJoin(joinExpr *BinaryField) interface{} {
+	panic("not implemented")
 }
 
 func CrossJoin(table interface{}) interface{} {
-	return &JoinExpr{
+	return &joinExpr{
 		JoinType: "CROSS JOIN",
 		Table:    table,
 	}
 }
 
-type JoinExpr struct {
+type joinExpr struct {
 	JoinType string
 	Table    interface{}
 	On       interface{} // can be nil for CROSS JOIN or delayed assignment
 }
 
 type SelectQuery struct {
+	owner    *Query
 	table    interface{}
 	Fields   []interface{}
 	WhereEx  interface{}
@@ -59,10 +62,57 @@ type SelectQueryWithOrder struct {
 	OffsetEx *int
 }
 
+func (q *SelectQueryWithOrder) String() string {
+	sql, _ := q.ToSQL(q.owner.tenantDb.Dialect)
+
+	return sql
+}
+func (q *Query) convertToAlias(field interface{}) interface{} {
+	if _, ok := field.(*AliasField); !ok {
+		return field
+	}
+	panic("not implemented")
+
+}
 func (q *Query) Select(fields ...interface{}) *SelectQuery {
+	selectFields := make([]interface{}, 0, len(fields))
+	for _, f := range fields {
+		// selectFields = append(selectFields, q.convertToAlias(f))
+		if _, ok := f.(*AliasField); !ok {
+			valType := reflect.ValueOf(f)
+			if valType.Kind() == reflect.Ptr {
+				valType = valType.Elem()
+			}
+			aliasField := valType.FieldByName("FieldName")
+
+			if aliasField.IsValid() {
+				fieldName := aliasField.String()
+				selectFields = append(selectFields, &AliasField{f, fieldName})
+			}
+
+		} else {
+			selectFields = append(selectFields, f.(*AliasField))
+		}
+	}
+	// for _, f := range fields {
+	// 	dbField := reflect.ValueOf(f).FieldByName("DbField")
+	// 	if dbField.Kind() == reflect.Ptr {
+	// 		dbField = dbField.Elem()
+	// 	}
+	// 	if dbField.IsValid() {
+	// 		aliasField := dbField.FieldByName("Alias")
+	// 		fieldName := dbField.FieldByName("FieldName")
+	// 		strFieldName := fieldName.String()
+	// 		if aliasField.IsValid() {
+	// 			aliasField.SetString(strFieldName)
+	// 		}
+
+	// 	}
+	// }
 	return &SelectQuery{
+		owner:  q,
 		table:  q.table,
-		Fields: fields,
+		Fields: selectFields,
 	}
 }
 
@@ -101,6 +151,30 @@ func (q *SelectQueryWithOrder) Offset(offset int) *SelectQueryWithOrder {
 func (q *SelectQuery) ToSQL(d Dialect) (string, []interface{}) {
 	return (&SelectQueryWithOrder{SelectQuery: q}).ToSQL(d)
 }
+func (q *SelectQuery) execToByType(typ reflect.Type) (interface{}, error) {
+	sqlStmt, args := q.ToSQL(q.owner.tenantDb.Dialect)
+	rows, err := q.owner.tenantDb.DB.Query(sqlStmt, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return utils.fetchAllRows(rows, typ)
+}
+func (q *SelectQuery) ExecTo(entity interface{}) (interface{}, error) {
+	typ := reflect.TypeOf(entity)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	if typ.Kind() == reflect.Slice {
+		typ = typ.Elem()
+	}
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	return q.execToByType(typ)
+
+}
 
 func (q *SelectQueryWithOrder) ToSQL(d Dialect) (string, []interface{}) {
 	sql := "SELECT"
@@ -112,6 +186,7 @@ func (q *SelectQueryWithOrder) ToSQL(d Dialect) (string, []interface{}) {
 	} else {
 		fields := make([]string, len(q.Fields))
 		for i, f := range q.Fields {
+
 			expr, a := compiler.Compile(f, d)
 			fields[i] = expr
 			args = append(args, a...)
@@ -121,7 +196,7 @@ func (q *SelectQueryWithOrder) ToSQL(d Dialect) (string, []interface{}) {
 
 	// FROM
 	switch jt := q.table.(type) {
-	case *JoinExpr:
+	case *joinExpr:
 		tableSQL, tableArgs := compiler.Compile(jt.Table, d)
 		sql += " FROM " + tableSQL + " " + jt.JoinType
 		args = append(args, tableArgs...)
@@ -178,13 +253,24 @@ func (q *SelectQueryWithOrder) ToSQL(d Dialect) (string, []interface{}) {
 	limOff := d.MakeLimitOffset(q.LimitEx, q.OffsetEx)
 	if limOff != "" {
 		sql += " " + limOff
-		if q.LimitEx != nil {
-			args = append(args, *q.LimitEx)
-		}
-		if q.OffsetEx != nil {
-			args = append(args, *q.OffsetEx)
-		}
+		// if q.LimitEx != nil {
+		// 	args = append(args, *q.LimitEx)
+		// }
+		// if q.OffsetEx != nil {
+		// 	args = append(args, *q.OffsetEx)
+		// }
 	}
 
-	return sql, args
+	return utils.replacePlaceHolder(d.GetParamPlaceholder(), sql), args
+}
+func (q *SelectQueryWithOrder) execToByType(typ reflect.Type) (interface{}, error) {
+	sqlStmt, args := q.ToSQL(q.owner.tenantDb.Dialect)
+	rows, err := q.owner.tenantDb.DB.Query(sqlStmt, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return utils.fetchAllRows(rows, typ)
+
 }

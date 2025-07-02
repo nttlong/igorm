@@ -9,6 +9,8 @@ import (
 
 type SqlServerDialect struct {
 	baseDialect
+	db               sql.DB
+	paramPlaceholder string
 }
 
 /*
@@ -344,13 +346,39 @@ func (d *SqlServerDialect) MakeLimitOffset(limit *int, offset *int) string {
 		return fmt.Sprintf("OFFSET %d ROWS", *offset)
 	}
 	if offset == nil {
-		return fmt.Sprintf("FETCH NEXT %d ROWS ONLY", *limit)
+		return fmt.Sprintf("OFFSET 0 ROWS FETCH NEXT %d ROWS ONLY", *limit)
 	}
 	return fmt.Sprintf("OFFSET %d ROWS FETCH NEXT %d ROWS ONLY", *offset, *limit)
 }
-func NewSqlServerDialect(db *sql.DB) Dialect {
-	return &SqlServerDialect{
+func (d *SqlServerDialect) BuildSqlInsert(TableName string, AutoKeyField string, fields ...string) string {
 
+	strVales := []string{}
+	strFields := []string{}
+	for i, field := range fields {
+		strFields = append(strFields, d.QuoteIdent(field))
+		paramName := fmt.Sprintf("@p%d", i+1)
+		strVales = append(strVales, paramName)
+
+	}
+	returnValue := ""
+	if AutoKeyField != "" {
+		returnValue = " OUTPUT INSERTED." + d.QuoteIdent(AutoKeyField) + " "
+	}
+	if returnValue == "" {
+
+		ret := "INSERT INTO " + d.QuoteIdent(TableName) + " (" + strings.Join(strFields, ", ") + ") VALUES (" + strings.Join(strVales, ", ") + ")"
+		return ret
+	} else {
+		ret := "INSERT INTO " + d.QuoteIdent(TableName) + " (" + strings.Join(strFields, ", ") + ") " + returnValue + " VALUES (" + strings.Join(strVales, ", ") + ")"
+		return ret
+	}
+}
+func (d *SqlServerDialect) GetParamPlaceholder() string {
+	return d.paramPlaceholder
+}
+func NewSqlServerDialect() Dialect {
+	return &SqlServerDialect{
+		paramPlaceholder: "@p",
 		baseDialect: baseDialect{
 			schema: map[string]map[string]TableSchema{},
 			mapGoTypeToDb: map[string]string{

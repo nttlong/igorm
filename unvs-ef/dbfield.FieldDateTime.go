@@ -1,15 +1,20 @@
 package unvsef
 
-import "time"
+import (
+	"time"
+)
 
 type FieldDateTime Field[time.Time]
 
-func (f *FieldDateTime) ToSqlExpr(d Dialect) (string, []interface{}) {
-	return compiler.Compile(f, d)
+func (f *FieldDateTime) Set(val *time.Time) {
+	f.val = val
 }
-func (f *FieldDateTime) Year() *Field[int] {
-	return &Field[int]{
+
+func (f *FieldDateTime) Year() *FieldNumber[int] {
+	return &FieldNumber[int]{
+		DbField: f.DbField.clone(),
 		FuncField: &FuncField{
+
 			FuncName: "YEAR",
 			Args:     []interface{}{f},
 		},
@@ -17,7 +22,9 @@ func (f *FieldDateTime) Year() *Field[int] {
 }
 func (f *FieldDateTime) Month() *Field[int] {
 	return &Field[int]{
+		DbField: f.DbField.clone(),
 		FuncField: &FuncField{
+
 			FuncName: "MONTH",
 			Args:     []interface{}{f},
 		},
@@ -25,6 +32,7 @@ func (f *FieldDateTime) Month() *Field[int] {
 }
 func (f *FieldDateTime) Day() *Field[int] {
 	return &Field[int]{
+		DbField: f.DbField.clone(),
 		FuncField: &FuncField{
 			FuncName: "DAY",
 			Args:     []interface{}{f},
@@ -33,6 +41,7 @@ func (f *FieldDateTime) Day() *Field[int] {
 }
 func (f *FieldDateTime) Hour() *Field[int] {
 	return &Field[int]{
+		DbField: f.DbField.clone(),
 		FuncField: &FuncField{
 			FuncName: "HOUR",
 			Args:     []interface{}{f},
@@ -41,6 +50,7 @@ func (f *FieldDateTime) Hour() *Field[int] {
 }
 func (f *FieldDateTime) Minute() *Field[int] {
 	return &Field[int]{
+		DbField: f.DbField.clone(),
 		FuncField: &FuncField{
 			FuncName: "MINUTE",
 			Args:     []interface{}{f},
@@ -49,6 +59,7 @@ func (f *FieldDateTime) Minute() *Field[int] {
 }
 func (f *FieldDateTime) Second() *Field[int] {
 	return &Field[int]{
+		DbField: f.DbField.clone(),
 		FuncField: &FuncField{
 			FuncName: "SECOND",
 			Args:     []interface{}{f},
@@ -57,16 +68,18 @@ func (f *FieldDateTime) Second() *Field[int] {
 }
 func (f *FieldDateTime) Between(left interface{}, right interface{}) *FieldBool {
 	return &FieldBool{
+		DbField: f.DbField.clone(),
 		BinaryField: &BinaryField{
+
 			Left:  f,
 			Op:    "BETWEEN",
 			Right: []interface{}{left, right},
 		},
 	}
 }
-func (f *BinaryField) ToSqlExpr(d Dialect) (string, []interface{}) {
-	return compiler.Compile(f, d)
-}
-func (f BinaryField) ToSqlExpr2(d Dialect) (string, []interface{}) {
-	return compiler.Compile(f, d)
+func (f *FieldDateTime) As(alias string) *AliasField {
+	return &AliasField{
+		Field: f,
+		Alias: alias,
+	}
 }
