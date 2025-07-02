@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func mssql() orm.Dialect {
+func mssql() orm.DialectCompiler {
 	return &orm.MssqlDialect
 }
 func TestFieldMssql(t *testing.T) {
@@ -47,7 +47,7 @@ func TestListOfFieldBinariesListOfMethods(t *testing.T) {
 
 	fn := orm.CreateNumberField[int64]("table.name")
 
-	typ := reflect.TypeOf(fn)
+	typ := reflect.TypeOf(&fn)
 
 	for _, fnx := range fnList {
 		if _, ok := typ.MethodByName(fnx); !ok {

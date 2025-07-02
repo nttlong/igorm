@@ -1,6 +1,6 @@
 package orm
 
-type Dialect interface {
+type DialectCompiler interface {
 	resolve(caller *methodCall) (*resolverResult, error)
 	getQuoteIdent() string
 	getParam(index int) string

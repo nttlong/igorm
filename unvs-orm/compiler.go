@@ -12,7 +12,7 @@ type resolverResult struct {
 	Args   []interface{}
 }
 type CompilerUtils struct {
-	dialect Dialect
+	dialect DialectCompiler
 }
 
 var cacheCompilerUtilsCtx sync.Map
@@ -24,7 +24,7 @@ func (c *CompilerUtils) Quote(args ...string) string {
 	return left + strings.Join(args, right+"."+left) + right
 
 }
-func (c *CompilerUtils) Ctx(dialect Dialect) *CompilerUtils {
+func (c *CompilerUtils) Ctx(dialect DialectCompiler) *CompilerUtils {
 	if dialect == nil {
 		panic("dialect is nil")
 	}

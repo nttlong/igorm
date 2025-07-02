@@ -54,6 +54,6 @@ func (d *mssqlDialect) driverName() string {
 
 var MssqlDialect = mssqlDialect{}
 
-func NewMssqlDialect() Dialect {
+func NewMssqlDialect() DialectCompiler {
 	return &mssqlDialect{}
 }
