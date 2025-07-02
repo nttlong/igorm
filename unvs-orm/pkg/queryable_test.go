@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"testing"
 	orm "unvs-orm"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type User struct {
@@ -63,6 +65,19 @@ func TestQueryableNullField(t *testing.T) {
 	ret2 := retVal2.Interface()
 
 	qr2 := ret2.(*UserNullable)
+	expr := qr2.NTextField.Eq("test")
+	cmp := orm.Compiler.Ctx(mssql())
+	r1, err := cmp.Resolve(expr)
+	assert.NoError(t, err)
+	assert.Equal(t, "[user_nullables].[n_text_field] = ?", r1.Syntax)
+	assert.Equal(t, []interface{}{"test"}, r1.Args)
+	// c := qr2.NIntField.Eq(1)
+	//c1 :=
+	expr2 := qr2.NBoolField.Eq(true).And(qr2.NIntField.Eq(1))
+	cmp = orm.Compiler.Ctx(mssql())
+	r2, err := cmp.Resolve(expr2)
+	assert.NoError(t, err)
+	assert.Equal(t, "[user_nullables].[n_bool_field]  = ? AND [user_nullables].[n_int_field] = ?", r2.Syntax)
+	assert.Equal(t, []interface{}{true, 1}, r2.Args)
 
-	t.Log(qr2)
 }

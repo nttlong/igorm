@@ -184,7 +184,7 @@ func (c *CompilerUtils) Resolve(expr interface{}) (*resolverResult, error) {
 	}
 	// endregion
 
-	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", expr, "compiler.go", 179))
+	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", expr, "unvs-orm/compiler.go", 187))
 }
 func (c *CompilerUtils) ResolveBetween(f *BoolField) (*resolverResult, error) {
 	left, err := c.Resolve(f.left)
@@ -258,16 +258,7 @@ func (c *CompilerUtils) resolveNumberField(expr interface{}) (*resolverResult, e
 	}
 	return nil, nil
 }
-func (c *CompilerUtils) resolveConstant(expr interface{}) (*resolverResult, error) {
-	switch expr.(type) {
-	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, float32, float64, string:
-		return &resolverResult{
-			Syntax: "?",
-			Args:   []interface{}{expr},
-		}, nil
-	}
-	return nil, nil
-}
+
 func (c *CompilerUtils) resolveBoolField(f *BoolField) (*resolverResult, error) {
 	if f.op == "BETWEEN" {
 		return c.ResolveBetween(f)
@@ -277,15 +268,26 @@ func (c *CompilerUtils) resolveBoolField(f *BoolField) (*resolverResult, error) 
 		return c.ResolveNotBetween(f)
 
 	}
-
-	left, err := c.Resolve(f.left)
-	if err != nil {
-		return nil, err
+	var left *resolverResult
+	if f.left != nil && f.right != nil {
+		_left, err := c.Resolve(f.left)
+		if err != nil {
+			return nil, err
+		}
+		left = _left
+	}
+	if left == nil {
+		_left, err := c.Resolve(f.dbField)
+		if err != nil {
+			return nil, err
+		}
+		left = _left
 	}
 	right, err := c.Resolve(f.right)
 	if err != nil {
 		return nil, err
 	}
+
 	args := append(left.Args, right.Args...)
 	if f.op == "IN" || f.op == "NOT IN" {
 		return &resolverResult{

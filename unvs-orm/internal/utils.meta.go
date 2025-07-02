@@ -73,15 +73,10 @@ func (u *utilsPackage) GetMetaInfo(typ reflect.Type) map[string]map[string]Field
 		if ftType.Kind() == reflect.Ptr {
 			ftType = ftType.Elem()
 		}
-		fmt.Println("Field: ", field.Name, " Type: ", ftType.String())
-		if n, ok := u.mapType[ftType]; ok {
-			fmt.Println("Type: ", ftType.String(), " is map to ", n)
-		}
 
 		// Bỏ qua field đặc biệt "_" (used for table(...) override)
 		if strings.HasPrefix(ftType.String(), u.entityTypeName) {
 
-			fmt.Println("Skip: ", ftType.String())
 			continue
 		}
 

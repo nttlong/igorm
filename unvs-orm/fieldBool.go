@@ -8,6 +8,15 @@ type BoolField struct {
 	val   *bool
 }
 
+func (f *BoolField) Eq(value interface{}) *fieldBinary {
+	return &fieldBinary{
+
+		dbField: f.dbField.clone(),
+		left:    f,
+		right:   value,
+		op:      "=",
+	}
+}
 func (f *BoolField) And(other interface{}) *BoolField {
 	return &BoolField{
 		dbField: f.dbField.clone(),

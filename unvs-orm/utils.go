@@ -71,7 +71,7 @@ func init() {
 
 func resolveFieldType(tableName string, colName string, field reflect.StructField) reflect.Value {
 	fieldType := field.Type
-	fmt.Println("resolveFieldType", tableName, colName, fieldType)
+
 	if fieldType.Kind() == reflect.Ptr {
 		fieldType = fieldType.Elem()
 	}

@@ -5,7 +5,6 @@ package internal
 // binary operations, CASE WHEN expressions, JOINs, GROUP BY, HAVING, and more.
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 	"sync"
@@ -43,7 +42,6 @@ func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName str
 	mapField := utils.GetMetaInfo(entityType)
 
 	for colName, fieldTags := range mapField[tableName] {
-		fmt.Println(colName, fieldTags)
 
 		valField := elem.FieldByName(fieldTags.Field.Name)
 		ft, ok := entityType.FieldByName(fieldTags.Field.Name)
@@ -58,8 +56,6 @@ func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName str
 
 		if strings.HasPrefix(ftType.String(), utils.entityTypeName) {
 
-			// entityTypeVal := reflect.New(ft.Type.Elem())
-			// fmt.Println(entityTypeVal)
 			continue
 		}
 
@@ -81,8 +77,7 @@ func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName str
 		}
 
 		// Duyệt field bên trong Field[T] để tìm *DbField
-		fieldType := valField.Type()
-		fmt.Println(fieldType.String())
+
 		fv := u.FieldResolver(tableName, colName, ft)
 
 		valField.Set(fv)
