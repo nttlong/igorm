@@ -131,6 +131,9 @@ func (c *CompilerUtils) Resolve(expr interface{}) (*resolverResult, error) {
 		return c.resolveBoolField(&f)
 	}
 	if f, ok := expr.(*DateTimeField); ok {
+		if f.callMethod != nil {
+			return c.dialect.resolve(f.callMethod) //<-- call method resolver no longer refers to the Field
+		}
 		return c.Resolve(f.dbField)
 	}
 	if f, ok := expr.(DateTimeField); ok {

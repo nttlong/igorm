@@ -32,11 +32,14 @@ func TestAllMethodsAreImplementedOfDateTimeField(t *testing.T) {
 		"Minute",
 		"Second",
 		"Format",
+		"Min",
+		"Max",
+		"Count",
 	}
 
 	fn := orm.CreateDateTimeField("table.name")
 
-	typ := reflect.TypeOf(fn)
+	typ := reflect.TypeOf(&fn)
 
 	for _, fn := range fnList {
 		if _, ok := typ.MethodByName(fn); !ok {
@@ -50,6 +53,7 @@ func createDateTimeField(fullName string) *orm.DateTimeField {
 	return &ret
 }
 func TestDateTiemField(t *testing.T) {
+	TestAllMethodsAreImplementedOfDateTimeField(t)
 	cmp := orm.Compiler.Ctx(mssql())
 	fn := createDateTimeField("table.name")
 	expr1 := fn.Eq("2021-01-01")
@@ -165,5 +169,23 @@ func TestDateTiemField(t *testing.T) {
 	}
 	assert.Equal(t, "FORMAT([table].[name],?)", r.Syntax)
 	assert.Equal(t, "YYYY-MM-DD", r.Args[0])
+	expr18 := fn.Min()
+	r, err = cmp.Resolve(expr18)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, "MIN([table].[name])", r.Syntax)
+	expr19 := fn.Max()
+	r, err = cmp.Resolve(expr19)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, "MAX([table].[name])", r.Syntax)
+	expr20 := fn.Count()
+	r, err = cmp.Resolve(expr20)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, "COUNT([table].[name])", r.Syntax)
 
 }

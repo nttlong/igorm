@@ -4,10 +4,11 @@ import "time"
 
 type DateTimeField struct {
 	*dbField
-	Left  interface{}
-	Right interface{}
-	Op    string
-	val   *time.Time
+	callMethod *methodCall
+	Left       interface{}
+	Right      interface{}
+	Op         string
+	val        *time.Time
 }
 
 func (f *DateTimeField) Get() *time.Time {
@@ -155,6 +156,39 @@ func (f *DateTimeField) Format(layout string) *TextField {
 			method:  "FORMAT",
 			dbField: f.dbField.clone(),
 			args:    []interface{}{layout},
+		},
+	}
+}
+
+/*
+DateTimeField_test.go:46: method Min not found in type *orm.DateTimeField
+    DateTimeField_test.go:46: method Max not found in type *orm.DateTimeField
+    DateTimeField_test.go:46: method Count not found in type *orm.DateTimeField
+*/
+func (f *DateTimeField) Min() *DateTimeField {
+	return &DateTimeField{
+		callMethod: &methodCall{
+			method:  "MIN",
+			dbField: f.dbField.clone(),
+			args:    []interface{}{},
+		},
+	}
+}
+func (f *DateTimeField) Max() *DateTimeField {
+	return &DateTimeField{
+		callMethod: &methodCall{
+			method:  "MAX",
+			dbField: f.dbField.clone(),
+			args:    []interface{}{},
+		},
+	}
+}
+func (f *DateTimeField) Count() *NumberField[int] {
+	return &NumberField[int]{
+		callMethod: &methodCall{
+			method:  "COUNT",
+			dbField: f.dbField.clone(),
+			args:    []interface{}{},
 		},
 	}
 }
