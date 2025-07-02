@@ -134,3 +134,36 @@ DateTimeField_test.go:47: method In not found in type *orm.DateTimeField
 	DateTimeField_test.go:47: method Second not found in type *orm.DateTimeField
 	DateTimeField_test.go:47: method Format not found in type *orm.DateTimeField
 */
+/*
+field_test.go:59: method Sum was not found in NumberField[int64]
+    field_test.go:59: method Avg was not found in NumberField[int64]
+    field_test.go:59: method Max was not found in NumberField[int64]
+    field_test.go:59: method Min was not found in NumberField[int64]
+    field_test.go:59: method Count was not found in NumberField[int64]
+*/
+func (f *NumberField[T]) callMethodFunc(name string, args ...interface{}) *NumberField[T] {
+	return &NumberField[T]{
+		// dbField: f.dbField.clone(),
+
+		callMethod: &methodCall{
+			// dbField: f.dbField,
+			method: name,
+			args:   []interface{}{f},
+		},
+	}
+}
+func (f *NumberField[T]) Sum() *NumberField[T] {
+	return f.callMethodFunc("SUM")
+}
+func (f *NumberField[T]) Avg() *NumberField[T] {
+	return f.callMethodFunc("AFG")
+}
+func (f *NumberField[T]) Max() *NumberField[T] {
+	return f.callMethodFunc("AMX")
+}
+func (f *NumberField[T]) Min() *NumberField[T] {
+	return f.callMethodFunc("MIN")
+}
+func (f *NumberField[T]) Count() *NumberField[T] {
+	return f.callMethodFunc("COUNT")
+}

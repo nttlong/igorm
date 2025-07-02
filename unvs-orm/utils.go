@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 	internal "unvs-orm/internal"
 )
 
@@ -246,3 +247,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 }
 
 var Utils = internal.Utils
+
+func Now() time.Time {
+	return time.Now()
+}

@@ -1,8 +1,15 @@
 package orm
 
+import "time"
+
 func (c *CompilerUtils) resolveConstant(expr interface{}) (*resolverResult, error) {
 	switch expr.(type) {
 	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, float32, float64, string:
+		return &resolverResult{
+			Syntax: "?",
+			Args:   []interface{}{expr},
+		}, nil
+	case time.Time:
 		return &resolverResult{
 			Syntax: "?",
 			Args:   []interface{}{expr},
@@ -12,6 +19,12 @@ func (c *CompilerUtils) resolveConstant(expr interface{}) (*resolverResult, erro
 			Syntax: "?",
 			Args:   []interface{}{expr},
 		}, nil
+	case nil:
+		return &resolverResult{
+			Syntax: "NULL",
+			Args:   []interface{}{expr},
+		}, nil
 	}
+
 	return nil, nil
 }

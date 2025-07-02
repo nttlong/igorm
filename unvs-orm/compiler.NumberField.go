@@ -1,6 +1,7 @@
 package orm
 
 func (c *CompilerUtils) resolveNumberField(expr interface{}) (*resolverResult, error) {
+
 	switch f := expr.(type) {
 	case *NumberField[int], NumberField[int],
 		*NumberField[int8], NumberField[int8],

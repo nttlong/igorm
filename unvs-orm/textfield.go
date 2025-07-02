@@ -99,52 +99,78 @@ func (f *TextField) Get() *string {
 
 //---------------------------
 
-func (f *TextField) Len() *methodCall {
-	return &methodCall{
-		method: "LEN",
-		args:   []interface{}{f},
+func (f *TextField) Len() *NumberField[int] {
+	return &NumberField[int]{
+		dbField: f.dbField.clone(),
+		callMethod: &methodCall{
+			method: "LEN",
+			args:   []interface{}{f},
+		},
 	}
 }
-func (f *TextField) Upper() *methodCall {
-	return &methodCall{
-		method: "UPPER",
-		args:   []interface{}{f},
+
+func (f *TextField) Upper() *TextField {
+
+	return &TextField{
+		dbField: f.dbField.clone(),
+		callMethod: &methodCall{
+			method: "UPPER",
+			args:   []interface{}{f},
+		},
 	}
 }
-func (f *TextField) Lower() *methodCall {
-	return &methodCall{
-		method: "LOWER",
-		args:   []interface{}{f},
+func (f *TextField) Lower() *TextField {
+	return &TextField{
+		dbField: f.dbField.clone(),
+		callMethod: &methodCall{
+			method: "LOWER",
+			args:   []interface{}{f},
+		},
 	}
 }
-func (f *TextField) Trim() *methodCall {
-	return &methodCall{
-		method: "TRIM",
-		args:   []interface{}{f},
+func (f *TextField) Trim() *TextField {
+	return &TextField{
+		dbField: f.dbField.clone(),
+		callMethod: &methodCall{
+			method: "TRIM",
+			args:   []interface{}{f},
+		},
 	}
 }
-func (f *TextField) LTrim() *methodCall {
-	return &methodCall{
-		method: "LTRIM",
-		args:   []interface{}{f},
+func (f *TextField) LTrim() *TextField {
+	return &TextField{
+		dbField: f.dbField.clone(),
+		callMethod: &methodCall{
+			method: "LTRIM",
+			args:   []interface{}{f},
+		},
 	}
 }
-func (f *TextField) RTrim() *methodCall {
-	return &methodCall{
-		method: "RTRIM",
-		args:   []interface{}{f},
+func (f *TextField) RTrim() *TextField {
+	return &TextField{
+		dbField: f.dbField.clone(),
+		callMethod: &methodCall{
+			method: "RTRIM",
+			args:   []interface{}{f},
+		},
 	}
 }
-func (f *TextField) Concat(args ...interface{}) *methodCall {
-	return &methodCall{
-		method: "CONCAT",
-		args:   append([]interface{}{f}, args...),
+func (f *TextField) Concat(args ...interface{}) *TextField {
+	return &TextField{
+		dbField: f.dbField.clone(),
+		callMethod: &methodCall{
+			method: "CONCAT",
+			args:   append([]interface{}{f}, args...),
+		},
 	}
 }
-func (f *TextField) Replace(old, new interface{}) *methodCall {
-	return &methodCall{
-		method: "REPLACE",
-		args:   []interface{}{f, old, new},
+func (f *TextField) Replace(old, new interface{}) *TextField {
+	return &TextField{
+		dbField: f.dbField.clone(),
+		callMethod: &methodCall{
+			method: "REPLACE",
+			args:   []interface{}{f, old, new},
+		},
 	}
 }
 func (f *TextField) Substr(start, length interface{}) *methodCall {

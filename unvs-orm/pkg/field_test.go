@@ -43,6 +43,11 @@ func TestListOfFieldBinariesListOfMethods(t *testing.T) {
 		"NotIn",
 		"Between",
 		"NotBetween",
+		"Sum",
+		"Avg",
+		"Max",
+		"Min",
+		"Count",
 	}
 
 	fn := orm.CreateNumberField[int64]("table.name")
