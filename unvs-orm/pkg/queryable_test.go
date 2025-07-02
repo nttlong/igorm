@@ -79,5 +79,23 @@ func TestQueryableNullField(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "[user_nullables].[n_bool_field]  = ? AND [user_nullables].[n_int_field] = ?", r2.Syntax)
 	assert.Equal(t, []interface{}{true, 1}, r2.Args)
+	expr3 := qr2.NIntField.Eq(1).And(qr2.NFloatField.Eq(1.1))
+	cmp = orm.Compiler.Ctx(mssql())
+	r3, err := cmp.Resolve(expr3)
+	assert.NoError(t, err)
+	assert.Equal(t, "[user_nullables].[n_int_field] = ? AND [user_nullables].[n_float_field] = ?", r3.Syntax)
+	assert.Equal(t, []interface{}{1, 1.1}, r3.Args)
+	expr4 := qr2.NIntField.Eq(1).And(qr2.NFloatField.Eq(1.1)).And(qr2.NInt8Field.Eq(1))
+	cmp = orm.Compiler.Ctx(mssql())
+	r4, err := cmp.Resolve(expr4)
+	assert.NoError(t, err)
+	assert.Equal(t, "[user_nullables].[n_int_field] = ? AND [user_nullables].[n_float_field] = ? AND [user_nullables].[n_int8_field] = ?", r4.Syntax)
+	assert.Equal(t, []interface{}{1, 1.1, 1}, r4.Args)
+	expr5 := qr2.NIntField.Eq(1).And(qr2.NFloatField.Eq(1.1)).And(qr2.NInt8Field.Eq(1)).And(qr2.NInt16Field.Eq(1))
+
+	r5, err := cmp.Resolve(expr5)
+	assert.NoError(t, err)
+	assert.Equal(t, "[user_nullables].[n_int_field] = ? AND [user_nullables].[n_float_field] = ? AND [user_nullables].[n_int8_field] = ? AND [user_nullables].[n_int16_field] = ?", r5.Syntax)
+	assert.Equal(t, []interface{}{1, 1.1, 1, 1}, r5.Args)
 
 }

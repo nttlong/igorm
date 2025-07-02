@@ -183,6 +183,7 @@ func (c *CompilerUtils) Resolve(expr interface{}) (*resolverResult, error) {
 		return ret, nil
 	}
 	// endregion
+	//*unvs-orm.NumberField[int8]
 
 	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", expr, "unvs-orm/compiler.go", 187))
 }
@@ -229,34 +230,6 @@ func (c *CompilerUtils) resolveSlice(expr interface{}) ([]*resolverResult, error
 		results[i] = result
 	}
 	return results, nil
-}
-
-func (c *CompilerUtils) resolveNumberField(expr interface{}) (*resolverResult, error) {
-	if f, ok := expr.(*NumberField[int64]); ok {
-		return c.Resolve(f.dbField)
-	}
-	if f, ok := expr.(NumberField[int64]); ok {
-		return c.Resolve(&f)
-	}
-	if f, ok := expr.(*NumberField[float64]); ok {
-		return c.Resolve(f.dbField)
-	}
-	if f, ok := expr.(NumberField[float64]); ok {
-		return c.Resolve(&f)
-	}
-	if f, ok := expr.(*NumberField[int64]); ok {
-		return c.Resolve(f.dbField)
-	}
-	if f, ok := expr.(NumberField[int64]); ok {
-		return c.Resolve(&f)
-	}
-	if f, ok := expr.(*NumberField[float64]); ok {
-		return c.Resolve(f.dbField)
-	}
-	if f, ok := expr.(NumberField[float64]); ok {
-		return c.Resolve(&f)
-	}
-	return nil, nil
 }
 
 func (c *CompilerUtils) resolveBoolField(f *BoolField) (*resolverResult, error) {
