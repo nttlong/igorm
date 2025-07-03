@@ -2,6 +2,8 @@ package orm_test
 
 import (
 	"testing"
+	"time"
+	"unsafe"
 	orm "unvs-orm"
 
 	"github.com/stretchr/testify/assert"
@@ -21,16 +23,56 @@ func TestRepository_MSSQL(t *testing.T) {
 	}
 
 }
+func TestRepository_MSSQL_New(t *testing.T) {
+	mssqlDns := "server=localhost;database=master;user id=sa;password=123456;app name=test"
+	db, err := orm.Open("mssql", mssqlDns)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	repo := orm.Repository[OrderRepository](db)
+	if repo.Err != nil {
+		t.Fatal(repo.Err)
+	}
+	a := repo.Orders.New()
+
+	b := repo.Orders.New()
+	assert.NotEqual(t,
+		uintptr(unsafe.Pointer(&a)),
+		uintptr(unsafe.Pointer(&b)),
+	)
+
+	// Thêm metric tùy chỉnh
+
+}
 func BenchmarkRepository_MSSQL(b *testing.B) {
 	mssqlDns := "server=localhost;database=master;user id=sa;password=123456;app name=test"
 	db, err := orm.Open("mssql", mssqlDns)
 	if err != nil {
-		b.Error(err)
-		return
+		b.Fatal(err)
 	}
 	defer db.Close()
 
+	repo := orm.Repository[OrderRepository](db)
+	if repo.Err != nil {
+		b.Fatal(repo.Err)
+	}
+
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
-		orm.Repository[OrderRepository](db)
+		start := time.Now()
+
+		for k := 0; k < 10000; k++ {
+
+			_ = repo.Orders.New() // Tạo mới object (nên tránh tính thời gian khác)
+		}
+
+		elapsed := time.Since(start).Nanoseconds()
+		avgPerOp := float64(elapsed) / 10000.0
+
+		// Thêm metric tùy chỉnh
+		b.ReportMetric(avgPerOp, "ns/op_for_new_10000_object")
 	}
 }

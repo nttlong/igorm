@@ -17,6 +17,7 @@ func createErrorRepoFromType(typ reflect.Type, err error) interface{} {
 	ret.FieldByName("Err").Set(reflect.ValueOf(err))
 	return ret.Interface()
 }
+
 func Repository[T any](db *sql.DB) T {
 	typ := reflect.TypeFor[T]()
 	if _, ok := typ.FieldByName("TenantDb"); ok {

@@ -11,9 +11,9 @@ type Order struct {
 	Version   orm.NumberField[int]    `db:"primaryKey"`
 	Note      orm.TextField           `db:"length(200)"`
 	CreatedAt orm.DateTimeField
-	UpdatedAt *orm.DateTimeField
-	CreatedBy orm.TextField  `db:"length(100)"`
-	UpdatedBy *orm.TextField `db:"length(100)"`
+	UpdatedAt orm.DateTimeField `db:"null"`
+	CreatedBy orm.TextField     `db:"length(100)"`
+	UpdatedBy orm.TextField     `db:"length(100);null"`
 }
 type OrderItem struct {
 	*orm.Model[OrderItem]
@@ -23,9 +23,9 @@ type OrderItem struct {
 	Product   orm.TextField           `db:"length(100)"`
 	Quantity  orm.NumberField[int]
 	CreatedAt orm.DateTimeField
-	UpdatedAt *orm.DateTimeField
-	CreatedBy orm.TextField  `db:"length(100)"`
-	UpdatedBy *orm.TextField `db:"length(100)"`
+	UpdatedAt orm.DateTimeField `db:"null"`
+	CreatedBy orm.TextField     `db:"length(100)"`
+	UpdatedBy orm.TextField     `db:"length(100);null"`
 }
 type OrderRepository struct {
 	*orm.TenantDb

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
-	"strconv"
 	"strings"
 	"sync"
 	"unicode"
@@ -29,6 +28,7 @@ type utilsPackage struct {
 	cacheGetRequireFields                   sync.Map
 	cacheGetAutoPkKey                       sync.Map
 	entityTypeName                          string
+	cacheVerifyModelFieldFirst              sync.Map
 
 	cacheReplacePlaceHolder sync.Map
 }
@@ -126,67 +126,6 @@ func (u *utilsPackage) ToSnakeCase(str string) string {
 	return string(result)
 }
 
-// ParseDBTag parses the `db` struct tag into a FieldTag struct.
-func (u *utilsPackage) ParseDBTag(field reflect.StructField) FieldTag {
-
-	tag := strings.TrimSpace(field.Tag.Get("db"))
-	t := FieldTag{
-		Field: field,
-	}
-
-	t.Nullable = field.Type.Kind() == reflect.Ptr
-	tag = strings.TrimSpace(tag)
-	if tag == "" {
-		return t
-	}
-	parts := strings.Split(tag, ";")
-	for _, p := range parts {
-		p = strings.TrimSpace(p)
-		switch {
-
-		case p == "primaryKey":
-			t.PrimaryKey = true
-		case p == "autoIncrement":
-			t.AutoIncrement = true
-		case p == "unique":
-			t.Unique = true
-			t.UniqueName = u.ToSnakeCase(field.Name)
-		case strings.HasPrefix(p, "unique("):
-			t.Unique = true
-			t.UniqueName = u.extractName(p)
-		case p == "index":
-			t.Index = true
-			t.IndexName = u.ToSnakeCase(field.Name)
-		case strings.HasPrefix(p, "index("):
-			t.Index = true
-			t.IndexName = u.extractName(p)
-		case strings.HasPrefix(p, "table("):
-			t.TableName = u.extractName(p)
-		case strings.HasPrefix(p, "length("):
-			if s := u.extractName(p); s != "" {
-				if n, err := strconv.Atoi(s); err == nil {
-					t.Length = &n
-				}
-			}
-		case strings.HasPrefix(p, "check("):
-			t.Check = u.extractName(p)
-
-			if s := u.extractName(p); s != "" {
-				if n, err := strconv.Atoi(s); err == nil {
-					t.Length = &n
-				}
-			}
-		case strings.HasPrefix(p, "FTS("):
-			t.FTSName = u.extractName(p)
-		case strings.HasPrefix(p, "type:"):
-			t.DBType = strings.TrimPrefix(p, "type:")
-		case strings.HasPrefix(p, "default:"):
-			t.Default = strings.TrimPrefix(p, "default:")
-		}
-
-	}
-	return t
-}
 func (u *utilsPackage) extractName(s string) string {
 	re := regexp.MustCompile(`\((.*?)\)`)
 	matches := re.FindStringSubmatch(s)
@@ -431,8 +370,28 @@ func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type, tenantDb *Tenan
 	}
 	return ret, nil
 }
+func (u *utilsPackage) verifyModelFieldFirst(typ reflect.Type) error {
+	//check cache
+
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+
+	if _, ok := u.cacheVerifyModelFieldFirst.Load(typ); ok {
+		return nil
+	}
+
+	if typ.NumField() == 0 || typ.Field(0).Name != "Model" {
+
+		retErr := fmt.Errorf("orm.Model must be the first field in struct %s", typ.Name())
+		u.cacheVerifyModelFieldFirst.Store(typ, retErr)
+		return retErr
+	}
+	return nil
+}
 func (u *utilsPackage) GetOrCreateRepository(typ reflect.Type, tenantDb TenantDb) (*repositoryValueStruct, error) {
 	//check cache
+
 	key := typ.String() + "@" + tenantDb.DbName + "@" + tenantDb.DBTypeName
 	if val, ok := u.cacheGetOrCreateRepository.Load(key); ok {
 		return val.(*repositoryValueStruct), nil
