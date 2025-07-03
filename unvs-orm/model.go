@@ -24,9 +24,9 @@ func (e *Model[T]) New() T {
 	verifyModelFieldFirst[T]()
 	var t T
 
-	valE := reflect.ValueOf(&t).Elem() // ✅ cần là addressable
+	valE := reflect.ValueOf(&t).Elem()
 	ptr := unsafe.Pointer(&t)
-	*(*uintptr)(ptr) = uintptr(unsafe.Pointer(e)) // gán Model
+	*(*uintptr)(ptr) = uintptr(unsafe.Pointer(e)) // gán Model vào struct
 
 	meta := internal.Utils.GetMetaInfo(reflect.TypeFor[T]())
 	for tableName, fieldMeta := range meta {
@@ -34,7 +34,7 @@ func (e *Model[T]) New() T {
 			f := valE.FieldByName(field.Field.Name)
 
 			if !f.IsValid() || !f.CanAddr() {
-				continue // hoặc panic(fmt.Sprintf("Field %s not found or unaddressable", fieldName))
+				continue // hoặc panic nếu bạn muốn strict hơn
 			}
 
 			dbField := &dbField{
@@ -43,8 +43,7 @@ func (e *Model[T]) New() T {
 				field: field.Field,
 			}
 
-			fieldPtr := unsafe.Pointer(f.UnsafeAddr()) // ✅ giờ thì được
-			*(*uintptr)(fieldPtr) = uintptr(unsafe.Pointer(dbField))
+			utilsObjectIns.AssignDbFieldSmart(f, dbField) // <-- auto fallback
 		}
 	}
 

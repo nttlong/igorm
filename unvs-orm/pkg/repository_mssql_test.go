@@ -76,3 +76,23 @@ func BenchmarkRepository_MSSQL(b *testing.B) {
 		b.ReportMetric(avgPerOp, "ns/op_for_new_10000_object")
 	}
 }
+
+/* unsafe
+goos: windows
+goarch: amd64
+pkg: unvs-orm/pkg
+cpu: 12th Gen Intel(R) Core(TM) i7-12650H
+BenchmarkRepository_MSSQL-16    	      91	  11077929 ns/op	      1394 ns/op_for_new_10000_object	12960637 B/op	   80009 allocs/op
+PASS
+ok  	unvs-orm/pkg	5.662s
+*/
+
+/*  safe
+goos: windows
+goarch: amd64
+pkg: unvs-orm/pkg
+cpu: 12th Gen Intel(R) Core(TM) i7-12650H
+BenchmarkRepository_MSSQL-16    	      91	  12228938 ns/op	      1875 ns/op_for_new_10000_object	12960361 B/op	   80009 allocs/op
+PASS
+ok  	unvs-orm/pkg	6.374s
+*/

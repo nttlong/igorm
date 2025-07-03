@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 	"time"
+	"unsafe"
 	internal "unvs-orm/internal"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -231,4 +233,80 @@ func Open(driverName, dataSourceName string) (*sql.DB, error) {
 func NewTenantDb(db *sql.DB) (*TenantDb, error) {
 	return internal.Utils.NewTenantDb(db)
 
+}
+
+type utilsObject struct {
+	useSafeAssign          bool
+	enableFallbackDebugLog bool
+	didFallbackOnce        sync.Once
+}
+
+var utilsObjectIns = &utilsObject{
+	useSafeAssign:          true, // bật để dùng switch-case
+	enableFallbackDebugLog: true, // bật log khi fallback
+}
+
+// Switch-case fallback
+func (u *utilsObject) Assign(fieldPtr any, dbf *dbField) {
+	switch v := fieldPtr.(type) {
+	case *TextField:
+		v.dbField = dbf
+	case *NumberField[int]:
+		v.dbField = dbf
+	case *NumberField[int8]:
+		v.dbField = dbf
+	case *NumberField[int16]:
+		v.dbField = dbf
+	case *NumberField[int32]:
+		v.dbField = dbf
+	case *NumberField[int64]:
+		v.dbField = dbf
+	case *NumberField[uint8]:
+		v.dbField = dbf
+	case *NumberField[uint16]:
+		v.dbField = dbf
+	case *NumberField[uint32]:
+		v.dbField = dbf
+	case *NumberField[uint64]:
+		v.dbField = dbf
+	case *NumberField[float32]:
+		v.dbField = dbf
+	case *NumberField[float64]:
+		v.dbField = dbf
+	case *BoolField:
+		v.dbField = dbf
+	case *DateTimeField:
+		v.dbField = dbf
+	default:
+		panic(fmt.Sprintf("Unsupported field type: %T", v))
+	}
+}
+
+// Gán dbField bằng unsafe + fallback an toàn
+func (u *utilsObject) AssignDbFieldSmart(f reflect.Value, dbf *dbField) {
+	if !f.IsValid() || !f.CanAddr() {
+		panic("AssignDbFieldSmart: field is not addressable or invalid")
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			u.didFallbackOnce.Do(func() {
+				if u.enableFallbackDebugLog {
+					fmt.Printf("[⚠️ Fallback] AssignDbFieldSmart panic: %v. Switching to Assign()\n", r)
+				}
+			})
+			// fallback
+			fieldPtr := f.Addr().Interface()
+			u.Assign(fieldPtr, dbf)
+		}
+	}()
+
+	if u.useSafeAssign {
+		fieldPtr := f.Addr().Interface()
+		u.Assign(fieldPtr, dbf)
+		return
+	}
+
+	fieldPtr := unsafe.Pointer(f.UnsafeAddr())
+	*(*uintptr)(fieldPtr) = uintptr(unsafe.Pointer(dbf))
 }
