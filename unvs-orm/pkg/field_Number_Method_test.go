@@ -34,8 +34,8 @@ func TestMethodOfNumberField(t *testing.T) {
 
 	fn := orm.CreateNumberField[int]("table.name")
 	// expr := fn.Eq(10)
-	typ := reflect.TypeOf(fn)
-	assert.Equal(t, "*orm.NumberField[int64]", typ.String())
+	typ := reflect.TypeOf(&fn)
+	assert.Equal(t, "*orm.NumberField[int]", typ.String())
 
 	for _, mn := range fnList {
 		if _, ok := typ.MethodByName(mn); !ok {

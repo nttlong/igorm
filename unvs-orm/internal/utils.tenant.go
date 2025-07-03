@@ -104,10 +104,6 @@ func (u *utilsPackage) DetectDatabaseType(db *sql.DB) (DBType, string, error) {
 }
 func (u *utilsPackage) NewTenantDb(db *sql.DB) (*TenantDb, error) {
 
-	key := fmt.Sprintf("NewTenantDb %v", db)
-	if val, ok := u.cacheNewTenantDb.Load(key); ok {
-		return val.(*TenantDb), nil
-	}
 	ret := &TenantDb{
 		DB: db,
 	}
@@ -138,7 +134,7 @@ func (u *utilsPackage) NewTenantDb(db *sql.DB) (*TenantDb, error) {
 		return nil, fmt.Errorf("Unsupported database type '%s'", dbTypeName)
 
 	}
-	u.cacheNewTenantDb.Store(key, ret)
+
 	return ret, nil
 }
 func (u *utilsPackage) GetDbName(db *sql.DB) (string, error) {

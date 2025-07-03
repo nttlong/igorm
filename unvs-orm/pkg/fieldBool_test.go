@@ -19,7 +19,7 @@ func TestMethodOfBoolField(t *testing.T) {
 	fn := orm.CreateNumberField[int64]("table2.field2")
 	expr := fn.Eq(10)
 	typ := reflect.TypeOf(expr)
-	assert.Equal(t, "*orm.fieldBool", typ.String())
+	assert.Equal(t, "*orm.BoolField", typ.String())
 
 	for _, mn := range fnList {
 		if _, ok := typ.MethodByName(mn); !ok {

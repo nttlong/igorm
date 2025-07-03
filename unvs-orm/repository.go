@@ -2,6 +2,7 @@ package orm
 
 import (
 	"database/sql"
+	"fmt"
 	"reflect"
 
 	internal "unvs-orm/internal"
@@ -18,13 +19,30 @@ func createErrorRepoFromType(typ reflect.Type, err error) interface{} {
 }
 func Repository[T any](db *sql.DB) T {
 	typ := reflect.TypeFor[T]()
+	if _, ok := typ.FieldByName("TenantDb"); ok {
+		tenantDbVal, err := internal.Utils.NewTenantDb(db)
+		if err != nil {
+			ret := createErrorRepoFromType(typ, err)
 
-	retVal, err := internal.Utils.GetOrCreateRepository(typ)
-	if err != nil {
+			return ret.(T)
+		}
+
+		retVal, err := internal.Utils.GetOrCreateRepository(typ, *tenantDbVal)
+		tenantDbFieldVal := retVal.PtrValueOfRepo.Elem().FieldByName("TenantDb")
+		tenantDbFieldVal.Set(reflect.ValueOf(tenantDbVal))
+
+		if err != nil {
+			ret := createErrorRepoFromType(typ, err)
+			return ret.(T)
+		}
+
+		return retVal.PtrValueOfRepo.Elem().Interface().(T)
+	} else {
+		err := fmt.Errorf("*TenantDb field not found in type %s", typ.String())
+
 		ret := createErrorRepoFromType(typ, err)
 		return ret.(T)
 	}
-	return retVal.PtrValueOfRepo.Elem().Interface().(T)
 }
 
 // func RepositoryFromType(db *sql.DB, typ reflect.Type) reflect.Value {

@@ -92,8 +92,8 @@ func createListOfFieldBinaries(cmp *orm.CompilerUtils, testVal interface{}) []st
 	ret := []structTest{}
 
 	fn := orm.CreateNumberField[int64]("table.name")
-	fnVal := reflect.ValueOf(fn)
-	typ := reflect.TypeOf(fn)
+	fnVal := reflect.ValueOf(&fn)
+	typ := reflect.TypeOf(&fn)
 
 	for _, fex := range fnList {
 		fx := strings.Split(fex, "->")[0]

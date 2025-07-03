@@ -51,7 +51,8 @@ func TestGetMeta(t *testing.T) {
 func TestQueryable(t *testing.T) {
 	typ := reflect.TypeOf(&User{}).Elem()
 	tblName := orm.Utils.TableNameFromStruct(typ)
-	retVal := orm.EntityUtils.QueryableFromType(typ, tblName)
+
+	retVal := orm.EntityUtils.QueryableFromType(typ, tblName, nil, nil)
 	ret := retVal.Interface()
 	qr := ret.(*User)
 
@@ -61,7 +62,8 @@ func TestQueryable(t *testing.T) {
 func TestQueryableNullField(t *testing.T) {
 	typ := reflect.TypeOf(&UserNullable{}).Elem()
 	tblName := orm.Utils.TableNameFromStruct(typ)
-	retVal2 := orm.EntityUtils.QueryableFromType(typ, tblName)
+
+	retVal2 := orm.EntityUtils.QueryableFromType(typ, tblName, nil, nil)
 	ret2 := retVal2.Interface()
 
 	qr2 := ret2.(*UserNullable)
@@ -128,7 +130,7 @@ func TestQueryableNullField(t *testing.T) {
 func TestQueryableNullFieldWithCall(t *testing.T) {
 	typ := reflect.TypeOf(&UserNullable{}).Elem()
 	tblName := orm.Utils.TableNameFromStruct(typ)
-	retVal2 := orm.EntityUtils.QueryableFromType(typ, tblName)
+	retVal2 := orm.EntityUtils.QueryableFromType(typ, tblName, nil, nil)
 	ret2 := retVal2.Interface()
 	cmp := orm.Compiler.Ctx(mssql())
 	qr2 := ret2.(*UserNullable)
@@ -167,7 +169,7 @@ func TestQueryableNullFieldWithCall(t *testing.T) {
 func TestSumOfLen(t *testing.T) {
 	typ := reflect.TypeOf(&UserNullable{}).Elem()
 	tblName := orm.Utils.TableNameFromStruct(typ)
-	retVal2 := orm.EntityUtils.QueryableFromType(typ, tblName)
+	retVal2 := orm.EntityUtils.QueryableFromType(typ, tblName, nil, nil)
 	ret2 := retVal2.Interface()
 	cmp := orm.Compiler.Ctx(mssql())
 	qr2 := ret2.(*UserNullable)

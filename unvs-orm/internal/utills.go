@@ -31,7 +31,6 @@ type utilsPackage struct {
 	entityTypeName                          string
 
 	cacheReplacePlaceHolder sync.Map
-	cacheNewTenantDb        sync.Map
 }
 
 /*
@@ -359,7 +358,7 @@ func (u *utilsPackage) GetIndexConstraintsFromMetaByType(typ reflect.Type) map[s
 	u.cacheGetIndexConstraintsFromMetaByType.Store(typ, ret)
 	return ret
 }
-func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type) (*repositoryValueStruct, error) {
+func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type, tenantDb *TenantDb) (*repositoryValueStruct, error) {
 
 	retValueOfRepo := reflect.New(typ)
 	valueOfRepo := retValueOfRepo.Elem()
@@ -380,7 +379,7 @@ func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type) (*repositoryVal
 				continue
 
 			} else {
-				repoVal, err := u.buildRepositoryFromType(field.Type) //<-- do not gen sql migrate for inner entity
+				repoVal, err := u.buildRepositoryFromType(field.Type, tenantDb) //<-- do not gen sql migrate for inner entity
 				if err != nil {
 					return nil, err
 				}
@@ -403,10 +402,18 @@ func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type) (*repositoryVal
 			return nil, buildRepositoryError{
 				FieldName:     field.Name,
 				FieldTypeName: fieldType.String(),
-				err:           fmt.Errorf("field %s of type %s is not a struct or not a pointer to struct", field.Name, fieldType),
+				err:           fmt.Errorf("embedded Model[] was not found struct %s of field %s of type %s is not a struct or not a pointer to struct", field.Name, fieldType),
 			}
 		}
-		queryableVal := entityUtils.QueryableFromType(fieldType, tableName)
+		var modelVal *reflect.Value = nil
+		queryableVal := entityUtils.QueryableFromType(fieldType, tableName, modelVal, tenantDb)
+		// if modelVal == nil {
+		// 	return nil, buildRepositoryError{
+		// 		FieldName:     field.Name,
+		// 		FieldTypeName: fieldType.String(),
+		// 		err:           fmt.Errorf("field %s of type %s is not a struct or not a pointer to struct", field.Name, fieldType),
+		// 	}
+		// }
 		queryableValField := valueOfRepo.Field(i)
 
 		queryableValField.Set(queryableVal)
@@ -424,16 +431,18 @@ func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type) (*repositoryVal
 	}
 	return ret, nil
 }
-func (u *utilsPackage) GetOrCreateRepository(typ reflect.Type) (*repositoryValueStruct, error) {
+func (u *utilsPackage) GetOrCreateRepository(typ reflect.Type, tenantDb TenantDb) (*repositoryValueStruct, error) {
 	//check cache
-	key := typ.String()
+	key := typ.String() + "@" + tenantDb.DbName + "@" + tenantDb.DBTypeName
 	if val, ok := u.cacheGetOrCreateRepository.Load(key); ok {
 		return val.(*repositoryValueStruct), nil
 	}
-	repoVal, err := u.buildRepositoryFromType(typ)
+	repoVal, err := u.buildRepositoryFromType(typ, &tenantDb)
+
 	if err != nil {
 		return nil, err
 	}
+	//set cache
 	u.cacheGetOrCreateRepository.Store(key, repoVal)
 	return repoVal, nil
 }

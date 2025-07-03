@@ -13,9 +13,9 @@ func BenchmarkQueryALB(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
 		typ := reflect.TypeOf(&User{}).Elem()
-		orm.Queryable[User]()
+		orm.Queryable[User](nil)
 		tblName := orm.Utils.TableNameFromStruct(typ)
-		retVal := orm.EntityUtils.QueryableFromType(typ, tblName)
+		retVal := orm.EntityUtils.QueryableFromType(typ, tblName, nil, nil)
 		retVal.Interface()
 		b.StopTimer()
 

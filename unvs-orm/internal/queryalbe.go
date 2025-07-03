@@ -36,10 +36,34 @@ Create a new instance of the queryable type and set the DbField for each field.
 //		u.cacheGetAllFields.Store(entityType, fields)
 //		return fields
 //	}
-func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName string) reflect.Value {
+func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName string, modelVal *reflect.Value, tenantDb *TenantDb) reflect.Value {
 
+	if modelVal == nil {
+
+		if modelField, ok := entityType.FieldByName("Model"); ok {
+			modelFieldType := modelField.Type
+			if modelFieldType.Kind() == reflect.Ptr {
+				modelFieldType = modelFieldType.Elem()
+			}
+			_modelVal := reflect.New(modelFieldType)
+			_modelValEle := _modelVal.Elem()
+			if tenantDb != nil {
+				tenantDbValField := _modelValEle.FieldByName("TenantDb")
+				if tenantDbValField.CanSet() {
+					tenantDbValField.Set(reflect.ValueOf(tenantDb))
+				}
+			}
+			modelVal = &_modelVal
+		}
+	}
 	ret := reflect.New(entityType)
+	valModelField := ret.Elem().FieldByName("Model")
+	if valModelField.IsZero() {
+
+		valModelField.Set(*modelVal)
+	}
 	elem := ret.Elem()
+
 	mapField := utils.GetMetaInfo(entityType)
 
 	for colName, fieldTags := range mapField[tableName] {
@@ -62,7 +86,7 @@ func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName str
 
 		// Đệ quy cho embedded struct
 		if ft.Anonymous {
-			anonymousValue := u.QueryableFromType(ft.Type, tableName)
+			anonymousValue := u.QueryableFromType(ft.Type, tableName, modelVal, tenantDb)
 			if valField.CanSet() {
 				valField.Set(anonymousValue)
 			}
