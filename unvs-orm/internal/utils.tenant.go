@@ -32,7 +32,7 @@ func (u *utilsPackage) getTenantDb(db *sql.DB, typ reflect.Type) (*TenantDb, err
 			baseType = reflect.TypeOf(TenantDb{})
 		}
 		if baseType.String() == field.Type.String() {
-			_dbSchema, err := u.newTenantDb(db)
+			_dbSchema, err := u.NewTenantDb(db)
 			if err != nil {
 				return nil, err
 			}
@@ -55,19 +55,21 @@ func (u *utilsPackage) getTenantDb(db *sql.DB, typ reflect.Type) (*TenantDb, err
 }
 func (u *utilsPackage) DetectDatabaseType(db *sql.DB) (DBType, string, error) {
 	var version string
+	var comment string
 
 	queries := []struct {
 		query string
 	}{
-		{"SELECT version();"},        // PostgreSQL, MySQL, Cockroach, Greenplum
-		{"SELECT @@VERSION;"},        // SQL Server, Sybase
-		{"SELECT sqlite_version();"}, // SQLite
-		{"SELECT tidb_version();"},   // TiDB
-		{"SELECT * FROM v$version"},  // Oracle
+		{"SELECT 'version_comment' ,version();"},       // PostgreSQL,  Cockroach, Greenplum
+		{"SELECT 'version_comment', @@VERSION;"},       // SQL Server, Sybase
+		{"SELECT 'version_comment',sqlite_version();"}, // SQLite
+		{"SELECT 'version_comment',tidb_version();"},   // TiDB
+		{"SELECT * FROM v$version"},                    // Oracle
+		{"SHOW VARIABLES LIKE 'version_comment'"},      //MySQL
 	}
 
 	for _, q := range queries {
-		err := db.QueryRow(q.query).Scan(&version)
+		err := db.QueryRow(q.query).Scan(&comment, &version)
 		if err == nil && version != "" {
 			v := strings.ToLower(version)
 
@@ -100,9 +102,16 @@ func (u *utilsPackage) DetectDatabaseType(db *sql.DB) (DBType, string, error) {
 
 	return DBUnknown, version, errors.New("unable to detect database type")
 }
-func (u *utilsPackage) newTenantDb(db *sql.DB) (*TenantDb, error) {
-	ret := &TenantDb{}
-	ret.DB = *db
+func (u *utilsPackage) NewTenantDb(db *sql.DB) (*TenantDb, error) {
+
+	key := fmt.Sprintf("NewTenantDb %v", db)
+	if val, ok := u.cacheNewTenantDb.Load(key); ok {
+		return val.(*TenantDb), nil
+	}
+	ret := &TenantDb{
+		DB: db,
+	}
+
 	dbDetect, dbTypeName, err := u.DetectDatabaseType(db)
 
 	if err != nil {
@@ -114,20 +123,22 @@ func (u *utilsPackage) newTenantDb(db *sql.DB) (*TenantDb, error) {
 	}
 	ret.DbName = dbName
 	if dbDetect == DBMSSQL {
-		ret.Dialect = NewSqlServerDialect()
+		ret.Dialect = NewMssqlDialect()
 		ret.DBType = DBMSSQL
 		ret.DBTypeName = dbTypeName
 	} else if dbDetect == DBMySQL {
-		ret.Dialect = NewSqlServerDialect()
+		ret.Dialect = NewMysqlDialect()
 		ret.DBType = DBMySQL
 		ret.DBTypeName = dbTypeName
 	} else if dbDetect == DBPostgres {
+		ret.Dialect = NewPostgresDialect()
 		ret.DBType = DBPostgres
 		ret.DBTypeName = dbTypeName
 	} else {
 		return nil, fmt.Errorf("Unsupported database type '%s'", dbTypeName)
 
 	}
+	u.cacheNewTenantDb.Store(key, ret)
 	return ret, nil
 }
 func (u *utilsPackage) GetDbName(db *sql.DB) (string, error) {

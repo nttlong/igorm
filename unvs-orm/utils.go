@@ -1,47 +1,17 @@
 package orm
 
 import (
+	"database/sql"
 	"fmt"
 	"reflect"
 	"strings"
 	"time"
 	internal "unvs-orm/internal"
+
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/jackc/pgx/v5/stdlib"
+	_ "github.com/microsoft/go-mssqldb"
 )
-
-// import (
-// 	"encoding/json"
-// 	"fmt"
-// 	"reflect"
-// 	"sync"
-
-// 	_ "github.com/microsoft/go-mssqldb"
-// )
-
-// type utilsPackage struct {
-// 	cacheGetMetaInfo                        sync.Map
-// 	CacheTableNameFromStruct                sync.Map
-// 	cacheGetPkFromMeta                      sync.Map
-// 	cacheGetUniqueConstraintsFromMetaByType sync.Map
-// 	cacheGetIndexConstraintsFromMetaByType  sync.Map
-// 	schemaCache                             sync.Map
-// 	cacheGetOrCreateRepository              sync.Map
-// 	cacheGetTenantDb                        sync.Map
-// 	cacheBuildFieldMap                      sync.Map
-// 	mapType                                 map[reflect.Type]string
-// 	currentPackagePath                      string //<-- cache current package path
-// 	cacheGetRequireFields                   sync.Map
-// 	cacheGetAutoPkKey                       sync.Map
-// 	entityTypeName                          string
-
-// 	cacheReplacePlaceHolder sync.Map
-// }
-
-// func (u *utilsPackage) PtrToInterface(v interface{}) interface{} {
-// 	val := reflect.ValueOf(v)
-// 	ptr := reflect.New(reflect.TypeOf((*interface{})(nil)).Elem()) // tạo interface{}
-// 	ptr.Elem().Set(val)                                            // gán giá trị
-// 	return ptr.Interface()                                         // trả *interface{}
-// }
 
 var EntityUtils = internal.EntityUtils
 var mapType = map[reflect.Type]string{
@@ -250,4 +220,15 @@ var Utils = internal.Utils
 
 func Now() time.Time {
 	return time.Now()
+}
+
+type TenantDb = internal.TenantDb
+
+func Open(driverName, dataSourceName string) (*sql.DB, error) {
+	return sql.Open(driverName, dataSourceName)
+}
+
+func NewTenantDb(db *sql.DB) (*TenantDb, error) {
+	return internal.Utils.NewTenantDb(db)
+
 }

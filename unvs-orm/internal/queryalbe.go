@@ -11,8 +11,9 @@ import (
 )
 
 type entitiesUtils struct {
-	cacheGetAllFields sync.Map
-	FieldResolver     func(tableName string, colName string, field reflect.StructField) reflect.Value
+	cacheQueryableFromType sync.Map
+	cacheGetAllFields      sync.Map
+	FieldResolver          func(tableName string, colName string, field reflect.StructField) reflect.Value
 }
 
 /*

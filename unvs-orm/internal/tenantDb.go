@@ -10,7 +10,7 @@ import (
 This struct is definition of tenant db
 */
 type TenantDb struct {
-	DB                   sql.DB
+	*sql.DB
 	Dialect              Dialect
 	DBType               DBType
 	DBTypeName           string

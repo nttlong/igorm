@@ -31,6 +31,7 @@ type utilsPackage struct {
 	entityTypeName                          string
 
 	cacheReplacePlaceHolder sync.Map
+	cacheNewTenantDb        sync.Map
 }
 
 /*
