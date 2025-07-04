@@ -310,3 +310,7 @@ func (u *utilsObject) AssignDbFieldSmart(f reflect.Value, dbf *dbField) {
 	fieldPtr := unsafe.Pointer(f.UnsafeAddr())
 	*(*uintptr)(fieldPtr) = uintptr(unsafe.Pointer(dbf))
 }
+
+func Ptr[T any](v T) *T {
+	return &v
+}

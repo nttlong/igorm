@@ -1,7 +1,6 @@
 package orm
 
 import (
-	"database/sql"
 	"fmt"
 	"reflect"
 
@@ -18,19 +17,14 @@ func createErrorRepoFromType(typ reflect.Type, err error) interface{} {
 	return ret.Interface()
 }
 
-func Repository[T any](db *sql.DB) T {
+func Repository[T any]() T {
 	typ := reflect.TypeFor[T]()
-	if _, ok := typ.FieldByName("TenantDb"); ok {
-		tenantDbVal, err := internal.Utils.NewTenantDb(db)
-		if err != nil {
-			ret := createErrorRepoFromType(typ, err)
+	if _, ok := typ.FieldByName("Base"); ok {
+		// baseRepo := Base{}
 
-			return ret.(T)
-		}
-
-		retVal, err := internal.Utils.GetOrCreateRepository(typ, *tenantDbVal)
-		tenantDbFieldVal := retVal.PtrValueOfRepo.Elem().FieldByName("TenantDb")
-		tenantDbFieldVal.Set(reflect.ValueOf(tenantDbVal))
+		retVal, err := internal.Utils.GetOrCreateRepository(typ)
+		// tenantDbFieldVal := retVal.PtrValueOfRepo.FieldByName("Base")
+		// tenantDbFieldVal.Set(reflect.ValueOf(baseRepo))
 
 		if err != nil {
 			ret := createErrorRepoFromType(typ, err)

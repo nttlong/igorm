@@ -8,8 +8,9 @@ import (
 )
 
 type resolverResult struct {
-	Syntax string
-	Args   []interface{}
+	Syntax      string
+	Args        []interface{}
+	AliasSource map[string]string
 }
 type CompilerUtils struct {
 	dialect DialectCompiler
@@ -39,7 +40,7 @@ func (c *CompilerUtils) Ctx(dialect DialectCompiler) *CompilerUtils {
 	cacheCompilerUtilsCtx.Store(key, ret)
 	return ret
 }
-func (c *CompilerUtils) Resolve(expr interface{}) (*resolverResult, error) {
+func (c *CompilerUtils) Resolve(aliasSource *map[string]string, expr interface{}) (*resolverResult, error) {
 	if expr == nil {
 		return &resolverResult{
 			Syntax: "",
@@ -48,7 +49,7 @@ func (c *CompilerUtils) Resolve(expr interface{}) (*resolverResult, error) {
 	}
 	typ := reflect.TypeOf(expr)
 	if typ.Kind() == reflect.Slice {
-		args, err := c.resolveSlice(expr)
+		args, err := c.resolveSlice(aliasSource, expr)
 		if err != nil {
 			return nil, err
 		}
@@ -69,16 +70,13 @@ func (c *CompilerUtils) Resolve(expr interface{}) (*resolverResult, error) {
 
 	}
 	if f, ok := expr.(*dbField); ok {
-		return &resolverResult{
-			Syntax: c.Quote(f.Table, f.Name),
-			Args:   nil,
-		}, nil
+		return c.resolveDBField(aliasSource, f)
 	}
 	if f, ok := expr.(dbField); ok {
-		return c.Resolve(&f)
+		return c.resolveDBField(aliasSource, &f)
 	}
 	if f, ok := expr.(*aliasField); ok {
-		result, err := c.Resolve(f.Expr)
+		result, err := c.Resolve(aliasSource, f.Expr)
 		if err != nil {
 			return nil, err
 		}
@@ -89,14 +87,14 @@ func (c *CompilerUtils) Resolve(expr interface{}) (*resolverResult, error) {
 	}
 
 	if f, ok := expr.(aliasField); ok {
-		return c.Resolve(&f)
+		return c.Resolve(aliasSource, &f)
 	}
 	if f, ok := expr.(*fieldBinary); ok {
-		left, err := c.Resolve(f.left)
+		left, err := c.Resolve(aliasSource, f.left)
 		if err != nil {
 			return nil, err
 		}
-		right, err := c.Resolve(f.right)
+		right, err := c.Resolve(aliasSource, f.right)
 		if err != nil {
 			return nil, err
 		}
@@ -121,51 +119,51 @@ func (c *CompilerUtils) Resolve(expr interface{}) (*resolverResult, error) {
 	}
 
 	if f, ok := expr.(fieldBinary); ok {
-		return c.Resolve(&f)
+		return c.Resolve(aliasSource, &f)
 	}
 	if f, ok := expr.(*BoolField); ok {
-		return c.resolveBoolField(f)
+		return c.resolveBoolField(aliasSource, f)
 
 	}
 	if f, ok := expr.(BoolField); ok {
-		return c.resolveBoolField(&f)
+		return c.resolveBoolField(aliasSource, &f)
 	}
 	if f, ok := expr.(*DateTimeField); ok {
 		if f.callMethod != nil {
-			return c.dialect.resolve(f.callMethod) //<-- call method resolver no longer refers to the Field
+			return c.dialect.resolve(aliasSource, f.callMethod) //<-- call method resolver no longer refers to the Field
 		}
-		return c.Resolve(f.dbField)
+		return c.Resolve(aliasSource, f.dbField)
 	}
 	if f, ok := expr.(DateTimeField); ok {
 
-		return c.Resolve(f.dbField)
+		return c.Resolve(aliasSource, f.dbField)
 	}
 	if f, ok := expr.(*NumberField[int]); ok {
 		if f.callMethod != nil {
-			return c.dialect.resolve(f.callMethod) //<-- call method resolver no longer refers to the Field
+			return c.dialect.resolve(aliasSource, f.callMethod) //<-- call method resolver no longer refers to the Field
 
 		}
-		return c.Resolve(f.dbField)
+		return c.Resolve(aliasSource, f.dbField)
 	}
 	if f, ok := expr.(NumberField[int]); ok {
-		return c.Resolve(f.dbField)
+		return c.Resolve(aliasSource, f.dbField)
 	}
 	if f, ok := expr.(*TextField); ok {
 		if f.callMethod != nil {
-			return c.dialect.resolve(f.callMethod) //<-- call method resolver no longer refers to the Field
+			return c.dialect.resolve(aliasSource, f.callMethod) //<-- call method resolver no longer refers to the Field
 		}
-		return c.Resolve(f.dbField)
+		return c.Resolve(aliasSource, f.dbField)
 	}
 	if f, ok := expr.(TextField); ok {
-		return c.Resolve(f.dbField)
+		return c.Resolve(aliasSource, f.dbField)
 	}
 	if f, ok := expr.(*methodCall); ok {
-		return c.dialect.resolve(f)
+		return c.dialect.resolve(aliasSource, f)
 	}
 	if f, ok := expr.(methodCall); ok {
-		return c.dialect.resolve(&f)
+		return c.dialect.resolve(aliasSource, &f)
 	}
-	ret, err := c.resolveNumberField(expr)
+	ret, err := c.resolveNumberField(aliasSource, expr)
 	if err != nil {
 		return nil, err
 	}
@@ -187,12 +185,12 @@ func (c *CompilerUtils) Resolve(expr interface{}) (*resolverResult, error) {
 
 	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", expr, "unvs-orm/compiler.go", 187))
 }
-func (c *CompilerUtils) ResolveBetween(f *BoolField) (*resolverResult, error) {
-	left, err := c.Resolve(f.left)
+func (c *CompilerUtils) ResolveBetween(aliasSource *map[string]string, f *BoolField) (*resolverResult, error) {
+	left, err := c.Resolve(aliasSource, f.left)
 	if err != nil {
 		return nil, err
 	}
-	right, err := c.Resolve(f.right)
+	right, err := c.Resolve(aliasSource, f.right)
 	if err != nil {
 		return nil, err
 	}
@@ -203,12 +201,12 @@ func (c *CompilerUtils) ResolveBetween(f *BoolField) (*resolverResult, error) {
 		Args:   args,
 	}, nil
 }
-func (c *CompilerUtils) ResolveNotBetween(f *BoolField) (*resolverResult, error) {
-	left, err := c.Resolve(f.left)
+func (c *CompilerUtils) ResolveNotBetween(aliasSource *map[string]string, f *BoolField) (*resolverResult, error) {
+	left, err := c.Resolve(aliasSource, f.left)
 	if err != nil {
 		return nil, err
 	}
-	right, err := c.Resolve(f.right)
+	right, err := c.Resolve(aliasSource, f.right)
 	if err != nil {
 		return nil, err
 	}
@@ -219,11 +217,11 @@ func (c *CompilerUtils) ResolveNotBetween(f *BoolField) (*resolverResult, error)
 		Args:   args,
 	}, nil
 }
-func (c *CompilerUtils) resolveSlice(expr interface{}) ([]*resolverResult, error) {
+func (c *CompilerUtils) resolveSlice(aliasSource *map[string]string, expr interface{}) ([]*resolverResult, error) {
 	slice := reflect.ValueOf(expr)
 	results := make([]*resolverResult, slice.Len())
 	for i := 0; i < slice.Len(); i++ {
-		result, err := c.Resolve(slice.Index(i).Interface())
+		result, err := c.Resolve(aliasSource, slice.Index(i).Interface())
 		if err != nil {
 			return nil, err
 		}
@@ -232,31 +230,31 @@ func (c *CompilerUtils) resolveSlice(expr interface{}) ([]*resolverResult, error
 	return results, nil
 }
 
-func (c *CompilerUtils) resolveBoolField(f *BoolField) (*resolverResult, error) {
+func (c *CompilerUtils) resolveBoolField(aliasSource *map[string]string, f *BoolField) (*resolverResult, error) {
 	if f.op == "BETWEEN" {
-		return c.ResolveBetween(f)
+		return c.ResolveBetween(aliasSource, f)
 
 	}
 	if f.op == "NOT BETWEEN" {
-		return c.ResolveNotBetween(f)
+		return c.ResolveNotBetween(aliasSource, f)
 
 	}
 	var left *resolverResult
 	if f.left != nil && f.right != nil {
-		_left, err := c.Resolve(f.left)
+		_left, err := c.Resolve(aliasSource, f.left)
 		if err != nil {
 			return nil, err
 		}
 		left = _left
 	}
 	if left == nil {
-		_left, err := c.Resolve(f.dbField)
+		_left, err := c.Resolve(aliasSource, f.dbField)
 		if err != nil {
 			return nil, err
 		}
 		left = _left
 	}
-	right, err := c.Resolve(f.right)
+	right, err := c.Resolve(aliasSource, f.right)
 	if err != nil {
 		return nil, err
 	}

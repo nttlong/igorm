@@ -16,7 +16,7 @@ func mssql() orm.DialectCompiler {
 func TestFieldMssql(t *testing.T) {
 
 	f := orm.CreateNumberField[int64]("table.name")
-	r, err := orm.Compiler.Ctx(mssql()).Resolve(f)
+	r, err := orm.Compiler.Ctx(mssql()).Resolve(nil, f)
 	assert.NoError(t, err)
 	assert.Equal(t, "[table].[name]", r.Syntax)
 	assert.Equal(t, 0, len(r.Args))
@@ -69,7 +69,7 @@ func TestFieldAlias(t *testing.T) {
 
 	f := orm.CreateNumberField[int64]("table.name")
 
-	r, err := orm.Compiler.Ctx(mssql()).Resolve(f.As("alias"))
+	r, err := orm.Compiler.Ctx(mssql()).Resolve(nil, f.As("alias"))
 	assert.NoError(t, err)
 	assert.Equal(t, "[table].[name] AS [alias]", r.Syntax)
 	assert.Empty(t, r.Args)
@@ -104,7 +104,7 @@ func createListOfFieldBinaries(cmp *orm.CompilerUtils, testVal interface{}) []st
 			// mc := m.Func.Call()
 
 			outPut := m.Func.Call([]reflect.Value{fnVal, reflect.ValueOf(testVal)})
-			Expected, err := cmp.Resolve(testVal)
+			Expected, err := cmp.Resolve(nil, testVal)
 			if err != nil {
 				panic(err)
 			}
@@ -132,7 +132,7 @@ func TestBinaryField(t *testing.T) {
 	cmp := orm.Compiler.Ctx(mssql())
 	testData := createListOfFieldBinaries(cmp, 123)
 	for _, td := range testData {
-		r, err := orm.Compiler.Ctx(mssql()).Resolve(td.Expr)
+		r, err := orm.Compiler.Ctx(mssql()).Resolve(nil, td.Expr)
 		assert.NoError(t, err)
 		assert.Equal(t, td.Expected, r.Syntax)
 		assert.Equal(t, 1, len(r.Args))

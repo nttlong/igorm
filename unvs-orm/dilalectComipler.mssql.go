@@ -6,7 +6,8 @@ import (
 )
 
 type mssqlDialect struct {
-	compiler *CompilerUtils
+	compiler     *CompilerUtils
+	joinCompiler *JoinCompilerUtils
 }
 
 func (d *mssqlDialect) getQuoteIdent() string {
@@ -19,15 +20,18 @@ func (d *mssqlDialect) getParam(index int) string {
 func (d *mssqlDialect) setCompiler(compiler *CompilerUtils) {
 	d.compiler = compiler
 }
+func (d *mssqlDialect) setJoinCompiler(compiler *JoinCompilerUtils) {
+	d.joinCompiler = compiler
+}
 func (d *mssqlDialect) getCompiler() *CompilerUtils {
 	return d.compiler
 }
-func (d *mssqlDialect) resolve(caller *methodCall) (*resolverResult, error) {
+func (d *mssqlDialect) resolve(aliasSource *map[string]string, caller *methodCall) (*resolverResult, error) {
 
 	strArgs := make([]string, 0)
 	retArgs := make([]interface{}, 0)
 	if caller.dbField != nil {
-		field, err := d.compiler.Resolve(caller.dbField)
+		field, err := d.compiler.Resolve(aliasSource, caller.dbField)
 		if err != nil {
 			return nil, err
 		}
@@ -35,7 +39,7 @@ func (d *mssqlDialect) resolve(caller *methodCall) (*resolverResult, error) {
 		retArgs = append(retArgs, field.Args...)
 	}
 	for _, arg := range caller.args {
-		rs, err := d.compiler.Resolve(arg)
+		rs, err := d.compiler.Resolve(aliasSource, arg)
 		if err != nil {
 			return nil, err
 		}

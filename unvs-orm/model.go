@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"reflect"
 	"unsafe"
-
 	internal "unvs-orm/internal"
 )
 
 type Model[T any] struct {
-	TenantDb *internal.TenantDb
-	meta     map[string]internal.FieldTag
-	A        string
+	dataPointer unsafe.Pointer
+	data        interface{}
 }
 
 func verifyModelFieldFirst[T any]() {
@@ -20,16 +18,17 @@ func verifyModelFieldFirst[T any]() {
 		panic(fmt.Sprintf("orm.Model must be the first field in struct %s", typ.Name()))
 	}
 }
-func (e *Model[T]) New() T {
+func (e *Model[T]) New() *Object[T] {
 	verifyModelFieldFirst[T]()
 	var t T
 
 	valE := reflect.ValueOf(&t).Elem()
-	ptr := unsafe.Pointer(&t)
-	*(*uintptr)(ptr) = uintptr(unsafe.Pointer(e)) // gán Model vào struct
+	// testData := reflect.New(reflect.TypeFor[T]()).Elem()
 
 	meta := internal.Utils.GetMetaInfo(reflect.TypeFor[T]())
+
 	for tableName, fieldMeta := range meta {
+
 		for fieldName, field := range fieldMeta {
 			f := valE.FieldByName(field.Field.Name)
 
@@ -47,7 +46,10 @@ func (e *Model[T]) New() T {
 		}
 	}
 
-	return t
+	return &Object[T]{
+
+		Data: t,
+	}
 }
 
 //go:linkname memmove runtime.memmove
@@ -91,7 +93,7 @@ func Queryable[T any](tenantDb *internal.TenantDb) *T {
 		typ = reflect.TypeOf((*T)(nil)).Elem()
 	}
 
-	e := internal.EntityUtils.QueryableFromType(typ, internal.Utils.TableNameFromStruct(typ), nil, tenantDb)
+	e := internal.EntityUtils.QueryableFromType(typ, internal.Utils.TableNameFromStruct(typ), nil)
 	ret := e.Interface().(*T)
 	return ret
 }

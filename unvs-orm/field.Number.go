@@ -8,19 +8,22 @@ type Number interface {
 }
 type NumberField[T Number] struct {
 	*dbField
-	val        *T
+	Val        *T
 	callMethod *methodCall
 }
 
 func (f *NumberField[T]) Get() *T {
-	return f.val
+	return f.Val
 }
 func (f *NumberField[T]) Set(val *T) {
-	f.val = val
+	f.Val = val
 }
 
-func (f *NumberField[T]) As(name string) aliasField {
-	return *f.dbField.As(name)
+func (f *NumberField[T]) As(name string) *aliasField {
+	return &aliasField{
+		Expr:  f,
+		Alias: name,
+	}
 
 }
 
@@ -159,7 +162,7 @@ func (f *NumberField[T]) Avg() *NumberField[T] {
 	return f.callMethodFunc("AFG")
 }
 func (f *NumberField[T]) Max() *NumberField[T] {
-	return f.callMethodFunc("AMX")
+	return f.callMethodFunc("MAX")
 }
 func (f *NumberField[T]) Min() *NumberField[T] {
 	return f.callMethodFunc("MIN")

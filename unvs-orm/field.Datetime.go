@@ -8,15 +8,9 @@ type DateTimeField struct {
 	Left       interface{}
 	Right      interface{}
 	Op         string
-	val        *time.Time
+	Val        *time.Time
 }
 
-func (f *DateTimeField) Get() *time.Time {
-	return f.val
-}
-func (f *DateTimeField) Set(val *time.Time) {
-	f.val = val
-}
 func (f *DateTimeField) compare(other interface{}, op string) *BoolField {
 
 	return &BoolField{

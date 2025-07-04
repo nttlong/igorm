@@ -1,4 +1,4 @@
-package orm_test
+package pkgquerybuilder
 
 import (
 	"testing"

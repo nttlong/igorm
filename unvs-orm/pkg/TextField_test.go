@@ -13,8 +13,7 @@ func TestListOfFieldTextFields(t *testing.T) {
 		"Eq",
 		"Ne",
 		"As",
-		"Set",
-		"Get",
+
 		"Like",
 		"NotLike",
 		"In",
@@ -53,22 +52,22 @@ func TestTextField(t *testing.T) {
 	cmp := orm.Compiler.Ctx(mssql())
 	fn := createTextField("table.name")
 	expr := fn.IsNotNull()
-	r, err := cmp.Resolve(expr)
+	r, err := cmp.Resolve(nil, expr)
 	assert.NoError(t, err)
 	assert.Equal(t, "[table].[name] IS NOT NULL", r.Syntax)
 	expr1 := fn.Eq("abc")
-	r, err = cmp.Resolve(expr1)
+	r, err = cmp.Resolve(nil, expr1)
 	assert.NoError(t, err)
 	assert.Equal(t, "[table].[name] = ?", r.Syntax)
 	assert.Equal(t, "abc", r.Args[0])
 	expr2 := fn.In([]string{"a", "b", "c"})
-	r, err = cmp.Resolve(expr2)
+	r, err = cmp.Resolve(nil, expr2)
 	assert.NoError(t, err)
 	assert.Equal(t, "[table].[name] IN (?,?,?)", r.Syntax)
 	fnFirstName := createTextField("table.first_name")
 	fnLastName := createTextField("table.last_name")
 	expr3 := fnFirstName.Concat(" ", fnLastName)
-	r, err = cmp.Resolve(expr3)
+	r, err = cmp.Resolve(nil, expr3)
 	assert.NoError(t, err)
 	assert.Equal(t, "CONCAT([table].[first_name],?,[table].[last_name])", r.Syntax)
 	assert.Equal(t, " ", r.Args[0])

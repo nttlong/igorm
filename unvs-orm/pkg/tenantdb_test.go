@@ -3,11 +3,13 @@ package orm_test
 import (
 	"testing"
 	orm "unvs-orm"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTenantDB(t *testing.T) {
-	mssqlDns := "server=localhost;database=master;user id=sa;password=123456;app name=test"
-	db, err := orm.Open("mssql", mssqlDns)
+	sqlServerDns := "sqlserver://sa:123456@localhost?database=aaa&fetchSize=10000&encrypt=disable"
+	db, err := orm.Open("mssql", sqlServerDns)
 
 	if err != nil {
 		t.Error(err)
@@ -19,12 +21,12 @@ func TestTenantDB(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	t.Log(tenantDb)
+	assert.Equal(t, "aaa", tenantDb.DbName)
 }
 func BenchmarkTenantDB(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		mssqlDns := "server=localhost;database=master;user id=sa;password=123456;app name=test"
-		db, err := orm.Open("mssql", mssqlDns)
+		sqlServerDns := "sqlserver://sa:123456@localhost?database=aaa&fetchSize=10000&encrypt=disable"
+		db, err := orm.Open("mssql", sqlServerDns)
 
 		if err != nil {
 			b.Error(err)

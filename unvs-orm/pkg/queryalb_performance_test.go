@@ -3,6 +3,7 @@ package orm_test
 import (
 	"reflect"
 	"testing"
+	"time"
 	orm "unvs-orm"
 )
 
@@ -11,16 +12,17 @@ func BenchmarkQueryALB(b *testing.B) {
 	var totalTime int64
 
 	for i := 0; i < b.N; i++ {
-		b.StartTimer()
+		start := time.Now()
+
 		typ := reflect.TypeOf(&User{}).Elem()
 		orm.Queryable[User](nil)
 		tblName := orm.Utils.TableNameFromStruct(typ)
-		retVal := orm.EntityUtils.QueryableFromType(typ, tblName, nil, nil)
+		retVal := orm.EntityUtils.QueryableFromType(typ, tblName, nil)
 		retVal.Interface()
-		b.StopTimer()
 
+		elapsed := time.Since(start).Nanoseconds()
+		totalTime += elapsed
 		totalQueries++
-		totalTime += b.Elapsed().Nanoseconds()
 	}
 
 	b.ReportMetric(float64(totalQueries), "total_queries")

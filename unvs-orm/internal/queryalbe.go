@@ -36,7 +36,15 @@ Create a new instance of the queryable type and set the DbField for each field.
 //		u.cacheGetAllFields.Store(entityType, fields)
 //		return fields
 //	}
-func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName string, modelVal *reflect.Value, tenantDb *TenantDb) reflect.Value {
+func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName string, modelVal *reflect.Value) reflect.Value {
+	if q, ok := u.cacheQueryableFromType.Load(entityType); ok {
+		return q.(reflect.Value)
+	}
+	q := u.QueryableFromTypeNoCache(entityType, tableName, nil)
+	u.cacheQueryableFromType.Store(entityType, q)
+	return q
+}
+func (u *entitiesUtils) QueryableFromTypeNoCache(entityType reflect.Type, tableName string, modelVal *reflect.Value) reflect.Value {
 
 	if modelVal == nil {
 
@@ -45,23 +53,23 @@ func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName str
 			if modelFieldType.Kind() == reflect.Ptr {
 				modelFieldType = modelFieldType.Elem()
 			}
-			_modelVal := reflect.New(modelFieldType)
-			_modelValEle := _modelVal.Elem()
-			if tenantDb != nil {
-				tenantDbValField := _modelValEle.FieldByName("TenantDb")
-				if tenantDbValField.CanSet() {
-					tenantDbValField.Set(reflect.ValueOf(tenantDb))
-				}
-			}
+			_modelVal := reflect.New(modelFieldType).Elem()
+
 			modelVal = &_modelVal
 		}
 	}
 	ret := reflect.New(entityType)
 	valModelField := ret.Elem().FieldByName("Model")
-	if valModelField.IsZero() {
 
-		valModelField.Set(*modelVal)
+	//fix "reflect.Set: value of type orm.Model[unvs-orm/pkg_test.User] is not assignable to type *orm.Model[unvs-orm/pkg_test.User]"
+	if valModelField.IsValid() && valModelField.CanSet() {
+		val := (*modelVal)
+		if valModelField.Type().Kind() == reflect.Ptr {
+			val = val.Addr()
+		}
+		valModelField.Set(val)
 	}
+
 	elem := ret.Elem()
 
 	mapField := utils.GetMetaInfo(entityType)
@@ -86,7 +94,7 @@ func (u *entitiesUtils) QueryableFromType(entityType reflect.Type, tableName str
 
 		// Đệ quy cho embedded struct
 		if ft.Anonymous {
-			anonymousValue := u.QueryableFromType(ft.Type, tableName, modelVal, tenantDb)
+			anonymousValue := u.QueryableFromTypeNoCache(ft.Type, tableName, modelVal)
 			if valField.CanSet() {
 				valField.Set(anonymousValue)
 			}

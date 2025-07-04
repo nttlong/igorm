@@ -15,7 +15,7 @@ func TestNumberField_NumberField(t *testing.T) {
 	testData := createListOfFieldBinaries(cmp, fn)
 
 	for _, td := range testData {
-		r, err := orm.Compiler.Ctx(mssql()).Resolve(td.Expr)
+		r, err := orm.Compiler.Ctx(mssql()).Resolve(nil, td.Expr)
 		assert.NoError(t, err)
 		assert.Equal(t, td.Expected, r.Syntax)
 		assert.Equal(t, 0, len(r.Args))

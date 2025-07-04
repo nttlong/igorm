@@ -2,12 +2,17 @@ package orm
 
 type BoolField struct {
 	*dbField
-	left  interface{}
-	right interface{}
-	op    string
-	val   *bool
+	left    interface{}
+	right   interface{}
+	op      string
+	val     *bool
+	rawText string
 }
 
+func (f *BoolField) Raw(text string) *BoolField {
+	f.rawText = text
+	return f
+}
 func (f *BoolField) Eq(value interface{}) *fieldBinary {
 	return &fieldBinary{
 

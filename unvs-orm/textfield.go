@@ -3,7 +3,7 @@ package orm
 type TextField struct {
 	*dbField
 	callMethod *methodCall
-	val        *string
+	Val        *string
 }
 
 func (f *TextField) As(name string) *aliasField {
@@ -12,8 +12,8 @@ func (f *TextField) As(name string) *aliasField {
 		Alias: name,
 	}
 }
-func (f *TextField) Eq(value interface{}) *fieldBinary {
-	return &fieldBinary{
+func (f *TextField) Eq(value interface{}) *BoolField {
+	return &BoolField{
 		dbField: f.dbField.clone(),
 		left:    f,
 		right:   value,
@@ -89,12 +89,6 @@ func (f *TextField) NotBetween(start, end interface{}) *fieldBinary {
 		right:   []interface{}{start, end},
 		op:      "NOT BETWEEN",
 	}
-}
-func (f *TextField) Set(val *string) {
-	f.val = val
-}
-func (f *TextField) Get() *string {
-	return f.val
 }
 
 //---------------------------
