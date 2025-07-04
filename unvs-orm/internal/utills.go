@@ -337,10 +337,6 @@ func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type, isChildren bool
 				}
 				entityTypes = append(entityTypes, repoVal.EntityTypes...)
 				valueOfRepo.Field(i).Set(repoVal.ValueOfRepo.Addr())
-				// entityType := field.Type
-				// if entityType.Kind() == reflect.Ptr {
-				// 	entityType = entityType.Elem()
-				// }
 
 				continue
 			}
@@ -412,3 +408,5 @@ func (u *utilsPackage) GetOrCreateRepository(typ reflect.Type) (*repositoryValue
 	u.cacheGetOrCreateRepository.Store(key, repoVal)
 	return repoVal, nil
 }
+
+type FnGetBAse func() interface{}

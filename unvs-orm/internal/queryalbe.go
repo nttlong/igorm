@@ -54,6 +54,7 @@ func (u *entitiesUtils) QueryableFromTypeNoCache(entityType reflect.Type, tableN
 				modelFieldType = modelFieldType.Elem()
 			}
 			_modelVal := reflect.New(modelFieldType).Elem()
+			_modelVal.FieldByName("TableName").SetString(tableName)
 
 			modelVal = &_modelVal
 		}

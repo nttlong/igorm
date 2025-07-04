@@ -15,32 +15,32 @@ func From(table interface{}) *Query {
 	}
 }
 
-func LeftJoin(table interface{}) interface{} {
+func LeftJoin1(table interface{}) interface{} {
 	return &joinExpr{
 		JoinType: "LEFT JOIN",
 		Table:    table,
 	}
 }
 
-func RightJoin(table interface{}) interface{} {
+func RightJoin1(table interface{}) interface{} {
 	return &joinExpr{
 		JoinType: "RIGHT JOIN",
 		Table:    table,
 	}
 }
 
-func InnerJoin(joinExpr *BinaryField) interface{} {
+func InnerJoin1(joinExpr *BinaryField) interface{} {
 	panic("not implemented")
 }
 
-func CrossJoin(table interface{}) interface{} {
+func CrossJoin1(table interface{}) interface{} {
 	return &joinExpr{
 		JoinType: "CROSS JOIN",
 		Table:    table,
 	}
 }
 
-type joinExpr struct {
+type joinExpr1 struct {
 	JoinType string
 	Table    interface{}
 	On       interface{} // can be nil for CROSS JOIN or delayed assignment

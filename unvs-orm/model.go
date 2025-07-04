@@ -8,8 +8,8 @@ import (
 )
 
 type Model[T any] struct {
-	dataPointer unsafe.Pointer
-	data        interface{}
+	// dataPointer unsafe.Pointer
+	TableName string
 }
 
 func verifyModelFieldFirst[T any]() {

@@ -51,12 +51,16 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 	var source *resolverResult
 	ctx := Compiler.Ctx(dialectCompiler)
 	joinCtx := JoinCompiler.Ctx(dialectCompiler)
-	if join, ok := s.source.(*Join); ok {
-		_source, err := joinCtx.Resolve(join)
+	if join, ok := s.source.(*JoinExpr); ok {
+		joinResult, err := joinCtx.Resolve(join)
 		if err != nil {
 			return nil, err
 		}
-		source = _source
+		source = &resolverResult{
+			Syntax:      joinResult.Syntax,
+			AliasSource: join.aliasMap,
+			Args:        joinResult.Args,
+		}
 	} else {
 		typ := reflect.TypeOf(s.source)
 		if typ.Kind() == reflect.Ptr {
