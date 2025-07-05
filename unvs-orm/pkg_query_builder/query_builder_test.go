@@ -102,3 +102,37 @@ func TestJoin3Tables2(b *testing.T) {
 	expectedSql2 := "[invoices] AS [T1] INNER JOIN [invoice_details] AS [T2] ON [T1].[invoice_id] = [T2].[invoice_id] INNER JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id] INNER JOIN [payment_methods] AS [T4] ON [T1].[payment_method_id] = [T4].[payment_method_id] INNER JOIN [items] AS [T5] ON [T2].[item_id] = [T5].[item_id]"
 	assert.Equal(b, expectedSql2, joinRes2.Syntax)
 }
+func TestLeftJoinExpr(b *testing.T) {
+	repo := orm.Repository[OrderRepository]()
+	on := repo.Orders.OrderId.Eq(repo.OrderItems.OrderId)
+	join := repo.Orders.LeftJoin(repo.OrderItems, on).LeftJoin(
+		repo.Invoices, repo.Invoices.OrderId.Eq(repo.OrderItems.OrderId),
+	)
+	ctx := orm.JoinCompiler.Ctx(mssql())
+	joinRes, err := ctx.Resolve(join)
+	assert.NoError(b, err)
+	expectedSql := "[orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] LEFT JOIN [invoices] AS [T3] ON [T3].[order_id] = [T2].[order_id]"
+	assert.Equal(b, expectedSql, joinRes.Syntax)
+
+}
+func TestJoinByUsingDirectlyQueryable(b *testing.T) {
+	repo := orm.Repository[OrderRepository]()
+
+	join := repo.Invoices.OrderId.Eq(repo.OrderItems.OrderId).And(
+		repo.Invoices.Version.Eq(1).And( //<-- will be compile as join condition even this is AND not join
+			repo.Invoices.CustomerId.Eq(repo.Customers.CustomerId), //<-- be cause new table appear in
+		),
+	)
+	expectedSql := "[invoices] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? INNER JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
+	ctxCmp := orm.Compiler.Ctx(mssql())
+	testCmd, err := ctxCmp.Resolve(nil, join)
+	assert.NoError(b, err)
+	b.Log(testCmd.Syntax)
+
+	ctx := orm.JoinCompiler.Ctx(mssql())
+	joinRes, err := ctx.ResolveBoolFieldAsJoin(join)
+	assert.NoError(b, err)
+
+	assert.Equal(b, expectedSql, joinRes.Syntax)
+
+}

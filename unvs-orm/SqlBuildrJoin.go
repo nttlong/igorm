@@ -62,34 +62,35 @@ func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
 
 }
 
-// func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
-// 	cmd := Compiler.Ctx(c.dialect)
+func (c *JoinCompilerUtils) ResolveBoolFieldAsJoin(expr *BoolField) (*resolverResult, error) {
+	cmp := Compiler.Ctx(c.dialect) //<-- get compiler for dialect
+	if len(expr.tables) == 0 {
+		expr = expr.Join(nil)
+		cmpRes, err := cmp.Resolve(&expr.alias, expr.left)
+		if err != nil {
+			return nil, err
+		}
+		right := cmp.Quote(expr.tables[1]) + " AS " + cmp.Quote(expr.alias[expr.tables[1]])
+		left := cmp.Quote(expr.tables[0]) + " AS " + cmp.Quote(expr.alias[expr.tables[0]])
+		cmpRes.Syntax = left + " " + expr.joinType + " JOIN " + right + " ON " + cmpRes.Syntax
+		return &resolverResult{
+			Syntax:      cmpRes.Syntax,
+			Args:        cmpRes.Args,
+			AliasSource: expr.alias,
+		}, nil
+	}
+	cmpRes, err := cmp.Resolve(&expr.alias, expr)
+	if err != nil {
+		return nil, err
+	}
+	return &resolverResult{
+		Syntax:      cmpRes.Syntax,
+		Args:        cmpRes.Args,
+		AliasSource: expr.alias,
+	}, nil
 
-// 	// Dịch điều kiện ON
-// 	onRes, err := cmd.Resolve(&expr.aliasSource, expr.on)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+}
 
-// 	// Bảng được JOIN (phải là bảng bên phải)
-// 	// Giả sử expr.tables luôn là [leftTable, rightTable]
-// 	if len(expr.tables) != 2 {
-// 		return nil, errors.New("JoinExpr expects exactly 2 tables")
-// 	}
-
-// 	// Bảng bên phải là bảng được JOIN vào FROM gốc
-// 	rightTable := expr.tables[1]
-// 	rightAlias := expr.aliasSource[rightTable]
-
-// 	// Sinh JOIN clause
-// 	tblJoin := cmd.Quote(rightTable) + " AS " + cmd.Quote(rightAlias)
-
-// 	ret := &resolverResult{
-// 		Syntax:      expr.joinType + " JOIN " + tblJoin + " ON " + onRes.Syntax,
-// 		Args:        onRes.Args,
-// 		AliasSource: expr.aliasSource,
-// 	}
-// 	return ret, nil
-// }
+// stack := []*JoinExpr{}
 
 var JoinCompiler = JoinCompilerUtils{}

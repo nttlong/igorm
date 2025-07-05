@@ -1,6 +1,11 @@
 package orm
 
+import "errors"
+
 func (c *CompilerUtils) resolveDBField(aliasSource *map[string]string, f *dbField) (*resolverResult, error) {
+	if f == nil {
+		return nil, errors.New("dbField is nil")
+	}
 	if aliasSource == nil {
 		return &resolverResult{
 			Syntax: c.Quote(f.Table, f.Name),

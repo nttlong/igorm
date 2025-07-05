@@ -2,11 +2,16 @@ package orm
 
 type BoolField struct {
 	*dbField
-	left    interface{}
-	right   interface{}
-	op      string
-	val     *bool
-	rawText string
+	left            interface{}
+	right           interface{}
+	op              string
+	val             *bool
+	rawText         string
+	joinType        string
+	alias           map[string]string
+	tables          []string
+	joinSource      string
+	joinSourceAlias string
 }
 
 func (f *BoolField) Raw(text string) *BoolField {

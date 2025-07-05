@@ -15,47 +15,22 @@ type JoinExpr struct {
 	index    int
 }
 
-// type JoinExpr struct {
-// 	joinType    string
-// 	aliasSource map[string]string
-// 	on          interface{} // can be nil for CROSS JOIN or delayed assignment
-
-// 	tables []string
-// }
-
-//	func InnerJoin(source ...interface{}) *JoinExpr {
-//		AliasSource := map[string]string{}
-//		for i, s := range source {
-//			alias := "T" + strconv.Itoa(i+1)
-//			if tableName, ok := s.(string); ok {
-//				AliasSource[tableName] = alias
-//			} else {
-//				typ := reflect.TypeOf(s)
-//				if typ.Kind() == reflect.Ptr {
-//					typ = typ.Elem()
-//				}
-//				tableName = Utils.TableNameFromStruct(typ)
-//				AliasSource[tableName] = alias
-//			}
-//		}
-//		return &JoinExpr{
-//			joinType: "INNER JOIN",
-//			aliasMap: AliasSource,
-//			on:       nil,
-//		}
-//	}
-func (j *JoinExpr) On(on *BoolField) *JoinExpr {
-	j.on = on
-	return j
+func (m *Model[T]) Joins(joins ...*JoinExpr) *JoinExpr {
+	root := joins[0]
+	for i := 1; i < len(joins); i++ {
+		root = root.doJoin(joins[i].joinType, joins[i].baseTable, joins[i].on)
+	}
+	return root
 }
-func (m *Model[T]) Join(other interface{}, on *BoolField) *JoinExpr {
+func (m *Model[T]) doJoin(joinType string, other interface{}, on *BoolField) *JoinExpr {
 	root := &JoinExpr{
-		joinType:  "INNER",
+		joinType:  joinType,
 		index:     1,
 		baseTable: m.TableName,
 	}
 	ret := &JoinExpr{
 		previous: root,
+		joinType: joinType,
 
 		aliasMap: map[string]string{},
 		on:       on,
@@ -76,20 +51,20 @@ func (m *Model[T]) Join(other interface{}, on *BoolField) *JoinExpr {
 
 	return ret
 }
-
-//	func (j *JoinExpr) getBaseTable() string {
-//		// Tìm node gốc (previous = nil)
-//		node := j
-//		for node.previous != nil {
-//			node = node.previous
-//		}
-//		return node.baseTable
-//	}
-func (j *JoinExpr) Join(other interface{}, on *BoolField) *JoinExpr {
-	j.joinType = "INNER"
+func (m *Model[T]) Join(other interface{}, on *BoolField) *JoinExpr {
+	return m.doJoin("INNER", other, on)
+}
+func (m *Model[T]) LeftJoin(other interface{}, on *BoolField) *JoinExpr {
+	return m.doJoin("LEFT", other, on)
+}
+func (m *Model[T]) RightJoinJoin(other interface{}, on *BoolField) *JoinExpr {
+	return m.doJoin("RIGHT", other, on)
+}
+func (j *JoinExpr) doJoin(joinType string, other interface{}, on *BoolField) *JoinExpr {
+	j.joinType = joinType
 	ret := &JoinExpr{
 		previous: j,
-		joinType: "INNER",
+		joinType: joinType,
 
 		aliasMap: j.aliasMap,
 		on:       on,
@@ -107,4 +82,30 @@ func (j *JoinExpr) Join(other interface{}, on *BoolField) *JoinExpr {
 	ret.baseTable = otherTableName
 
 	return ret
+}
+func (j *JoinExpr) Join(other interface{}, on *BoolField) *JoinExpr {
+	return j.doJoin("INNER", other, on)
+}
+func (j *JoinExpr) LeftJoin(other interface{}, on *BoolField) *JoinExpr {
+	return j.doJoin("LEFT", other, on)
+}
+func (j *JoinExpr) RightJoin(other interface{}, on *BoolField) *JoinExpr {
+	return j.doJoin("RIGHT", other, on)
+}
+func (m *Model[T]) JoinBy(on *BoolField) *JoinExpr {
+	return joinUnpackUtils.unpack(on)
+}
+func (f *BoolField) Join(other *BoolField) *BoolField {
+
+	ret := &BoolField{
+
+		left:     f,
+		right:    other,
+		joinType: "INNER",
+	}
+	fx := joinUnpackUtils.ExtractJoinInfo(f)
+	ret.alias = fx.alias
+	ret.tables = fx.tables
+	return ret
+
 }

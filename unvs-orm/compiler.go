@@ -231,6 +231,9 @@ func (c *CompilerUtils) resolveSlice(aliasSource *map[string]string, expr interf
 }
 
 func (c *CompilerUtils) resolveBoolField(aliasSource *map[string]string, f *BoolField) (*resolverResult, error) {
+	if strings.HasSuffix(f.op, " JOIN") {
+		return c.resolveBoolFieldJoin(aliasSource, f)
+	}
 	if f.op == "BETWEEN" {
 		return c.ResolveBetween(aliasSource, f)
 
