@@ -95,17 +95,49 @@ func (j *JoinExpr) RightJoin(other interface{}, on *BoolField) *JoinExpr {
 func (m *Model[T]) JoinBy(on *BoolField) *JoinExpr {
 	return joinUnpackUtils.unpack(on)
 }
-func (f *BoolField) Join(other *BoolField) *BoolField {
+func (f *BoolField) Join(other interface{}) *BoolField {
+	return &BoolField{
+		dbField:  f.dbField.clone(),
+		left:     f,
+		right:    other,
+		op:       "AND",
+		joinType: "INNER",
+	}
+
+}
+func (f *BoolField) RightJoin(other interface{}) *BoolField {
+	return &BoolField{
+		dbField:  f.dbField.clone(),
+		left:     f,
+		right:    other,
+		op:       "AND",
+		joinType: "RIGHT",
+	}
+
+}
+func (f *BoolField) LeftJoin(other interface{}) *BoolField {
+	return &BoolField{
+		dbField:  f.dbField.clone(),
+		left:     f,
+		right:    other,
+		op:       "AND",
+		joinType: "LEFT",
+	}
+
+}
+func (f *BoolField) doJoin() *BoolField {
 
 	ret := &BoolField{
 
 		left:     f,
-		right:    other,
-		joinType: "INNER",
+		right:    nil,
+		joinType: f.joinType,
+		op:       "AND",
 	}
 	fx := joinUnpackUtils.ExtractJoinInfo(f)
 	ret.alias = fx.alias
 	ret.tables = fx.tables
+
 	return ret
 
 }

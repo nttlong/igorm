@@ -65,7 +65,7 @@ func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
 func (c *JoinCompilerUtils) ResolveBoolFieldAsJoin(expr *BoolField) (*resolverResult, error) {
 	cmp := Compiler.Ctx(c.dialect) //<-- get compiler for dialect
 	if len(expr.tables) == 0 {
-		expr = expr.Join(nil)
+		expr = expr.doJoin()
 		cmpRes, err := cmp.Resolve(&expr.alias, expr.left)
 		if err != nil {
 			return nil, err

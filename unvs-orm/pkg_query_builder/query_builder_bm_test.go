@@ -126,20 +126,46 @@ func BenchmarkTestLeftJoinExpr(b *testing.B) {
 }
 func BenchmarkTestJoinByUsingDirectlyQueryable(b *testing.B) {
 	repo := orm.Repository[OrderRepository]()
+	ctx := orm.JoinCompiler.Ctx(mssql())
 	for i := 0; i < b.N; i++ {
 
-		join := repo.Invoices.OrderId.Eq(repo.OrderItems.OrderId).And(
+		innerJoin := repo.Invoices.OrderId.Eq(repo.OrderItems.OrderId).Join(
 			repo.Invoices.Version.Eq(1).And( //<-- will be compile as join condition even this is AND not join
 				repo.Invoices.CustomerId.Eq(repo.Customers.CustomerId), //<-- be cause new table appear in
 			),
 		)
-		expectedSql := "[invoices] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? INNER JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
+		expectedInnerJoinClause := "[invoices] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? INNER JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
 
-		ctx := orm.JoinCompiler.Ctx(mssql())
-		joinRes, err := ctx.ResolveBoolFieldAsJoin(join)
+		innerJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(innerJoin)
 		assert.NoError(b, err)
 
-		assert.Equal(b, expectedSql, joinRes.Syntax)
+		assert.Equal(b, expectedInnerJoinClause, innerJoinClauseRes.Syntax)
+		assert.Equal(b, []interface{}{1}, innerJoinClauseRes.Args)
+		leftJoin := repo.Invoices.OrderId.Eq(repo.OrderItems.OrderId).LeftJoin(
+			repo.Invoices.Version.Eq(100).And( //<-- will be compile as join condition even this is AND not join
+				repo.Invoices.CustomerId.Eq(repo.Customers.CustomerId), //<-- be cause new table appear in
+			),
+		)
+		leftJoinExpectedSql := "[invoices] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? LEFT JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
+
+		leftJoinRes, err := ctx.ResolveBoolFieldAsJoin(leftJoin)
+		assert.NoError(b, err)
+
+		assert.Equal(b, leftJoinExpectedSql, leftJoinRes.Syntax)
+		assert.Equal(b, []interface{}{100}, leftJoinRes.Args)
+
+		rightJoin := repo.Invoices.OrderId.Eq(repo.OrderItems.OrderId).RightJoin(
+			repo.Invoices.Version.Eq(1).And( //<-- will be compile as join condition even this is AND not join
+				repo.Invoices.CustomerId.Eq(repo.Customers.CustomerId), //<-- be cause new table appear in
+			),
+		)
+		expectedRightJoinClause := "[invoices] AS [T1] RIGHT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? RIGHT JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
+
+		rightJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(rightJoin)
+		assert.NoError(b, err)
+
+		assert.Equal(b, expectedRightJoinClause, rightJoinClauseRes.Syntax)
+		assert.Equal(b, []interface{}{1}, rightJoinClauseRes.Args)
 	}
 
 }

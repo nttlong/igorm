@@ -139,7 +139,7 @@ func (j *joinUnpack) ExtractJoinInfo(on *BoolField) *joinInfoFromBoolField {
 		alias:       map[string]string{},
 		tables:      []string{},
 		hasNewTable: false,
-		joinType:    "INNER",
+		joinType:    on.joinType,
 	}
 	refTables = j.extractJoinInfos(refTables, on)
 	ret := &joinInfoFromBoolField{
