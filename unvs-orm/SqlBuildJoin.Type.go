@@ -2,15 +2,17 @@ package orm
 
 import (
 	"reflect"
+	"strconv"
 )
 
 type JoinExpr struct {
-	baseTable  string
-	previous   *JoinExpr
-	rightTable string
-	on         *BoolField
-	aliasMap   map[string]string
-	joinType   string
+	baseTable string
+	previous  *JoinExpr
+
+	on       *BoolField
+	aliasMap map[string]string
+	joinType string
+	index    int
 }
 
 // type JoinExpr struct {
@@ -47,10 +49,17 @@ func (j *JoinExpr) On(on *BoolField) *JoinExpr {
 	return j
 }
 func (m *Model[T]) Join(other interface{}, on *BoolField) *JoinExpr {
+	root := &JoinExpr{
+		joinType:  "INNER",
+		index:     1,
+		baseTable: m.TableName,
+	}
 	ret := &JoinExpr{
-		joinType: "INNER",
+		previous: root,
+
 		aliasMap: map[string]string{},
 		on:       on,
+		index:    2,
 	}
 	otherTyp := reflect.TypeOf(other)
 	if otherTyp.Kind() == reflect.Ptr {
@@ -59,17 +68,43 @@ func (m *Model[T]) Join(other interface{}, on *BoolField) *JoinExpr {
 	otherTableName := Utils.TableNameFromStruct(otherTyp)
 	// ret.tables = append(ret.tables, m.TableName, otherTableName)
 	ret.aliasMap[m.TableName] = "T1"
-	ret.aliasMap[Utils.TableNameFromStruct(otherTyp)] = "T2"
-	ret.rightTable = otherTableName
-	ret.baseTable = m.TableName
+	ret.aliasMap[otherTableName] = "T2"
+
+	ret.baseTable = otherTableName
+
+	root.aliasMap = ret.aliasMap
 
 	return ret
 }
-func (j *JoinExpr) getBaseTable() string {
-	// Tìm node gốc (previous = nil)
-	node := j
-	for node.previous != nil {
-		node = node.previous
+
+//	func (j *JoinExpr) getBaseTable() string {
+//		// Tìm node gốc (previous = nil)
+//		node := j
+//		for node.previous != nil {
+//			node = node.previous
+//		}
+//		return node.baseTable
+//	}
+func (j *JoinExpr) Join(other interface{}, on *BoolField) *JoinExpr {
+	j.joinType = "INNER"
+	ret := &JoinExpr{
+		previous: j,
+		joinType: "INNER",
+
+		aliasMap: j.aliasMap,
+		on:       on,
+		index:    j.index + 1,
 	}
-	return node.baseTable
+	otherTyp := reflect.TypeOf(other)
+	if otherTyp.Kind() == reflect.Ptr {
+		otherTyp = otherTyp.Elem()
+	}
+	otherTableName := Utils.TableNameFromStruct(otherTyp)
+	// ret.tables = append(ret.tables, m.TableName, otherTableName)
+	t1 := "T" + strconv.Itoa(j.index+1)
+
+	ret.aliasMap[Utils.TableNameFromStruct(otherTyp)] = t1
+	ret.baseTable = otherTableName
+
+	return ret
 }

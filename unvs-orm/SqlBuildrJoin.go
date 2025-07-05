@@ -1,7 +1,6 @@
 package orm
 
 import (
-	"fmt"
 	"strings"
 	"sync"
 )
@@ -28,46 +27,39 @@ func (c *JoinCompilerUtils) Ctx(dialect DialectCompiler) *JoinCompilerUtils {
 	return ret
 }
 func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
-	cmd := Compiler.Ctx(c.dialect)
-
-	stack := []*JoinExpr{}
-	for node := expr; node != nil; node = node.previous {
-		stack = append(stack, node)
-	}
-	for i, j := 0, len(stack)-1; i < j; i, j = i+1, j-1 {
-		stack[i], stack[j] = stack[j], stack[i]
-	}
-
-	sqlParts := []string{}
+	cmp := Compiler.Ctx(c.dialect) //<-- get compiler for dialect
+	retSyntax := []string{}
 	args := []interface{}{}
+	// stack := []*JoinExpr{}
+	for node := expr; node != nil; node = node.previous {
+		if node.on != nil {
+			r, err := cmp.Resolve(&node.aliasMap, node.on) //<-- resolve on condition
+			if err != nil {
+				return nil, err
+			}
+			syntax := cmp.Quote(node.baseTable) + " AS " + cmp.Quote(node.aliasMap[node.baseTable]) + " ON " + r.Syntax
+			if node.previous != nil {
+				if node.joinType == "" {
+					panic("joinType is empty")
+				}
+				syntax = node.previous.joinType + " JOIN " + syntax
+			}
+			retSyntax = append([]string{syntax}, retSyntax...)
+			args = append(r.Args, args...)
 
-	// FROM part
-	baseAlias := expr.aliasMap[expr.baseTable]
-	sqlParts = append(sqlParts, cmd.Quote(expr.baseTable)+" AS "+cmd.Quote(baseAlias))
-
-	for _, join := range stack {
-		right := join.rightTable
-		rightAlias := join.aliasMap[right]
-
-		onRes, err := cmd.Resolve(&join.aliasMap, join.on)
-		if err != nil {
-			return nil, err
+		} else {
+			syntax := cmp.Quote(node.baseTable) + " AS " + cmp.Quote(node.aliasMap[node.baseTable])
+			retSyntax = append([]string{syntax}, retSyntax...)
 		}
 
-		sql := fmt.Sprintf("%s JOIN %s AS %s ON %s",
-			join.joinType,
-			cmd.Quote(right),
-			cmd.Quote(rightAlias),
-			onRes.Syntax,
-		)
-		sqlParts = append(sqlParts, sql)
-		args = append(args, onRes.Args...)
 	}
 
 	return &resolverResult{
-		Syntax: strings.Join(sqlParts, " "),
-		Args:   args,
+		Syntax:      strings.Join(retSyntax, " "),
+		Args:        args,
+		AliasSource: expr.aliasMap,
 	}, nil
+
 }
 
 // func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {

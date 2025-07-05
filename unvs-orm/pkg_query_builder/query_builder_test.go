@@ -68,3 +68,37 @@ func TestJoinExpr2(b *testing.T) {
 	assert.Equal(b, expectedSql3, joinRes3.Syntax)
 	assert.Equal(b, []interface{}{1}, joinRes3.Args)
 }
+func TestJoin3Tables(b *testing.T) {
+	ctx := orm.JoinCompiler.Ctx(mssql())
+	repo := orm.Repository[OrderRepository]()
+
+	join2 := repo.Invoices.Join(
+		repo.InvoiceDetails, repo.Invoices.InvoiceId.Eq(repo.InvoiceDetails.InvoiceId),
+	).Join(
+		repo.Items, repo.InvoiceDetails.ItemId.Eq(repo.Items.ItemId),
+	)
+	joinRes2, err := ctx.Resolve(join2)
+	assert.NoError(b, err)
+
+	expectedSql2 := "[invoices] AS [T1] INNER JOIN [invoice_details] AS [T2] ON [T1].[invoice_id] = [T2].[invoice_id] INNER JOIN [items] AS [T3] ON [T2].[item_id] = [T3].[item_id]"
+	assert.Equal(b, expectedSql2, joinRes2.Syntax)
+}
+func TestJoin3Tables2(b *testing.T) {
+	ctx := orm.JoinCompiler.Ctx(mssql())
+	repo := orm.Repository[OrderRepository]()
+
+	join2 := repo.Invoices.Join(
+		repo.InvoiceDetails, repo.Invoices.InvoiceId.Eq(repo.InvoiceDetails.InvoiceId),
+	).Join(
+		repo.Customers, repo.Invoices.CustomerId.Eq(repo.Customers.CustomerId),
+	).Join(
+		repo.PaymentMethods, repo.Invoices.PaymentMethodId.Eq(repo.PaymentMethods.PaymentMethodId),
+	).Join(
+		repo.Items, repo.InvoiceDetails.ItemId.Eq(repo.Items.ItemId),
+	)
+	joinRes2, err := ctx.Resolve(join2)
+	assert.NoError(b, err)
+
+	expectedSql2 := "[invoices] AS [T1] INNER JOIN [invoice_details] AS [T2] ON [T1].[invoice_id] = [T2].[invoice_id] INNER JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id] INNER JOIN [payment_methods] AS [T4] ON [T1].[payment_method_id] = [T4].[payment_method_id] INNER JOIN [items] AS [T5] ON [T2].[item_id] = [T5].[item_id]"
+	assert.Equal(b, expectedSql2, joinRes2.Syntax)
+}
