@@ -97,6 +97,10 @@ func (j *joinUnpack) extractJoinInfos(refTable *joinRefInfo, expr ...interface{}
 			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
 		case *NumberField[int8]:
 			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+		case DateTimeField:
+			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+		case *DateTimeField:
+			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
 		case *methodCall:
 			if v == nil {
 				continue

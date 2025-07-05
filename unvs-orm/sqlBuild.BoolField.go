@@ -26,6 +26,7 @@ func (s *sqlSelectSource) build(d DialectCompiler) (*resolverResult, error) {
 type SqlCmdSelect struct {
 	source   *sqlSelectSource
 	fields   []interface{}
+	where    interface{}
 	aliasMap *map[string]string
 	cmp      *CompilerUtils
 	Err      error
@@ -82,6 +83,29 @@ func (expr *BoolField) Select(fields ...interface{}) *SqlCmdSelect {
 		fields: fields,
 	}
 }
+func (sql *SqlCmdSelect) Where(expr *BoolField) *SqlCmdSelect {
+	sql.where = expr
+	return sql
+}
+func (sql *SqlCmdSelect) buildWhere() *sqlCmdSelectResult {
+	if sql.where == nil {
+		return &sqlCmdSelectResult{
+			SqlText: "",
+			Args:    []interface{}{},
+		}
+	}
+	whereResult, err := sql.cmp.Resolve(sql.aliasMap, sql.where)
+	if err != nil {
+		return &sqlCmdSelectResult{
+			Err: err,
+		}
+	}
+	return &sqlCmdSelectResult{
+		SqlText: whereResult.Syntax,
+		Args:    whereResult.Args,
+	}
+
+}
 func (sql *SqlCmdSelect) Compile(d DialectCompiler) *sqlCmdSelectResult {
 	var args []interface{}
 	sql.cmp = Compiler.Ctx(d)
@@ -102,8 +126,17 @@ func (sql *SqlCmdSelect) Compile(d DialectCompiler) *sqlCmdSelectResult {
 		return resultBuildSelect
 	}
 	args = append(args, resultBuildSelect.Args...)
+	resultBuildWhere := sql.buildWhere()
+	if resultBuildWhere.Err != nil {
+		return resultBuildWhere
+	}
 
 	sqlStr := "SELECT " + resultBuildSelect.SqlText + " FROM " + sql.source.sourceText
+	if resultBuildWhere.SqlText != "" {
+		sqlStr += " WHERE " + resultBuildWhere.SqlText
+	}
+	args = append(args, resultBuildWhere.Args...)
+
 	return &sqlCmdSelectResult{
 		SqlText: sqlStr,
 		Args:    args,
