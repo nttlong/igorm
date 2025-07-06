@@ -24,6 +24,9 @@ func (d *mssqlDialect) setJoinCompiler(compiler *JoinCompilerUtils) {
 	d.joinCompiler = compiler
 }
 func (d *mssqlDialect) getCompiler() *CompilerUtils {
+	if d.compiler == nil {
+		d.compiler = Compiler.Ctx(d)
+	}
 	return d.compiler
 }
 func (d *mssqlDialect) resolve(aliasSource *map[string]string, caller *methodCall) (*resolverResult, error) {

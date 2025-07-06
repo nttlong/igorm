@@ -30,7 +30,10 @@ type utilsPackage struct {
 	entityTypeName                          string
 	cacheVerifyModelFieldFirst              sync.Map
 
-	cacheReplacePlaceHolder sync.Map
+	cacheReplacePlaceHolder       sync.Map
+	cacheEntityNameAndDbTableName sync.Map
+	cacheEntityNameAndMetaInfo    sync.Map
+	cacheToSnakeCase              sync.Map
 }
 
 /*
@@ -115,6 +118,9 @@ func (u *utilsPackage) GetPkFromMetaByType(typ reflect.Type) map[string]map[stri
 }
 
 func (u *utilsPackage) ToSnakeCase(str string) string {
+	if v, ok := u.cacheToSnakeCase.Load(str); ok {
+		return v.(string)
+	}
 	var result []rune
 	for i, r := range str {
 		if i > 0 && unicode.IsUpper(r) &&
@@ -123,7 +129,9 @@ func (u *utilsPackage) ToSnakeCase(str string) string {
 		}
 		result = append(result, unicode.ToLower(r))
 	}
-	return string(result)
+	ret := string(result)
+	u.cacheToSnakeCase.Store(str, ret)
+	return ret
 }
 
 func (u *utilsPackage) extractName(s string) string {
@@ -164,16 +172,23 @@ func (u *utilsPackage) TableNameFromStruct(typ reflect.Type) string {
 			parsed := u.ParseDBTag(typ.Field(i))
 			if parsed.TableName != "" {
 				u.CacheTableNameFromStruct.Store(typ, parsed.TableName)
+				u.cacheEntityNameAndDbTableName.Store(strings.ToLower(typ.Name()), parsed.TableName)
+				u.cacheEntityNameAndDbTableName.Store(u.Plural(strings.ToLower(typ.Name())), parsed.TableName)
 				return parsed.TableName
 			} else {
 				ret := pluralize.Plural(u.ToSnakeCase(typ.Name()))
 				u.CacheTableNameFromStruct.Store(typ, ret)
+				u.cacheEntityNameAndDbTableName.Store(strings.ToLower(typ.Name()), ret)
+				u.cacheEntityNameAndDbTableName.Store(u.Plural(strings.ToLower(typ.Name())), ret)
 				return ret
 
 			}
 		}
 	}
 	return ""
+}
+func (u *utilsPackage) Plural(txt string) string {
+	return pluralize.Plural(txt)
 }
 
 /*
@@ -407,6 +422,14 @@ func (u *utilsPackage) GetOrCreateRepository(typ reflect.Type) (*repositoryValue
 	//set cache
 	u.cacheGetOrCreateRepository.Store(key, repoVal)
 	return repoVal, nil
+}
+func (u *utilsPackage) GetMetaInfoByTableName(tableName string) map[string]FieldTag {
+	//check cache
+
+	if val, ok := u.cacheEntityNameAndMetaInfo.Load(tableName); ok {
+		return val.(map[string]FieldTag)
+	}
+	return nil
 }
 
 type FnGetBAse func() interface{}

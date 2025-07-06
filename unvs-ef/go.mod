@@ -22,6 +22,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
+require github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2
+
 require (
 	github.com/google/uuid v1.6.0 // indirect
 

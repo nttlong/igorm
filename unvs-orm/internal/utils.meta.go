@@ -63,6 +63,7 @@ func (u *utilsPackage) GetMetaInfo(typ reflect.Type) map[string]map[string]Field
 	if metaInfo, ok := u.cacheGetMetaInfo.Load(typ); ok {
 		return metaInfo.(map[string]map[string]FieldTag)
 	}
+	cacheItem := map[string]FieldTag{}
 
 	// 2. Tạo mới metadata
 	metaInfo := make(map[string]map[string]FieldTag)
@@ -88,8 +89,10 @@ func (u *utilsPackage) GetMetaInfo(typ reflect.Type) map[string]map[string]Field
 					metaInfo[tableName] = make(map[string]FieldTag)
 				}
 				for fieldName, fieldTag := range fields {
-
-					metaInfo[tableName][u.ToSnakeCase(fieldName)] = fieldTag
+					fieldNameSnakeCase := u.ToSnakeCase(fieldName)
+					metaInfo[tableName][fieldNameSnakeCase] = fieldTag
+					cacheItem[fieldNameSnakeCase] = fieldTag
+					cacheItem[strings.ToLower(fieldTag.Field.Name)] = fieldTag
 				}
 			}
 			continue
@@ -100,11 +103,18 @@ func (u *utilsPackage) GetMetaInfo(typ reflect.Type) map[string]map[string]Field
 		}
 
 		// 5. Gán tag metadata cho field
-		metaInfo[tableName][u.ToSnakeCase(field.Name)] = u.ParseDBTag(field)
+		fieldTag := u.ParseDBTag(field)
+		fieldNameSnakeCase := u.ToSnakeCase(field.Name)
+		metaInfo[tableName][fieldNameSnakeCase] = fieldTag
+		cacheItem[fieldNameSnakeCase] = fieldTag
+		cacheItem[strings.ToLower(fieldTag.Field.Name)] = fieldTag
 	}
 
 	// 6. Cache lại và trả về
 	u.cacheGetMetaInfo.Store(typ, metaInfo)
+	u.cacheEntityNameAndMetaInfo.Store(strings.ToLower(typ.Name()), cacheItem)
+	u.cacheEntityNameAndMetaInfo.Store(strings.ToLower(u.Plural(typ.Name())), cacheItem)
+	u.cacheEntityNameAndMetaInfo.Store(tableName, cacheItem)
 	return metaInfo
 }
 func (u *utilsPackage) getAutoPkKey(typ reflect.Type) *autoNumberKey {
@@ -197,4 +207,11 @@ func (u *utilsPackage) getRequireFields(typ reflect.Type) map[string]FieldTag {
 	u.cacheGetRequireFields.Store(typ.String(), ret)
 	return ret
 
+}
+func (u *utilsPackage) GetDbTableName(repoName string) string {
+	//refer to u.TableNameFromStruct
+	if v, ok := u.cacheEntityNameAndDbTableName.Load(repoName); ok {
+		return v.(string)
+	}
+	return ""
 }
