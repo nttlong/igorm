@@ -1,14 +1,10 @@
 package orm
 
 import (
-	"bytes"
-	"fmt"
-	"sort"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	sqlparser "github.com/xwb1989/sqlparser"
 )
 
 type Order struct {
@@ -119,84 +115,6 @@ type PaymentMethod struct {
 	UpdatedBy TextField     `db:"length(100);null"`
 }
 
-type expression struct {
-	dialect     DialectCompiler
-	cmp         *CompilerUtils
-	keywords    []string
-	specialChar []byte
-}
-
-func (e *expression) getField(expr interface{}) (string, error) {
-
-	switch expr := expr.(type) {
-	case *sqlparser.ColName:
-		tableNameFromSyntax := expr.Qualifier.ToViewName().Name.CompliantName()
-		tableName := tableNameFromSyntax
-		if dbTableName := Utils.GetDbTableName(tableNameFromSyntax); dbTableName != "" {
-			tableName = dbTableName
-		}
-		if tableName == "" {
-			return "", fmt.Errorf("table name not found for %s", expr)
-		}
-		fieldName := expr.Name.CompliantName()
-		metaInfo := Utils.GetMetaInfoByTableName(tableName)
-		if metaInfo != nil {
-			if _, ok := metaInfo[strings.ToLower(fieldName)]; !ok {
-				return "", fmt.Errorf("field %s not found in table %s", fieldName, tableName)
-			} else {
-				fieldName = Utils.ToSnakeCase(fieldName)
-			}
-		}
-		ret := e.cmp.Quote(tableName, fieldName) + " AS " + e.cmp.Quote(expr.Name.CompliantName())
-		return ret, nil
-
-	case *sqlparser.AliasedExpr:
-		return e.getField(expr.Expr)
-	default:
-		return "", fmt.Errorf("not support %s", expr)
-	}
-	return "", nil
-
-}
-func (e *expression) InsertMarks(input string, markList [][]int) string {
-	// Sort theo vị trí start giảm dần để tránh làm lệch chỉ số khi chèn
-	sort.Slice(markList, func(i, j int) bool {
-		return markList[i][0] > markList[j][0]
-	})
-
-	builder := strings.Builder{}
-	builder.WriteString(input)
-
-	for _, mark := range markList {
-		start, end := mark[0], mark[1]
-		if start < 0 || end > builder.Len() || start >= end {
-			continue // tránh lỗi khi input sai
-		}
-
-		// Chèn dấu '`' vào cuối đoạn trước
-		builderStr := builder.String()
-		builder.Reset()
-		builder.WriteString(builderStr[:end])
-		builder.WriteString("`")
-		builder.WriteString(builderStr[end:])
-
-		builderStr = builder.String()
-		builder.Reset()
-		builder.WriteString(builderStr[:start])
-		builder.WriteString("`")
-		builder.WriteString(builderStr[start:])
-	}
-
-	return builder.String()
-}
-func (e *expression) isSpecialChar(input byte) bool {
-	if e.specialChar == nil {
-		e.specialChar = []byte{
-			'(', ')', ',', '.', ' ', '/', '+', '-', '*', '%', '=', '<', '>', '!', '&', '|', '^', '~', '?', ':', ';', '[', ']', '{', '}', '@', '#', '$',
-		}
-	}
-	return bytes.Contains(e.specialChar, []byte{input})
-}
 func TestIsSpecialChar(t *testing.T) {
 	e := expression{}
 	assert.True(t, e.isSpecialChar('('))
@@ -228,92 +146,7 @@ func TestIsSpecialChar(t *testing.T) {
 	assert.True(t, e.isSpecialChar('#'))
 	assert.True(t, e.isSpecialChar('$'))
 }
-func (e *expression) getMarkList(input string, keyword string) ([][]int, error) {
-	keyword = strings.ToLower(keyword)
-	if !strings.Contains(strings.ToLower(input), keyword) {
-		return nil, nil
-	}
-	beginKeyword := keyword[0]
-	beginKeywordUpper := strings.ToUpper(string(beginKeyword))[0]
-	input = strings.TrimLeft(input, " ")
-	input = strings.TrimRight(input, " ")
 
-	check := ""
-
-	start := 0
-	end := -1
-	markList := [][]int{}
-	if !strings.Contains(strings.ToLower(input), keyword) {
-		return markList, nil
-	}
-	i := 0
-
-	for i < len(input) {
-
-		check += strings.ToLower(string(input[i]))
-		if e.isSpecialChar(input[i]) {
-			if i+1 > len(input) {
-
-				return nil, fmt.Errorf("syntax error in \n%s", input)
-			} else {
-				for i+1 < len(input) && (input[i+1] != beginKeyword && input[i+1] != beginKeywordUpper) {
-					i++
-
-				}
-				if i+1 >= len(input) {
-					return markList, nil
-				}
-				check = strings.ToLower(string(input[i+1]))
-
-				start = i + 1
-				i++
-			}
-		}
-		if check == keyword {
-			j := i
-
-			for j+1 < len(input) && !(e.isSpecialChar(input[j+1])) {
-
-				j++
-			}
-			if j < len(input) {
-				end = i
-
-				markList = append(markList, []int{start, end + 1})
-				check = ""
-				start = end + 1
-				end = -1
-				i = j
-			} else {
-				i++
-			}
-		}
-		i++
-	}
-	return markList, nil
-}
-func (e *expression) Prepare(input string) (string, error) {
-	if e.keywords == nil {
-		e.keywords = []string{
-			"select",
-			"from",
-			"where",
-			"group",
-			"order",
-			"limit",
-			"offset",
-		}
-	}
-	for _, keyword := range e.keywords {
-		markList, err := e.getMarkList(input, keyword)
-		if err != nil {
-			return "", err
-		}
-		input = e.InsertMarks(input, markList)
-	}
-	return input, nil
-
-}
 func TestGetMarkList(t *testing.T) {
 	dataTest := map[string][][]int{
 		"select.(12/  select/12)": {[]int{0, 6}, {13, 19}},
@@ -367,34 +200,6 @@ func TestPrepare(t *testing.T) {
 	}
 }
 
-func (e *expression) compileSelect(cmd string) (string, error) {
-	if e.cmp == nil {
-		e.cmp = e.dialect.getCompiler()
-	}
-	cmd, err := e.Prepare(cmd)
-	if err != nil {
-		return "", err
-	}
-	sqlTest := "select " + cmd
-	stm, err := sqlparser.Parse(sqlTest)
-	if err != nil {
-		return "", err
-	}
-	fields := []string{}
-	if stmt, ok := stm.(*sqlparser.Select); ok {
-		for _, col := range stmt.SelectExprs {
-			fieldE, err := e.getField(col)
-			if err != nil {
-				return "", err
-			}
-			fields = append(fields, fieldE)
-		}
-	} else {
-		return "", fmt.Errorf("%s not a select statement", cmd)
-	}
-
-	return strings.Join(fields, ", "), nil
-}
 func mssql() DialectCompiler {
 	return &MssqlDialect
 }
@@ -422,12 +227,22 @@ func TestCompileWithFuncCall(t *testing.T) {
 
 		dialect: mssql(),
 	}
-
-	cmd2 := "select.select"
+	cmd3 := "MAX(ORDER.OrderID, 10)"
+	compiled3, err := e.compileSelect(cmd3)
+	assert.NoError(t, err)
+	compiledExpected3 := "MAX([orders].[order_id], 10)"
+	assert.Equal(t, compiledExpected3, compiled3)
+	cmd2 := "MAX(ORDER.OrderID)"
 	compiled2, err := e.compileSelect(cmd2)
 	assert.NoError(t, err)
 	compiledExpected2 := "MAX([orders].[order_id])"
 	assert.Equal(t, compiledExpected2, compiled2)
+
+	cmd4 := "MAX(ORDER.OrderID, 10, 20)"
+	compiled4, err := e.compileSelect(cmd4)
+	assert.NoError(t, err)
+	compiledExpected4 := "MAX([orders].[order_id], 10, 20)"
+	assert.Equal(t, compiledExpected4, compiled4)
 }
 
 func BenchmarkCompile(b *testing.B) {

@@ -42,16 +42,21 @@ func (d *mssqlDialect) resolve(aliasSource *map[string]string, caller *methodCal
 		retArgs = append(retArgs, field.Args...)
 	}
 	for _, arg := range caller.args {
-		rs, err := d.compiler.Resolve(aliasSource, arg)
-		if err != nil {
-			return nil, err
+		if strArf, ok := arg.(string); ok {
+			strArgs = append(strArgs, strArf)
+			continue
+		} else {
+			rs, err := d.compiler.Resolve(aliasSource, arg)
+			if err != nil {
+				return nil, err
+			}
+			strArgs = append(strArgs, rs.Syntax)
+			retArgs = append(retArgs, rs.Args...)
 		}
-		strArgs = append(strArgs, rs.Syntax)
-		retArgs = append(retArgs, rs.Args...)
 	}
 
 	return &resolverResult{
-		Syntax: caller.method + "(" + strings.Join(strArgs, ",") + ")",
+		Syntax: caller.method + "(" + strings.Join(strArgs, ", ") + ")",
 		Args:   retArgs,
 	}, nil
 }
