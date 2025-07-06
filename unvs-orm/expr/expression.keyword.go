@@ -1,10 +1,10 @@
-package orm
+package expr
 
 import (
 	"strings"
 )
 
-func (e *expression) getMarkList(input string, keyword string) ([][]int, error) {
+func (e *expression) GetMarkList(input string, keyword string) ([][]int, error) {
 	keywordLower := strings.ToLower(keyword)
 	if !strings.Contains(strings.ToLower(input), keywordLower) {
 		return nil, nil
@@ -22,7 +22,7 @@ func (e *expression) getMarkList(input string, keyword string) ([][]int, error) 
 	i := 0
 	for i <= len(inputBytes)-keywordLen {
 		c := inputBytes[i]
-		if e.isSpecialChar(c) {
+		if e.IsSpecialChar(c) {
 			i++
 			continue
 		}
@@ -41,7 +41,7 @@ func (e *expression) getMarkList(input string, keyword string) ([][]int, error) 
 			end := i + keywordLen
 
 			// Đảm bảo tiếp sau là special char hoặc kết thúc
-			if end < len(inputBytes) && !e.isSpecialChar(inputBytes[end]) {
+			if end < len(inputBytes) && !e.IsSpecialChar(inputBytes[end]) {
 				i++
 				continue
 			}

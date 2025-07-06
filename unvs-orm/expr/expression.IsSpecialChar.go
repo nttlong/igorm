@@ -1,8 +1,8 @@
-package orm
+package expr
 
 import "bytes"
 
-func (e *expression) isSpecialChar(input byte) bool {
+func (e *expression) IsSpecialChar(input byte) bool {
 	if e.specialChar == nil {
 		e.specialChar = []byte{
 			'(', ')', ',', '.', ' ', '/', '+', '-', '*', '%', '=', '<', '>', '!', '&', '|', '^', '~', '?', ':', ';', '[', ']', '{', '}', '@', '#', '$',

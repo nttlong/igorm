@@ -27,6 +27,8 @@ func (f *NumberField[T]) As(name string) *aliasField {
 
 }
 
+// return m.doJoin("INNER", other, on)
+
 func (f *NumberField[T]) Eq(other interface{}) *BoolField {
 	return &BoolField{
 		dbField: f.dbField.clone(),
@@ -169,4 +171,16 @@ func (f *NumberField[T]) Min() *NumberField[T] {
 }
 func (f *NumberField[T]) Count() *NumberField[T] {
 	return f.callMethodFunc("COUNT")
+}
+func (f *NumberField[T]) Text() *TextField {
+	return &TextField{
+		dbField: f.dbField.clone(),
+
+		callMethod: &methodCall{
+
+			method: "text",
+			args:   []interface{}{f},
+		},
+	}
+
 }

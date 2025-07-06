@@ -30,6 +30,7 @@ func TestMethodOfNumberField(t *testing.T) {
 		"Mod",
 		"Pow",
 		"As",
+		"Text",
 	}
 
 	fn := orm.CreateNumberField[int]("table.name")
@@ -111,4 +112,7 @@ func TestNumberField(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "[table].[name] + ?", r.Syntax)
 	assert.Equal(t, []interface{}{10}, r.Args)
+	r, err = cmp.Resolve(nil, fn.Text())
+	assert.NoError(t, err)
+	assert.Equal(t, "CONVERT(NVARCHAR(50), [table].[name])", r.Syntax)
 }

@@ -106,6 +106,10 @@ func (j *joinUnpack) extractJoinInfos(refTable *joinRefInfo, expr ...interface{}
 				continue
 			}
 			refTable = j.extractJoinInfos(refTable, v.dbField, v.args)
+		case *fieldBinary:
+			refTable = j.extractJoinInfos(refTable, v.left, v.right)
+		case fieldBinary:
+			refTable = j.extractJoinInfos(refTable, v.left, v.right)
 		case *dbField:
 			if v == nil {
 				continue

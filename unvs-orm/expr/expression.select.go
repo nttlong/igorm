@@ -1,4 +1,4 @@
-package orm
+package expr
 
 func (e *expression) Prepare(input string) (string, error) {
 	if e.keywords == nil {
@@ -13,7 +13,7 @@ func (e *expression) Prepare(input string) (string, error) {
 		}
 	}
 	for _, keyword := range e.keywords {
-		markList, err := e.getMarkList(input, keyword)
+		markList, err := e.GetMarkList(input, keyword)
 		if err != nil {
 			return "", err
 		}

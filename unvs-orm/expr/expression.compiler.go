@@ -1,4 +1,4 @@
-package orm
+package expr
 
 import (
 	"fmt"
@@ -7,10 +7,8 @@ import (
 	"github.com/xwb1989/sqlparser"
 )
 
-func (e *expression) compileSelect(cmd string) (string, error) {
-	if e.cmp == nil {
-		e.cmp = e.dialect.getCompiler()
-	}
+func (e *expression) CompileSelect(cmd string) (string, error) {
+
 	cmd, err := e.Prepare(cmd)
 	if err != nil {
 		return "", err

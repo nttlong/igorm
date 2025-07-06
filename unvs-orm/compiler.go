@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 	"sync"
+	expression "unvs-orm/expr"
 )
 
 type resolverResult struct {
@@ -162,6 +163,18 @@ func (c *CompilerUtils) Resolve(aliasSource *map[string]string, expr interface{}
 	}
 	if f, ok := expr.(methodCall); ok {
 		return c.dialect.resolve(aliasSource, &f)
+	}
+	if f, ok := expr.(*expression.MethodCall); ok {
+		return c.dialect.resolve(aliasSource, &methodCall{
+			method: f.Method,
+			args:   f.Args,
+		})
+	}
+	if f, ok := expr.(expression.MethodCall); ok {
+		return c.dialect.resolve(aliasSource, &methodCall{
+			method: f.Method,
+			args:   f.Args,
+		})
 	}
 	ret, err := c.resolveNumberField(aliasSource, expr)
 	if err != nil {

@@ -1,8 +1,13 @@
-package orm
+package expr
 
 import (
 	"github.com/xwb1989/sqlparser"
 )
+
+type MethodCall struct {
+	Method string
+	Args   []interface{}
+}
 
 func (e *expression) funcExpr(expr *sqlparser.FuncExpr) ([]string, error) {
 
@@ -12,9 +17,9 @@ func (e *expression) funcExpr(expr *sqlparser.FuncExpr) ([]string, error) {
 	for i, arg := range retArs {
 		args[i] = arg
 	}
-	r, err := e.dialect.resolve(nil, &methodCall{
-		method: expr.Name.CompliantName(),
-		args:   args,
+	r, err := e.resolve(nil, &MethodCall{
+		Method: expr.Name.CompliantName(),
+		Args:   args,
 	})
 	if err != nil {
 		return nil, err

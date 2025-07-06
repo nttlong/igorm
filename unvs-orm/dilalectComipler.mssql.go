@@ -1,6 +1,7 @@
 package orm
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -30,7 +31,9 @@ func (d *mssqlDialect) getCompiler() *CompilerUtils {
 	return d.compiler
 }
 func (d *mssqlDialect) resolve(aliasSource *map[string]string, caller *methodCall) (*resolverResult, error) {
-
+	if caller.method == "text" {
+		return d.textFunc(aliasSource, caller)
+	}
 	strArgs := make([]string, 0)
 	retArgs := make([]interface{}, 0)
 	if caller.dbField != nil {
@@ -60,6 +63,30 @@ func (d *mssqlDialect) resolve(aliasSource *map[string]string, caller *methodCal
 		Args:   retArgs,
 	}, nil
 }
+func (d *mssqlDialect) textFunc(aliasSource *map[string]string, caller *methodCall) (*resolverResult, error) {
+	//CONVERT(NVARCHAR(50), 12345)
+	if len(caller.args) != 1 {
+		return nil, fmt.Errorf("text function only accept one argument")
+	}
+	arg := caller.args[0]
+	txtArgs := ""
+	args := make([]interface{}, 0)
+	if strArf, ok := arg.(string); ok {
+		txtArgs = strArf
+	} else {
+		rs, err := d.compiler.Resolve(aliasSource, arg)
+		if err != nil {
+			return nil, err
+		}
+		txtArgs = rs.Syntax
+		args = append(args, rs.Args...)
+	}
+	return &resolverResult{
+		Syntax: "CONVERT(NVARCHAR(50), " + txtArgs + ")",
+		Args:   args,
+	}, nil
+}
+
 func (d *mssqlDialect) driverName() string {
 	return "mssql"
 }

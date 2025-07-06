@@ -35,13 +35,51 @@ func TestOrderQuery(t *testing.T) {
 }
 func TestJoinExpr(b *testing.T) {
 	repo := orm.Repository[OrderRepository]()
-	on := repo.Orders.OrderId.Eq(repo.OrderItems.OrderId)
-	// join := repo.Orders.Join(repo.OrderItems, on)
+	on := repo.Orders.OrderId.Join(repo.OrderItems.OrderId)
+
 	ctx := orm.JoinCompiler.Ctx(mssql())
 	joinRes, err := ctx.ResolveBoolFieldAsJoin(on)
 	assert.NoError(b, err)
 	expectedSql := "[orders] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
 	assert.Equal(b, expectedSql, joinRes.Syntax)
+
+}
+func TestLeftJoinSimpleExpr(b *testing.T) {
+	repo := orm.Repository[OrderRepository]()
+	on := repo.Orders.OrderId.LeftJoin(repo.OrderItems.OrderId)
+
+	ctx := orm.JoinCompiler.Ctx(mssql())
+	joinRes, err := ctx.ResolveBoolFieldAsJoin(on)
+	assert.NoError(b, err)
+	expectedSql := "[orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
+	assert.Equal(b, expectedSql, joinRes.Syntax)
+
+}
+func TestComplexLeftJoinSimpleExpr(b *testing.T) {
+	repo := orm.Repository[OrderRepository]()
+	on := repo.Orders.OrderId.Add(1000).LeftJoin(repo.OrderItems.CreatedAt.Year().Add(10))
+
+	ctx := orm.JoinCompiler.Ctx(mssql())
+	joinRes, err := ctx.ResolveBoolFieldAsJoin(on)
+	assert.NoError(b, err)
+	expectedSql := "[orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] + ? = YEAR([T2].[created_at]) + ?"
+	assert.Equal(b, expectedSql, joinRes.Syntax)
+	assert.Equal(b, []interface{}{1000, 10}, joinRes.Args)
+
+}
+func BenchmarkTestComplexLeftJoinSimpleExpr(b *testing.B) {
+
+	repo := orm.Repository[OrderRepository]()
+	for i := 0; i < b.N; i++ {
+		on := repo.Orders.OrderId.Add(1000).LeftJoin(repo.OrderItems.CreatedAt.Year().Add(10))
+
+		ctx := orm.JoinCompiler.Ctx(mssql())
+		joinRes, err := ctx.ResolveBoolFieldAsJoin(on)
+		assert.NoError(b, err)
+		expectedSql := "[orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] + ? = YEAR([T2].[created_at]) + ?"
+		assert.Equal(b, expectedSql, joinRes.Syntax)
+		assert.Equal(b, []interface{}{1000, 10}, joinRes.Args)
+	}
 
 }
 func TestJoinExpr2(b *testing.T) {

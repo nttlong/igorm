@@ -3,6 +3,7 @@ package orm
 import (
 	"strings"
 	"testing"
+	EXPR "unvs-orm/expr"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -116,35 +117,35 @@ type PaymentMethod struct {
 }
 
 func TestIsSpecialChar(t *testing.T) {
-	e := expression{}
-	assert.True(t, e.isSpecialChar('('))
-	assert.True(t, e.isSpecialChar(')'))
-	assert.True(t, e.isSpecialChar(','))
-	assert.True(t, e.isSpecialChar('.'))
-	assert.True(t, e.isSpecialChar(' '))
-	assert.True(t, e.isSpecialChar('/'))
-	assert.True(t, e.isSpecialChar('+'))
-	assert.True(t, e.isSpecialChar('-'))
-	assert.True(t, e.isSpecialChar('*'))
-	assert.True(t, e.isSpecialChar('%'))
-	assert.True(t, e.isSpecialChar('='))
-	assert.True(t, e.isSpecialChar('<'))
-	assert.True(t, e.isSpecialChar('>'))
-	assert.True(t, e.isSpecialChar('!'))
-	assert.True(t, e.isSpecialChar('&'))
-	assert.True(t, e.isSpecialChar('|'))
-	assert.True(t, e.isSpecialChar('^'))
-	assert.True(t, e.isSpecialChar('~'))
-	assert.True(t, e.isSpecialChar('?'))
-	assert.True(t, e.isSpecialChar(':'))
-	assert.True(t, e.isSpecialChar(';'))
-	assert.True(t, e.isSpecialChar('['))
-	assert.True(t, e.isSpecialChar(']'))
-	assert.True(t, e.isSpecialChar('{'))
-	assert.True(t, e.isSpecialChar('}'))
-	assert.True(t, e.isSpecialChar('@'))
-	assert.True(t, e.isSpecialChar('#'))
-	assert.True(t, e.isSpecialChar('$'))
+	e := EXPR.ExpressionTest{}
+	assert.True(t, e.IsSpecialChar('('))
+	assert.True(t, e.IsSpecialChar(')'))
+	assert.True(t, e.IsSpecialChar(','))
+	assert.True(t, e.IsSpecialChar('.'))
+	assert.True(t, e.IsSpecialChar(' '))
+	assert.True(t, e.IsSpecialChar('/'))
+	assert.True(t, e.IsSpecialChar('+'))
+	assert.True(t, e.IsSpecialChar('-'))
+	assert.True(t, e.IsSpecialChar('*'))
+	assert.True(t, e.IsSpecialChar('%'))
+	assert.True(t, e.IsSpecialChar('='))
+	assert.True(t, e.IsSpecialChar('<'))
+	assert.True(t, e.IsSpecialChar('>'))
+	assert.True(t, e.IsSpecialChar('!'))
+	assert.True(t, e.IsSpecialChar('&'))
+	assert.True(t, e.IsSpecialChar('|'))
+	assert.True(t, e.IsSpecialChar('^'))
+	assert.True(t, e.IsSpecialChar('~'))
+	assert.True(t, e.IsSpecialChar('?'))
+	assert.True(t, e.IsSpecialChar(':'))
+	assert.True(t, e.IsSpecialChar(';'))
+	assert.True(t, e.IsSpecialChar('['))
+	assert.True(t, e.IsSpecialChar(']'))
+	assert.True(t, e.IsSpecialChar('{'))
+	assert.True(t, e.IsSpecialChar('}'))
+	assert.True(t, e.IsSpecialChar('@'))
+	assert.True(t, e.IsSpecialChar('#'))
+	assert.True(t, e.IsSpecialChar('$'))
 }
 
 func TestGetMarkList(t *testing.T) {
@@ -155,10 +156,10 @@ func TestGetMarkList(t *testing.T) {
 		"select.select":           {[]int{0, 6}, {7, 13}},
 		"select.  select":         {[]int{0, 6}, {9, 15}},
 	}
-	e := expression{}
+	e := EXPR.ExpressionTest{}
 	for input, data := range dataTest {
 
-		mark, err := e.getMarkList(input, "select")
+		mark, err := e.GetMarkList(input, "select")
 		assert.NoError(t, err)
 		assert.Equal(t, data, mark)
 
@@ -173,10 +174,10 @@ func BenchmarkGetMarkList(b *testing.B) {
 			"select.select":           {[]int{0, 6}, {7, 13}},
 			"select.  select":         {[]int{0, 6}, {9, 15}},
 		}
-		e := expression{}
+		e := EXPR.ExpressionTest{}
 		for input, data := range dataTest {
 
-			mark, err := e.getMarkList(input, "select")
+			mark, err := e.GetMarkList(input, "select")
 			assert.NoError(b, err)
 			assert.Equal(b, data, mark)
 
@@ -190,7 +191,7 @@ func TestPrepare(t *testing.T) {
 		"max(  select.  select   + 10)->max(  `select`.  `select`   + 10)",
 		"select/select->`select`/`select`",
 	}
-	e := expression{}
+	e := EXPR.ExpressionTest{}
 	for _, data := range dataTest {
 		input := strings.Split(data, "->")[0]
 		expected := strings.Split(data, "->")[1]
@@ -208,13 +209,12 @@ func TestCompile(t *testing.T) {
 }
 func funcTest(t assert.TestingT) {
 	Repository[OrderRepository]()
-	e := expression{
-
-		dialect: mssql(),
+	e := EXPR.ExpressionTest{
+		DbDriver: EXPR.DB_TYPE_MSSQL,
 	}
 	cmd := "ORDER.OrderID,Order.Note"
 
-	compiled, err := e.compileSelect(cmd)
+	compiled, err := e.CompileSelect(cmd)
 
 	assert.NoError(t, err)
 	compiledExpected := "[orders].[order_id] AS [OrderID], [orders].[note] AS [Note]"
@@ -223,26 +223,38 @@ func funcTest(t assert.TestingT) {
 }
 func TestCompileWithFuncCall(t *testing.T) {
 	Repository[OrderRepository]()
-	e := expression{
-
-		dialect: mssql(),
+	e := EXPR.ExpressionTest{
+		DbDriver: EXPR.DB_TYPE_MSSQL,
 	}
+	cmd6 := "text(ORDER.OrderID)"
+	compiled6, err := e.CompileSelect(cmd6)
+	assert.NoError(t, err)
+	compiledExpected6 := "CONVERT(NVARCHAR(50), [orders].[order_id])"
+	assert.Equal(t, compiledExpected6, compiled6)
+
+	cmd5 := "order.OrderID+order.Amount as TotalAmount"
+	compiled5, err := e.CompileSelect(cmd5)
+	assert.NoError(t, err)
+	compiledExpected5 := "[orders].[order_id] + [orders].[order_id] AS [TotalAmount]"
+
+	assert.Equal(t, compiledExpected5, compiled5)
 	cmd3 := "MAX(ORDER.OrderID, 10)"
-	compiled3, err := e.compileSelect(cmd3)
+	compiled3, err := e.CompileSelect(cmd3)
 	assert.NoError(t, err)
 	compiledExpected3 := "MAX([orders].[order_id], 10)"
 	assert.Equal(t, compiledExpected3, compiled3)
 	cmd2 := "MAX(ORDER.OrderID)"
-	compiled2, err := e.compileSelect(cmd2)
+	compiled2, err := e.CompileSelect(cmd2)
 	assert.NoError(t, err)
 	compiledExpected2 := "MAX([orders].[order_id])"
 	assert.Equal(t, compiledExpected2, compiled2)
 
 	cmd4 := "MAX(ORDER.OrderID, 10, 20)"
-	compiled4, err := e.compileSelect(cmd4)
+	compiled4, err := e.CompileSelect(cmd4)
 	assert.NoError(t, err)
 	compiledExpected4 := "MAX([orders].[order_id], 10, 20)"
 	assert.Equal(t, compiledExpected4, compiled4)
+
 }
 
 func BenchmarkCompile(b *testing.B) {

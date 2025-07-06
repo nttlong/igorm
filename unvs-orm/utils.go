@@ -8,6 +8,8 @@ import (
 	"sync"
 	"time"
 	"unsafe"
+	_ "unvs-orm/expr"
+
 	internal "unvs-orm/internal"
 
 	_ "github.com/go-sql-driver/mysql"
