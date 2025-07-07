@@ -1,18 +1,24 @@
 package expr
 
 import (
-	"fmt"
-
 	"github.com/xwb1989/sqlparser"
 )
 
-func (e *expression) compileSQLVal(v *sqlparser.SQLVal) ([]string, error) {
+func (e *expression) compileSQLVal(v *sqlparser.SQLVal) (*expressionCompileResult, error) {
 	if v.Type == sqlparser.StrVal {
-		return []string{string(v.Val)}, nil
-	}
-	if v.Type == sqlparser.IntVal {
-		return []string{string(v.Val)}, nil
+		retStr := string(v.Val)
+		if e.DbDriver == DB_TYPE_MSSQL {
+			retStr = "N'" + retStr + "'"
+			return &expressionCompileResult{Syntax: retStr}, nil
+
+		}
+		if e.DbDriver == DB_TYPE_POSTGRES {
+			retStr = "'" + "'" + retStr + "'::citext" + "'"
+			return &expressionCompileResult{Syntax: retStr}, nil
+		}
+		return &expressionCompileResult{Syntax: retStr}, nil
 	}
 
-	panic(fmt.Sprintf("unsupported SQLVal type: %d, file orm/expressiom.SQLVal.go", v.Type))
+	return &expressionCompileResult{Syntax: "?"}, nil
+	//panic(fmt.Sprintf("unsupported SQLVal type: %d, file orm/expr//expressiom.SQLVal.go", v.Type))
 }

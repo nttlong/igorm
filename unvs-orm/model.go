@@ -8,6 +8,7 @@ import (
 )
 
 type Model[T any] struct {
+
 	// dataPointer unsafe.Pointer
 	TableName string
 }

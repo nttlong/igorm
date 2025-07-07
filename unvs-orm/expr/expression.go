@@ -3,11 +3,24 @@ package expr
 type DB_TYPE int
 
 const (
-	DB_TYPE_MYSQL DB_TYPE = iota
+	DB_TYPE_UNKNOWN DB_TYPE = iota
+	DB_TYPE_MYSQL
 	DB_TYPE_POSTGRES
 	DB_TYPE_MSSQL
 )
 
+func (t DB_TYPE) FromString(str string) DB_TYPE {
+	switch str {
+	case "mysql":
+		return DB_TYPE_MYSQL
+	case "postgres":
+		return DB_TYPE_POSTGRES
+	case "mssql":
+		return DB_TYPE_MSSQL
+	default:
+		return -1
+	}
+}
 func (t DB_TYPE) String() string {
 	switch t {
 	case DB_TYPE_MYSQL:
@@ -35,12 +48,12 @@ type ResolverResult struct {
 func (e *expression) Quote(str ...string) string {
 	return OnGetQuoteFunc(e.DbDriver, str...)
 }
-func (e *expression) resolve(aliasSource *map[string]string, caller interface{}) (*ResolverResult, error) {
-	return OnCompileFunc(e.DbDriver, aliasSource, caller)
+func (e *expression) resolve(context *ResolveContext, caller interface{}) (*ResolverResult, error) {
+	return OnCompileFunc(e.DbDriver, &context.Map, caller)
 	//return nil, nil
 }
 
-type OnCompile = func(dbDriver DB_TYPE, aliasSource *map[string]string, caller interface{}) (*ResolverResult, error)
+type OnCompile = func(dbDriver DB_TYPE, context *map[string]string, caller interface{}) (*ResolverResult, error)
 type ExpressionTest = expression
 type OnGetQuote = func(dbDriver DB_TYPE, str ...string) string
 

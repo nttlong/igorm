@@ -2,21 +2,21 @@ package orm
 
 import "errors"
 
-func (c *CompilerUtils) resolveDBField(aliasSource *map[string]string, f *dbField) (*resolverResult, error) {
+func (c *CompilerUtils) resolveDBField(context *map[string]string, f *dbField) (*resolverResult, error) {
 	if f == nil {
 		return nil, errors.New("dbField is nil")
 	}
-	if aliasSource == nil {
+	if context == nil {
 		return &resolverResult{
 			Syntax: c.Quote(f.Table, f.Name),
 			Args:   nil,
 		}, nil
 	}
-	if alias, ok := (*aliasSource)[f.Table]; ok {
+	if alias, ok := (*context)[f.Table]; ok {
 		return &resolverResult{
-			Syntax:      c.Quote(alias, f.Name),
-			Args:        nil,
-			AliasSource: *aliasSource,
+			Syntax:       c.Quote(alias, f.Name),
+			Args:         nil,
+			buildContext: context,
 		}, nil
 	}
 	return &resolverResult{

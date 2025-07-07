@@ -24,12 +24,12 @@ func (s *sqlSelectSource) build(d DialectCompiler) (*resolverResult, error) {
 }
 
 type SqlCmdSelect struct {
-	source   *sqlSelectSource
-	fields   []interface{}
-	where    interface{}
-	aliasMap *map[string]string
-	cmp      *CompilerUtils
-	Err      error
+	source       *sqlSelectSource
+	fields       []interface{}
+	where        interface{}
+	buildContext *map[string]string
+	cmp          *CompilerUtils
+	Err          error
 }
 
 func (sql *SqlCmdSelect) buildSelect() *sqlCmdSelectResult {
@@ -38,7 +38,7 @@ func (sql *SqlCmdSelect) buildSelect() *sqlCmdSelectResult {
 	args := []interface{}{}
 	for _, field := range sql.fields {
 		if _, ok := field.(*aliasField); ok {
-			fieldCompiler, err := sql.cmp.Resolve(sql.aliasMap, field)
+			fieldCompiler, err := sql.cmp.Resolve(sql.buildContext, field)
 			if err != nil {
 				return &sqlCmdSelectResult{
 					Err: err,
@@ -94,7 +94,7 @@ func (sql *SqlCmdSelect) buildWhere() *sqlCmdSelectResult {
 			Args:    []interface{}{},
 		}
 	}
-	whereResult, err := sql.cmp.Resolve(sql.aliasMap, sql.where)
+	whereResult, err := sql.cmp.Resolve(sql.buildContext, sql.where)
 	if err != nil {
 		return &sqlCmdSelectResult{
 			Err: err,
@@ -120,7 +120,7 @@ func (sql *SqlCmdSelect) Compile(d DialectCompiler) *sqlCmdSelectResult {
 	sql.source.args = sourceCompiler.Args
 	args = append(args, sourceCompiler.Args...)
 
-	sql.aliasMap = &sourceCompiler.AliasSource
+	sql.buildContext = sourceCompiler.buildContext
 	resultBuildSelect := sql.buildSelect()
 	if resultBuildSelect.Err != nil {
 		return resultBuildSelect

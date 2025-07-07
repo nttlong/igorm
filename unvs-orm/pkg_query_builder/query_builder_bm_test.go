@@ -14,7 +14,7 @@ func BenchmarkQueryBuilder(b *testing.B) {
 		w := repo.Orders.OrderId.Eq(1).And(
 			repo.Orders.Note.Eq("test"),
 		)
-		orderQuery := orm.From(repo.Orders).Where(
+		orderQuery := repo.Orders.Where(
 			w,
 		).Select(repo.Orders.OrderId.Max().As("max_order_id"),
 			repo.Orders.Note,
@@ -22,7 +22,7 @@ func BenchmarkQueryBuilder(b *testing.B) {
 			repo.Orders.Note.Eq("test"),
 		)
 		sql, err := orderQuery.ToSql(mssql())
-		expectedSql := "SELECT MAX([T0].[order_id]) AS [max_order_id], [T0].[note] FROM orders WHERE [T0].[order_id] = ? AND [T0].[note] = ? GROUP BY [T0].[note] HAVING [T0].[note] = ?"
+		expectedSql := "SELECT MAX([T1].[order_id]) AS [max_order_id], [T1].[note] FROM orders AS [T1]WHERE [T1].[order_id] = ? AND [T1].[note] = ? GROUP BY [T1].[note] HAVING [T1].[note] = ?"
 		assert.Empty(b, err)
 		assert.Equal(b, expectedSql, sql.Sql)
 		assert.Equal(b, []interface{}{1, "test", "test"}, sql.Args)

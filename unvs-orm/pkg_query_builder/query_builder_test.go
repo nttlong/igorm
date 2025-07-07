@@ -195,3 +195,30 @@ func TestJoinByUsingDirectlyQueryable(b *testing.T) {
 	assert.Equal(b, []interface{}{1}, rightJoinClauseRes.Args)
 
 }
+func TestJoinFromExpr(b *testing.T) {
+	repo := orm.Repository[OrderRepository]()
+	join := repo.Join("customer.customerId=invoice.customerId AND customer.name=?", "John")
+
+	ctx := orm.JoinCompiler.Ctx(mssql())
+	joinRes, err := ctx.Resolve(join.UnderField.(*orm.JoinExpr))
+	assert.NoError(b, err)
+	expectedSql := "[customers] AS [T1] INNER JOIN [invoices] AS [T2] ON [T1].[customer_id] = [T2].[customer_id] AND [T1].[name] = ?"
+	assert.Equal(b, expectedSql, joinRes.Syntax)
+	assert.Equal(b, []interface{}{"John"}, joinRes.Args)
+
+}
+func BenchmarkJoinFromExpr(b *testing.B) {
+	repo := orm.Repository[OrderRepository]()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		join := repo.Join("order.orderid=invoice.customerId AND customer.name=?", "John")
+
+		ctx := orm.JoinCompiler.Ctx(mssql())
+		joinRes, err := ctx.Resolve(join.UnderField.(*orm.JoinExpr))
+		assert.NoError(b, err)
+		expectedSql := "[customers] AS [T1] INNER JOIN [invoices] AS [T2] ON [T1].[customer_id] = [T2].[customer_id] AND [T1].[name] = ?"
+		assert.Equal(b, expectedSql, joinRes.Syntax)
+		assert.Equal(b, []interface{}{"John"}, joinRes.Args)
+	}
+
+}

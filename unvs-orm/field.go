@@ -7,9 +7,10 @@ type dbField struct {
 	Table string
 	field reflect.StructField
 }
+
 type aliasField struct {
-	Expr  interface{}
-	Alias string
+	UnderField interface{}
+	Alias      string
 }
 
 func (f *dbField) clone() *dbField {
@@ -21,8 +22,8 @@ func (f *dbField) clone() *dbField {
 }
 func (f *dbField) As(name string) *aliasField {
 	return &aliasField{
-		Expr:  f,
-		Alias: name,
+		UnderField: f,
+		Alias:      name,
 	}
 
 }

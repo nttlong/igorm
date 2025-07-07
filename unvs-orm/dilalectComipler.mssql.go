@@ -25,19 +25,18 @@ func (d *mssqlDialect) setJoinCompiler(compiler *JoinCompilerUtils) {
 	d.joinCompiler = compiler
 }
 func (d *mssqlDialect) getCompiler() *CompilerUtils {
-	if d.compiler == nil {
-		d.compiler = Compiler.Ctx(d)
-	}
+
 	return d.compiler
 }
-func (d *mssqlDialect) resolve(aliasSource *map[string]string, caller *methodCall) (*resolverResult, error) {
-	if caller.method == "text" {
-		return d.textFunc(aliasSource, caller)
+func (d *mssqlDialect) resolve(context *map[string]string, caller *methodCall) (*resolverResult, error) {
+	methodName := strings.ToLower(caller.method)
+	if methodName == "text" {
+		return d.textFunc(context, caller)
 	}
 	strArgs := make([]string, 0)
 	retArgs := make([]interface{}, 0)
 	if caller.dbField != nil {
-		field, err := d.compiler.Resolve(aliasSource, caller.dbField)
+		field, err := d.compiler.Resolve(context, caller.dbField)
 		if err != nil {
 			return nil, err
 		}
@@ -49,7 +48,7 @@ func (d *mssqlDialect) resolve(aliasSource *map[string]string, caller *methodCal
 			strArgs = append(strArgs, strArf)
 			continue
 		} else {
-			rs, err := d.compiler.Resolve(aliasSource, arg)
+			rs, err := d.compiler.Resolve(context, arg)
 			if err != nil {
 				return nil, err
 			}
@@ -57,13 +56,18 @@ func (d *mssqlDialect) resolve(aliasSource *map[string]string, caller *methodCal
 			retArgs = append(retArgs, rs.Args...)
 		}
 	}
-
+	if methodName == "format" {
+		return &resolverResult{
+			Syntax: caller.method + "(" + strArgs[0] + ",?" + ")",
+			Args:   []interface{}{strArgs[1]},
+		}, nil
+	}
 	return &resolverResult{
 		Syntax: caller.method + "(" + strings.Join(strArgs, ", ") + ")",
 		Args:   retArgs,
 	}, nil
 }
-func (d *mssqlDialect) textFunc(aliasSource *map[string]string, caller *methodCall) (*resolverResult, error) {
+func (d *mssqlDialect) textFunc(context *map[string]string, caller *methodCall) (*resolverResult, error) {
 	//CONVERT(NVARCHAR(50), 12345)
 	if len(caller.args) != 1 {
 		return nil, fmt.Errorf("text function only accept one argument")
@@ -74,7 +78,7 @@ func (d *mssqlDialect) textFunc(aliasSource *map[string]string, caller *methodCa
 	if strArf, ok := arg.(string); ok {
 		txtArgs = strArf
 	} else {
-		rs, err := d.compiler.Resolve(aliasSource, arg)
+		rs, err := d.compiler.Resolve(context, arg)
 		if err != nil {
 			return nil, err
 		}

@@ -1,93 +1,77 @@
 package orm
 
+// type TextField struct {
+// 	*dbField
+// 	callMethod *methodCall
+// 	Val        *string
+// }
 type TextField struct {
-	*dbField
-	callMethod *methodCall
+	UnderField interface{}
 	Val        *string
 }
 
 func (f *TextField) As(name string) *aliasField {
 	return &aliasField{
-		Expr:  f.dbField,
-		Alias: name,
+		UnderField: f,
+		Alias:      name,
+	}
+}
+func (f *TextField) makFieldBinary(other interface{}, op string) *fieldBinary {
+	return &fieldBinary{
+		left:  f,
+		right: other,
+		op:    op,
 	}
 }
 func (f *TextField) Eq(value interface{}) *BoolField {
 	return &BoolField{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   value,
-		op:      "=",
+		UnderField: f.makFieldBinary(value, "="),
 	}
 }
-func (f *TextField) Ne(value interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   value,
-		op:      "!=",
+func (f *TextField) Ne(value interface{}) *BoolField {
+	return &BoolField{
+		UnderField: f.makFieldBinary(value, "!="),
 	}
 }
-func (f *TextField) Like(value interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   value,
-		op:      "LIKE",
+func (f *TextField) Like(value interface{}) *BoolField {
+	return &BoolField{
+		UnderField: f.makFieldBinary(value, "LIKE"),
 	}
 }
-func (f *TextField) NotLike(value interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   value,
-		op:      "NOT LIKE",
+func (f *TextField) NotLike(value interface{}) *BoolField {
+	return &BoolField{
+		UnderField: f.makFieldBinary(value, "NOT LIKE"),
 	}
 }
-func (f *TextField) In(values interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   values,
-		op:      "IN",
+func (f *TextField) In(values interface{}) *BoolField {
+	return &BoolField{
+		UnderField: f.makFieldBinary(values, "IN"),
 	}
 }
-func (f *TextField) NotIn(values interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   values,
-		op:      "NOT IN",
+func (f *TextField) NotIn(values interface{}) *BoolField {
+	return &BoolField{
+		UnderField: f.makFieldBinary(values, "NOT IN"),
 	}
 }
-func (f *TextField) IsNull() *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		op:      "IS NULL",
+func (f *TextField) IsNull() *BoolField {
+	return &BoolField{
+		UnderField: f.makFieldBinary(nil, "IS NULL"),
 	}
 }
-func (f *TextField) IsNotNull() *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		op:      "IS NOT NULL",
+func (f *TextField) IsNotNull() *BoolField {
+	return &BoolField{
+		UnderField: f.makFieldBinary(nil, "IS NOT NULL"),
 	}
 }
-func (f *TextField) Between(start, end interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   []interface{}{start, end},
-		op:      "BETWEEN",
+func (f *TextField) Between(start, end interface{}) *BoolField {
+	return &BoolField{
+		UnderField: f.makFieldBinary([]interface{}{start, end}, "BETWEEN"),
 	}
 }
-func (f *TextField) NotBetween(start, end interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   []interface{}{start, end},
-		op:      "NOT BETWEEN",
+
+func (f *TextField) NotBetween(start, end interface{}) *BoolField {
+	return &BoolField{
+		UnderField: f.makFieldBinary([]interface{}{start, end}, "NOT BETWEEN"),
 	}
 }
 
@@ -95,8 +79,7 @@ func (f *TextField) NotBetween(start, end interface{}) *fieldBinary {
 
 func (f *TextField) Len() *NumberField[int] {
 	return &NumberField[int]{
-		dbField: f.dbField.clone(),
-		callMethod: &methodCall{
+		UnderField: &methodCall{
 			method: "LEN",
 			args:   []interface{}{f},
 		},
@@ -106,8 +89,7 @@ func (f *TextField) Len() *NumberField[int] {
 func (f *TextField) Upper() *TextField {
 
 	return &TextField{
-		dbField: f.dbField.clone(),
-		callMethod: &methodCall{
+		UnderField: &methodCall{
 			method: "UPPER",
 			args:   []interface{}{f},
 		},
@@ -115,8 +97,7 @@ func (f *TextField) Upper() *TextField {
 }
 func (f *TextField) Lower() *TextField {
 	return &TextField{
-		dbField: f.dbField.clone(),
-		callMethod: &methodCall{
+		UnderField: &methodCall{
 			method: "LOWER",
 			args:   []interface{}{f},
 		},
@@ -124,8 +105,7 @@ func (f *TextField) Lower() *TextField {
 }
 func (f *TextField) Trim() *TextField {
 	return &TextField{
-		dbField: f.dbField.clone(),
-		callMethod: &methodCall{
+		UnderField: &methodCall{
 			method: "TRIM",
 			args:   []interface{}{f},
 		},
@@ -133,8 +113,7 @@ func (f *TextField) Trim() *TextField {
 }
 func (f *TextField) LTrim() *TextField {
 	return &TextField{
-		dbField: f.dbField.clone(),
-		callMethod: &methodCall{
+		UnderField: &methodCall{
 			method: "LTRIM",
 			args:   []interface{}{f},
 		},
@@ -142,8 +121,7 @@ func (f *TextField) LTrim() *TextField {
 }
 func (f *TextField) RTrim() *TextField {
 	return &TextField{
-		dbField: f.dbField.clone(),
-		callMethod: &methodCall{
+		UnderField: &methodCall{
 			method: "RTRIM",
 			args:   []interface{}{f},
 		},
@@ -151,8 +129,7 @@ func (f *TextField) RTrim() *TextField {
 }
 func (f *TextField) Concat(args ...interface{}) *TextField {
 	return &TextField{
-		dbField: f.dbField.clone(),
-		callMethod: &methodCall{
+		UnderField: &methodCall{
 			method: "CONCAT",
 			args:   append([]interface{}{f}, args...),
 		},
@@ -160,28 +137,35 @@ func (f *TextField) Concat(args ...interface{}) *TextField {
 }
 func (f *TextField) Replace(old, new interface{}) *TextField {
 	return &TextField{
-		dbField: f.dbField.clone(),
-		callMethod: &methodCall{
+		UnderField: &methodCall{
 			method: "REPLACE",
 			args:   []interface{}{f, old, new},
 		},
 	}
 }
-func (f *TextField) Substr(start, length interface{}) *methodCall {
-	return &methodCall{
-		method: "SUBSTR",
-		args:   []interface{}{f, start, length},
+func (f *TextField) Substr(start, length interface{}) *TextField {
+	return &TextField{
+		UnderField: &methodCall{
+			method: "SUBSTR",
+			args:   []interface{}{f, start, length},
+		},
 	}
+
 }
-func (f *TextField) Left(length interface{}) *methodCall {
-	return &methodCall{
-		method: "LEFT",
-		args:   []interface{}{f, length},
+func (f *TextField) Left(length interface{}) *TextField {
+	return &TextField{
+		UnderField: &methodCall{
+			method: "LEFT",
+			args:   []interface{}{f, length},
+		},
 	}
+
 }
-func (f *TextField) Right(length interface{}) *methodCall {
-	return &methodCall{
-		method: "RIGHT",
-		args:   []interface{}{f, length},
+func (f *TextField) Right(length interface{}) *TextField {
+	return &TextField{
+		UnderField: &methodCall{
+			method: "RIGHT",
+			args:   []interface{}{f, length},
+		},
 	}
 }

@@ -1,12 +1,14 @@
 package orm
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 )
 
 type JoinCompilerUtils struct {
-	dialect DialectCompiler
+	dialect             DialectCompiler
+	cacheFromExprString sync.Map
 }
 
 var cacheJoinCompilerCtx sync.Map
@@ -27,13 +29,32 @@ func (c *JoinCompilerUtils) Ctx(dialect DialectCompiler) *JoinCompilerUtils {
 	return ret
 }
 func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
+
+	if expr.joinExprText != nil {
+		join, err := c.fromExprString(expr)
+		if err != nil {
+			return nil, err
+		}
+		ctx := *join.buildContext
+		strLeft := c.dialect.getCompiler().Quote(join.Tables[0]) + " AS " + c.dialect.getCompiler().Quote(ctx[join.Tables[0]])
+		strRight := c.dialect.getCompiler().Quote(join.Tables[1]) + " AS " + c.dialect.getCompiler().Quote(ctx[join.Tables[1]])
+		syntax := strLeft + " " + expr.joinType + " JOIN " + strRight + " ON " + join.Syntax
+		return &resolverResult{
+			Syntax:       syntax,
+			Args:         join.Args,
+			buildContext: join.buildContext,
+		}, nil
+
+	}
 	cmp := Compiler.Ctx(c.dialect) //<-- get compiler for dialect
 	retSyntax := []string{}
 	args := []interface{}{}
 	// stack := []*JoinExpr{}
+	context := map[string]string{}
 	for node := expr; node != nil; node = node.previous {
 		if node.on != nil {
-			r, err := cmp.Resolve(&node.aliasMap, node.on) //<-- resolve on condition
+
+			r, err := cmp.Resolve(&context, node.on) //<-- resolve on condition
 			if err != nil {
 				return nil, err
 			}
@@ -48,6 +69,7 @@ func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
 			args = append(r.Args, args...)
 
 		} else {
+
 			syntax := cmp.Quote(node.baseTable) + " AS " + cmp.Quote(node.aliasMap[node.baseTable])
 			retSyntax = append([]string{syntax}, retSyntax...)
 		}
@@ -55,39 +77,50 @@ func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
 	}
 
 	return &resolverResult{
-		Syntax:      strings.Join(retSyntax, " "),
-		Args:        args,
-		AliasSource: expr.aliasMap,
+		Syntax:       strings.Join(retSyntax, " "),
+		Args:         args,
+		buildContext: &expr.aliasMap,
 	}, nil
 
 }
-
-func (c *JoinCompilerUtils) ResolveBoolFieldAsJoin(expr *BoolField) (*resolverResult, error) {
+func (c *JoinCompilerUtils) resolveJoinField(expr joinField) (*resolverResult, error) {
 	cmp := Compiler.Ctx(c.dialect) //<-- get compiler for dialect
-	if len(expr.tables) == 0 {
-		expr = expr.doJoin()
-		cmpRes, err := cmp.Resolve(&expr.alias, expr.left)
-		if err != nil {
-			return nil, err
-		}
-		right := cmp.Quote(expr.tables[1]) + " AS " + cmp.Quote(expr.alias[expr.tables[1]])
-		left := cmp.Quote(expr.tables[0]) + " AS " + cmp.Quote(expr.alias[expr.tables[0]])
-		cmpRes.Syntax = left + " " + expr.joinType + " JOIN " + right + " ON " + cmpRes.Syntax
-		return &resolverResult{
-			Syntax:      cmpRes.Syntax,
-			Args:        cmpRes.Args,
-			AliasSource: expr.alias,
-		}, nil
-	}
-	cmpRes, err := cmp.Resolve(&expr.alias, expr)
+
+	context := expr.alias
+	cmpRes, err := cmp.Resolve(&context, expr)
 	if err != nil {
 		return nil, err
 	}
 	return &resolverResult{
-		Syntax:      cmpRes.Syntax,
-		Args:        cmpRes.Args,
-		AliasSource: expr.alias,
+		Syntax:       cmpRes.Syntax,
+		Args:         cmpRes.Args,
+		buildContext: cmpRes.buildContext,
 	}, nil
+
+}
+func (c *JoinCompilerUtils) resoleFieldBinary(bF *BoolField, expr fieldBinary) (*resolverResult, error) {
+	cmp := Compiler.Ctx(c.dialect) //<-- get compiler for dialect
+	cmpRes, err := cmp.Resolve(nil, expr)
+	if err != nil {
+		return nil, err
+	}
+	return cmpRes, nil
+}
+func (c *JoinCompilerUtils) ResolveBoolFieldAsJoin(bF *BoolField) (*resolverResult, error) {
+	if expr, ok := bF.UnderField.(*joinField); ok {
+
+		return c.resolveJoinField(*expr)
+	}
+	if expr, ok := bF.UnderField.(joinField); ok {
+		return c.resolveJoinField(expr)
+	}
+	if expr, ok := bF.UnderField.(fieldBinary); ok {
+		return c.resoleFieldBinary(bF, expr)
+	}
+	if expr, ok := bF.UnderField.(*fieldBinary); ok {
+		return c.resoleFieldBinary(bF, *expr)
+	}
+	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", bF.UnderField, "unvs-orm/SqlBuildrJoin.go", 127))
 
 }
 

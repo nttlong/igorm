@@ -51,6 +51,7 @@ type Invoice struct {
 	PaymentMethodId orm.NumberField[uint64] `db:"index(payment_method_idx)"` // Mới thêm
 	InvoiceDate     orm.DateTimeField
 	TotalAmount     orm.NumberField[float64]
+	Name            orm.TextField `db:"length(200)"`
 
 	Note      orm.TextField `db:"length(200);null"`
 	CreatedAt orm.DateTimeField

@@ -56,10 +56,11 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 		if err != nil {
 			return nil, err
 		}
+
 		source = &resolverResult{
-			Syntax:      joinResult.Syntax,
-			AliasSource: join.aliasMap,
-			Args:        joinResult.Args,
+			Syntax:       joinResult.Syntax,
+			buildContext: &map[string]string{},
+			Args:         joinResult.Args,
 		}
 	} else {
 		typ := reflect.TypeOf(s.source)
@@ -67,18 +68,18 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 			typ = typ.Elem()
 		}
 		tableName := internal.Utils.TableNameFromStruct(typ)
+		buildContext := map[string]string{tableName: "T1"}
+
 		source = &resolverResult{
-			Syntax: tableName,
-			AliasSource: map[string]string{
-				tableName: "T0",
-			},
-			Args: []interface{}{},
+			Syntax:       tableName,
+			buildContext: &buildContext,
+			Args:         []interface{}{},
 		}
 	}
 
 	var condition *resolverResult
 	if s.condition != nil {
-		_condition, err := ctx.Resolve(&source.AliasSource, s.condition)
+		_condition, err := ctx.Resolve(source.buildContext, s.condition)
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +88,7 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 
 	selects := []resolverResult{}
 	for _, selectField := range s.selects {
-		field, err := ctx.Resolve(&source.AliasSource, selectField)
+		field, err := ctx.Resolve(source.buildContext, selectField)
 		if err != nil {
 			return nil, err
 		}
@@ -96,7 +97,7 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 
 	group := []resolverResult{}
 	for _, groupField := range s.group {
-		field, err := ctx.Resolve(&source.AliasSource, groupField)
+		field, err := ctx.Resolve(source.buildContext, groupField)
 		if err != nil {
 			return nil, err
 		}
@@ -105,7 +106,7 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 
 	var having *resolverResult
 	if s.having != nil {
-		_having, err := ctx.Resolve(&source.AliasSource, s.having)
+		_having, err := ctx.Resolve(source.buildContext, s.having)
 		if err != nil {
 			return nil, err
 		}

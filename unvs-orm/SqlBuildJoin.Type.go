@@ -5,7 +5,13 @@ import (
 	"strconv"
 )
 
+type joinExprText struct {
+	Expr string
+	Args []interface{}
+}
 type JoinExpr struct {
+	*joinExprText
+
 	baseTable string
 	previous  *JoinExpr
 
@@ -95,49 +101,70 @@ func (j *JoinExpr) RightJoin(other interface{}, on *BoolField) *JoinExpr {
 func (m *Model[T]) JoinBy(on *BoolField) *JoinExpr {
 	return joinUnpackUtils.unpack(on)
 }
+
+type joinField struct {
+	left     interface{}
+	right    interface{}
+	joinType string
+	alias    map[string]string
+	tables   []string
+}
+
 func (f *BoolField) Join(other interface{}) *BoolField {
 	return &BoolField{
-		dbField:  f.dbField.clone(),
-		left:     f,
-		right:    other,
-		op:       "AND",
-		joinType: "INNER",
+		UnderField: &joinField{
+			left:     f,
+			right:    other,
+			joinType: "INNER",
+		},
 	}
 
 }
 func (f *BoolField) RightJoin(other interface{}) *BoolField {
 	return &BoolField{
-		dbField:  f.dbField.clone(),
-		left:     f,
-		right:    other,
-		op:       "AND",
-		joinType: "RIGHT",
+		UnderField: &joinField{
+			left:     f,
+			right:    other,
+			joinType: "RIGHT",
+		},
 	}
 
 }
 func (f *BoolField) LeftJoin(other interface{}) *BoolField {
 	return &BoolField{
-		dbField:  f.dbField.clone(),
-		left:     f,
-		right:    other,
-		op:       "AND",
-		joinType: "LEFT",
+		UnderField: &joinField{
+			left:     f,
+			right:    other,
+			joinType: "LEFT",
+		},
+	}
+}
+
+func (f *BoolField) FullJoin(other interface{}) *BoolField {
+	return &BoolField{
+		UnderField: &joinField{
+			left:     f,
+			right:    other,
+			joinType: "FULL",
+		},
 	}
 
 }
+
 func (f *BoolField) doJoin() *BoolField {
+	if fx, ok := f.UnderField.(fieldBinary); ok {
+		joinInfo := joinUnpackUtils.ExtractJoinInfo(f)
+		return &BoolField{
+			UnderField: &joinField{
+				left:     fx.left,
+				right:    fx.right,
+				joinType: "INNER",
+				alias:    joinInfo.alias,
+				tables:   joinInfo.tables,
+			},
+		}
 
-	ret := &BoolField{
-
-		left:     f,
-		right:    nil,
-		joinType: f.joinType,
-		op:       "AND",
 	}
-	fx := joinUnpackUtils.ExtractJoinInfo(f)
-	ret.alias = fx.alias
-	ret.tables = fx.tables
-
-	return ret
+	panic("Can not convert to join")
 
 }

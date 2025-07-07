@@ -61,3 +61,63 @@ func TestSelectWhere(b *testing.T) {
 	assert.Equal(b, sqlText, compilerResult.SqlText)
 
 }
+func TestSelectWhereWithJoinByStatement(b *testing.T) {
+	dialect := mssql() //<-- create mssql dialect
+	//ctx := orm.JoinCompiler.Ctx(mssql()) //<-- create compiler context for mssql dialect
+	repo := orm.Repository[OrderRepository]()
+	when := time.Now()
+	content := "test"
+	sql := repo.Join("customer.customerId=invoice.customerId AND customer.name=?", "John").Select(
+		repo.Orders.Note,
+		repo.Orders.CreatedAt,
+		repo.Orders.UpdatedAt,
+		repo.Orders.CreatedBy,
+		repo.OrderItems.Product,
+		repo.Expr("len(customer.name)+order.orderid"),
+	).Where(
+		repo.Orders.Note.Eq(content).And(
+			repo.Orders.UpdatedAt.Eq(when),
+		),
+	)
+	compilerResult := sql.Compile(dialect)
+	assert.NoError(b, compilerResult.Err)
+
+	sqlExpected := "SELECT [orders].[note] AS [Note], [orders].[created_at] AS [CreatedAt], [orders].[updated_at] AS [UpdatedAt], [orders].[created_by] AS [CreatedBy], [order_items].[product] AS [Product], len([T1].[name]) + [T2].[orderid] FROM [customers] AS [T1] INNER JOIN [invoices] AS [T2] ON [T1].[customer_id] = [T2].[customer_id] AND [T1].[name] = ? WHERE [orders].[note] = ? AND [orders].[updated_at] = ?"
+	assert.Equal(b, sqlExpected, compilerResult.SqlText)
+	sqlText := compilerResult.SqlText
+
+	assert.Equal(b, []interface{}{"John", "test", when}, compilerResult.Args)
+	assert.Equal(b, sqlText, compilerResult.SqlText)
+
+}
+func BenchmarkSelectWhereWithJoinByStatement(b *testing.B) {
+	dialect := mssql() //<-- create mssql dialect
+	//ctx := orm.JoinCompiler.Ctx(mssql()) //<-- create compiler context for mssql dialect
+	repo := orm.Repository[OrderRepository]()
+	for i := 0; i < b.N; i++ {
+		when := time.Now()
+		content := "test"
+		sql := repo.Join("customer.customerId=invoice.customerId AND customer.name=?", "John").Select(
+			repo.Orders.Note,
+			repo.Orders.CreatedAt,
+			repo.Orders.UpdatedAt,
+			repo.Orders.CreatedBy,
+			repo.OrderItems.Product,
+			repo.Expr("len(customer.name)+order.orderid"),
+		).Where(
+			repo.Orders.Note.Eq(content).And(
+				repo.Orders.UpdatedAt.Eq(when),
+			),
+		)
+		compilerResult := sql.Compile(dialect)
+		assert.NoError(b, compilerResult.Err)
+
+		sqlExpected := "SELECT [orders].[note] AS [Note], [orders].[created_at] AS [CreatedAt], [orders].[updated_at] AS [UpdatedAt], [orders].[created_by] AS [CreatedBy], [order_items].[product] AS [Product], len([T1].[name]) + [T2].[orderid] FROM [customers] AS [T1] INNER JOIN [invoices] AS [T2] ON [T1].[customer_id] = [T2].[customer_id] AND [T1].[name] = ? WHERE [orders].[note] = ? AND [orders].[updated_at] = ?"
+		assert.Equal(b, sqlExpected, compilerResult.SqlText)
+		sqlText := compilerResult.SqlText
+
+		assert.Equal(b, []interface{}{"John", "test", when}, compilerResult.Args)
+		assert.Equal(b, sqlText, compilerResult.SqlText)
+	}
+
+}

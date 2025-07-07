@@ -55,6 +55,20 @@ func TestDateTiemField(t *testing.T) {
 	TestAllMethodsAreImplementedOfDateTimeField(t)
 	cmp := orm.Compiler.Ctx(mssql())
 	fn := createDateTimeField("table.name")
+	expr17 := fn.Format("YYYY-MM-DD")
+	r7, err7 := cmp.Resolve(nil, expr17)
+	if err7 != nil {
+		t.Error(err7)
+	}
+	assert.Equal(t, "FORMAT([table].[name],?)", r7.Syntax)
+	assert.Equal(t, "YYYY-MM-DD", r7.Args[0])
+	expr18 := fn.Min()
+	r1, err1 := cmp.Resolve(nil, expr18)
+	if err1 != nil {
+		t.Error(err1)
+	}
+	assert.Equal(t, "MIN([table].[name])", r1.Syntax)
+
 	expr1 := fn.Eq("2021-01-01")
 	r, err := cmp.Resolve(nil, expr1)
 	if err != nil {
@@ -161,19 +175,7 @@ func TestDateTiemField(t *testing.T) {
 		t.Error(err)
 	}
 	assert.Equal(t, "SECOND([table].[name])", r.Syntax)
-	expr17 := fn.Format("YYYY-MM-DD")
-	r, err = cmp.Resolve(nil, expr17)
-	if err != nil {
-		t.Error(err)
-	}
-	assert.Equal(t, "FORMAT([table].[name],?)", r.Syntax)
-	assert.Equal(t, "YYYY-MM-DD", r.Args[0])
-	expr18 := fn.Min()
-	r, err = cmp.Resolve(nil, expr18)
-	if err != nil {
-		t.Error(err)
-	}
-	assert.Equal(t, "MIN([table].[name])", r.Syntax)
+
 	expr19 := fn.Max()
 	r, err = cmp.Resolve(nil, expr19)
 	if err != nil {

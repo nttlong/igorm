@@ -11,22 +11,22 @@ func createDBField(fullPath string) *dbField {
 
 func CreateDateTimeField(fullPath string) DateTimeField {
 	return DateTimeField{
-		dbField: createDBField(fullPath),
+		UnderField: createDBField(fullPath),
 	}
 
 }
 func CreateTextField(fullPath string) TextField {
 	return TextField{
-		dbField: createDBField(fullPath),
+		UnderField: createDBField(fullPath),
 	}
 }
 func CreateNumberField[T Number](fullPath string) NumberField[T] {
 	return NumberField[T]{
-		dbField: createDBField(fullPath),
+		UnderField: createDBField(fullPath),
 	}
 }
 func CreateBoolField(fullPath string) BoolField {
 	return BoolField{
-		dbField: createDBField(fullPath),
+		UnderField: createDBField(fullPath),
 	}
 }

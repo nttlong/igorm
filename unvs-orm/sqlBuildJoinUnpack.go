@@ -45,13 +45,10 @@ func (j *joinUnpack) extractJoinInfos(refTable *joinRefInfo, expr ...interface{}
 		}
 		switch v := field.(type) {
 		case *BoolField:
-			refTable = j.extractJoinInfos(refTable, v.left, v.right)
-			if refTable.hasNewTable {
-				if v.joinType == "" && v.op == "AND" {
-
-					v.op = refTable.joinType + " JOIN"
-					v.joinSource = refTable.newTableName
-					v.joinSourceAlias = refTable.newTableNameAlias
+			if bf, ok := v.UnderField.(*fieldBinary); ok {
+				refTable = j.extractJoinInfos(refTable, bf.left, bf.right)
+				if refTable.hasNewTable {
+					bf.op = refTable.joinType + " JOIN"
 					// reset all
 					refTable.hasNewTable = false
 					refTable.newTableName = ""
@@ -60,47 +57,47 @@ func (j *joinUnpack) extractJoinInfos(refTable *joinRefInfo, expr ...interface{}
 			}
 
 		case NumberField[int]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *NumberField[int]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 
 		case NumberField[uint64]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case NumberField[uint32]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case NumberField[uint16]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case NumberField[uint8]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case NumberField[int64]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case NumberField[int32]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case NumberField[int16]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case NumberField[int8]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 
 		case *NumberField[uint64]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *NumberField[uint32]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *NumberField[uint16]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *NumberField[uint8]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *NumberField[int64]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *NumberField[int32]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *NumberField[int16]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *NumberField[int8]:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case DateTimeField:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *DateTimeField:
-			refTable = j.extractJoinInfos(refTable, v.callMethod, v.dbField)
+			refTable = j.extractJoinInfos(refTable, v.UnderField)
 		case *methodCall:
 			if v == nil {
 				continue
@@ -143,29 +140,36 @@ type joinRefInfo struct {
 }
 
 func (j *joinUnpack) ExtractJoinInfo(on *BoolField) *joinInfoFromBoolField {
-	refTables := &joinRefInfo{
-		alias:       map[string]string{},
-		tables:      []string{},
-		hasNewTable: false,
-		joinType:    on.joinType,
+	if on.UnderField == nil {
+		return nil
 	}
-	refTables = j.extractJoinInfos(refTables, on)
-	ret := &joinInfoFromBoolField{
-		alias:  map[string]string{},
-		tables: []string{},
-	}
-	retTables := []string{}
-	tblIndex := 1
-	for _, table := range refTables.tables {
-		if _, ok := ret.alias[table]; ok {
-			continue
+	if fx, ok := on.UnderField.(*joinField); ok {
+		refTables := &joinRefInfo{
+			alias:       map[string]string{},
+			tables:      []string{},
+			hasNewTable: false,
+			joinType:    fx.joinType,
 		}
-		ret.alias[table] = fmt.Sprintf("T%d", tblIndex)
-		tblIndex++
-		retTables = append(retTables, table)
+		refTables = j.extractJoinInfos(refTables, on)
+		ret := &joinInfoFromBoolField{
+			alias:  map[string]string{},
+			tables: []string{},
+		}
+		retTables := []string{}
+		tblIndex := 1
+		for _, table := range refTables.tables {
+			if _, ok := ret.alias[table]; ok {
+				continue
+			}
+			ret.alias[table] = fmt.Sprintf("T%d", tblIndex)
+			tblIndex++
+			retTables = append(retTables, table)
+		}
+		ret.tables = retTables
+		return ret
 	}
-	ret.tables = retTables
-	return ret
+	panic(fmt.Sprintf("unsupported type %T in orm/sqlBuildJoinUnpack.go, line 100", on.UnderField))
+
 }
 
 var joinUnpackUtils = joinUnpack{

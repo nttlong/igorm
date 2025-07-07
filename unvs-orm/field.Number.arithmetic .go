@@ -1,50 +1,40 @@
 package orm
 
-func (f *NumberField[T]) Add(other interface{}) *fieldBinary {
+func (f *NumberField[T]) makeArithmetic(other interface{}, op string) *fieldBinary {
 	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   other,
-		op:      "+",
+		left:  f,
+		right: other,
+		op:    op,
 	}
 }
-func (f *NumberField[T]) Sub(other interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   other,
-		op:      "-",
+func (f *NumberField[T]) Add(other interface{}) *NumberField[T] {
+	return &NumberField[T]{
+		UnderField: f.makeArithmetic(other, "+"),
+	}
+
+}
+func (f *NumberField[T]) Sub(other interface{}) *NumberField[T] {
+	return &NumberField[T]{
+		UnderField: f.makeArithmetic(other, "-"),
 	}
 }
-func (f *NumberField[T]) Mul(other interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   other,
-		op:      "*",
+func (f *NumberField[T]) Mul(other interface{}) *NumberField[T] {
+	return &NumberField[T]{
+		UnderField: f.makeArithmetic(other, "*"),
 	}
 }
-func (f *NumberField[T]) Div(other interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   other,
-		op:      "/",
+func (f *NumberField[T]) Div(other interface{}) *NumberField[T] {
+	return &NumberField[T]{
+		UnderField: f.makeArithmetic(other, "/"),
 	}
 }
-func (f *NumberField[T]) Mod(other interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   other,
-		op:      "%",
+func (f *NumberField[T]) Mod(other interface{}) *NumberField[T] {
+	return &NumberField[T]{
+		UnderField: f.makeArithmetic(other, "%"),
 	}
 }
-func (f *NumberField[T]) Pow(other interface{}) *fieldBinary {
-	return &fieldBinary{
-		dbField: f.dbField.clone(),
-		left:    f,
-		right:   other,
-		op:      "^",
+func (f *NumberField[T]) Pow(other interface{}) *NumberField[T] {
+	return &NumberField[T]{
+		UnderField: f.makeArithmetic(other, "^"),
 	}
 }

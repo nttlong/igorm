@@ -1,6 +1,7 @@
 package internal
 
 type Base struct {
+	TableName     string
 	Relationships []*RelationshipRegister
 
 	Err error

@@ -9,21 +9,26 @@ type MethodCall struct {
 	Args   []interface{}
 }
 
-func (e *expression) funcExpr(expr *sqlparser.FuncExpr) ([]string, error) {
+func (e *expression) funcExpr(funcExpr *sqlparser.FuncExpr, context *ResolveContext) (*expressionCompileResult, error) {
 
-	retArs, err := e.compile(expr.Exprs, true)
+	args := make([]interface{}, len(funcExpr.Exprs))
+	for i, expr := range funcExpr.Exprs {
+		retArs, err := e.compile(expr, context, true)
 
-	args := make([]interface{}, len(retArs))
-	for i, arg := range retArs {
-		args[i] = arg
+		if err != nil {
+			return nil, err
+		}
+		args[i] = retArs.Syntax
+
 	}
+
 	r, err := e.resolve(nil, &MethodCall{
-		Method: expr.Name.CompliantName(),
+		Method: funcExpr.Name.CompliantName(),
 		Args:   args,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return []string{r.Syntax}, nil
+	return &expressionCompileResult{Syntax: r.Syntax}, nil
 
 }

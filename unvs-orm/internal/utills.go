@@ -330,10 +330,12 @@ func (u *utilsPackage) buildRepositoryFromType(typ reflect.Type, isChildren bool
 
 			if baseType.Name() == fieldType.Name() {
 				if !isChildren {
+
 					base := &Base{
 						Relationships: []*RelationshipRegister{},
 					}
-					baseVal := reflect.ValueOf(base)
+					attachBase := OnRequestBaseFn(base)
+					baseVal := reflect.ValueOf(attachBase)
 					if valueOfRepo.Field(i).Kind() == reflect.Ptr {
 
 						valueOfRepo.Field(i).Set(baseVal) //<-- "reflect: reflect.Value.Set using unaddressable value"
@@ -433,3 +435,6 @@ func (u *utilsPackage) GetMetaInfoByTableName(tableName string) map[string]Field
 }
 
 type FnGetBAse func() interface{}
+type OnRequestBase func(base *Base) interface{}
+
+var OnRequestBaseFn OnRequestBase

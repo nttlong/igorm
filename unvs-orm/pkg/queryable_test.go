@@ -79,7 +79,7 @@ func TestQueryableNullField(t *testing.T) {
 	cmp = orm.Compiler.Ctx(mssql())
 	r2, err := cmp.Resolve(nil, expr2)
 	assert.NoError(t, err)
-	assert.Equal(t, "[user_nullables].[n_bool_field]  = ? AND [user_nullables].[n_int_field] = ?", r2.Syntax)
+	assert.Equal(t, "[user_nullables].[n_bool_field] = ? AND [user_nullables].[n_int_field] = ?", r2.Syntax)
 	assert.Equal(t, []interface{}{true, 1}, r2.Args)
 	expr3 := qr2.NIntField.Eq(1).And(qr2.NFloatField.Eq(1.1))
 	cmp = orm.Compiler.Ctx(mssql())
