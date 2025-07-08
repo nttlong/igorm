@@ -59,7 +59,22 @@ type Invoice struct {
 	CreatedBy orm.TextField     `db:"length(100)"`
 	UpdatedBy orm.TextField     `db:"length(100);null"`
 }
+type Department struct {
+	*orm.Model[Department]
 
+	DepartmentId orm.NumberField[uint64] `db:"primaryKey;autoIncrement"`
+	Code         orm.TextField           `db:"length(50);unique"` // Mã phòng ban
+	Name         orm.TextField           `db:"length(200)"`       // Tên phòng ban
+	ParentId     orm.NumberField[uint64] `db:"null"`              // FK tới Department cha (nullable)
+	Level        orm.NumberField[int]    `db:"null"`              // Tuỳ chọn: cấp độ phòng ban
+	OrderNo      orm.NumberField[int]    `db:"null"`              // Tuỳ chọn: thứ tự hiển thị
+
+	Note      orm.TextField `db:"length(200);null"`
+	CreatedAt orm.DateTimeField
+	UpdatedAt orm.DateTimeField `db:"null"`
+	CreatedBy orm.TextField     `db:"length(100)"`
+	UpdatedBy orm.TextField     `db:"length(100);null"`
+}
 type Item struct {
 	*orm.Model[Item]
 	ItemId orm.NumberField[uint64]  `db:"primaryKey;autoIncrement"`
@@ -100,6 +115,26 @@ type OrderRepository struct {
 	Items          *Item
 	InvoiceDetails *InvoiceDetail
 	PaymentMethods *PaymentMethod
+	Departments    *Department
+	Employees      *Employee
+}
+type Employee struct {
+	*orm.Model[Employee]
+
+	EmployeeId orm.NumberField[uint64] `db:"primaryKey;autoIncrement"`
+	Code       orm.TextField           `db:"length(50);unique"` // Mã nhân viên
+	Name       orm.TextField           `db:"length(200)"`       // Họ tên
+	Email      orm.TextField           `db:"length(100);null"`  // Email (nullable)
+	Phone      orm.TextField           `db:"length(20);null"`   // Số điện thoại (nullable)
+
+	DepartmentId orm.NumberField[uint64] `db:"null"`             // FK đến departments.department_id
+	Note         orm.TextField           `db:"length(200);null"` // Ghi chú
+
+	CreatedAt orm.DateTimeField
+	UpdatedAt orm.DateTimeField       `db:"null"`
+	CreatedBy orm.TextField           `db:"length(100)"`
+	UpdatedBy orm.TextField           `db:"length(100);null"`
+	ManagerId orm.NumberField[uint64] `db:"null"` // self join key
 }
 type PaymentMethod struct {
 	*orm.Model[PaymentMethod]

@@ -74,7 +74,57 @@ func (u *entitiesUtils) QueryableFromTypeNoCache(entityType reflect.Type, tableN
 	elem := ret.Elem()
 
 	mapField := utils.GetMetaInfo(entityType)
+	aliasTable := tableName
+	if strings.Contains(tableName, "*") {
+		tableName = strings.Split(tableName, "*")[0]
+	}
+	if aliasTable != tableName {
+		mapField[aliasTable] = map[string]FieldTag{}
+		for colName, fieldTags := range mapField[tableName] {
 
+			valField := elem.FieldByName(fieldTags.Field.Name)
+			ft, ok := entityType.FieldByName(fieldTags.Field.Name)
+			if !ok {
+				continue
+			}
+
+			ftType := ft.Type
+			if ftType.Kind() == reflect.Ptr {
+				ftType = ftType.Elem()
+			}
+
+			if strings.HasPrefix(ftType.String(), utils.entityTypeName) {
+
+				continue
+			}
+
+			// Đệ quy cho embedded struct
+			if ft.Anonymous {
+				anonymousValue := u.QueryableFromTypeNoCache(ft.Type, aliasTable, modelVal)
+				if valField.CanSet() {
+					valField.Set(anonymousValue)
+				}
+				continue
+			}
+
+			// Tạo pointer nếu là nil
+			if valField.Kind() == reflect.Ptr {
+				if valField.IsNil() {
+					valField.Set(reflect.New(valField.Type().Elem()))
+				}
+				valField = valField.Elem()
+			}
+
+			// Duyệt field bên trong Field[T] để tìm *DbField
+
+			fv := u.FieldResolver(aliasTable, colName, ft)
+
+			valField.Set(fv)
+
+		}
+
+		return ret
+	}
 	for colName, fieldTags := range mapField[tableName] {
 
 		valField := elem.FieldByName(fieldTags.Field.Name)

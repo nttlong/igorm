@@ -10,7 +10,7 @@ func (f *NumberField[T]) Join(other NumberField[T]) *BoolField {
 		},
 	}
 }
-func (f *NumberField[T]) LeftJoin(other interface{}) *BoolField {
+func (f *NumberField[T]) LeftJoin(other ...interface{}) *BoolField {
 
 	return &BoolField{
 		underField: &joinField{

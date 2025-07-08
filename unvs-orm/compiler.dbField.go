@@ -5,13 +5,16 @@ import (
 	"strconv"
 )
 
-func (c *CompilerUtils) addTables(tables *[]string, context *map[string]string, tablesAdd ...string) {
+func (c *CompilerUtils) addTables(tables *[]string, context *map[string]string, tablesAdd ...string) bool {
+	hasNew := false
 	for _, t := range tablesAdd {
 		if _, ok := (*context)[t]; !ok {
 			(*context)[t] = "T" + strconv.Itoa(len(*context)+1)
 			*tables = append(*tables, t)
+			hasNew = true
 		}
 	}
+	return hasNew
 }
 func (c *CompilerUtils) addMultipleTables(tables *[]string, context *map[string]string, tablesAdd ...*[]string) {
 	for _, t := range tablesAdd {
@@ -37,18 +40,20 @@ func (c *CompilerUtils) resolveDBField(tables *[]string, context *map[string]str
 			buildContext: context,
 		}, nil
 	}
-	c.addTables(tables, context, f.Table)
+	hasNew := c.addTables(tables, context, f.Table)
 	if requireAlias {
 		return &resolverResult{
 			Syntax:       c.Quote((*context)[f.Table], f.Name),
-			Tables:       &[]string{f.Table},
+			Tables:       tables,
 			Args:         nil,
 			buildContext: context,
+			hasNewTable:  hasNew,
+			NewTableName: f.Table,
 		}, nil
 	} else {
 		return &resolverResult{
 			Syntax:       c.Quote(f.Table, f.Name),
-			Tables:       &[]string{f.Table},
+			Tables:       tables,
 			Args:         nil,
 			buildContext: context,
 		}, nil

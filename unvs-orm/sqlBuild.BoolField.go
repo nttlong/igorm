@@ -2,11 +2,12 @@ package orm
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
 type sqlSelectSource struct {
-	expr       *BoolField
+	expr       interface{}
 	sourceText string
 	args       []interface{}
 }
@@ -19,7 +20,14 @@ type sqlSelectFields struct {
 
 func (s *sqlSelectSource) build(tables *[]string, context *map[string]string, d DialectCompiler) (*resolverResult, error) {
 	ctx := JoinCompiler.Ctx(d)
-	return ctx.ResolveBoolFieldAsJoin(tables, context, s.expr)
+	if bf, ok := s.expr.(*BoolField); ok {
+		return ctx.ResolveBoolFieldAsJoin(tables, context, bf)
+	}
+	if expr, ok := s.expr.(*JoinExpr); ok {
+		return ctx.Resolve(expr)
+		// return nil, errors.New("unsupported expression type: " + fmt.Sprintf("%T", expr))
+	}
+	return nil, errors.New("unsupported expression type: " + fmt.Sprintf("%T", s.expr))
 
 }
 

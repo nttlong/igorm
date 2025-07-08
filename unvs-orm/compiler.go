@@ -13,6 +13,10 @@ type resolverResult struct {
 	Args         []interface{}
 	buildContext *map[string]string
 	Tables       *[]string
+	hasNewTable  bool
+	NewTableName string
+	IsJoinExpr   bool
+	NextJoin     string
 }
 
 func (r *resolverResult) GetTableAliasMap() map[string]string {

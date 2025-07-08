@@ -6,7 +6,7 @@ import (
 
 func (sql *SqlCmdSelect) getFieldName(field interface{}) string {
 	if f, ok := field.(*dbField); ok {
-		return f.Name
+		return f.field.Name
 	}
 	panic(fmt.Errorf("unsupported field type %T, file orm/SqlCmdSelect.buildSelectField.go, line 11", field))
 }

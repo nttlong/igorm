@@ -23,12 +23,48 @@ func TestSelect(b *testing.T) {
 	)
 	compilerResult := sql.Compile(dialect)
 	assert.NoError(b, compilerResult.Err)
-	sqlExpected := "SELECT [T1].[note] AS [Note], [T1].[created_at] AS [CreatedAt], [T1].[updated_at] AS [UpdatedAt], [T1].[created_by] AS [CreatedBy], [T2].[product] AS [Product] FROM [orders] AS [T1]  JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
+	sqlExpected := "SELECT [T1].[note] AS [note], [T1].[created_at] AS [created_at], [T1].[updated_at] AS [updated_at], [T1].[created_by] AS [created_by], [T2].[product] AS [product] FROM [orders] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
 	assert.Equal(b, sqlExpected, compilerResult.SqlText)
 	sqlText := compilerResult.SqlText
 
 	assert.Equal(b, []interface{}(nil), compilerResult.Args)
 	assert.Equal(b, sqlText, compilerResult.SqlText)
+
+}
+func TestSelectLeftJoin(t *testing.T) {
+	dialect := mssql() //<-- create mssql dialect
+	//ctx := orm.JoinCompiler.Ctx(mssql()) //<-- create compiler context for mssql dialect
+	repo := orm.Repository[OrderRepository]()
+	join3Table := repo.Orders.OrderId.LeftJoin( //<-- join Order and OrderItem tables and select Order.Note, Order.CreatedAt, Order.UpdatedAt, Order.CreatedBy, OrderItem.Product
+		repo.OrderItems.OrderId,
+	).LeftJoin(repo.Customers.CustomerId)
+	t.Log(join3Table)
+	join2Table := repo.Orders.OrderId.LeftJoin( //<-- join Order and OrderItem tables and select Order.Note, Order.CreatedAt, Order.UpdatedAt, Order.CreatedBy, OrderItem.Product
+		repo.OrderItems.OrderId)
+	t.Log(join2Table)
+	join3Table2 := repo.Orders.OrderId.LeftJoin( //<-- join Order and OrderItem tables and select Order.Note, Order.CreatedAt, Order.UpdatedAt, Order.CreatedBy, OrderItem.Product
+		repo.OrderItems.OrderId,
+	).RightJoin(repo.Customers.CustomerId)
+	t.Log(join3Table2)
+	joinOneTo2Tables := repo.Orders.OrderId.LeftJoin( //<-- join Order and OrderItem tables and select Order.Note, Order.CreatedAt, Order.UpdatedAt, Order.CreatedBy, OrderItem.Product
+		repo.OrderItems.OrderId,
+		repo.Customers.CustomerId,
+	)
+	sql := joinOneTo2Tables.Select(
+		repo.Orders.Note,
+		repo.Orders.CreatedAt,
+		repo.Orders.UpdatedAt,
+		repo.Orders.CreatedBy,
+		repo.OrderItems.Product,
+	)
+	compilerResult := sql.Compile(dialect)
+	assert.NoError(t, compilerResult.Err)
+	sqlExpected := "SELECT [T1].[note] AS [note], [T1].[created_at] AS [created_at], [T1].[updated_at] AS [updated_at], [T1].[created_by] AS [created_by], [T2].[product] AS [product] FROM [orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
+	assert.Equal(t, sqlExpected, compilerResult.SqlText)
+	sqlText := compilerResult.SqlText
+
+	assert.Equal(t, []interface{}(nil), compilerResult.Args)
+	assert.Equal(t, sqlText, compilerResult.SqlText)
 
 }
 func TestSelectWhere(b *testing.T) {

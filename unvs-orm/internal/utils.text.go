@@ -5,6 +5,16 @@ import (
 	"strings"
 )
 
+func (u *utilsPackage) GetTableNameFromVirtualName(VirtualName string) string {
+	//check form cache
+	if v, ok := u.cacheGetTableNameFromVirtualName.Load(VirtualName); ok {
+		return v.(string)
+	}
+	ret := strings.Split(VirtualName, "*")[0]
+	u.cacheGetTableNameFromVirtualName.Store(VirtualName, ret)
+	return ret
+}
+
 func (u *utilsPackage) Contains(list []string, item string) bool {
 	item = strings.ToLower(item)
 	for _, v := range list {

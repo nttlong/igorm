@@ -30,10 +30,11 @@ type utilsPackage struct {
 	entityTypeName                          string
 	cacheVerifyModelFieldFirst              sync.Map
 
-	cacheReplacePlaceHolder       sync.Map
-	cacheEntityNameAndDbTableName sync.Map
-	cacheEntityNameAndMetaInfo    sync.Map
-	cacheToSnakeCase              sync.Map
+	cacheReplacePlaceHolder          sync.Map
+	cacheEntityNameAndDbTableName    sync.Map
+	cacheEntityNameAndMetaInfo       sync.Map
+	cacheToSnakeCase                 sync.Map
+	cacheGetTableNameFromVirtualName sync.Map
 }
 
 /*

@@ -2,7 +2,6 @@ package orm
 
 import (
 	"reflect"
-	"strconv"
 )
 
 type joinExprText struct {
@@ -15,8 +14,8 @@ type JoinExpr struct {
 	baseTable string
 	previous  *JoinExpr
 
-	on       *BoolField
-	aliasMap map[string]string
+	on *BoolField
+	// aliasMap map[string]string
 	joinType string
 	index    int
 }
@@ -34,26 +33,33 @@ func (m *Model[T]) doJoin(joinType string, other interface{}, on *BoolField) *Jo
 		index:     1,
 		baseTable: m.TableName,
 	}
-	ret := &JoinExpr{
-		previous: root,
-		joinType: joinType,
+	otherVal := reflect.ValueOf(other)
+	if otherVal.Kind() == reflect.Ptr {
+		otherVal = otherVal.Elem()
+	}
+	otherTableName := otherVal.FieldByName("TableName").String()
 
-		aliasMap: map[string]string{},
-		on:       on,
-		index:    2,
+	ret := &JoinExpr{
+		previous:  root,
+		joinType:  joinType,
+		baseTable: otherTableName,
+
+		// aliasMap: map[string]string{},
+		on:    on,
+		index: 2,
 	}
 	otherTyp := reflect.TypeOf(other)
 	if otherTyp.Kind() == reflect.Ptr {
 		otherTyp = otherTyp.Elem()
 	}
-	otherTableName := Utils.TableNameFromStruct(otherTyp)
+	// otherTableName := Utils.TableNameFromStruct(otherTyp)
 	// ret.tables = append(ret.tables, m.TableName, otherTableName)
-	ret.aliasMap[m.TableName] = "T1"
-	ret.aliasMap[otherTableName] = "T2"
+	// ret.aliasMap[m.TableName] = "T1"
+	// ret.aliasMap[otherTableName] = "T2"
 
-	ret.baseTable = otherTableName
+	// ret.baseTable = otherTableName
 
-	root.aliasMap = ret.aliasMap
+	// root.aliasMap = ret.aliasMap
 
 	return ret
 }
@@ -63,8 +69,9 @@ func (m *Model[T]) Join(other interface{}, on *BoolField) *JoinExpr {
 func (m *Model[T]) LeftJoin(other interface{}, on *BoolField) *JoinExpr {
 	return m.doJoin("LEFT", other, on)
 }
-func (m *Model[T]) RightJoinJoin(other interface{}, on *BoolField) *JoinExpr {
-	return m.doJoin("RIGHT", other, on)
+func (m *Model[T]) RightJoin(other interface{}, on *BoolField) *JoinExpr {
+	ret := m.doJoin("RIGHT", other, on)
+	return ret
 }
 func (j *JoinExpr) doJoin(joinType string, other interface{}, on *BoolField) *JoinExpr {
 	j.joinType = joinType
@@ -72,19 +79,23 @@ func (j *JoinExpr) doJoin(joinType string, other interface{}, on *BoolField) *Jo
 		previous: j,
 		joinType: joinType,
 
-		aliasMap: j.aliasMap,
-		on:       on,
-		index:    j.index + 1,
+		// aliasMap: j.aliasMap,
+		on:    on,
+		index: j.index + 1,
 	}
 	otherTyp := reflect.TypeOf(other)
 	if otherTyp.Kind() == reflect.Ptr {
 		otherTyp = otherTyp.Elem()
 	}
-	otherTableName := Utils.TableNameFromStruct(otherTyp)
+	otherVale := reflect.ValueOf(other)
+	if otherVale.Kind() == reflect.Ptr {
+		otherVale = otherVale.Elem()
+	}
+	otherTableName := otherVale.FieldByName("TableName").String()
 	// ret.tables = append(ret.tables, m.TableName, otherTableName)
-	t1 := "T" + strconv.Itoa(j.index+1)
+	// t1 := "T" + strconv.Itoa(j.index+1)
 
-	ret.aliasMap[Utils.TableNameFromStruct(otherTyp)] = t1
+	// ret.aliasMap[Utils.TableNameFromStruct(otherTyp)] = t1
 	ret.baseTable = otherTableName
 
 	return ret
@@ -167,4 +178,14 @@ func (f *BoolField) doJoin() *BoolField {
 	}
 	panic("Can not convert to join")
 
+}
+
+func (je *JoinExpr) Select(fields ...interface{}) *SqlCmdSelect {
+
+	return &SqlCmdSelect{
+		source: &sqlSelectSource{
+			expr: je,
+		},
+		fields: fields,
+	}
 }
