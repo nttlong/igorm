@@ -15,7 +15,9 @@ func (c *CompilerUtils) addTables(tables *[]string, context *map[string]string, 
 }
 func (c *CompilerUtils) addMultipleTables(tables *[]string, context *map[string]string, tablesAdd ...*[]string) {
 	for _, t := range tablesAdd {
-		c.addTables(tables, context, (*t)...)
+		if t != nil {
+			c.addTables(tables, context, (*t)...)
+		}
 	}
 }
 func (c *CompilerUtils) resolveDBField(tables *[]string, context *map[string]string, f *dbField, requireAlias bool) (*resolverResult, error) {
@@ -36,11 +38,20 @@ func (c *CompilerUtils) resolveDBField(tables *[]string, context *map[string]str
 		}, nil
 	}
 	c.addTables(tables, context, f.Table)
+	if requireAlias {
+		return &resolverResult{
+			Syntax:       c.Quote((*context)[f.Table], f.Name),
+			Tables:       &[]string{f.Table},
+			Args:         nil,
+			buildContext: context,
+		}, nil
+	} else {
+		return &resolverResult{
+			Syntax:       c.Quote(f.Table, f.Name),
+			Tables:       &[]string{f.Table},
+			Args:         nil,
+			buildContext: context,
+		}, nil
+	}
 
-	return &resolverResult{
-		Syntax:       c.Quote((*context)[f.Table], f.Name),
-		Tables:       &[]string{f.Table},
-		Args:         nil,
-		buildContext: context,
-	}, nil
 }

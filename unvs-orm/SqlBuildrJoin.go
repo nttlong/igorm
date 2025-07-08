@@ -110,7 +110,12 @@ func (c *JoinCompilerUtils) resoleFieldBinary(tables *[]string, context *map[str
 	return cmpRes, nil
 }
 func (c *JoinCompilerUtils) ResolveBoolFieldAsJoin(tables *[]string, context *map[string]string, bF *BoolField) (*resolverResult, error) {
-
+	if tables == nil {
+		tables = &[]string{}
+	}
+	if context == nil {
+		context = &map[string]string{}
+	}
 	if expr, ok := bF.UnderField.(*joinField); ok {
 
 		return c.resolveJoinField(tables, context, *expr)

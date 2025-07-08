@@ -20,5 +20,6 @@ func (m *Model[T]) Filter(expr *BoolField) *SqlSelectBuilder {
 	return &SqlSelectBuilder{
 		source:    m.TableName,
 		condition: expr,
+		noAlias:   true,
 	}
 }

@@ -1,6 +1,6 @@
 package orm
 
-func (f *NumberField[T]) Join(other interface{}) *BoolField {
+func (f *NumberField[T]) Join(other NumberField[T]) *BoolField {
 
 	return &BoolField{
 		UnderField: &joinField{

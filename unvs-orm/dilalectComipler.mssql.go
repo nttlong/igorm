@@ -61,7 +61,7 @@ func (d *mssqlDialect) resolve(tables *[]string, context *map[string]string, cal
 	if methodName == "format" {
 		return &resolverResult{
 			Syntax: caller.method + "(" + strArgs[0] + ",?" + ")",
-			Args:   []interface{}{strArgs[1]},
+			Args:   retArgs,
 		}, nil
 	}
 	return &resolverResult{

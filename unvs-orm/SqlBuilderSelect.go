@@ -42,10 +42,6 @@ func (s *SqlSelectBuilder) Having(condition *BoolField) *SqlSelectBuilder {
 	return s
 }
 
-func From(table interface{}) *SqlSelectBuilder {
-
-	return &SqlSelectBuilder{source: table}
-}
 func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerResult, error) {
 	if s.source == nil {
 		return nil, errors.New("source is nil")

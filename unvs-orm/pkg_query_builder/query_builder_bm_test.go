@@ -204,7 +204,7 @@ func BenchmarkTestJoinByUsingDirectlyQueryable(b *testing.B) {
 		)
 		expectedInnerJoinClause := "[invoices] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? INNER JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
 
-		innerJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(innerJoin)
+		innerJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(nil, nil, innerJoin)
 		assert.NoError(b, err)
 
 		assert.Equal(b, expectedInnerJoinClause, innerJoinClauseRes.Syntax)
@@ -216,7 +216,7 @@ func BenchmarkTestJoinByUsingDirectlyQueryable(b *testing.B) {
 		)
 		leftJoinExpectedSql := "[invoices] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? LEFT JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
 
-		leftJoinRes, err := ctx.ResolveBoolFieldAsJoin(leftJoin)
+		leftJoinRes, err := ctx.ResolveBoolFieldAsJoin(nil, nil, leftJoin)
 		assert.NoError(b, err)
 
 		assert.Equal(b, leftJoinExpectedSql, leftJoinRes.Syntax)
@@ -229,7 +229,7 @@ func BenchmarkTestJoinByUsingDirectlyQueryable(b *testing.B) {
 		)
 		expectedRightJoinClause := "[invoices] AS [T1] RIGHT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? RIGHT JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
 
-		rightJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(rightJoin)
+		rightJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(nil, nil, rightJoin)
 		assert.NoError(b, err)
 
 		assert.Equal(b, expectedRightJoinClause, rightJoinClauseRes.Syntax)

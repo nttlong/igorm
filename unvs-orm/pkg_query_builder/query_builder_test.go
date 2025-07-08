@@ -17,9 +17,7 @@ func TestOrderQuery(t *testing.T) {
 	w := repo.Orders.OrderId.Eq(1).And(
 		repo.Orders.Note.Eq("test"),
 	)
-	orderQuery := orm.From(
-		repo.Orders, //<-- repo.Orders.Join(repo.OrderItems, repo.Orders.OrderId.Eq(repo.OrderItems.OrderId))
-	).Where(
+	orderQuery := repo.Orders.Filter(
 		w,
 	).Select(repo.Orders.OrderId.Max().As("max_order_id"),
 		repo.Orders.Note,
@@ -27,7 +25,7 @@ func TestOrderQuery(t *testing.T) {
 		repo.Orders.Note.Eq("test"),
 	)
 	sql, err := orderQuery.ToSql(mssql())
-	expectedSql := "SELECT MAX([T0].[order_id]) AS [max_order_id], [T0].[note] FROM orders WHERE [T0].[order_id] = ? AND [T0].[note] = ? GROUP BY [T0].[note] HAVING [T0].[note] = ?"
+	expectedSql := "SELECT MAX([orders].[order_id]) AS [max_order_id], [orders].[note] FROM [orders] WHERE [orders].[order_id] = ? AND [orders].[note] = ? GROUP BY [orders].[note] HAVING [orders].[note] = ?"
 	assert.Empty(t, err)
 	assert.Equal(t, expectedSql, sql.Sql)
 	assert.Equal(t, []interface{}{1, "test", "test"}, sql.Args)
@@ -38,7 +36,7 @@ func TestJoinExpr(b *testing.T) {
 	on := repo.Orders.OrderId.Join(repo.OrderItems.OrderId)
 
 	ctx := orm.JoinCompiler.Ctx(mssql())
-	joinRes, err := ctx.ResolveBoolFieldAsJoin(on)
+	joinRes, err := ctx.ResolveBoolFieldAsJoin(nil, nil, on)
 	assert.NoError(b, err)
 	expectedSql := "[orders] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
 	assert.Equal(b, expectedSql, joinRes.Syntax)
@@ -49,7 +47,9 @@ func TestLeftJoinSimpleExpr(b *testing.T) {
 	on := repo.Orders.OrderId.LeftJoin(repo.OrderItems.OrderId)
 
 	ctx := orm.JoinCompiler.Ctx(mssql())
-	joinRes, err := ctx.ResolveBoolFieldAsJoin(on)
+	tables := []string{}
+	context := map[string]string{}
+	joinRes, err := ctx.ResolveBoolFieldAsJoin(&tables, &context, on)
 	assert.NoError(b, err)
 	expectedSql := "[orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
 	assert.Equal(b, expectedSql, joinRes.Syntax)
@@ -60,7 +60,7 @@ func TestComplexLeftJoinSimpleExpr(b *testing.T) {
 	on := repo.Orders.OrderId.Add(1000).LeftJoin(repo.OrderItems.CreatedAt.Year().Add(10))
 
 	ctx := orm.JoinCompiler.Ctx(mssql())
-	joinRes, err := ctx.ResolveBoolFieldAsJoin(on)
+	joinRes, err := ctx.ResolveBoolFieldAsJoin(nil, nil, on)
 	assert.NoError(b, err)
 	expectedSql := "[orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] + ? = YEAR([T2].[created_at]) + ?"
 	assert.Equal(b, expectedSql, joinRes.Syntax)
@@ -74,7 +74,7 @@ func BenchmarkTestComplexLeftJoinSimpleExpr(b *testing.B) {
 		on := repo.Orders.OrderId.Add(1000).LeftJoin(repo.OrderItems.CreatedAt.Year().Add(10))
 
 		ctx := orm.JoinCompiler.Ctx(mssql())
-		joinRes, err := ctx.ResolveBoolFieldAsJoin(on)
+		joinRes, err := ctx.ResolveBoolFieldAsJoin(nil, nil, on)
 		assert.NoError(b, err)
 		expectedSql := "[orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] + ? = YEAR([T2].[created_at]) + ?"
 		assert.Equal(b, expectedSql, joinRes.Syntax)
@@ -163,7 +163,7 @@ func TestJoinByUsingDirectlyQueryable(b *testing.T) {
 	)
 	expectedInnerJoinClause := "[invoices] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? INNER JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
 
-	innerJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(innerJoin)
+	innerJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(nil, nil, innerJoin)
 	assert.NoError(b, err)
 
 	assert.Equal(b, expectedInnerJoinClause, innerJoinClauseRes.Syntax)
@@ -175,7 +175,7 @@ func TestJoinByUsingDirectlyQueryable(b *testing.T) {
 	)
 	leftJoinExpectedSql := "[invoices] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? LEFT JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
 
-	leftJoinRes, err := ctx.ResolveBoolFieldAsJoin(leftJoin)
+	leftJoinRes, err := ctx.ResolveBoolFieldAsJoin(nil, nil, leftJoin)
 	assert.NoError(b, err)
 
 	assert.Equal(b, leftJoinExpectedSql, leftJoinRes.Syntax)
@@ -188,7 +188,7 @@ func TestJoinByUsingDirectlyQueryable(b *testing.T) {
 	)
 	expectedRightJoinClause := "[invoices] AS [T1] RIGHT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] AND [T1].[version] = ? RIGHT JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id]"
 
-	rightJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(rightJoin)
+	rightJoinClauseRes, err := ctx.ResolveBoolFieldAsJoin(nil, nil, rightJoin)
 	assert.NoError(b, err)
 
 	assert.Equal(b, expectedRightJoinClause, rightJoinClauseRes.Syntax)

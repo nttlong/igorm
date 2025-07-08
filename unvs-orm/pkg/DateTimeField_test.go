@@ -62,13 +62,6 @@ func TestDateTiemField(t *testing.T) {
 	}
 	assert.Equal(t, "FORMAT([table].[name],?)", r7.Syntax)
 	assert.Equal(t, "YYYY-MM-DD", r7.Args[0])
-	expr18 := fn.Min()
-	r1, err1 := cmp.ResolveWithoutTableAlias(expr18)
-	if err1 != nil {
-		t.Error(err1)
-	}
-	assert.Equal(t, "MIN([table].[name])", r1.Syntax)
-
 	expr1 := fn.Eq("2021-01-01")
 	r, err := cmp.ResolveWithoutTableAlias(expr1)
 	if err != nil {
@@ -76,6 +69,14 @@ func TestDateTiemField(t *testing.T) {
 	}
 	assert.Equal(t, "[table].[name] = ?", r.Syntax)
 	assert.Equal(t, "2021-01-01", r.Args[0])
+
+	expr18 := fn.Min()
+	r1, err1 := cmp.ResolveWithoutTableAlias(expr18)
+	if err1 != nil {
+		t.Error(err1)
+	}
+	assert.Equal(t, "MIN([table].[name])", r1.Syntax)
+
 	expr2 := fn.Ne("2021-01-01")
 	r, err = cmp.ResolveWithoutTableAlias(expr2)
 	if err != nil {
