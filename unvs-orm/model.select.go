@@ -10,13 +10,15 @@ func (f *Base) Expr(expr string, args ...interface{}) *exprField {
 }
 func (m *Model[T]) Select(fields ...interface{}) *SqlSelectBuilder {
 	return &SqlSelectBuilder{
-		source:  m,
+		source:  m.TableName,
 		selects: fields,
+		noAlias: true,
 	}
 }
-func (m *Model[T]) Where(expr *BoolField) *SqlSelectBuilder {
+
+func (m *Model[T]) Filter(expr *BoolField) *SqlSelectBuilder {
 	return &SqlSelectBuilder{
-		source:    m,
+		source:    m.TableName,
 		condition: expr,
 	}
 }

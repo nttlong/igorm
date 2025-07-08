@@ -2,13 +2,13 @@ package orm
 
 import "fmt"
 
-func (c *CompilerUtils) resolveBoolFieldJoin(context *map[string]string, bf *BoolField) (*resolverResult, error) {
+func (c *CompilerUtils) resolveBoolFieldJoin(tables *[]string, context *map[string]string, bf *BoolField, requireAlias bool) (*resolverResult, error) {
 	if f, ok := bf.UnderField.(*joinField); ok {
-		left, err := c.Resolve(context, f.left)
+		left, err := c.Resolve(tables, context, f.left, requireAlias)
 		if err != nil {
 			return nil, err
 		}
-		right, err := c.Resolve(context, f.right)
+		right, err := c.Resolve(tables, context, f.right, requireAlias)
 		if err != nil {
 			return nil, err
 		}

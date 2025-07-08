@@ -1,8 +1,8 @@
 package orm
 
 type methodCall struct {
-	*dbField
-	method string
+	isFromExr bool
+	method    string
 
 	args []interface{}
 }

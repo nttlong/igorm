@@ -207,6 +207,36 @@ func mssql() DialectCompiler {
 func TestCompile(t *testing.T) {
 	funcTest(t)
 }
+func TestFieldExpr(t *testing.T) {
+	e := EXPR.ExpressionTest{
+		DbDriver: EXPR.DB_TYPE_MSSQL,
+	}
+	cmd := "ORDER.OrderID"
+	tables := []string{}
+	context := map[string]string{}
+	compiled, err := e.Compile(&tables, &context, cmd, true)
+	assert.NoError(t, err)
+	compiledExpected := "[orders].[order_id]"
+	assert.Equal(t, compiledExpected, compiled.Syntax)
+	assert.Equal(t, []string{"orders"}, tables)
+	assert.Equal(t, map[string]string{"orders": "T1"}, context)
+
+}
+func TestSumExpr(t *testing.T) {
+	e := EXPR.ExpressionTest{
+		DbDriver: EXPR.DB_TYPE_MSSQL,
+	}
+	cmd := "SUM(ORDER.OrderID)"
+	tables := []string{}
+	context := map[string]string{}
+	compiled, err := e.Compile(&tables, &context, cmd, true)
+	assert.NoError(t, err)
+	compiledExpected := "SUM([orders].[order_id])"
+	assert.Equal(t, compiledExpected, compiled.Syntax)
+	assert.Equal(t, []string{"orders"}, tables)
+	assert.Equal(t, map[string]string{"orders": "T1"}, context)
+
+}
 func funcTest(t assert.TestingT) {
 	Repository[OrderRepository]()
 	e := EXPR.ExpressionTest{
@@ -214,7 +244,9 @@ func funcTest(t assert.TestingT) {
 	}
 	cmd := "ORDER.OrderID,Order.Note"
 
-	compiled, err := e.CompileSelect(cmd)
+	tables := []string{}
+	context := map[string]string{}
+	compiled, err := e.Compile(&tables, &context, cmd, true)
 
 	assert.NoError(t, err)
 	compiledExpected := "[orders].[order_id] AS [OrderID], [orders].[note] AS [Note]"
@@ -226,31 +258,34 @@ func TestCompileWithFuncCall(t *testing.T) {
 	e := EXPR.ExpressionTest{
 		DbDriver: EXPR.DB_TYPE_MSSQL,
 	}
+	tables := []string{}
+	context := map[string]string{}
+
 	cmd6 := "text(ORDER.OrderID)"
-	compiled6, err := e.CompileSelect(cmd6)
+	compiled6, err := e.Compile(&tables, &context, cmd6, false)
 	assert.NoError(t, err)
 	compiledExpected6 := "CONVERT(NVARCHAR(50), [orders].[order_id])"
 	assert.Equal(t, compiledExpected6, compiled6)
 
 	cmd5 := "order.OrderID+order.Amount as TotalAmount"
-	compiled5, err := e.CompileSelect(cmd5)
+	compiled5, err := e.Compile(&tables, &context, cmd5, false)
 	assert.NoError(t, err)
 	compiledExpected5 := "[orders].[order_id] + [orders].[order_id] AS [TotalAmount]"
 
 	assert.Equal(t, compiledExpected5, compiled5)
 	cmd3 := "MAX(ORDER.OrderID, 10)"
-	compiled3, err := e.CompileSelect(cmd3)
+	compiled3, err := e.Compile(&tables, &context, cmd3, false)
 	assert.NoError(t, err)
 	compiledExpected3 := "MAX([orders].[order_id], 10)"
 	assert.Equal(t, compiledExpected3, compiled3)
 	cmd2 := "MAX(ORDER.OrderID)"
-	compiled2, err := e.CompileSelect(cmd2)
+	compiled2, err := e.Compile(&tables, &context, cmd2, false)
 	assert.NoError(t, err)
 	compiledExpected2 := "MAX([orders].[order_id])"
 	assert.Equal(t, compiledExpected2, compiled2)
 
 	cmd4 := "MAX(ORDER.OrderID, 10, 20)"
-	compiled4, err := e.CompileSelect(cmd4)
+	compiled4, err := e.Compile(&tables, &context, cmd4, false)
 	assert.NoError(t, err)
 	compiledExpected4 := "MAX([orders].[order_id], 10, 20)"
 	assert.Equal(t, compiledExpected4, compiled4)

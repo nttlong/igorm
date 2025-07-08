@@ -11,10 +11,13 @@ import (
 type compileResult struct {
 	Syntax  string
 	Args    []interface{}
-	Context *ResolveContext
+	Context *map[string]string
 }
 
-func (e *expression) CompileSelect(cmd string) (*compileResult, error) {
+//	func (e *expression) CompileSelect(cmd string) (*compileResult, error) {
+//		return e.CompileSelectFull(nil, cmd, false)
+//	}
+func (e *expression) Compile(tables *[]string, context *map[string]string, cmd string, requireAlias bool) (*compileResult, error) {
 
 	cmd, err := e.Prepare(cmd)
 	if err != nil {
@@ -26,14 +29,11 @@ func (e *expression) CompileSelect(cmd string) (*compileResult, error) {
 		return nil, err
 	}
 	fields := []string{}
-	context := &ResolveContext{
-		Tables: []string{},
-		Map:    map[string]string{},
-	}
+
 	if stmt, ok := stm.(*sqlparser.Select); ok {
 		for _, col := range stmt.SelectExprs {
 
-			fieldE, err := e.compile(col, context, false)
+			fieldE, err := e.compile(col, tables, context, false, true)
 			if err != nil {
 				return nil, err
 			}
@@ -58,58 +58,7 @@ func NewExpressionCompiler(driver string) *expression {
 		return v.(*expression)
 	}
 	e := &expression{
-		keywords: []string{
-			"order",
-			"select",
-			"from",
-			"where",
-			"and",
-			"or",
-			"not",
-			"in",
-			"like",
-			"is",
-			"null",
-			"between",
-			"exists",
-			"case",
-			"when",
-			"then",
-			"else",
-			"end",
-			"as",
-			"distinct",
-			"count",
-			"sum",
-			"avg",
-			"max",
-			"min",
-			"abs",
-			"ceil",
-			"floor",
-			"round",
-			"length",
-			"substring",
-			"trim",
-			"lower",
-			"upper",
-			"date",
-			"time",
-			"datetime",
-			"year",
-			"month",
-			"day",
-			"hour",
-			"minute",
-			"second",
-			"now",
-			"current_date",
-			"current_time",
-			"current_timestamp",
-			"group",
-			"order",
-			"limit",
-		},
+		keywords:    nil,
 		specialChar: []byte{'.', ' ', '\t', '\n', '\r', ',', ';', '(', ')', '<', '>', '=', '+', '-', '*', '/', '%', '&', '|', '^', '!', '?'},
 		DbDriver:    DB_TYPE_UNKNOWN.FromString(driver),
 	}

@@ -42,18 +42,18 @@ type expression struct {
 type ResolverResult struct {
 	Syntax      string
 	Args        []interface{}
-	AliasSource map[string]string
+	AliasSource *map[string]string
 }
 
 func (e *expression) Quote(str ...string) string {
 	return OnGetQuoteFunc(e.DbDriver, str...)
 }
-func (e *expression) resolve(context *ResolveContext, caller interface{}) (*ResolverResult, error) {
-	return OnCompileFunc(e.DbDriver, &context.Map, caller)
+func (e *expression) resolve(tables *[]string, context *map[string]string, caller interface{}, requireAlias bool) (*ResolverResult, error) {
+	return OnCompileFunc(e.DbDriver, tables, context, caller, requireAlias)
 	//return nil, nil
 }
 
-type OnCompile = func(dbDriver DB_TYPE, context *map[string]string, caller interface{}) (*ResolverResult, error)
+type OnCompile = func(dbDriver DB_TYPE, tables *[]string, context *map[string]string, caller interface{}, requireAlias bool) (*ResolverResult, error)
 type ExpressionTest = expression
 type OnGetQuote = func(dbDriver DB_TYPE, str ...string) string
 

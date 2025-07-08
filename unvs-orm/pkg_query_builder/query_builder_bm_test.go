@@ -7,25 +7,93 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func BenchmarkQueryBuilder(b *testing.B) {
+func TestCompileExprToSqlSyntax(b *testing.T) {
+	repo := orm.Repository[OrderRepository]()
+	ctx := orm.Compiler.Ctx(mssql()) //<-- chuan bi bo compiler, la duy nhat cho moi database driver, truong hop nay dang dung voi mssql
+	w := repo.Orders.OrderId.Eq(1).And(
+		repo.Orders.Note.Eq("test"),
+	)
+
+	stm, err := ctx.ResolveWithoutTableAlias(w)
+	assert.NoError(b, err)
+	assert.Equal(b, "[orders].[order_id] = ? AND [orders].[note] = ?", stm.Syntax)
+	assert.Equal(b, []interface{}{1, "test"}, stm.Args)
+	stm2, err := ctx.ResolveWithTableAlias(w)
+	assert.NoError(b, err)
+	assert.Equal(b, "[T1].[order_id] = ? AND [T1].[note] = ?", stm2.Syntax)
+	assert.Equal(b, []interface{}{1, "test"}, stm.Args)
+	assert.Equal(b, []string{"orders"}, stm2.Tables)
+	assert.Equal(b, map[string]string{"orders": "T1"}, stm2.GetTableAliasMap())
+
+}
+func TestSimpleQuery(t *testing.T) {
+	repo := orm.Repository[OrderRepository]()
+	w := repo.Orders.OrderId.Eq(1).And(
+		repo.Orders.Note.Eq("test"),
+	)
+	orderQuery := repo.Orders.Filter(
+		w,
+	).Select(repo.Orders.OrderId.Max().As("max_order_id"),
+		repo.Orders.Note,
+	).GroupBy(repo.Orders.Note).Having(
+		repo.Orders.Note.Eq("test"),
+	)
+	sql, err := orderQuery.ToSql(mssql())
+	assert.NoError(t, err)
+	expectedSql := "SELECT MAX([T1].[order_id]) AS [max_order_id], [T1].[note] FROM [orders] AS [T1] WHERE [T1].[order_id] = ? AND [T1].[note] = ? GROUP BY [T1].[note] HAVING [T1].[note] = ?"
+	assert.Equal(t, expectedSql, sql.Sql)
+}
+func BenchmarkCompileExprWithoutTableAliasToSqlSyntax(b *testing.B) {
+	repo := orm.Repository[OrderRepository]()
+	ctx := orm.Compiler.Ctx(mssql()) //<-- chuan bi bo compiler, la duy nhat cho moi database driver, truong hop nay dang dung voi mssql
 	for i := 0; i < b.N; i++ {
-		repo := orm.Repository[OrderRepository]()
+		w := repo.Orders.OrderId.Eq(1).And(
+			repo.Orders.Note.Eq("test"),
+		)
+
+		stm, err := ctx.ResolveWithoutTableAlias(w)
+		assert.NoError(b, err)
+		assert.Equal(b, "[orders].[order_id] = ? AND [orders].[note] = ?", stm.Syntax)
+		assert.Equal(b, []interface{}{1, "test"}, stm.Args)
+	}
+
+}
+func BenchmarkCompileExprWithTableAliasToSqlSyntax(b *testing.B) {
+	repo := orm.Repository[OrderRepository]()
+	ctx := orm.Compiler.Ctx(mssql()) //<-- chuan bi bo compiler, la duy nhat cho moi database driver, truong hop nay dang dung voi mssql
+	for i := 0; i < b.N; i++ {
+		w := repo.Orders.OrderId.Eq(1).And(
+			repo.Orders.Note.Eq("test"),
+		)
+
+		stm, err := ctx.ResolveWithTableAlias(w)
+		assert.NoError(b, err)
+		assert.Equal(b, "[T1].[order_id] = ? AND [T1].[note] = ?", stm.Syntax)
+		assert.Equal(b, []interface{}{1, "test"}, stm.Args)
+		assert.Equal(b, []string{"orders"}, stm.Tables)
+		assert.Equal(b, map[string]string{"orders": "T1"}, stm.GetTableAliasMap())
+	}
+
+}
+func BenchmarkQueryBuilder(b *testing.B) {
+	repo := orm.Repository[OrderRepository]()
+	for i := 0; i < b.N; i++ {
 
 		w := repo.Orders.OrderId.Eq(1).And(
 			repo.Orders.Note.Eq("test"),
 		)
-		orderQuery := repo.Orders.Where(
+		orderQuery := repo.Orders.Filter(
 			w,
 		).Select(repo.Orders.OrderId.Max().As("max_order_id"),
 			repo.Orders.Note,
 		).GroupBy(repo.Orders.Note).Having(
 			repo.Orders.Note.Eq("test"),
 		)
+		b.Log(orderQuery)
 		sql, err := orderQuery.ToSql(mssql())
-		expectedSql := "SELECT MAX([T1].[order_id]) AS [max_order_id], [T1].[note] FROM orders AS [T1]WHERE [T1].[order_id] = ? AND [T1].[note] = ? GROUP BY [T1].[note] HAVING [T1].[note] = ?"
-		assert.Empty(b, err)
+		assert.NoError(b, err)
+		expectedSql := "SELECT MAX([T1].[order_id]) AS [max_order_id], [T1].[note] FROM [orders] AS[T1] WHERE [T1].[order_id] = ? AND [T1].[note] = ? GROUP BY [T1].[note] HAVING [T1].[note] = ?"
 		assert.Equal(b, expectedSql, sql.Sql)
-		assert.Equal(b, []interface{}{1, "test", "test"}, sql.Args)
 	}
 
 }

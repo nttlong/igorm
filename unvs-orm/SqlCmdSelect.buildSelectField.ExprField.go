@@ -2,7 +2,7 @@ package orm
 
 func (sql *SqlCmdSelect) buildExprField(f *exprField) (string, []interface{}, error) {
 
-	ret, err := sql.cmp.Resolve(sql.buildContext, f)
+	ret, err := sql.cmp.Resolve(sql.tables, sql.buildContext, f, true)
 
 	if err != nil {
 		return "", nil, err

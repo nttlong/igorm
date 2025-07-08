@@ -6,13 +6,13 @@ import (
 	"github.com/xwb1989/sqlparser"
 )
 
-func (e *expression) AndExpr(expr *sqlparser.AndExpr, context *ResolveContext, isFunctionParamCompiler bool) (*expressionCompileResult, error) {
-	left, err := e.compile(expr.Left, context, isFunctionParamCompiler)
+func (e *expression) AndExpr(expr *sqlparser.AndExpr, tables *[]string, context *map[string]string, isFunctionParamCompiler bool, requireAlias bool) (*expressionCompileResult, error) {
+	left, err := e.compile(expr.Left, tables, context, isFunctionParamCompiler, requireAlias)
 	if err != nil {
 		return nil, err
 	}
 
-	right, err := e.compile(expr.Right, context, isFunctionParamCompiler)
+	right, err := e.compile(expr.Right, tables, context, isFunctionParamCompiler, requireAlias)
 	if err != nil {
 		return nil, err
 	}
@@ -20,13 +20,13 @@ func (e *expression) AndExpr(expr *sqlparser.AndExpr, context *ResolveContext, i
 	ret := []string{left.Syntax + " AND " + right.Syntax}
 	return &expressionCompileResult{Syntax: strings.Join(ret, " AND ")}, nil
 }
-func (e *expression) OrExpr(expr *sqlparser.OrExpr, context *ResolveContext, isFunctionParamCompiler bool) (*expressionCompileResult, error) {
-	left, err := e.compile(expr.Left, context, isFunctionParamCompiler)
+func (e *expression) OrExpr(expr *sqlparser.OrExpr, tables *[]string, context *map[string]string, isFunctionParamCompiler bool, requireAlias bool) (*expressionCompileResult, error) {
+	left, err := e.compile(expr.Left, tables, context, isFunctionParamCompiler, requireAlias)
 	if err != nil {
 		return nil, err
 	}
 
-	right, err := e.compile(expr.Right, context, isFunctionParamCompiler)
+	right, err := e.compile(expr.Right, tables, context, isFunctionParamCompiler, requireAlias)
 	if err != nil {
 		return nil, err
 	}

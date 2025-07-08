@@ -2,14 +2,14 @@ package expr
 
 import "github.com/xwb1989/sqlparser"
 
-func (e *expression) ComparisonExpr(expr *sqlparser.ComparisonExpr, context *ResolveContext, isFunctionParamCompiler bool) (*expressionCompileResult, error) {
+func (e *expression) ComparisonExpr(expr *sqlparser.ComparisonExpr, tables *[]string, context *map[string]string, isFunctionParamCompiler bool, requireAlias bool) (*expressionCompileResult, error) {
 	// TODO: implement this function
-	left, err := e.compile(expr.Left, context, isFunctionParamCompiler)
+	left, err := e.compile(expr.Left, tables, context, isFunctionParamCompiler, requireAlias)
 	if err != nil {
 		return nil, err
 	}
 
-	right, err := e.compile(expr.Right, context, isFunctionParamCompiler)
+	right, err := e.compile(expr.Right, tables, context, isFunctionParamCompiler, requireAlias)
 	if err != nil {
 		return nil, err
 	}

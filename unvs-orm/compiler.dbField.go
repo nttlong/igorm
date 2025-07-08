@@ -1,8 +1,24 @@
 package orm
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+)
 
-func (c *CompilerUtils) resolveDBField(context *map[string]string, f *dbField) (*resolverResult, error) {
+func (c *CompilerUtils) addTables(tables *[]string, context *map[string]string, tablesAdd ...string) {
+	for _, t := range tablesAdd {
+		if _, ok := (*context)[t]; !ok {
+			(*context)[t] = "T" + strconv.Itoa(len(*context)+1)
+			*tables = append(*tables, t)
+		}
+	}
+}
+func (c *CompilerUtils) addMultipleTables(tables *[]string, context *map[string]string, tablesAdd ...*[]string) {
+	for _, t := range tablesAdd {
+		c.addTables(tables, context, (*t)...)
+	}
+}
+func (c *CompilerUtils) resolveDBField(tables *[]string, context *map[string]string, f *dbField, requireAlias bool) (*resolverResult, error) {
 	if f == nil {
 		return nil, errors.New("dbField is nil")
 	}
@@ -19,8 +35,12 @@ func (c *CompilerUtils) resolveDBField(context *map[string]string, f *dbField) (
 			buildContext: context,
 		}, nil
 	}
+	c.addTables(tables, context, f.Table)
+
 	return &resolverResult{
-		Syntax: c.Quote(f.Table, f.Name),
-		Args:   nil,
+		Syntax:       c.Quote((*context)[f.Table], f.Name),
+		Tables:       &[]string{f.Table},
+		Args:         nil,
+		buildContext: context,
 	}, nil
 }

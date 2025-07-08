@@ -13,8 +13,10 @@ type SqlSelectBuilder struct {
 	selects   []interface{}
 	group     []interface{}
 
-	having interface{}
-	Err    error
+	having  interface{}
+	Err     error
+	noAlias bool
+	tables  *[]string
 }
 type SqlCompilerResult struct {
 	Sql  string
@@ -51,7 +53,22 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 	var source *resolverResult
 	ctx := Compiler.Ctx(dialectCompiler)
 	joinCtx := JoinCompiler.Ctx(dialectCompiler)
-	if join, ok := s.source.(*JoinExpr); ok {
+	if strTableName, ok := s.source.(string); ok {
+		if s.noAlias {
+			source = &resolverResult{
+				Syntax:       ctx.Quote(strTableName),
+				buildContext: nil,
+				Args:         []interface{}{},
+			}
+		} else {
+			buildContext := map[string]string{strTableName: "T1"}
+			source = &resolverResult{
+				Syntax:       ctx.Quote(strTableName) + " AS " + ctx.Quote("T1"),
+				buildContext: &buildContext,
+				Args:         []interface{}{},
+			}
+		}
+	} else if join, ok := s.source.(*JoinExpr); ok {
 		joinResult, err := joinCtx.Resolve(join)
 		if err != nil {
 			return nil, err
@@ -79,7 +96,7 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 
 	var condition *resolverResult
 	if s.condition != nil {
-		_condition, err := ctx.Resolve(source.buildContext, s.condition)
+		_condition, err := ctx.Resolve(s.tables, source.buildContext, s.condition, true)
 		if err != nil {
 			return nil, err
 		}
@@ -88,7 +105,7 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 
 	selects := []resolverResult{}
 	for _, selectField := range s.selects {
-		field, err := ctx.Resolve(source.buildContext, selectField)
+		field, err := ctx.Resolve(s.tables, source.buildContext, selectField, !s.noAlias)
 		if err != nil {
 			return nil, err
 		}
@@ -97,7 +114,7 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 
 	group := []resolverResult{}
 	for _, groupField := range s.group {
-		field, err := ctx.Resolve(source.buildContext, groupField)
+		field, err := ctx.Resolve(s.tables, source.buildContext, groupField, true)
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +123,7 @@ func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerR
 
 	var having *resolverResult
 	if s.having != nil {
-		_having, err := ctx.Resolve(source.buildContext, s.having)
+		_having, err := ctx.Resolve(s.tables, source.buildContext, s.having, true)
 		if err != nil {
 			return nil, err
 		}

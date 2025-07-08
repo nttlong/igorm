@@ -15,25 +15,26 @@ func init() {
 			panic(fmt.Errorf("not implemented mysql dialect in file orm/links.go, line %d", 17))
 		}
 		if dbDriver == expression.DB_TYPE_MSSQL {
-			return NewMssqlDialect().getCompiler().Quote(str...)
+
+			return MssqlCompiler.Quote(str...)
 		}
 
 		panic(fmt.Sprintf("not support dialect for %s, file orm/links.go, line %d", dbDriver, 21))
 
 	}
-	expression.OnCompileFunc = func(dbDriver expression.DB_TYPE, context *map[string]string, caller interface{}) (*expression.ResolverResult, error) {
+	expression.OnCompileFunc = func(dbDriver expression.DB_TYPE, tables *[]string, context *map[string]string, caller interface{}, requireAlias bool) (*expression.ResolverResult, error) {
 
 		if dbDriver == expression.DB_TYPE_MSSQL {
 			//if exprCall,ok:=caller.(*expression.ExpressionTest);ok{
 
-			result, err := NewMssqlDialect().getCompiler().Resolve(context, caller)
+			result, err := MssqlCompiler.Resolve(tables, context, caller, requireAlias)
 			if err != nil {
 				return nil, err
 			}
 			return &expression.ResolverResult{
 				Syntax:      result.Syntax,
 				Args:        result.Args,
-				AliasSource: *result.buildContext,
+				AliasSource: result.buildContext,
 			}, nil
 
 		}

@@ -28,33 +28,35 @@ func (d *mssqlDialect) getCompiler() *CompilerUtils {
 
 	return d.compiler
 }
-func (d *mssqlDialect) resolve(context *map[string]string, caller *methodCall) (*resolverResult, error) {
+func (d *mssqlDialect) resolve(tables *[]string, context *map[string]string, caller *methodCall, requireAlias bool) (*resolverResult, error) {
+
+	if caller.isFromExr {
+		strArgs := []string{}
+		for _, arg := range caller.args {
+			if strArg, ok := arg.(string); ok {
+				strArgs = append(strArgs, strArg)
+			} else {
+				return nil, fmt.Errorf("syntax error: unsupported argument type: %T", arg)
+			}
+		}
+		return &resolverResult{
+			Syntax: fmt.Sprintf("%s (%s)", caller.method, strings.Join(strArgs, ", ")),
+		}, nil
+	}
 	methodName := strings.ToLower(caller.method)
 	if methodName == "text" {
-		return d.textFunc(context, caller)
+		return d.textFunc(tables, context, caller, requireAlias)
 	}
 	strArgs := make([]string, 0)
 	retArgs := make([]interface{}, 0)
-	if caller.dbField != nil {
-		field, err := d.compiler.Resolve(context, caller.dbField)
+
+	for _, arg := range caller.args {
+		rs, err := d.compiler.Resolve(tables, context, arg, requireAlias)
 		if err != nil {
 			return nil, err
 		}
-		strArgs = append(strArgs, field.Syntax)
-		retArgs = append(retArgs, field.Args...)
-	}
-	for _, arg := range caller.args {
-		if strArf, ok := arg.(string); ok {
-			strArgs = append(strArgs, strArf)
-			continue
-		} else {
-			rs, err := d.compiler.Resolve(context, arg)
-			if err != nil {
-				return nil, err
-			}
-			strArgs = append(strArgs, rs.Syntax)
-			retArgs = append(retArgs, rs.Args...)
-		}
+		strArgs = append(strArgs, rs.Syntax)
+		retArgs = append(retArgs, rs.Args...)
 	}
 	if methodName == "format" {
 		return &resolverResult{
@@ -67,7 +69,7 @@ func (d *mssqlDialect) resolve(context *map[string]string, caller *methodCall) (
 		Args:   retArgs,
 	}, nil
 }
-func (d *mssqlDialect) textFunc(context *map[string]string, caller *methodCall) (*resolverResult, error) {
+func (d *mssqlDialect) textFunc(tables *[]string, context *map[string]string, caller *methodCall, requireAlias bool) (*resolverResult, error) {
 	//CONVERT(NVARCHAR(50), 12345)
 	if len(caller.args) != 1 {
 		return nil, fmt.Errorf("text function only accept one argument")
@@ -78,7 +80,7 @@ func (d *mssqlDialect) textFunc(context *map[string]string, caller *methodCall) 
 	if strArf, ok := arg.(string); ok {
 		txtArgs = strArf
 	} else {
-		rs, err := d.compiler.Resolve(context, arg)
+		rs, err := d.compiler.Resolve(tables, context, arg, requireAlias)
 		if err != nil {
 			return nil, err
 		}
@@ -95,8 +97,16 @@ func (d *mssqlDialect) driverName() string {
 	return "mssql"
 }
 
-var MssqlDialect = mssqlDialect{}
+var MssqlDialect = mssqlDialect{
+	compiler:     &CompilerUtils{},
+	joinCompiler: &JoinCompilerUtils{},
+}
+var MssqlCompiler = &CompilerUtils{}
+var MssqlJoinCompilerUtils = &JoinCompilerUtils{}
 
-func NewMssqlDialect() DialectCompiler {
-	return &mssqlDialect{}
+func init() {
+	MssqlDialect.compiler = MssqlCompiler
+	MssqlDialect.joinCompiler = MssqlJoinCompilerUtils
+	MssqlCompiler.dialect = &MssqlDialect
+	MssqlJoinCompilerUtils.dialect = &MssqlDialect
 }

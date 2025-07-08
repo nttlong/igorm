@@ -122,7 +122,7 @@ func (sql *SqlCmdSelect) buildSelectField(field interface{}) (string, []interfac
 func (sql *SqlCmdSelect) buildSelectFieldNoAlias(field interface{}) (string, []interface{}, error) {
 	cmp := sql.cmp
 
-	ret, err := cmp.Resolve(sql.buildContext, field)
+	ret, err := cmp.Resolve(sql.tables, sql.buildContext, field, true)
 	if err != nil {
 		return "", nil, err
 	}

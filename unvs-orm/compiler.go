@@ -12,21 +12,34 @@ type resolverResult struct {
 	Syntax       string
 	Args         []interface{}
 	buildContext *map[string]string
-	Tables       []string
+	Tables       *[]string
 }
+
+func (r *resolverResult) GetTableAliasMap() map[string]string {
+	return *r.buildContext
+}
+
 type CompilerUtils struct {
-	dialect DialectCompiler
+	dialect    DialectCompiler
+	cacheQuote sync.Map
 }
 
 var cacheCompilerUtilsCtx sync.Map
 
 func (c *CompilerUtils) Quote(args ...string) string {
+	key := strings.Join(args, ".")
+	if v, ok := c.cacheQuote.Load(key); ok {
+		return v.(string)
+	}
+
 	quoteIdent := c.dialect.getQuoteIdent()
 	left := string(quoteIdent[0])
 	right := string(quoteIdent[1])
-	return left + strings.Join(args, right+"."+left) + right
-
+	ret := left + strings.Join(args, right+"."+left) + right
+	c.cacheQuote.Store(key, ret)
+	return ret
 }
+
 func (c *CompilerUtils) Ctx(dialect DialectCompiler) *CompilerUtils {
 	if dialect == nil {
 		panic("dialect is nil")
@@ -42,7 +55,23 @@ func (c *CompilerUtils) Ctx(dialect DialectCompiler) *CompilerUtils {
 	cacheCompilerUtilsCtx.Store(key, ret)
 	return ret
 }
-func (c *CompilerUtils) Resolve(context *map[string]string, expr interface{}) (*resolverResult, error) {
+func (c *CompilerUtils) ResolveWithoutTableAlias(expr interface{}) (*resolverResult, error) {
+	context := make(map[string]string)
+	tables := make([]string, 0)
+	return c.Resolve(&tables, &context, expr, false)
+}
+func (c *CompilerUtils) ResolveWithTableAlias(expr interface{}) (*resolverResult, error) {
+	context := make(map[string]string)
+	tables := make([]string, 0)
+	r, e := c.Resolve(&tables, &context, expr, true)
+	if e != nil {
+		return nil, e
+	}
+	r.buildContext = &context
+	return r, nil
+}
+
+func (c *CompilerUtils) Resolve(tables *[]string, context *map[string]string, expr interface{}, requireAlias bool) (*resolverResult, error) {
 	if expr == nil {
 		return &resolverResult{
 			Syntax: "",
@@ -51,7 +80,7 @@ func (c *CompilerUtils) Resolve(context *map[string]string, expr interface{}) (*
 	}
 	typ := reflect.TypeOf(expr)
 	if typ.Kind() == reflect.Slice {
-		args, err := c.resolveSlice(context, expr)
+		args, err := c.resolveSlice(tables, context, expr, requireAlias)
 		if err != nil {
 			return nil, err
 		}
@@ -72,13 +101,13 @@ func (c *CompilerUtils) Resolve(context *map[string]string, expr interface{}) (*
 
 	}
 	if f, ok := expr.(*dbField); ok {
-		return c.resolveDBField(context, f)
+		return c.resolveDBField(tables, context, f, requireAlias)
 	}
 	if f, ok := expr.(dbField); ok {
-		return c.resolveDBField(context, &f)
+		return c.resolveDBField(tables, context, &f, requireAlias)
 	}
 	if f, ok := expr.(*aliasField); ok {
-		result, err := c.Resolve(context, f.UnderField)
+		result, err := c.Resolve(tables, context, f.UnderField, requireAlias)
 		if err != nil {
 			return nil, err
 		}
@@ -89,82 +118,83 @@ func (c *CompilerUtils) Resolve(context *map[string]string, expr interface{}) (*
 	}
 
 	if f, ok := expr.(aliasField); ok {
-		return c.Resolve(context, &f)
+		return c.Resolve(tables, context, &f, requireAlias)
 	}
 	if f, ok := expr.(*fieldBinary); ok {
-		return c.resolveBinaryField(context, f)
+		return c.resolveBinaryField(tables, context, f, requireAlias)
 
 	}
 
 	if f, ok := expr.(fieldBinary); ok {
-		return c.Resolve(context, &f)
+		return c.Resolve(tables, context, &f, requireAlias)
 	}
 	if f, ok := expr.(*BoolField); ok {
-		return c.resolveBoolField(context, f)
+		return c.resolveBoolField(tables, context, f, requireAlias)
 
 	}
 	if f, ok := expr.(BoolField); ok {
-		return c.resolveBoolField(context, &f)
+		return c.resolveBoolField(tables, context, &f, requireAlias)
 	}
 	if f, ok := expr.(*DateTimeField); ok {
 		// if f.callMethod != nil {
 		// 	return c.dialect.resolve(context, f.callMethod) //<-- call method resolver no longer refers to the Field
 		// }
-		return c.Resolve(context, f.UnderField)
+		return c.Resolve(tables, context, f.UnderField, requireAlias)
 	}
 	if f, ok := expr.(DateTimeField); ok {
 
-		return c.Resolve(context, f.UnderField)
+		return c.Resolve(tables, context, f.UnderField, requireAlias)
 	}
 	if f, ok := expr.(*NumberField[int]); ok {
 		// if f.callMethod != nil {
 		// 	return c.dialect.resolve(context, f.callMethod) //<-- call method resolver no longer refers to the Field
 
 		// }
-		return c.Resolve(context, f.UnderField)
+		return c.Resolve(tables, context, f.UnderField, requireAlias)
 
 	}
 	if f, ok := expr.(NumberField[int]); ok {
-		return c.Resolve(context, f.UnderField)
+		return c.Resolve(tables, context, f.UnderField, requireAlias)
 	}
 	if f, ok := expr.(*TextField); ok {
-		return c.Resolve(context, f.UnderField)
+		return c.Resolve(tables, context, f.UnderField, requireAlias)
 
 	}
 	if f, ok := expr.(TextField); ok {
-		return c.Resolve(context, f.UnderField)
+		return c.Resolve(tables, context, f.UnderField, requireAlias)
 	}
 	if f, ok := expr.(*methodCall); ok {
-		return c.dialect.resolve(context, f)
+		return c.dialect.resolve(tables, context, f, requireAlias) //<-- this method will compile with alias if any table of field found in context
 	}
 	if f, ok := expr.(methodCall); ok {
-		return c.dialect.resolve(context, &f)
+		return c.dialect.resolve(tables, context, &f, requireAlias)
 	}
 	if f, ok := expr.(*expression.MethodCall); ok {
-		return c.dialect.resolve(context, &methodCall{
-			method: f.Method,
-			args:   f.Args,
-		})
+		return c.dialect.resolve(tables, context, &methodCall{
+			method:    f.Method,
+			args:      f.Args,
+			isFromExr: true,
+		}, requireAlias)
 	}
 	if f, ok := expr.(expression.MethodCall); ok {
-		return c.dialect.resolve(context, &methodCall{
+		return c.dialect.resolve(tables, context, &methodCall{
 			method: f.Method,
 			args:   f.Args,
-		})
+		}, requireAlias)
 	}
 	if f, ok := expr.(*exprField); ok {
-		return c.resolveExprField(context, f)
+		return c.resolveExprField(tables, context, f, requireAlias)
 	}
 	if f, ok := expr.(exprField); ok {
-		return c.resolveExprField(context, &f)
+		return c.resolveExprField(tables, context, &f, requireAlias)
 	}
 	if f, ok := expr.(*joinField); ok {
-		return c.resolveJoinField(context, *f)
+		return c.resolveJoinField(tables, context, *f, requireAlias)
 	}
 	if f, ok := expr.(joinField); ok {
-		return c.resolveJoinField(context, f)
+		return c.resolveJoinField(tables, context, f, requireAlias)
 	}
-	ret, err := c.resolveNumberField(context, expr)
+	ret, err := c.resolveNumberField(tables, context, expr, requireAlias)
 	if err != nil {
 		return nil, err
 	}
@@ -186,16 +216,17 @@ func (c *CompilerUtils) Resolve(context *map[string]string, expr interface{}) (*
 
 	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", expr, "unvs-orm/compiler.go", 187))
 }
-func (c *CompilerUtils) ResolveBetween(context *map[string]string, btf *BoolField) (*resolverResult, error) {
+func (c *CompilerUtils) ResolveBetween(tables *[]string, context *map[string]string, btf *BoolField, requireAlias bool) (*resolverResult, error) {
 	if f, ok := btf.UnderField.(*fieldBinary); ok {
-		left, err := c.Resolve(context, f.left)
+		left, err := c.Resolve(tables, context, f.left, requireAlias)
 		if err != nil {
 			return nil, err
 		}
-		right, err := c.Resolve(context, f.right)
+		right, err := c.Resolve(tables, context, f.right, requireAlias)
 		if err != nil {
 			return nil, err
 		}
+		c.addMultipleTables(tables, context, left.Tables, right.Tables)
 		args := append(left.Args, right.Args...)
 		right.Syntax = strings.ReplaceAll(right.Syntax, ",", " AND ")
 		return &resolverResult{
@@ -203,15 +234,15 @@ func (c *CompilerUtils) ResolveBetween(context *map[string]string, btf *BoolFiel
 			Args:   args,
 		}, nil
 	}
-	return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", btf.UnderField)
+	return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", btf.UnderField, "unvs-orm/compiler.go", 232)
 }
-func (c *CompilerUtils) ResolveNotBetween(context *map[string]string, btf *BoolField) (*resolverResult, error) {
+func (c *CompilerUtils) ResolveNotBetween(tables *[]string, context *map[string]string, btf *BoolField, requireAlias bool) (*resolverResult, error) {
 	if f, ok := btf.UnderField.(*fieldBinary); ok {
-		left, err := c.Resolve(context, f.left)
+		left, err := c.Resolve(tables, context, f.left, requireAlias)
 		if err != nil {
 			return nil, err
 		}
-		right, err := c.Resolve(context, f.right)
+		right, err := c.Resolve(tables, context, f.right, requireAlias)
 		if err != nil {
 			return nil, err
 		}
@@ -222,13 +253,13 @@ func (c *CompilerUtils) ResolveNotBetween(context *map[string]string, btf *BoolF
 			Args:   args,
 		}, nil
 	}
-	return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", btf)
+	return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", btf, "unvs-orm/compiler.go", 251)
 }
-func (c *CompilerUtils) resolveSlice(context *map[string]string, expr interface{}) ([]*resolverResult, error) {
+func (c *CompilerUtils) resolveSlice(tables *[]string, context *map[string]string, expr interface{}, requireAlias bool) ([]*resolverResult, error) {
 	slice := reflect.ValueOf(expr)
 	results := make([]*resolverResult, slice.Len())
 	for i := 0; i < slice.Len(); i++ {
-		result, err := c.Resolve(context, slice.Index(i).Interface())
+		result, err := c.Resolve(tables, context, slice.Index(i).Interface(), requireAlias)
 		if err != nil {
 			return nil, err
 		}
@@ -237,12 +268,12 @@ func (c *CompilerUtils) resolveSlice(context *map[string]string, expr interface{
 	return results, nil
 }
 
-func (c *CompilerUtils) resolveBoolField(context *map[string]string, bf *BoolField) (*resolverResult, error) {
+func (c *CompilerUtils) resolveBoolField(tables *[]string, context *map[string]string, bf *BoolField, requireAlias bool) (*resolverResult, error) {
 	if _, ok := bf.UnderField.(*joinField); ok {
-		return c.resolveBoolFieldJoin(context, bf)
+		return c.resolveBoolFieldJoin(tables, context, bf, requireAlias)
 	}
 
-	return c.Resolve(context, bf.UnderField)
+	return c.Resolve(tables, context, bf.UnderField, requireAlias)
 	//return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", bf.UnderField, "unvs-orm/compiler.go", 317)
 }
 

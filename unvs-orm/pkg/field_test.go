@@ -16,7 +16,7 @@ func mssql() orm.DialectCompiler {
 func TestFieldMssql(t *testing.T) {
 
 	f := orm.CreateNumberField[int64]("table.name")
-	r, err := orm.Compiler.Ctx(mssql()).Resolve(nil, f)
+	r, err := orm.Compiler.Ctx(mssql()).ResolveWithoutTableAlias(f)
 	assert.NoError(t, err)
 	assert.Equal(t, "[table].[name]", r.Syntax)
 	assert.Equal(t, 0, len(r.Args))
@@ -69,7 +69,7 @@ func TestFieldAlias(t *testing.T) {
 
 	f := orm.CreateNumberField[int64]("table.name")
 
-	r, err := orm.Compiler.Ctx(mssql()).Resolve(nil, f.As("alias"))
+	r, err := orm.Compiler.Ctx(mssql()).ResolveWithoutTableAlias(f.As("alias"))
 	assert.NoError(t, err)
 	assert.Equal(t, "[table].[name] AS [alias]", r.Syntax)
 	assert.Empty(t, r.Args)
@@ -78,6 +78,8 @@ func TestFieldAlias(t *testing.T) {
 type structTest struct {
 	Expr     interface{}
 	Expected string
+	Op       string
+	Fn       string
 }
 
 func createListOfFieldBinaries(cmp *orm.CompilerUtils, testVal interface{}) []structTest {
@@ -104,7 +106,9 @@ func createListOfFieldBinaries(cmp *orm.CompilerUtils, testVal interface{}) []st
 			// mc := m.Func.Call()
 
 			outPut := m.Func.Call([]reflect.Value{fnVal, reflect.ValueOf(testVal)})
-			Expected, err := cmp.Resolve(nil, testVal)
+			retVal := outPut[0].Interface()
+			// fmt.Println(retVal)
+			Expected, err := cmp.ResolveWithoutTableAlias(retVal)
 			if err != nil {
 				panic(err)
 			}
@@ -112,11 +116,15 @@ func createListOfFieldBinaries(cmp *orm.CompilerUtils, testVal interface{}) []st
 				ret = append(ret, structTest{
 					Expr:     outPut[0].Interface(),
 					Expected: fmt.Sprintf("[table].[name] %s ?", fxe),
+					Op:       fxe,
+					Fn:       fx,
 				})
 			} else {
 				ret = append(ret, structTest{
+					Op:       fxe,
+					Fn:       fx,
 					Expr:     outPut[0].Interface(),
-					Expected: fmt.Sprintf("[table].[name] %s %s", fxe, Expected.Syntax),
+					Expected: Expected.Syntax,
 				})
 			}
 		} else {
@@ -132,7 +140,7 @@ func TestBinaryField(t *testing.T) {
 	cmp := orm.Compiler.Ctx(mssql())
 	testData := createListOfFieldBinaries(cmp, 123)
 	for _, td := range testData {
-		r, err := orm.Compiler.Ctx(mssql()).Resolve(nil, td.Expr)
+		r, err := orm.Compiler.Ctx(mssql()).ResolveWithoutTableAlias(td.Expr)
 		assert.NoError(t, err)
 		assert.Equal(t, td.Expected, r.Syntax)
 		assert.Equal(t, 1, len(r.Args))

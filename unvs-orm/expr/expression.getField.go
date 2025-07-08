@@ -9,28 +9,21 @@ import (
 )
 
 type expressionCompileResult struct {
-	Syntax string
-	Tables []string
-}
-type ResolveContext struct {
-	Tables []string
-
-	Map map[string]string
+	Syntax  string
+	Context *map[string]string
 }
 
-func (c *ResolveContext) addTables(tableNames ...string) {
+func (c *expression) addTables(tables *[]string, context *map[string]string, tableNames ...string) {
 	for _, tableName := range tableNames {
-		if _, ok := c.Map[tableName]; !ok { // Đọc từ map thông thường
-			c.Tables = append(c.Tables, tableName)
-			c.Map[tableName] = "T" + fmt.Sprintf("%d", len(c.Tables))
+		if _, ok := (*context)[tableName]; !ok { // Đọc từ map thông thường
+			(*tables) = append((*tables), tableName)
+			(*context)[tableName] = "T" + fmt.Sprintf("%d", len((*context))+1)
 			// Ghi vào map thông thường
 		}
 	}
 }
-func (e *expression) compile(expr interface{}, context *ResolveContext, isFunctionParamCompiler bool) (*expressionCompileResult, error) {
-	if context == nil {
-		context = &ResolveContext{Tables: []string{}, Map: map[string]string{}}
-	}
+func (e *expression) compile(expr interface{}, tables *[]string, context *map[string]string, isFunctionParamCompiler bool, requireAlias bool) (*expressionCompileResult, error) {
+
 	switch expr := expr.(type) {
 	case *sqlparser.SQLVal:
 		return e.compileSQLVal(expr)
@@ -55,18 +48,18 @@ func (e *expression) compile(expr interface{}, context *ResolveContext, isFuncti
 			}
 		}
 		if !isFunctionParamCompiler {
-			context.addTables(tableName)
-			tableAlias := context.Map[tableName]
+			e.addTables(tables, context, tableName)
+			tableAlias := (*context)[tableName]
 			ret := e.Quote(tableAlias, fieldName) + " AS " + e.Quote(expr.Name.CompliantName())
-			return &expressionCompileResult{Syntax: ret, Tables: context.Tables}, nil
+			return &expressionCompileResult{Syntax: ret, Context: context}, nil
 		} else {
-			context.addTables(tableName)
-			tableAlias := context.Map[tableName]
-			return &expressionCompileResult{Syntax: e.Quote(tableAlias, fieldName), Tables: context.Tables}, nil
+			e.addTables(tables, context, tableName)
+			tableAlias := (*context)[tableName]
+			return &expressionCompileResult{Syntax: e.Quote(tableAlias, fieldName), Context: context}, nil
 		}
 
 	case *sqlparser.AliasedExpr:
-		ret, err := e.compile(expr.Expr, context, true)
+		ret, err := e.compile(expr.Expr, tables, context, true, requireAlias)
 		if err != nil {
 			return nil, err
 		}
@@ -82,13 +75,13 @@ func (e *expression) compile(expr interface{}, context *ResolveContext, isFuncti
 			}
 		}
 	case *sqlparser.FuncExpr:
-		return e.funcExpr(expr, context)
+		return e.funcExpr(expr, tables, context, requireAlias)
 	case sqlparser.SelectExprs:
 
 		retStr := []string{}
 
 		for _, expr := range expr {
-			ret, err := e.compile(expr, context, isFunctionParamCompiler)
+			ret, err := e.compile(expr, tables, context, isFunctionParamCompiler, requireAlias)
 			if err != nil {
 				return nil, err
 			}
@@ -98,23 +91,23 @@ func (e *expression) compile(expr interface{}, context *ResolveContext, isFuncti
 		return &expressionCompileResult{Syntax: strings.Join(retStr, ", ")}, nil
 
 	case *sqlparser.SelectExprs:
-		return e.compile(&expr, context, isFunctionParamCompiler)
+		return e.compile(&expr, tables, context, isFunctionParamCompiler, requireAlias)
 	case sqlparser.BinaryExpr:
-		return e.compileBinaryExpr(&expr, context, false)
+		return e.compileBinaryExpr(&expr, tables, context, false, requireAlias)
 	case *sqlparser.BinaryExpr:
-		return e.compileBinaryExpr(expr, context, false)
+		return e.compileBinaryExpr(expr, tables, context, false, requireAlias)
 	case *sqlparser.AndExpr:
-		return e.AndExpr(expr, context, isFunctionParamCompiler)
+		return e.AndExpr(expr, tables, context, isFunctionParamCompiler, requireAlias)
 	case sqlparser.AndExpr:
-		return e.AndExpr(&expr, context, isFunctionParamCompiler)
+		return e.AndExpr(&expr, tables, context, isFunctionParamCompiler, requireAlias)
 	case *sqlparser.OrExpr:
-		return e.OrExpr(expr, context, isFunctionParamCompiler)
+		return e.OrExpr(expr, tables, context, isFunctionParamCompiler, requireAlias)
 	case sqlparser.OrExpr:
-		return e.OrExpr(&expr, context, isFunctionParamCompiler)
+		return e.OrExpr(&expr, tables, context, isFunctionParamCompiler, requireAlias)
 	case *sqlparser.ComparisonExpr:
-		return e.ComparisonExpr(expr, context, isFunctionParamCompiler)
+		return e.ComparisonExpr(expr, tables, context, isFunctionParamCompiler, requireAlias)
 	case sqlparser.ComparisonExpr:
-		return e.ComparisonExpr(&expr, context, isFunctionParamCompiler)
+		return e.ComparisonExpr(&expr, tables, context, isFunctionParamCompiler, requireAlias)
 	default:
 		return nil, fmt.Errorf("not support %s in file orm/expression.getField.go", expr)
 	}

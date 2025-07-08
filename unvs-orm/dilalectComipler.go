@@ -1,7 +1,7 @@
 package orm
 
 type DialectCompiler interface {
-	resolve(context *map[string]string, caller *methodCall) (*resolverResult, error)
+	resolve(tables *[]string, context *map[string]string, caller *methodCall, requireAlias bool) (*resolverResult, error)
 	getQuoteIdent() string
 	getParam(index int) string
 	driverName() string

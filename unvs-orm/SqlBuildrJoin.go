@@ -32,12 +32,15 @@ func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
 
 	if expr.joinExprText != nil {
 		join, err := c.fromExprString(expr)
+
 		if err != nil {
 			return nil, err
 		}
+
 		ctx := *join.buildContext
-		strLeft := c.dialect.getCompiler().Quote(join.Tables[0]) + " AS " + c.dialect.getCompiler().Quote(ctx[join.Tables[0]])
-		strRight := c.dialect.getCompiler().Quote(join.Tables[1]) + " AS " + c.dialect.getCompiler().Quote(ctx[join.Tables[1]])
+		tables := *join.Tables
+		strLeft := c.dialect.getCompiler().Quote(tables[0]) + " AS " + c.dialect.getCompiler().Quote(ctx[tables[0]])
+		strRight := c.dialect.getCompiler().Quote(tables[1]) + " AS " + c.dialect.getCompiler().Quote(ctx[tables[1]])
 		syntax := strLeft + " " + expr.joinType + " JOIN " + strRight + " ON " + join.Syntax
 		return &resolverResult{
 			Syntax:       syntax,
@@ -51,10 +54,11 @@ func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
 	args := []interface{}{}
 	// stack := []*JoinExpr{}
 	context := map[string]string{}
+	tables := []string{}
 	for node := expr; node != nil; node = node.previous {
 		if node.on != nil {
 
-			r, err := cmp.Resolve(&context, node.on) //<-- resolve on condition
+			r, err := cmp.Resolve(&tables, &context, node.on, true) //<-- resolve on condition is alway required alias mapping
 			if err != nil {
 				return nil, err
 			}
@@ -83,11 +87,10 @@ func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
 	}, nil
 
 }
-func (c *JoinCompilerUtils) resolveJoinField(expr joinField) (*resolverResult, error) {
+func (c *JoinCompilerUtils) resolveJoinField(tables *[]string, context *map[string]string, expr joinField) (*resolverResult, error) {
 	cmp := Compiler.Ctx(c.dialect) //<-- get compiler for dialect
 
-	context := expr.alias
-	cmpRes, err := cmp.Resolve(&context, expr)
+	cmpRes, err := cmp.Resolve(tables, context, expr, true)
 	if err != nil {
 		return nil, err
 	}
@@ -98,27 +101,28 @@ func (c *JoinCompilerUtils) resolveJoinField(expr joinField) (*resolverResult, e
 	}, nil
 
 }
-func (c *JoinCompilerUtils) resoleFieldBinary(bF *BoolField, expr fieldBinary) (*resolverResult, error) {
+func (c *JoinCompilerUtils) resoleFieldBinary(tables *[]string, context *map[string]string, bF *BoolField, expr fieldBinary) (*resolverResult, error) {
 	cmp := Compiler.Ctx(c.dialect) //<-- get compiler for dialect
-	cmpRes, err := cmp.Resolve(nil, expr)
+	cmpRes, err := cmp.Resolve(tables, context, expr, false)
 	if err != nil {
 		return nil, err
 	}
 	return cmpRes, nil
 }
-func (c *JoinCompilerUtils) ResolveBoolFieldAsJoin(bF *BoolField) (*resolverResult, error) {
+func (c *JoinCompilerUtils) ResolveBoolFieldAsJoin(tables *[]string, context *map[string]string, bF *BoolField) (*resolverResult, error) {
+
 	if expr, ok := bF.UnderField.(*joinField); ok {
 
-		return c.resolveJoinField(*expr)
+		return c.resolveJoinField(tables, context, *expr)
 	}
 	if expr, ok := bF.UnderField.(joinField); ok {
-		return c.resolveJoinField(expr)
+		return c.resolveJoinField(tables, context, expr)
 	}
 	if expr, ok := bF.UnderField.(fieldBinary); ok {
-		return c.resoleFieldBinary(bF, expr)
+		return c.resoleFieldBinary(tables, context, bF, expr)
 	}
 	if expr, ok := bF.UnderField.(*fieldBinary); ok {
-		return c.resoleFieldBinary(bF, *expr)
+		return c.resoleFieldBinary(tables, context, bF, *expr)
 	}
 	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", bF.UnderField, "unvs-orm/SqlBuildrJoin.go", 127))
 

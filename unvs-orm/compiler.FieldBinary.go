@@ -1,14 +1,16 @@
 package orm
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func (c *CompilerUtils) resolveBinaryField(context *map[string]string, f *fieldBinary) (*resolverResult, error) {
+func (c *CompilerUtils) resolveBinaryField(tables *[]string, context *map[string]string, f *fieldBinary, requireAlias bool) (*resolverResult, error) {
 
-	left, err := c.Resolve(context, f.left)
+	left, err := c.Resolve(tables, context, f.left, requireAlias)
 	if err != nil {
 		return nil, err
 	}
-	right, err := c.Resolve(context, f.right)
+	right, err := c.Resolve(tables, context, f.right, requireAlias)
 	if err != nil {
 		return nil, err
 	}
@@ -19,20 +21,37 @@ func (c *CompilerUtils) resolveBinaryField(context *map[string]string, f *fieldB
 			Args:   args,
 		}, nil
 	}
-	if len(args) == 0 {
+	if f.op == "IN" || f.op == "NOT IN" {
 		return &resolverResult{
-			Syntax: fmt.Sprintf("%s %s", left.Syntax, f.op),
+			Syntax: fmt.Sprintf("%s %s (%s)", left.Syntax, f.op, right.Syntax),
 			Args:   args,
 		}, nil
-	} else if len(args) == 1 {
+	}
+
+	if left.Syntax != "" && right.Syntax != "" {
+		c.addMultipleTables(tables, context, left.Tables, right.Tables)
 		return &resolverResult{
-			Syntax: fmt.Sprintf("%s %s %s", left.Syntax, f.op, right.Syntax),
-			Args:   args,
+			Syntax:       fmt.Sprintf("%s %s %s", left.Syntax, f.op, right.Syntax),
+			Args:         args,
+			Tables:       tables,
+			buildContext: context,
+		}, nil
+	} else if left.Syntax == "" && right.Syntax != "" {
+		return &resolverResult{
+			Syntax:       fmt.Sprintf("%s %s", f.op, right.Syntax),
+			Args:         args,
+			Tables:       right.Tables,
+			buildContext: context,
+		}, nil
+
+	} else if left.Syntax != "" && right.Syntax == "" {
+		return &resolverResult{
+			Syntax:       fmt.Sprintf("%s %s", left.Syntax, f.op),
+			Args:         args,
+			Tables:       left.Tables,
+			buildContext: context,
 		}, nil
 	} else {
-		return &resolverResult{
-			Syntax: fmt.Sprintf("%s %s %s", left.Syntax, f.op, right.Syntax),
-			Args:   args,
-		}, nil
+		return nil, fmt.Errorf("invalid binary expression")
 	}
 }

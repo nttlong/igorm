@@ -4,9 +4,10 @@ import (
 	EXPR "unvs-orm/expr"
 )
 
-func (c *CompilerUtils) resolveExprField(context *map[string]string, f *exprField) (*resolverResult, error) {
+func (c *CompilerUtils) resolveExprField(tables *[]string, context *map[string]string, f *exprField, requireAlias bool) (*resolverResult, error) {
 	if bf, ok := f.UnderField.(*ExprBase); ok {
-		r, err := EXPR.NewExpressionCompiler(c.dialect.driverName()).CompileSelect(bf.Stmt)
+		selectCmp := EXPR.NewExpressionCompiler(c.dialect.driverName())
+		r, err := selectCmp.Compile(tables, context, bf.Stmt, true)
 		if err != nil {
 			return nil, err
 		}
@@ -14,9 +15,9 @@ func (c *CompilerUtils) resolveExprField(context *map[string]string, f *exprFiel
 			Syntax:       r.Syntax,
 			Args:         r.Args,
 			buildContext: context,
-			Tables:       r.Context.Tables,
+			Tables:       tables,
 		}, nil
 	} else {
-		return c.Resolve(context, f.UnderField)
+		return c.Resolve(tables, context, f.UnderField, requireAlias)
 	}
 }

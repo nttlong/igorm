@@ -31,7 +31,10 @@ func (c *JoinCompilerUtils) fromExprStringNoCache(expr *JoinExpr) (*resolverResu
 	e := EXPR.ExpressionTest{
 		DbDriver: EXPR.DB_TYPE_UNKNOWN.FromString(c.dialect.driverName()),
 	}
-	compiled, err := e.CompileSelect(expr.Expr)
+	context := map[string]string{}
+	tables := []string{}
+	compiled, err := e.Compile(&tables, &context, expr.Expr, true)
+
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +42,7 @@ func (c *JoinCompilerUtils) fromExprStringNoCache(expr *JoinExpr) (*resolverResu
 	return &resolverResult{
 		Syntax:       compiled.Syntax,
 		Args:         expr.Args,
-		buildContext: &compiled.Context.Map,
-		Tables:       compiled.Context.Tables,
+		buildContext: &context,
+		Tables:       &tables,
 	}, nil
 }
