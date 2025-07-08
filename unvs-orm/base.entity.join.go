@@ -2,7 +2,7 @@ package orm
 
 func (b *Base) Join(expr string, args ...interface{}) *BoolField {
 	return &BoolField{
-		UnderField: &JoinExpr{
+		underField: &JoinExpr{
 			joinType: "INNER",
 			joinExprText: &joinExprText{
 				Expr: expr,
@@ -14,7 +14,7 @@ func (b *Base) Join(expr string, args ...interface{}) *BoolField {
 }
 func (b *Base) LeftJoin(expr string, args ...interface{}) *BoolField {
 	return &BoolField{
-		UnderField: &JoinExpr{
+		underField: &JoinExpr{
 			joinType: "LEFT",
 			joinExprText: &joinExprText{
 				Expr: expr,
@@ -25,7 +25,7 @@ func (b *Base) LeftJoin(expr string, args ...interface{}) *BoolField {
 }
 func (b *Base) RightJoin(expr string, args ...interface{}) *BoolField {
 	return &BoolField{
-		UnderField: &JoinExpr{
+		underField: &JoinExpr{
 			joinType: "RIGHT",
 			joinExprText: &joinExprText{
 				Expr: expr,
@@ -36,7 +36,7 @@ func (b *Base) RightJoin(expr string, args ...interface{}) *BoolField {
 }
 func (b *Base) FullJoin(expr string, args ...interface{}) *BoolField {
 	return &BoolField{
-		UnderField: &JoinExpr{
+		underField: &JoinExpr{
 			joinType: "FULL",
 			joinExprText: &joinExprText{
 				Expr: expr,

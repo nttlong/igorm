@@ -52,7 +52,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(TextField{}) {
 		ret := TextField{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -64,7 +64,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(BoolField{}) {
 		ret := BoolField{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -75,7 +75,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(DateTimeField{}) {
 		ret := DateTimeField{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -86,7 +86,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[int64]{}) {
 		ret := NumberField[int64]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -97,7 +97,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[int]{}) {
 		ret := NumberField[int]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -108,7 +108,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[float32]{}) {
 		ret := NumberField[float32]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -119,7 +119,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[float64]{}) {
 		ret := NumberField[float64]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -130,7 +130,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[int8]{}) {
 		ret := NumberField[int8]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -141,7 +141,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[int16]{}) {
 		ret := NumberField[int16]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -152,7 +152,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[int32]{}) {
 		ret := NumberField[int32]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -163,7 +163,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[uint]{}) {
 		ret := NumberField[uint]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -174,7 +174,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[uint16]{}) {
 		ret := NumberField[uint16]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -185,7 +185,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[uint32]{}) {
 		ret := NumberField[uint32]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -196,7 +196,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[uint64]{}) {
 		ret := NumberField[uint64]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -207,7 +207,7 @@ func resolveFieldType(tableName string, colName string, field reflect.StructFiel
 	}
 	if fieldType == reflect.TypeOf(NumberField[uint8]{}) {
 		ret := NumberField[uint8]{
-			UnderField: &dbField{
+			underField: &dbField{
 				field: field,
 				Name:  colName,
 				Table: tableName,
@@ -252,33 +252,33 @@ var utilsObjectIns = &utilsObject{
 func (u *utilsObject) Assign(fieldPtr any, dbf *dbField) {
 	switch v := fieldPtr.(type) {
 	case *TextField:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[int]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[int8]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[int16]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[int32]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[int64]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[uint8]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[uint16]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[uint32]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[uint64]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[float32]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *NumberField[float64]:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *BoolField:
-		v.UnderField = dbf
+		v.underField = dbf
 	case *DateTimeField:
-		v.UnderField = dbf
+		v.underField = dbf
 	default:
 		panic(fmt.Sprintf("Unsupported field type: %T", v))
 	}

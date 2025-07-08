@@ -19,12 +19,12 @@ type rawTextField struct {
 	rawText string
 }
 type BoolField struct {
-	UnderField interface{}
+	underField interface{}
 }
 
 func (f *BoolField) Raw(text string) *BoolField {
 	return &BoolField{
-		UnderField: &rawTextField{
+		underField: &rawTextField{
 			rawText: text,
 		},
 	}
@@ -42,18 +42,18 @@ func (f *BoolField) Eq(value interface{}) *fieldBinary {
 }
 func (f *BoolField) And(other interface{}) *BoolField {
 	return &BoolField{
-		UnderField: f.makeFieldBinary(other, "AND"),
+		underField: f.makeFieldBinary(other, "AND"),
 	}
 
 }
 func (f *BoolField) Or(other interface{}) *BoolField {
 	return &BoolField{
-		UnderField: f.makeFieldBinary(other, "OR"),
+		underField: f.makeFieldBinary(other, "OR"),
 	}
 }
 func (f *BoolField) Not() *BoolField {
 	return &BoolField{
-		UnderField: fieldBinary{
+		underField: fieldBinary{
 			left:  nil,
 			right: f,
 			op:    "NOT",

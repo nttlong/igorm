@@ -112,7 +112,7 @@ type joinField struct {
 
 func (f *BoolField) Join(other interface{}) *BoolField {
 	return &BoolField{
-		UnderField: &joinField{
+		underField: &joinField{
 			left:     f,
 			right:    other,
 			joinType: "INNER",
@@ -122,7 +122,7 @@ func (f *BoolField) Join(other interface{}) *BoolField {
 }
 func (f *BoolField) RightJoin(other interface{}) *BoolField {
 	return &BoolField{
-		UnderField: &joinField{
+		underField: &joinField{
 			left:     f,
 			right:    other,
 			joinType: "RIGHT",
@@ -132,7 +132,7 @@ func (f *BoolField) RightJoin(other interface{}) *BoolField {
 }
 func (f *BoolField) LeftJoin(other interface{}) *BoolField {
 	return &BoolField{
-		UnderField: &joinField{
+		underField: &joinField{
 			left:     f,
 			right:    other,
 			joinType: "LEFT",
@@ -142,7 +142,7 @@ func (f *BoolField) LeftJoin(other interface{}) *BoolField {
 
 func (f *BoolField) FullJoin(other interface{}) *BoolField {
 	return &BoolField{
-		UnderField: &joinField{
+		underField: &joinField{
 			left:     f,
 			right:    other,
 			joinType: "FULL",
@@ -152,10 +152,10 @@ func (f *BoolField) FullJoin(other interface{}) *BoolField {
 }
 
 func (f *BoolField) doJoin() *BoolField {
-	if fx, ok := f.UnderField.(fieldBinary); ok {
+	if fx, ok := f.underField.(fieldBinary); ok {
 		joinInfo := joinUnpackUtils.ExtractJoinInfo(f)
 		return &BoolField{
-			UnderField: &joinField{
+			underField: &joinField{
 				left:     fx.left,
 				right:    fx.right,
 				joinType: "INNER",

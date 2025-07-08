@@ -9,7 +9,7 @@ type dbField struct {
 }
 
 type aliasField struct {
-	UnderField interface{}
+	underField interface{}
 	Alias      string
 }
 
@@ -22,7 +22,7 @@ func (f *dbField) clone() *dbField {
 }
 func (f *dbField) As(name string) *aliasField {
 	return &aliasField{
-		UnderField: f,
+		underField: f,
 		Alias:      name,
 	}
 

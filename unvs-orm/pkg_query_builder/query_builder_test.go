@@ -200,7 +200,7 @@ func TestJoinFromExpr(b *testing.T) {
 	join := repo.Join("customer.customerId=invoice.customerId AND customer.name=?", "John")
 
 	ctx := orm.JoinCompiler.Ctx(mssql())
-	joinRes, err := ctx.Resolve(join.UnderField.(*orm.JoinExpr))
+	joinRes, err := ctx.Compile(join)
 	assert.NoError(b, err)
 	expectedSql := "[customers] AS [T1] INNER JOIN [invoices] AS [T2] ON [T1].[customer_id] = [T2].[customer_id] AND [T1].[name] = ?"
 	assert.Equal(b, expectedSql, joinRes.Syntax)
@@ -214,9 +214,9 @@ func BenchmarkJoinFromExpr(b *testing.B) {
 		join := repo.Join("order.orderid=invoice.customerId AND customer.name=?", "John")
 
 		ctx := orm.JoinCompiler.Ctx(mssql())
-		joinRes, err := ctx.Resolve(join.UnderField.(*orm.JoinExpr))
+		joinRes, err := ctx.Compile(join)
 		assert.NoError(b, err)
-		expectedSql := "[customers] AS [T1] INNER JOIN [invoices] AS [T2] ON [T1].[customer_id] = [T2].[customer_id] AND [T1].[name] = ?"
+		expectedSql := "[orders] AS [T1] INNER JOIN [invoices] AS [T2] ON [T1].[orderid] = [T2].[customer_id] AND [T3].[name] = ?"
 		assert.Equal(b, expectedSql, joinRes.Syntax)
 		assert.Equal(b, []interface{}{"John"}, joinRes.Args)
 	}

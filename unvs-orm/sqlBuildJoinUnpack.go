@@ -45,7 +45,7 @@ func (j *joinUnpack) extractJoinInfos(refTable *joinRefInfo, expr ...interface{}
 		}
 		switch v := field.(type) {
 		case *BoolField:
-			if bf, ok := v.UnderField.(*fieldBinary); ok {
+			if bf, ok := v.underField.(*fieldBinary); ok {
 				refTable = j.extractJoinInfos(refTable, bf.left, bf.right)
 				if refTable.hasNewTable {
 					bf.op = refTable.joinType + " JOIN"
@@ -57,47 +57,47 @@ func (j *joinUnpack) extractJoinInfos(refTable *joinRefInfo, expr ...interface{}
 			}
 
 		case NumberField[int]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *NumberField[int]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 
 		case NumberField[uint64]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case NumberField[uint32]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case NumberField[uint16]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case NumberField[uint8]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case NumberField[int64]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case NumberField[int32]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case NumberField[int16]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case NumberField[int8]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 
 		case *NumberField[uint64]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *NumberField[uint32]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *NumberField[uint16]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *NumberField[uint8]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *NumberField[int64]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *NumberField[int32]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *NumberField[int16]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *NumberField[int8]:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case DateTimeField:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *DateTimeField:
-			refTable = j.extractJoinInfos(refTable, v.UnderField)
+			refTable = j.extractJoinInfos(refTable, v.underField)
 		case *methodCall:
 			if v == nil {
 				continue
@@ -140,10 +140,10 @@ type joinRefInfo struct {
 }
 
 func (j *joinUnpack) ExtractJoinInfo(on *BoolField) *joinInfoFromBoolField {
-	if on.UnderField == nil {
+	if on.underField == nil {
 		return nil
 	}
-	if fx, ok := on.UnderField.(*joinField); ok {
+	if fx, ok := on.underField.(*joinField); ok {
 		refTables := &joinRefInfo{
 			alias:       map[string]string{},
 			tables:      []string{},
@@ -168,7 +168,7 @@ func (j *joinUnpack) ExtractJoinInfo(on *BoolField) *joinInfoFromBoolField {
 		ret.tables = retTables
 		return ret
 	}
-	panic(fmt.Sprintf("unsupported type %T in orm/sqlBuildJoinUnpack.go, line 100", on.UnderField))
+	panic(fmt.Sprintf("unsupported type %T in orm/sqlBuildJoinUnpack.go, line 100", on.underField))
 
 }
 

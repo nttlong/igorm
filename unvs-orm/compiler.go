@@ -107,7 +107,7 @@ func (c *CompilerUtils) Resolve(tables *[]string, context *map[string]string, ex
 		return c.resolveDBField(tables, context, &f, requireAlias)
 	}
 	if f, ok := expr.(*aliasField); ok {
-		result, err := c.Resolve(tables, context, f.UnderField, requireAlias)
+		result, err := c.Resolve(tables, context, f.underField, requireAlias)
 		if err != nil {
 			return nil, err
 		}
@@ -139,29 +139,29 @@ func (c *CompilerUtils) Resolve(tables *[]string, context *map[string]string, ex
 		// if f.callMethod != nil {
 		// 	return c.dialect.resolve(context, f.callMethod) //<-- call method resolver no longer refers to the Field
 		// }
-		return c.Resolve(tables, context, f.UnderField, requireAlias)
+		return c.Resolve(tables, context, f.underField, requireAlias)
 	}
 	if f, ok := expr.(DateTimeField); ok {
 
-		return c.Resolve(tables, context, f.UnderField, requireAlias)
+		return c.Resolve(tables, context, f.underField, requireAlias)
 	}
 	if f, ok := expr.(*NumberField[int]); ok {
 		// if f.callMethod != nil {
 		// 	return c.dialect.resolve(context, f.callMethod) //<-- call method resolver no longer refers to the Field
 
 		// }
-		return c.Resolve(tables, context, f.UnderField, requireAlias)
+		return c.Resolve(tables, context, f.underField, requireAlias)
 
 	}
 	if f, ok := expr.(NumberField[int]); ok {
-		return c.Resolve(tables, context, f.UnderField, requireAlias)
+		return c.Resolve(tables, context, f.underField, requireAlias)
 	}
 	if f, ok := expr.(*TextField); ok {
-		return c.Resolve(tables, context, f.UnderField, requireAlias)
+		return c.Resolve(tables, context, f.underField, requireAlias)
 
 	}
 	if f, ok := expr.(TextField); ok {
-		return c.Resolve(tables, context, f.UnderField, requireAlias)
+		return c.Resolve(tables, context, f.underField, requireAlias)
 	}
 	if f, ok := expr.(*methodCall); ok {
 		return c.dialect.resolve(tables, context, f, requireAlias) //<-- this method will compile with alias if any table of field found in context
@@ -217,7 +217,7 @@ func (c *CompilerUtils) Resolve(tables *[]string, context *map[string]string, ex
 	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", expr, "unvs-orm/compiler.go", 187))
 }
 func (c *CompilerUtils) ResolveBetween(tables *[]string, context *map[string]string, btf *BoolField, requireAlias bool) (*resolverResult, error) {
-	if f, ok := btf.UnderField.(*fieldBinary); ok {
+	if f, ok := btf.underField.(*fieldBinary); ok {
 		left, err := c.Resolve(tables, context, f.left, requireAlias)
 		if err != nil {
 			return nil, err
@@ -234,10 +234,10 @@ func (c *CompilerUtils) ResolveBetween(tables *[]string, context *map[string]str
 			Args:   args,
 		}, nil
 	}
-	return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", btf.UnderField, "unvs-orm/compiler.go", 232)
+	return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", btf.underField, "unvs-orm/compiler.go", 232)
 }
 func (c *CompilerUtils) ResolveNotBetween(tables *[]string, context *map[string]string, btf *BoolField, requireAlias bool) (*resolverResult, error) {
-	if f, ok := btf.UnderField.(*fieldBinary); ok {
+	if f, ok := btf.underField.(*fieldBinary); ok {
 		left, err := c.Resolve(tables, context, f.left, requireAlias)
 		if err != nil {
 			return nil, err
@@ -269,12 +269,12 @@ func (c *CompilerUtils) resolveSlice(tables *[]string, context *map[string]strin
 }
 
 func (c *CompilerUtils) resolveBoolField(tables *[]string, context *map[string]string, bf *BoolField, requireAlias bool) (*resolverResult, error) {
-	if _, ok := bf.UnderField.(*joinField); ok {
+	if _, ok := bf.underField.(*joinField); ok {
 		return c.resolveBoolFieldJoin(tables, context, bf, requireAlias)
 	}
 
-	return c.Resolve(tables, context, bf.UnderField, requireAlias)
-	//return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", bf.UnderField, "unvs-orm/compiler.go", 317)
+	return c.Resolve(tables, context, bf.underField, requireAlias)
+	//return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", bf.underField, "unvs-orm/compiler.go", 317)
 }
 
 var Compiler = CompilerUtils{}

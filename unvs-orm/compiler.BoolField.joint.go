@@ -3,7 +3,7 @@ package orm
 import "fmt"
 
 func (c *CompilerUtils) resolveBoolFieldJoin(tables *[]string, context *map[string]string, bf *BoolField, requireAlias bool) (*resolverResult, error) {
-	if f, ok := bf.UnderField.(*joinField); ok {
+	if f, ok := bf.underField.(*joinField); ok {
 		left, err := c.Resolve(tables, context, f.left, requireAlias)
 		if err != nil {
 			return nil, err
@@ -20,5 +20,5 @@ func (c *CompilerUtils) resolveBoolFieldJoin(tables *[]string, context *map[stri
 			Args:   args,
 		}, nil
 	}
-	return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", bf.UnderField, "unvs-orm/compiler.go", 23)
+	return nil, fmt.Errorf("unsupported expression type: %T, file %s, line %d", bf.underField, "unvs-orm/compiler.go", 23)
 }

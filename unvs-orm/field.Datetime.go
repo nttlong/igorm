@@ -11,13 +11,13 @@ import "time"
 // 	Val        *time.Time
 // }
 type DateTimeField struct {
-	UnderField interface{}
+	underField interface{}
 	Val        *time.Time
 }
 
 func (f *DateTimeField) As(alias string) *aliasField {
 	return &aliasField{
-		UnderField: f,
+		underField: f,
 		Alias:      alias,
 	}
 }
@@ -31,7 +31,7 @@ func (f *DateTimeField) makeFieldBinary(other interface{}, op string) *fieldBina
 func (f *DateTimeField) compare(other interface{}, op string) *BoolField {
 
 	return &BoolField{
-		UnderField: f.makeFieldBinary(other, op),
+		underField: f.makeFieldBinary(other, op),
 	}
 }
 func (f *DateTimeField) Eq(other interface{}) *BoolField {
@@ -74,7 +74,7 @@ func (f *DateTimeField) NotBetween(min, max interface{}) *BoolField {
 }
 func (f *DateTimeField) makeDateTimeMethodCall(method string) *NumberField[int] {
 	return &NumberField[int]{
-		UnderField: &methodCall{
+		underField: &methodCall{
 			method: method,
 			args:   []interface{}{f},
 		},
@@ -101,7 +101,7 @@ func (f *DateTimeField) Second() *NumberField[int] {
 }
 func (f *DateTimeField) Format(layout string) *TextField {
 	return &TextField{
-		UnderField: &methodCall{
+		underField: &methodCall{
 			method: "FORMAT",
 			args:   []interface{}{f, layout},
 		},
@@ -115,7 +115,7 @@ DateTimeField_test.go:46: method Min not found in type *orm.DateTimeField
 */
 func (f *DateTimeField) Min() *DateTimeField {
 	return &DateTimeField{
-		UnderField: &methodCall{
+		underField: &methodCall{
 			method: "MIN",
 			args:   []interface{}{f},
 		},
@@ -123,7 +123,7 @@ func (f *DateTimeField) Min() *DateTimeField {
 }
 func (f *DateTimeField) Max() *DateTimeField {
 	return &DateTimeField{
-		UnderField: &methodCall{
+		underField: &methodCall{
 			method: "MAX",
 			args:   []interface{}{f},
 		},

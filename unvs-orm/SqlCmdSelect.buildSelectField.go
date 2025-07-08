@@ -18,89 +18,89 @@ func (sql *SqlCmdSelect) buildSelectField(field interface{}) (string, []interfac
 	aliasField := ""
 	switch f := field.(type) {
 	case *BoolField:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *DateTimeField:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *TextField:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[int64]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[int32]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[int16]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[int8]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[uint64]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[uint32]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[uint16]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[uint8]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[float64]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[float32]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *NumberField[int]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 		//------------------------------------------
 	case BoolField:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case DateTimeField:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case TextField:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[int64]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[int32]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[int16]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[int8]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[uint64]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[uint32]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[uint16]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[uint8]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[float64]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[float32]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case NumberField[int]:
-		aliasField = sql.getFieldName(f.UnderField)
+		aliasField = sql.getFieldName(f.underField)
 		txtSql, args, err = sql.buildSelectFieldNoAlias(f)
 	case *exprField:
 		return sql.buildExprField(f)

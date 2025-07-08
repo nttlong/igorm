@@ -28,6 +28,13 @@ func (c *JoinCompilerUtils) Ctx(dialect DialectCompiler) *JoinCompilerUtils {
 	cacheJoinCompilerCtx.Store(key, ret)
 	return ret
 }
+func (c *JoinCompilerUtils) Compile(expr *BoolField) (*resolverResult, error) {
+	if je, ok := expr.underField.(*JoinExpr); ok {
+		return c.Resolve(je)
+	} else {
+		return nil, fmt.Errorf("unsupported expression type: %T", expr.underField)
+	}
+}
 func (c *JoinCompilerUtils) Resolve(expr *JoinExpr) (*resolverResult, error) {
 
 	if expr.joinExprText != nil {
@@ -116,20 +123,20 @@ func (c *JoinCompilerUtils) ResolveBoolFieldAsJoin(tables *[]string, context *ma
 	if context == nil {
 		context = &map[string]string{}
 	}
-	if expr, ok := bF.UnderField.(*joinField); ok {
+	if expr, ok := bF.underField.(*joinField); ok {
 
 		return c.resolveJoinField(tables, context, *expr)
 	}
-	if expr, ok := bF.UnderField.(joinField); ok {
+	if expr, ok := bF.underField.(joinField); ok {
 		return c.resolveJoinField(tables, context, expr)
 	}
-	if expr, ok := bF.UnderField.(fieldBinary); ok {
+	if expr, ok := bF.underField.(fieldBinary); ok {
 		return c.resoleFieldBinary(tables, context, bF, expr)
 	}
-	if expr, ok := bF.UnderField.(*fieldBinary); ok {
+	if expr, ok := bF.underField.(*fieldBinary); ok {
 		return c.resoleFieldBinary(tables, context, bF, *expr)
 	}
-	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", bF.UnderField, "unvs-orm/SqlBuildrJoin.go", 127))
+	panic(fmt.Errorf("unsupported expression type: %T, file %s, line %d", bF.underField, "unvs-orm/SqlBuildrJoin.go", 127))
 
 }
 
