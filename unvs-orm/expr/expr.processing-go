@@ -1,0 +1,180 @@
+package expr
+
+import (
+	"bytes"
+	"strconv"
+	"strings"
+	"sync"
+)
+
+type ExprConfig struct {
+	keywords             map[string]bool
+	funcWhitelist        map[string]bool
+	cacheQuoteExpression sync.Map
+	cacheExtractText     sync.Map
+	sbPool               sync.Pool
+	bufferPool           sync.Pool
+}
+type ExprQuoteResult struct {
+	QuotedSQL string
+	Literals  []string
+}
+
+func NewExprConfig() *ExprConfig {
+	return &ExprConfig{
+		sbPool: sync.Pool{
+			New: func() any {
+				return new(bytes.Buffer)
+			},
+		},
+		bufferPool: sync.Pool{
+			New: func() any {
+				return new(bytes.Buffer)
+			},
+		},
+	}
+}
+func (c *ExprConfig) init() {
+	if c.funcWhitelist == nil {
+		c.funcWhitelist = map[string]bool{
+			"min": true, "max": true, "abs": true, "len": true,
+		}
+	}
+
+	if c.keywords == nil {
+		c.keywords = map[string]bool{"as": true}
+	}
+}
+func (c *ExprConfig) itoa(i int) string {
+	return string(rune('0' + i))
+}
+
+func (cfg *ExprConfig) QuoteExpression(expr string) string {
+	cfg.init()
+	// Cache check
+	if v, ok := cfg.cacheQuoteExpression.Load(expr); ok {
+		return v.(string)
+	}
+	res := cfg.quoteAndExtract(expr)
+	for i, lit := range res.Literals {
+		res.QuotedSQL = strings.ReplaceAll(res.QuotedSQL, "<"+strconv.Itoa(i)+">", "'"+lit+"'")
+	}
+	res.QuotedSQL = strings.ReplaceAll(res.QuotedSQL, "[", "`")
+	res.QuotedSQL = strings.ReplaceAll(res.QuotedSQL, "]", "`")
+	// Cache store
+	cfg.cacheQuoteExpression.Store(expr, res.QuotedSQL)
+	return res.QuotedSQL
+}
+func (cfg *ExprConfig) quoteAndExtract(expr string) ExprQuoteResult {
+	buf := cfg.bufferPool.Get().(*bytes.Buffer)
+	buf.Reset()
+	defer cfg.bufferPool.Put(buf)
+
+	literals := []string{}
+	placeholderIdx := 0
+	tmp := make([]byte, 0, 32)
+
+	isIdentChar := func(ch byte) bool {
+		return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
+			(ch >= '0' && ch <= '9') || ch == '_' || ch == '.'
+	}
+
+	isKeyword := func(s string) bool {
+		switch strings.ToLower(s) {
+		case "as", "and", "or", "not", "case", "when", "then", "else", "end":
+			return true
+		default:
+			return false
+		}
+	}
+
+	isFunc := func(s string) bool {
+		switch s {
+		case "min", "max", "abs", "len":
+			return true
+		default:
+			return false
+		}
+	}
+
+	data := []byte(expr)
+	for i := 0; i < len(data); {
+		ch := data[i]
+
+		// ---- 1. Handle string literal: 'abc'
+		if ch == '\'' {
+			start := i + 1
+			i++
+			for i < len(data) && data[i] != '\'' {
+				i++
+			}
+			end := i
+			if i < len(data) {
+				i++ // skip closing '
+			}
+			val := string(data[start:end])
+			literals = append(literals, val)
+			cfg.writePlaceholder(buf, placeholderIdx)
+			//buf.WriteString("<" + strconv.Itoa(placeholderIdx) + ">")
+			placeholderIdx++
+			continue
+		}
+
+		// ---- 2. Handle identifier (table.column or variable)
+		if isIdentChar(ch) && (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch == '_') {
+			tmp = tmp[:0]
+			j := i
+			for j < len(data) && isIdentChar(data[j]) {
+				tmp = append(tmp, data[j])
+				j++
+			}
+			ident := string(tmp)
+			isFunction := j < len(data) && data[j] == '('
+
+			if isKeyword(ident) || (isFunction && isFunc(ident)) {
+				buf.WriteString(ident)
+			} else if strings.Contains(ident, ".") {
+				parts := strings.Split(ident, ".")
+				for idx, p := range parts {
+					if idx > 0 {
+						buf.WriteByte('.')
+					}
+					buf.WriteByte('`')
+					buf.WriteString(p)
+					buf.WriteByte('`')
+				}
+			} else {
+				buf.WriteByte('`')
+				buf.WriteString(ident)
+				buf.WriteByte('`')
+			}
+			i = j
+			continue
+		}
+
+		// ---- 3. Copy character normally
+		buf.WriteByte(ch)
+		i++
+	}
+
+	return ExprQuoteResult{
+		QuotedSQL: buf.String(),
+		Literals:  literals,
+	}
+}
+func (cfg *ExprConfig) writePlaceholder(buf *bytes.Buffer, i int) {
+	buf.WriteByte('<')
+	if i == 0 {
+		buf.WriteByte('0')
+	} else {
+		tmp := [10]byte{}
+		pos := len(tmp)
+		for i > 0 {
+			pos--
+			tmp[pos] = '0' + byte(i%10)
+			i /= 10
+		}
+		buf.Write(tmp[pos:])
+	}
+	buf.WriteByte('>')
+}

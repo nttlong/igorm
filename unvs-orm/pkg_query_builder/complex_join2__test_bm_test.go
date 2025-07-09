@@ -198,3 +198,54 @@ func BenchmarkJoinEmployeeWithManager(b *testing.B) {
 		assert.Equal(b, expected, compilerResult.SqlText)
 	}
 }
+func BenchmarkEmployeeWithoutManager(b *testing.B) {
+	repo := orm.Repository[OrderRepository]()
+
+	for i := 0; i < b.N; i++ {
+		emp := repo.Employees
+		manager := repo.Employees.Alias("manager")
+
+		sql := emp.ManagerId.
+			LeftJoin(manager.EmployeeId).
+			Select(emp.Name.As("EmpName")).
+			Where(manager.EmployeeId.IsNull())
+
+		dialect := mssql()
+		compilerResult := sql.Compile(dialect)
+		assert.NoError(b, compilerResult.Err)
+
+		expected := "SELECT [T1].[name] AS [EmpName] " +
+			"FROM [employees] AS [T1] " +
+			"LEFT JOIN [employees] AS [T2] ON [T1].[manager_id] = [T2].[employee_id] " +
+			"WHERE [T2].[employee_id] IS NULL"
+
+		assert.Equal(b, expected, compilerResult.SqlText)
+	}
+}
+func BenchmarkEmployeeWithGrandManager(b *testing.B) {
+	repo := orm.Repository[OrderRepository]()
+
+	for i := 0; i < b.N; i++ {
+		emp := repo.Employees
+		mgr := repo.Employees.Alias("mgr")
+		grand := repo.Employees.Alias("grand")
+
+		join := emp.Join(mgr, emp.ManagerId.Eq(mgr.EmployeeId)) //<--emp.ManagerId.LeftJoin(mgr.EmployeeId)
+		join = join.LeftJoin(grand, grand.EmployeeId.Eq(mgr.ManagerId))
+
+		sql := join.Select(
+			emp.Name.As("EmpName"),
+			mgr.Name.As("ManagerName"),
+			grand.Name.As("GrandManagerName"),
+		)
+
+		dialect := mssql()
+		compilerResult := sql.Compile(dialect)
+		assert.NoError(b, compilerResult.Err)
+
+		expected := "SELECT [T3].[name] AS [EmpName], [T2].[name] AS [ManagerName], [T1].[name] AS [GrandManagerName] FROM [employees] AS [T3] INNER JOIN [employees] AS [T2] ON [T3].[manager_id] = [T2].[employee_id] LEFT JOIN [employees] AS [T1] ON [T1].[employee_id] = [T2].[manager_id]"
+
+		assert.Equal(b, expected, compilerResult.SqlText)
+		//"SELECT [T3].[name] AS [EmpName], [T2].[name] AS [ManagerName], [T1].[name] AS [GrandManagerName] FROM [employees] AS [T3] INNER JOIN [employees] AS [T2] ON [T3].[manager_id] = [T2].[employee_id] LEFT JOIN [employees] AS [T1] ON [T1].[employee_id] = [T2].[manager_id]"
+	}
+}

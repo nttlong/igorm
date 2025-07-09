@@ -19,10 +19,8 @@ type compileResult struct {
 //	}
 func (e *expression) Compile(tables *[]string, context *map[string]string, cmd string, requireAlias bool) (*compileResult, error) {
 
-	cmd, err := e.Prepare(cmd)
-	if err != nil {
-		return nil, err
-	}
+	cmd = e.Prepare(cmd)
+
 	sqlTest := "select " + cmd
 	stm, err := sqlparser.Parse(sqlTest)
 	if err != nil {

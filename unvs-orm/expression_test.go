@@ -195,8 +195,8 @@ func TestPrepare(t *testing.T) {
 	for _, data := range dataTest {
 		input := strings.Split(data, "->")[0]
 		expected := strings.Split(data, "->")[1]
-		res, err := e.Prepare(input)
-		assert.NoError(t, err)
+		res := e.Prepare(input)
+
 		assert.Equal(t, expected, res)
 	}
 }
