@@ -12,6 +12,7 @@ type cacheSqlExecutorBuildSourceItem struct {
 }
 
 var cacheSqlExecutorBuildSource sync.Map
+var cacheSqlExecutorToSql sync.Map
 
 type SqlBuilderReceiver struct {
 }
@@ -54,7 +55,7 @@ func (s *SqlExecutor) Select(args ...interface{}) *SqlExecutor {
 	return s
 }
 
-func (s *SqlExecutor) buildSource(dialect Dialect) error {
+func (s *SqlExecutor) buildSource(exprCompile *exprCompiler, dialect Dialect) error {
 	key := dialect.Name() + "://" + s.source
 	if v, ok := cacheSqlExecutorBuildSource.Load(key); ok {
 		item := v.(cacheSqlExecutorBuildSourceItem)
@@ -63,19 +64,12 @@ func (s *SqlExecutor) buildSource(dialect Dialect) error {
 		s.source = item.source
 		return nil
 	}
-	joinCompilerSource := &exprJoin{
-		context: &exprCompileContext{
-			tables:      s.tables,
-			alias:       s.alias,
-			dialect:     dialect,
-			IsBuildJoin: false,
-		},
-	}
-	err := joinCompilerSource.build(s.source)
+
+	err := exprCompile.build(s.source)
 	if err != nil {
 		return err
 	}
-	s.source = joinCompilerSource.content
+	s.source = exprCompile.content
 
 	item := cacheSqlExecutorBuildSourceItem{
 		tables: []string{},
@@ -83,20 +77,20 @@ func (s *SqlExecutor) buildSource(dialect Dialect) error {
 
 		source: s.source,
 	}
-	for _, table := range joinCompilerSource.context.alias {
+	for _, table := range exprCompile.context.alias {
 		item.tables = append(item.tables, table)
 	}
-	for k, v := range joinCompilerSource.context.alias {
+	for k, v := range exprCompile.context.alias {
 		item.alias[k] = v
 	}
 	cacheSqlExecutorBuildSource.Store(key, item)
 
-	s.source = joinCompilerSource.content
+	s.source = exprCompile.content
 	s.alias = item.alias
 	s.tables = item.tables
 	return nil
 }
-func (s *SqlExecutor) buildSelectors(dialect Dialect) error {
+func (s *SqlExecutor) buildSelectors(compiler *exprCompiler, dialect Dialect) error {
 	if s.selectors == "" {
 		if len(s.tables) == 1 {
 			s.selectors = "*"
@@ -109,21 +103,42 @@ func (s *SqlExecutor) buildSelectors(dialect Dialect) error {
 		}
 
 	}
+
+	err := compiler.buildSelectField(s.selectors)
+	if err != nil {
+		return err
+	}
+	s.selectors = compiler.content
+
 	return nil
 
 }
 func (s *SqlExecutor) ToSql(dialect Dialect) (string, []interface{}) {
-	err := s.buildSource(dialect)
+	key := dialect.Name() + "://" + s.source + "?" + s.selectors
+	if v, ok := cacheSqlExecutorToSql.Load(key); ok {
+
+		return v.(string), s.args
+	}
+	exprCompile := &exprCompiler{
+		context: &exprCompileContext{
+			tables:  s.tables,
+			alias:   s.alias,
+			dialect: dialect,
+			purpose: build_purpose_join,
+		},
+	}
+	err := s.buildSource(exprCompile, dialect)
 	if err != nil {
 		s.Err = err
 		return "", nil
 	}
-	err = s.buildSelectors(dialect)
+	err = s.buildSelectors(exprCompile, dialect)
 	if err != nil {
 		s.Err = err
 		return "", nil
 	}
 	sql := "SELECT " + s.selectors + " FROM " + s.source
+	cacheSqlExecutorToSql.Store(key, sql)
 	return sql, s.args
 
 }

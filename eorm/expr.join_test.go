@@ -7,7 +7,7 @@ import (
 )
 
 func TestEormJoin(t *testing.T) {
-	ej := &exprJoin{
+	ej := &exprCompiler{
 
 		context: &exprCompileContext{
 			tables: []string{},
@@ -15,8 +15,8 @@ func TestEormJoin(t *testing.T) {
 			schema: map[string]bool{
 				"User": true,
 			},
-			dialect:     dialectFactory.Create("mssql"),
-			IsBuildJoin: true,
+			dialect: dialectFactory.Create("mssql"),
+			purpose: build_purpose_join,
 		},
 	}
 	err := ej.build("Departments INNER JOIN User ON User.Code = Departments.Code INNER JOIN Check ON Check.Name = 'John'")
@@ -26,7 +26,7 @@ func TestEormJoin(t *testing.T) {
 }
 func BenchmarkEormJoin(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		ej := &exprJoin{
+		ej := &exprCompiler{
 
 			context: &exprCompileContext{
 				tables: []string{},
@@ -34,8 +34,8 @@ func BenchmarkEormJoin(b *testing.B) {
 				schema: map[string]bool{
 					"User": true,
 				},
-				dialect:     dialectFactory.Create("mssql"),
-				IsBuildJoin: true,
+				dialect: dialectFactory.Create("mssql"),
+				purpose: build_purpose_join,
 			},
 		}
 		err := ej.build("Departments INNER JOIN User ON User.Code = Departments.Code INNER JOIN Check ON Check.Name = 'John'")

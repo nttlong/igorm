@@ -21,3 +21,8 @@ func (d *mssqlDialect) GetTableAndColumnsDictionary(db *sql.DB) (map[string]stri
 func (d *mssqlDialect) ToText(value string) string {
 	return fmt.Sprintf("N'%s'", value)
 }
+func (d *mssqlDialect) SqlFunction(delegator *DialectDelegateFunction) (string, error) {
+	//delegator.Approved = true
+	delegator.FuncName = strings.ToUpper(delegator.FuncName)
+	return "", nil
+}

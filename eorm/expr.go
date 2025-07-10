@@ -29,6 +29,12 @@ func (e *exprReceiver) compile(context *exprCompileContext, expr interface{}) (s
 		return e.JoinCondition(context, &expr)
 	case sqlparser.TableName:
 		return e.TableName(context, &expr)
+	case *sqlparser.BinaryExpr:
+		return e.BinaryExpr(context, expr)
+	case *sqlparser.FuncExpr:
+		return e.FuncExpr(context, expr)
+	case *sqlparser.AliasedExpr:
+		return e.AliasedExpr(context, expr)
 
 	default:
 		panic(fmt.Errorf("unsupported expression type %T in file eorm/expr.go, line 17", expr))

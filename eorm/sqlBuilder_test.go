@@ -6,6 +6,40 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestSqlBuilderSelectField(t *testing.T) {
+	for i := 0; i < 5; i++ {
+		joinExpr := "Departments INNER JOIN User ON User.Code = Departments.Code INNER JOIN Check ON Check.Name = 'John'"
+		builder := SqlBuilder.From(joinExpr).Select(
+			`Departments.Code AS DepartmentCode,
+			User.Name AS UserName,
+			Check.Name as CheckName,
+			concat(User.FirstName,' ',User.LastName) AS FullName,`,
+
+			"", 12,
+		)
+		sql, args := builder.ToSql(dialectFactory.Create("mssql"))
+		assert.NoError(t, builder.Err)
+		assert.Equal(t, "SELECT [T1].[code] AS [DepartmentCode], [T2].[name] AS [UserName], [T3].[name] AS [CheckName], CONCAT([T2].[first_name], N' ', [T2].[last_name]) AS [FullName] FROM [departments] AS [T1] INNER JOIN [users] AS [T2] ON [T2].[code] = [T1].[code] INNER JOIN [checks] AS [T3] ON [T3].[name] = N'John'", sql)
+		assert.Equal(t, 2, len(args))
+	}
+}
+func BenchmarkBuilderSelectField(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		joinExpr := "Departments INNER JOIN User ON User.Code = Departments.Code INNER JOIN Check ON Check.Name = 'John'"
+		builder := SqlBuilder.From(joinExpr).Select(
+			`Departments.Code AS DepartmentCode,
+			User.Name AS UserName,
+			Check.Name as CheckName,
+			concat(User.FirstName,' ',User.LastName) AS FullName,`,
+
+			"", 12,
+		)
+		sql, args := builder.ToSql(dialectFactory.Create("mssql"))
+		assert.NoError(b, builder.Err)
+		assert.Equal(b, "SELECT [T1].[code] AS [DepartmentCode], [T2].[name] AS [UserName], [T3].[name] AS [CheckName], CONCAT([T2].[first_name], N' ', [T2].[last_name]) AS [FullName] FROM [departments] AS [T1] INNER JOIN [users] AS [T2] ON [T2].[code] = [T1].[code] INNER JOIN [checks] AS [T3] ON [T3].[name] = N'John'", sql)
+		assert.Equal(b, 2, len(args))
+	}
+}
 func TestSqlBuilder(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		joinExpr := "Departments INNER JOIN User ON User.Code = Departments.Code INNER JOIN Check ON Check.Name = 'John'"

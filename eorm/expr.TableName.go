@@ -14,7 +14,7 @@ func (compiler *exprReceiver) TableName(context *exprCompileContext, expr *sqlpa
 	if _, ok := context.schema[tableName]; !ok { // not found in schema, try to pluralize it
 		tableName = utils.Plural(tableName)
 	}
-	if context.IsBuildJoin {
+	if context.purpose == build_purpose_join {
 		if _, ok := context.alias[tableName]; !ok {
 			context.tables = append(context.tables, tableName)
 			context.alias[tableName] = "T" + strconv.Itoa(len(context.tables))

@@ -77,7 +77,11 @@ func (c *exprUtils) QuoteExpression(expr string) string {
 	if cached, ok := c.cache.Load(expr); ok {
 		return cached.(string)
 	}
-
+	expr = strings.ReplaceAll(expr, "\n", "")
+	expr = strings.ReplaceAll(expr, "\t", "")
+	expr = strings.TrimPrefix(expr, " ")
+	expr = strings.TrimSuffix(expr, " ")
+	expr = strings.TrimSuffix(expr, ",")
 	// Get buffer from pool
 	buf := c.bufPool.Get().(*bytes.Buffer)
 	buf.Reset()

@@ -9,6 +9,45 @@ import (
 	// alias để tránh trùng tên
 )
 
+func BenchmarkTestEntSelectJoin(b *testing.B) {
+	builder := entSql.Dialect("postgres")
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		q := builder.
+			Select(
+				"T1.code AS DepartmentCode",
+				"T2.name AS UserName",
+				"T3.name AS CheckName",
+				"CONCAT(T2.first_name, ' ', T2.last_name) AS FullName",
+			).
+			From(entSql.Table("departments").As("T1")).
+			Join(entSql.Table("users").As("T2")).
+			On("T2.code", "T1.code").
+			Join(entSql.Table("checks").As("T3")).
+			On("T3.name", "?") // có thể binding 'John' nếu cần
+		sqlText, _ := q.Query()
+		assert.Equal(b, "SELECT T1.code AS DepartmentCode, T2.name AS UserName, T3.name AS CheckName, CONCAT(T2.first_name, ' ', T2.last_name) AS FullName FROM \"departments\" AS \"T1\" JOIN \"users\" AS \"T2\" ON \"T2.code\" = \"T1.code\" JOIN \"checks\" AS \"T3\" ON \"T3.name\" = \"?\"", sqlText)
+	}
+}
+
+func TestEntSelectJoin(t *testing.T) {
+	builder := sql.Dialect("postgres")
+	q := builder.
+		Select(
+			"T1.code AS DepartmentCode",
+			"T2.name AS UserName",
+			"T3.name AS CheckName",
+			"CONCAT(T2.first_name, ' ', T2.last_name) AS FullName",
+		).
+		From(entSql.Table("departments").As("T1")).
+		Join(entSql.Table("users").As("T2")).
+		On("T2.code", "T1.code").
+		Join(entSql.Table("checks").As("T3")).
+		On("T3.name", "?") // có thể binding 'John' nếu cần
+	sqlText, _ := q.Query()
+	assert.Equal(t, "SELECT T1.code AS DepartmentCode, T2.name AS UserName, T3.name AS CheckName, CONCAT(T2.first_name, ' ', T2.last_name) AS FullName FROM \"departments\" AS \"T1\" JOIN \"users\" AS \"T2\" ON \"T2.code\" = \"T1.code\" JOIN \"checks\" AS \"T3\" ON \"T3.name\" = \"?\"", sqlText)
+
+}
 func TestXxx(t *testing.T) {
 	builder := sql.Dialect("postgres")
 
