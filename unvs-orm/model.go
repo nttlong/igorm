@@ -12,7 +12,16 @@ type Model[T any] struct {
 	// dataPointer unsafe.Pointer
 	TableName string
 }
+type allColumSelectors struct {
+	tableName string
+}
 
+func (m *Model[T]) AllColumns() *allColumSelectors {
+	return &allColumSelectors{
+		tableName: m.TableName,
+	}
+
+}
 func verifyModelFieldFirst[T any]() {
 	typ := reflect.TypeOf((*T)(nil)).Elem()
 	if typ.NumField() == 0 || typ.Field(0).Name != "Model" {

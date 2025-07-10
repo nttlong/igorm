@@ -23,13 +23,13 @@ func BenchmarkTestSelect(b *testing.B) {
 			repo.OrderItems.Product,
 		)
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 		sqlExpected := "SELECT [T1].[note] AS [Note], [T1].[created_at] AS [CreatedAt], [T1].[updated_at] AS [UpdatedAt], [T1].[created_by] AS [CreatedBy], [T2].[product] AS [Product] FROM [orders] AS [T1]  JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
-		assert.Equal(b, sqlExpected, compilerResult.SqlText)
-		sqlText := compilerResult.SqlText
+		assert.Equal(b, sqlExpected, compilerResult.String())
+		sqlText := compilerResult.String()
 
 		assert.Equal(b, []interface{}(nil), compilerResult.Args)
-		assert.Equal(b, sqlText, compilerResult.SqlText)
+		assert.Equal(b, sqlText, compilerResult.String())
 	}
 
 }
@@ -55,14 +55,14 @@ func BenchmarkTestSelectWhere(b *testing.B) {
 			),
 		)
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 
 		sqlExpected := "SELECT CONVERT(NVARCHAR(50), [T1].[order_id]) AS [OrderId], [T1].[note] AS [Note], [T1].[created_at] AS [CreatedAt], [T1].[updated_at] AS [UpdatedAt], [T1].[created_by] AS [CreatedBy], [T2].[product] AS [Product] FROM [orders] AS [T1]  JOIN [order_items] AS [T2] ON [T1].[created_at] = [T2].[created_at] WHERE [T1].[note] = ? AND [T1].[updated_at] = ?"
-		assert.Equal(b, sqlExpected, compilerResult.SqlText)
-		sqlText := compilerResult.SqlText
+		assert.Equal(b, sqlExpected, compilerResult.String())
+		sqlText := compilerResult.String()
 
 		assert.Equal(b, []interface{}{content, when}, compilerResult.Args)
-		assert.Equal(b, sqlText, compilerResult.SqlText)
+		assert.Equal(b, sqlText, compilerResult.String())
 	}
 
 }

@@ -13,7 +13,7 @@ type Number interface {
 //		callMethod *methodCall
 //	}
 type NumberField[T Number] struct {
-	underField interface{}
+	underField underFieldObject
 	Val        *T
 }
 

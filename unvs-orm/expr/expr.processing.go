@@ -30,7 +30,14 @@ func NewExprConfig() *ExprConfig {
 		},
 		funcWhitelist: map[string]bool{
 			"min": true, "max": true, "abs": true, "len": true,
+			"sum": true, "avg": true, "count": true, "coalesce": true,
+			"lower": true, "upper": true, "trim": true, "ltrim": true, "rtrim": true,
+			"date_format": true, "date_add": true, "date_sub": true, "date": true,
+			"year": true, "month": true, "day": true, "hour": true, "minute": true,
 		},
+	}
+	for k, v := range ret.funcWhitelist {
+		ret.funcWhitelist[strings.ToUpper(k)] = v
 	}
 
 	ret.reSingleQuote = regexp.MustCompile(`'(.*?)'`)
@@ -124,3 +131,5 @@ func (c *ExprConfig) QuoteExpression(expr string) string {
 	c.cache.Store(expr, out)
 	return out
 }
+
+var ExprPreProcessText = NewExprConfig()

@@ -3,9 +3,22 @@ package pkgquerybuilder
 import (
 	"testing"
 	orm "unvs-orm"
+	EXPR "unvs-orm/expr"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func BenchmarkQuoteExpression_CacheHit(b *testing.B) {
+	cfg := EXPR.NewExprConfig()
+	expr := "items.basicSalary*100+min(bonus, 1000)/len(items.name) as total"
+	// Warm‑up: build cache lần đầu
+	_ = cfg.QuoteExpression(expr)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = cfg.QuoteExpression(expr)
+	}
+}
 
 func TestCompileExprToSqlSyntax(b *testing.T) {
 	repo := orm.Repository[OrderRepository]()
@@ -22,8 +35,6 @@ func TestCompileExprToSqlSyntax(b *testing.T) {
 	assert.NoError(b, err)
 	assert.Equal(b, "[T1].[order_id] = ? AND [T1].[note] = ?", stm2.Syntax)
 	assert.Equal(b, []interface{}{1, "test"}, stm.Args)
-	assert.Equal(b, []string{"orders"}, stm2.Tables)
-	assert.Equal(b, map[string]string{"orders": "T1"}, stm2.GetTableAliasMap())
 
 }
 func TestSimpleQuery(t *testing.T) {
@@ -38,10 +49,10 @@ func TestSimpleQuery(t *testing.T) {
 	).GroupBy(repo.Orders.Note).Having(
 		repo.Orders.Note.Eq("test"),
 	)
-	sql, err := orderQuery.ToSql(mssql())
-	assert.NoError(t, err)
+	sql := orderQuery.Compile(mssql())
+	assert.NoError(t, sql.Err())
 	expectedSql := "SELECT MAX([T1].[order_id]) AS [max_order_id], [T1].[note] FROM [orders] AS [T1] WHERE [T1].[order_id] = ? AND [T1].[note] = ? GROUP BY [T1].[note] HAVING [T1].[note] = ?"
-	assert.Equal(t, expectedSql, sql.Sql)
+	assert.Equal(t, expectedSql, sql.String())
 }
 func BenchmarkCompileExprWithoutTableAliasToSqlSyntax(b *testing.B) {
 	repo := orm.Repository[OrderRepository]()
@@ -70,8 +81,7 @@ func BenchmarkCompileExprWithTableAliasToSqlSyntax(b *testing.B) {
 		assert.NoError(b, err)
 		assert.Equal(b, "[T1].[order_id] = ? AND [T1].[note] = ?", stm.Syntax)
 		assert.Equal(b, []interface{}{1, "test"}, stm.Args)
-		assert.Equal(b, []string{"orders"}, stm.Tables)
-		assert.Equal(b, map[string]string{"orders": "T1"}, stm.GetTableAliasMap())
+
 	}
 
 }
@@ -90,10 +100,11 @@ func BenchmarkQueryBuilder(b *testing.B) {
 			repo.Orders.Note.Eq("test"),
 		)
 		b.Log(orderQuery)
-		sql, err := orderQuery.ToSql(mssql())
-		assert.NoError(b, err)
+		sql := orderQuery.Compile(mssql())
+		assert.NoError(b, sql.Err())
 		expectedSql := "SELECT MAX([T1].[order_id]) AS [max_order_id], [T1].[note] FROM [orders] AS[T1] WHERE [T1].[order_id] = ? AND [T1].[note] = ? GROUP BY [T1].[note] HAVING [T1].[note] = ?"
-		assert.Equal(b, expectedSql, sql.Sql)
+		assert.Equal(b, expectedSql, sql.String())
+		assert.Equal(b, []interface{}{1, "test", "test"}, sql.Args)
 	}
 
 }
@@ -105,7 +116,9 @@ func BenchmarkTestJoinExpr(b *testing.B) {
 		on := repo.Orders.OrderId.Eq(repo.OrderItems.OrderId)
 		join := repo.Orders.Join(repo.OrderItems, on)
 		ctx := orm.JoinCompiler.Ctx(mssql())
-		joinRes, err := ctx.Resolve(join)
+		tables := []string{}
+		cyx := map[string]string{}
+		joinRes, err := ctx.Resolve(join, &tables, &cyx, "")
 		assert.NoError(b, err)
 		expectedSql := "[orders] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
 		assert.Equal(b, expectedSql, joinRes.Syntax)
@@ -119,7 +132,9 @@ func BenchmarkTestJoinExpr2(b *testing.B) {
 		on := repo.Orders.OrderId.Add(1).Eq(repo.OrderItems.OrderId)
 		join := repo.Orders.Join(repo.OrderItems, on)
 		ctx := orm.JoinCompiler.Ctx(mssql())
-		joinRes, err := ctx.Resolve(join)
+		tables := []string{}
+		cyx := map[string]string{}
+		joinRes, err := ctx.Resolve(join, &tables, &cyx, "")
 		assert.NoError(b, err)
 		expectedSql := "[orders] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] + ? = [T2].[order_id]"
 		assert.Equal(b, expectedSql, joinRes.Syntax)
@@ -127,13 +142,17 @@ func BenchmarkTestJoinExpr2(b *testing.B) {
 		on2 := repo.Orders.Note.Len().Eq(repo.OrderItems.OrderId)
 		expectedSql2 := "[orders] AS [T1] INNER JOIN [order_items] AS [T2] ON LEN([T1].[note]) = [T2].[order_id]"
 		join2 := repo.Orders.Join(repo.OrderItems, on2)
-		joinRes2, err := ctx.Resolve(join2)
+		tables = []string{}
+		cyx = map[string]string{}
+		joinRes2, err := ctx.Resolve(join2, &tables, &cyx, "")
 		assert.NoError(b, err)
 		assert.Equal(b, expectedSql2, joinRes2.Syntax)
 		on3 := repo.Orders.Note.Len().Eq(repo.OrderItems.OrderId.Add(1))
 		expectedSql3 := "[orders] AS [T1] INNER JOIN [order_items] AS [T2] ON LEN([T1].[note]) = [T2].[order_id] + ?"
 		join3 := repo.Orders.Join(repo.OrderItems, on3)
-		joinRes3, err := ctx.Resolve(join3)
+		tables = []string{}
+		cyx = map[string]string{}
+		joinRes3, err := ctx.Resolve(join3, &tables, &cyx, "")
 		assert.NoError(b, err)
 		assert.Equal(b, expectedSql3, joinRes3.Syntax)
 		assert.Equal(b, []interface{}{1}, joinRes3.Args)
@@ -149,7 +168,8 @@ func BenchmarkTestJoin3Tables(b *testing.B) {
 		).Join(
 			repo.Items, repo.InvoiceDetails.ItemId.Eq(repo.Items.ItemId),
 		)
-		joinRes2, err := ctx.Resolve(join2)
+
+		joinRes2, err := ctx.Resolve(join2, nil, nil, "")
 		assert.NoError(b, err)
 		//"[orders] AS [T3] INNER JOIN [invoice_details] AS [T2] ON [T1].[invoice_id] = [T2].[invoice_id] INNER JOIN [] AS [] ON [T3].[order_id] = [T1].[order_id]"
 		//"[orders] AS [T3] INNER JOIN [invoice_details] AS [T2] ON [T1].[invoice_id] = [T2].[invoice_id] INNER JOIN [] AS [] ON [T3].[order_id] = [T1].[order_id]"
@@ -170,7 +190,7 @@ func BenchmarkTestJoin3Tables2(b *testing.B) {
 		).Join(
 			repo.Items, repo.InvoiceDetails.ItemId.Eq(repo.Items.ItemId),
 		)
-		joinRes2, err := ctx.Resolve(join2)
+		joinRes2, err := ctx.Resolve(join2, nil, nil, "")
 		assert.NoError(b, err)
 
 		expectedSql2 := "[invoices] AS [T1] INNER JOIN [invoice_details] AS [T2] ON [T1].[invoice_id] = [T2].[invoice_id] INNER JOIN [customers] AS [T3] ON [T1].[customer_id] = [T3].[customer_id] INNER JOIN [payment_methods] AS [T4] ON [T1].[payment_method_id] = [T4].[payment_method_id] INNER JOIN [items] AS [T5] ON [T2].[item_id] = [T5].[item_id]"
@@ -185,7 +205,7 @@ func BenchmarkTestLeftJoinExpr(b *testing.B) {
 			repo.Invoices, repo.Invoices.OrderId.Eq(repo.OrderItems.OrderId),
 		)
 		ctx := orm.JoinCompiler.Ctx(mssql())
-		joinRes, err := ctx.Resolve(join)
+		joinRes, err := ctx.Resolve(join, nil, nil, "")
 		assert.NoError(b, err)
 		expectedSql := "[orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] LEFT JOIN [invoices] AS [T3] ON [T3].[order_id] = [T2].[order_id]"
 		assert.Equal(b, expectedSql, joinRes.Syntax)

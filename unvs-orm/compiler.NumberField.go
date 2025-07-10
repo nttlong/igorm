@@ -1,79 +1,44 @@
 package orm
 
-func (c *CompilerUtils) resolveNumberField(tables *[]string, context *map[string]string, ptr interface{}, requireAlias bool) (*resolverResult, error) {
+func (c *CompilerUtils) resolveNumberField(
+	tables *[]string,
+	context *map[string]string,
+	ptr interface{},
+	extractAlias, applyContext bool,
+) (*resolverResult, error) {
 
-	if nf, ok := ptr.(*NumberField[int]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
+	switch nf := ptr.(type) {
+	case *NumberField[int],
+		*NumberField[int8],
+		*NumberField[int16],
+		*NumberField[int32],
+		*NumberField[int64],
+		*NumberField[uint],
+		*NumberField[uint8],
+		*NumberField[uint16],
+		*NumberField[uint32],
+		*NumberField[uint64],
+		*NumberField[float32],
+		*NumberField[float64]:
+
+		return c.Resolve(tables, context, nf.(interface{ GetUnderField() any }).GetUnderField(), extractAlias, applyContext)
+
+	case NumberField[int],
+		NumberField[int8],
+		NumberField[int16],
+		NumberField[int32],
+		NumberField[int64],
+		NumberField[uint],
+		NumberField[uint8],
+		NumberField[uint16],
+		NumberField[uint32],
+		NumberField[uint64],
+		NumberField[float32],
+		NumberField[float64]:
+
+		return c.Resolve(tables, context, nf.(interface{ GetUnderField() any }).GetUnderField(), extractAlias, applyContext)
+
+	default:
+		return nil, nil
 	}
-	if nf, ok := ptr.(*NumberField[int8]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[int16]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[int32]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[int64]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[uint]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[uint8]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[uint16]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[uint32]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[uint64]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[float32]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(*NumberField[float64]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	//-----------------------------------------
-	if nf, ok := ptr.(NumberField[int]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[int8]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[int16]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[int32]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[int64]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[uint]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[uint8]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[uint16]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[uint32]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[uint64]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[float32]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	if nf, ok := ptr.(NumberField[float64]); ok {
-		return c.Resolve(tables, context, nf.underField, requireAlias)
-	}
-	return nil, nil
 }

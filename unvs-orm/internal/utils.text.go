@@ -12,6 +12,7 @@ func (u *utilsPackage) GetTableNameFromVirtualName(VirtualName string) string {
 	}
 	ret := strings.Split(VirtualName, "*")[0]
 	u.cacheGetTableNameFromVirtualName.Store(VirtualName, ret)
+
 	return ret
 }
 

@@ -28,7 +28,7 @@ func (d *mssqlDialect) getCompiler() *CompilerUtils {
 
 	return d.compiler
 }
-func (d *mssqlDialect) resolve(tables *[]string, context *map[string]string, caller *methodCall, requireAlias bool) (*resolverResult, error) {
+func (d *mssqlDialect) resolve(tables *[]string, context *map[string]string, caller *methodCall, extractAlias, applyContext bool) (*resolverResult, error) {
 
 	if caller.isFromExr {
 		strArgs := []string{}
@@ -45,13 +45,13 @@ func (d *mssqlDialect) resolve(tables *[]string, context *map[string]string, cal
 	}
 	methodName := strings.ToLower(caller.method)
 	if methodName == "text" {
-		return d.textFunc(tables, context, caller, requireAlias)
+		return d.textFunc(tables, context, caller, extractAlias, applyContext)
 	}
 	strArgs := make([]string, 0)
 	retArgs := make([]interface{}, 0)
 
 	for _, arg := range caller.args {
-		rs, err := d.compiler.Resolve(tables, context, arg, requireAlias)
+		rs, err := d.compiler.Resolve(tables, context, arg, extractAlias, applyContext)
 		if err != nil {
 			return nil, err
 		}
@@ -69,7 +69,7 @@ func (d *mssqlDialect) resolve(tables *[]string, context *map[string]string, cal
 		Args:   retArgs,
 	}, nil
 }
-func (d *mssqlDialect) textFunc(tables *[]string, context *map[string]string, caller *methodCall, requireAlias bool) (*resolverResult, error) {
+func (d *mssqlDialect) textFunc(tables *[]string, context *map[string]string, caller *methodCall, extractAlias, applyContext bool) (*resolverResult, error) {
 	//CONVERT(NVARCHAR(50), 12345)
 	if len(caller.args) != 1 {
 		return nil, fmt.Errorf("text function only accept one argument")
@@ -80,7 +80,7 @@ func (d *mssqlDialect) textFunc(tables *[]string, context *map[string]string, ca
 	if strArf, ok := arg.(string); ok {
 		txtArgs = strArf
 	} else {
-		rs, err := d.compiler.Resolve(tables, context, arg, requireAlias)
+		rs, err := d.compiler.Resolve(tables, context, arg, extractAlias, applyContext)
 		if err != nil {
 			return nil, err
 		}

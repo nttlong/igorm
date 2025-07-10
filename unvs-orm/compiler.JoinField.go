@@ -2,12 +2,12 @@ package orm
 
 import "strings"
 
-func (c *CompilerUtils) resolveJoinFieldASRightJoin(tables *[]string, context *map[string]string, JoinField joinField, requireAlias bool) (*resolverResult, error) {
-	left, err := c.Resolve(tables, context, JoinField.left, requireAlias)
+func (c *CompilerUtils) resolveJoinFieldASRightJoin(tables *[]string, context *map[string]string, JoinField joinField, extractAlias, applyContext bool) (*resolverResult, error) {
+	left, err := c.Resolve(tables, context, JoinField.left, extractAlias, applyContext)
 	if err != nil {
 		return nil, err
 	}
-	right, err := c.Resolve(tables, context, JoinField.right, requireAlias)
+	right, err := c.Resolve(tables, context, JoinField.right, extractAlias, applyContext)
 	if err != nil {
 		return nil, err
 	}
@@ -34,10 +34,9 @@ func (c *CompilerUtils) resolveJoinFieldASRightJoin(tables *[]string, context *m
 		//syntax = leftExpr + " " + JoinField.joinType + " JOIN " + rightExpr + " ON " + left.Syntax + " = " + right.Syntax
 	}
 	return &resolverResult{
-		Syntax:       syntax,
-		Args:         append(left.Args, right.Args...),
-		buildContext: context,
-		Tables:       tables,
+		Syntax: syntax,
+		Args:   append(left.Args, right.Args...),
+
 		hasNewTable:  true,
 		NewTableName: rightTable,
 		IsJoinExpr:   true,
@@ -45,12 +44,12 @@ func (c *CompilerUtils) resolveJoinFieldASRightJoin(tables *[]string, context *m
 	}, nil
 
 }
-func (c *CompilerUtils) resolveJoinField(tables *[]string, context *map[string]string, JoinField joinField, requireAlias bool) (*resolverResult, error) {
+func (c *CompilerUtils) resolveJoinField(tables *[]string, context *map[string]string, JoinField joinField, extractAlias, applyContext bool) (*resolverResult, error) {
 	if JoinField.joinType == "RIGHT" {
-		return c.resolveJoinFieldASRightJoin(tables, context, JoinField, requireAlias)
+		return c.resolveJoinFieldASRightJoin(tables, context, JoinField, extractAlias, applyContext)
 
 	}
-	left, err := c.Resolve(tables, context, JoinField.left, requireAlias)
+	left, err := c.Resolve(tables, context, JoinField.left, extractAlias, applyContext)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +60,7 @@ func (c *CompilerUtils) resolveJoinField(tables *[]string, context *map[string]s
 		syntax := leftSource
 		args := left.Args
 		for _, right := range jf {
-			right, err := c.Resolve(tables, context, right, requireAlias)
+			right, err := c.Resolve(tables, context, right, extractAlias, applyContext)
 			args = append(args, right.Args...)
 			if err != nil {
 				return nil, err
@@ -78,16 +77,15 @@ func (c *CompilerUtils) resolveJoinField(tables *[]string, context *map[string]s
 
 		}
 		return &resolverResult{
-			Syntax:       syntax,
-			Args:         args,
-			buildContext: context,
-			Tables:       tables,
-			IsJoinExpr:   true,
+			Syntax: syntax,
+			Args:   args,
+
+			IsJoinExpr: true,
 		}, nil
 
 	}
 
-	right, err := c.Resolve(tables, context, JoinField.right, requireAlias)
+	right, err := c.Resolve(tables, context, JoinField.right, extractAlias, applyContext)
 	if err != nil {
 		return nil, err
 	}
@@ -119,10 +117,8 @@ func (c *CompilerUtils) resolveJoinField(tables *[]string, context *map[string]s
 	}
 
 	return &resolverResult{
-		Syntax:       syntax,
-		Args:         append(left.Args, right.Args...),
-		buildContext: context,
-		Tables:       tables,
+		Syntax: syntax,
+		Args:   append(left.Args, right.Args...),
 	}, nil
 
 }

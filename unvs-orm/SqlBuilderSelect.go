@@ -1,13 +1,7 @@
 package orm
 
-import (
-	"errors"
-	"reflect"
-	"strings"
-	"unvs-orm/internal"
-)
-
 type SqlSelectBuilder struct {
+	tableName string
 	source    interface{} //<-- table name or join expression or subquery
 	condition *BoolField  //<-- condition expression
 	selects   []interface{}
@@ -17,157 +11,188 @@ type SqlSelectBuilder struct {
 	Err     error
 	noAlias bool
 	tables  *[]string
+	context *map[string]string
 }
 type SqlCompilerResult struct {
 	Sql  string
 	Args []interface{}
+	Err  error
 }
 
-func (s *SqlSelectBuilder) Where(condition *BoolField) *SqlSelectBuilder {
-	s.condition = condition
-	return s
-}
-func (s *SqlSelectBuilder) Select(fields ...interface{}) *SqlSelectBuilder {
+//	func (s *SqlSelectBuilder) Where(condition *BoolField) *SqlSelectBuilder {
+//		s.condition = condition
+//		return s
+//	}
+func (s *SqlSelectBuilder) Select(fields ...interface{}) *SqlCmdSelect {
 	s.selects = fields
-	return s
-}
-func (s *SqlSelectBuilder) GroupBy(fields ...interface{}) *SqlSelectBuilder {
-	s.group = fields
-	return s
-
+	return &SqlCmdSelect{
+		source: s.tableName,
+		fields: s.selects,
+	}
 }
 
-func (s *SqlSelectBuilder) Having(condition *BoolField) *SqlSelectBuilder {
-	s.having = condition
-	return s
-}
+// func (s *SqlSelectBuilder) GroupBy(fields ...interface{}) *SqlSelectBuilder {
+// 	s.group = fields
+// 	return s
 
-func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerResult, error) {
-	if s.source == nil {
-		return nil, errors.New("source is nil")
-	}
-	var source *resolverResult
-	ctx := Compiler.Ctx(dialectCompiler)
-	joinCtx := JoinCompiler.Ctx(dialectCompiler)
-	if strTableName, ok := s.source.(string); ok {
-		if s.noAlias {
-			source = &resolverResult{
-				Syntax:       ctx.Quote(strTableName),
-				buildContext: nil,
-				Args:         []interface{}{},
-			}
-		} else {
-			buildContext := map[string]string{strTableName: "T1"}
-			source = &resolverResult{
-				Syntax:       ctx.Quote(strTableName) + " AS " + ctx.Quote("T1"),
-				buildContext: &buildContext,
-				Args:         []interface{}{},
-			}
-		}
-	} else if join, ok := s.source.(*JoinExpr); ok {
-		joinResult, err := joinCtx.Resolve(join)
-		if err != nil {
-			return nil, err
-		}
+// }
 
-		source = &resolverResult{
-			Syntax:       joinResult.Syntax,
-			buildContext: &map[string]string{},
-			Args:         joinResult.Args,
-		}
-	} else {
-		typ := reflect.TypeOf(s.source)
-		if typ.Kind() == reflect.Ptr {
-			typ = typ.Elem()
-		}
-		tableName := internal.Utils.TableNameFromStruct(typ)
-		buildContext := map[string]string{tableName: "T1"}
+// func (s *SqlSelectBuilder) Having(condition *BoolField) *SqlSelectBuilder {
+// 	s.having = condition
+// 	return s
+// }
+// func (s *SqlSelectBuilder) Compile(dialectCompiler DialectCompiler) *sqlCmdSelectResult {
+// 	ret, err := s.ToSql(dialectCompiler)
+// 	if err != nil {
+// 		return &sqlCmdSelectResult{
+// 			Err: err,
+// 		}
 
-		source = &resolverResult{
-			Syntax:       tableName,
-			buildContext: &buildContext,
-			Args:         []interface{}{},
-		}
-	}
+// 	}
+// 	return &sqlCmdSelectResult{
+// 		SqlText: ret.Sql,
+// 		Args:    ret.Args,
+// 	}
+// }
+// func (s *SqlSelectBuilder) ToSql(dialectCompiler DialectCompiler) (*SqlCompilerResult, error) {
+// 	if s.source == nil {
+// 		return nil, errors.New("source is nil")
+// 	}
+// 	var source *resolverResult
+// 	ctx := Compiler.Ctx(dialectCompiler)
+// 	joinCtx := JoinCompiler.Ctx(dialectCompiler)
+// 	if strTableName, ok := s.source.(string); ok {
+// 		if s.noAlias {
+// 			source = &resolverResult{
+// 				Syntax:       ctx.Quote(strTableName),
+// 				buildContext: nil,
+// 				Args:         []interface{}{},
+// 			}
+// 		} else {
+// 			buildContext := map[string]string{strTableName: "T1"}
+// 			source = &resolverResult{
+// 				Syntax:       ctx.Quote(strTableName) + " AS " + ctx.Quote("T1"),
+// 				buildContext: &buildContext,
+// 				Args:         []interface{}{},
+// 			}
+// 		}
+// 	} else if join, ok := s.source.(*JoinExpr); ok {
+// 		joinResult, err := joinCtx.Resolve(join)
+// 		if err != nil {
+// 			return nil, err
+// 		}
 
-	var condition *resolverResult
-	if s.condition != nil {
-		_condition, err := ctx.Resolve(s.tables, source.buildContext, s.condition, true)
-		if err != nil {
-			return nil, err
-		}
-		condition = _condition
-	}
+// 		source = &resolverResult{
+// 			Syntax:       joinResult.Syntax,
+// 			buildContext: &map[string]string{},
+// 			Args:         joinResult.Args,
+// 		}
+// 	} else {
+// 		typ := reflect.TypeOf(s.source)
+// 		if typ.Kind() == reflect.Ptr {
+// 			typ = typ.Elem()
+// 		}
+// 		tableName := internal.Utils.TableNameFromStruct(typ)
+// 		buildContext := map[string]string{tableName: "T1"}
 
-	selects := []resolverResult{}
-	for _, selectField := range s.selects {
-		field, err := ctx.Resolve(s.tables, source.buildContext, selectField, !s.noAlias)
-		if err != nil {
-			return nil, err
-		}
-		selects = append(selects, *field)
-	}
+// 		source = &resolverResult{
+// 			Syntax:       tableName,
+// 			buildContext: &buildContext,
+// 			Args:         []interface{}{},
+// 		}
+// 	}
 
-	group := []resolverResult{}
-	for _, groupField := range s.group {
-		field, err := ctx.Resolve(s.tables, source.buildContext, groupField, true)
-		if err != nil {
-			return nil, err
-		}
-		group = append(group, *field)
-	}
+// 	var condition *resolverResult
+// 	if s.condition != nil {
+// 		_condition, err := ctx.Resolve(s.tables, source.buildContext, s.condition, true)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		condition = _condition
+// 	}
 
-	var having *resolverResult
-	if s.having != nil {
-		_having, err := ctx.Resolve(s.tables, source.buildContext, s.having, true)
-		if err != nil {
-			return nil, err
-		}
-		having = _having
-	}
+// 	selects := []resolverResult{}
+// 	if allCols, ok := s.selects[0].(*allColumSelectors); ok {
+// 		mapCols := Utils.GetMetaInfoByTableName(allCols.tableName)
+// 		for colName, col := range mapCols {
+// 			r := &resolverResult{
+// 				Syntax:       dialectCompiler.getCompiler().Quote(colName) + " AS " + dialectCompiler.getCompiler().Quote(col.Field.Name),
+// 				buildContext: source.buildContext,
+// 				Args:         []interface{}{},
+// 			}
+// 			selects = append(selects, *r)
+// 		}
 
-	// === Assemble SQL ===
-	sql := "SELECT "
+// 	} else {
+// 		for _, selectField := range s.selects {
+// 			field, err := ctx.Resolve(s.tables, source.buildContext, selectField, !s.noAlias)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			selects = append(selects, *field)
+// 		}
+// 	}
 
-	if len(selects) == 0 {
-		sql += "*"
-	} else {
-		selectParts := []string{}
-		for _, sel := range selects {
-			selectParts = append(selectParts, sel.Syntax)
-		}
-		sql += joinComma(selectParts)
-	}
+// 	group := []resolverResult{}
+// 	for _, groupField := range s.group {
+// 		field, err := ctx.Resolve(s.tables, source.buildContext, groupField, true)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		group = append(group, *field)
+// 	}
 
-	sql += " FROM " + source.Syntax
-	args := append([]interface{}{}, source.Args...)
+// 	var having *resolverResult
+// 	if s.having != nil {
+// 		_having, err := ctx.Resolve(s.tables, source.buildContext, s.having, true)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		having = _having
+// 	}
 
-	if condition != nil {
-		sql += " WHERE " + condition.Syntax
-		args = append(args, condition.Args...)
-	}
+// 	// === Assemble SQL ===
+// 	sql := "SELECT "
 
-	if len(group) > 0 {
-		groupParts := []string{}
-		for _, grp := range group {
-			groupParts = append(groupParts, grp.Syntax)
-		}
-		sql += " GROUP BY " + joinComma(groupParts)
-		for _, g := range group {
-			args = append(args, g.Args...)
-		}
-	}
+// 	if len(selects) == 0 {
+// 		sql += "*"
+// 	} else {
+// 		selectParts := []string{}
+// 		for _, sel := range selects {
+// 			selectParts = append(selectParts, sel.Syntax)
+// 		}
+// 		sql += joinComma(selectParts)
+// 	}
 
-	if having != nil {
-		sql += " HAVING " + having.Syntax
-		args = append(args, having.Args...)
-	}
+// 	sql += " FROM " + source.Syntax
+// 	args := append([]interface{}{}, source.Args...)
 
-	return &SqlCompilerResult{
-		Sql:  sql,
-		Args: args,
-	}, nil
-}
-func joinComma(parts []string) string {
-	return strings.Join(parts, ", ")
-}
+// 	if condition != nil {
+// 		sql += " WHERE " + condition.Syntax
+// 		args = append(args, condition.Args...)
+// 	}
+
+// 	if len(group) > 0 {
+// 		groupParts := []string{}
+// 		for _, grp := range group {
+// 			groupParts = append(groupParts, grp.Syntax)
+// 		}
+// 		sql += " GROUP BY " + joinComma(groupParts)
+// 		for _, g := range group {
+// 			args = append(args, g.Args...)
+// 		}
+// 	}
+
+// 	if having != nil {
+// 		sql += " HAVING " + having.Syntax
+// 		args = append(args, having.Args...)
+// 	}
+
+// 	return &SqlCompilerResult{
+// 		Sql:  sql,
+// 		Args: args,
+// 	}, nil
+// }
+// func joinComma(parts []string) string {
+// 	return strings.Join(parts, ", ")
+// }

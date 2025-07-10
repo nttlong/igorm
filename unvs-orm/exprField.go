@@ -1,13 +1,5 @@
 package orm
 
-type ExprBase struct {
-	Stmt string
-	Args []interface{}
-}
-type exprField struct {
-	UnderField interface{}
-}
-
 func (f *exprField) makeBinaryExpr(left interface{}, right interface{}, op string) *exprField {
 	return &exprField{
 		UnderField: fieldBinary{

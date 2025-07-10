@@ -4,45 +4,31 @@ import (
 	EXPR "unvs-orm/expr"
 )
 
-func (c *JoinCompilerUtils) fromExprString(expr *JoinExpr) (*resolverResult, error) {
-	if v, ok := c.cacheFromExprString.Load(expr.Expr); ok {
-		return v.(*resolverResult), nil
-	}
-	result, err := c.fromExprStringNoCache(expr)
+func (c *JoinCompilerUtils) fromExprString(sourceCache string, expr *JoinExpr, tables *[]string, context *map[string]string) (*resolverResult, error) {
+	// if v, ok := c.cacheFromExprString.Load(expr.Expr); ok {
+	// 	return v.(*resolverResult), nil
+	// }
+	result, err := c.fromExprStringNoCache(sourceCache, expr, tables, context)
 	if err != nil {
 		return nil, err
 	}
-	c.cacheFromExprString.Store(expr.Expr, result)
+	// c.cacheFromExprString.Store(expr.Expr, result)
 	return result, nil
 }
-func (c *JoinCompilerUtils) fromExprStringNoCache(expr *JoinExpr) (*resolverResult, error) {
-	/*
-		e := EXPR.ExpressionTest{
-			DbDriver: EXPR.DB_TYPE_MSSQL,
-		}
-		cmd := "ORDER.OrderID,Order.Note"
+func (c *JoinCompilerUtils) fromExprStringNoCache(sourceCache string, expr *JoinExpr, tables *[]string, context *map[string]string) (*resolverResult, error) {
 
-		compiled, err := e.CompileSelect(cmd)
-
-		assert.NoError(t, err)
-		compiledExpected := "[orders].[order_id] AS [OrderID], [orders].[note] AS [Note]"
-		assert.Equal(t, compiledExpected, compiled)
-	*/
 	e := EXPR.ExpressionTest{
 		DbDriver: EXPR.DB_TYPE_UNKNOWN.FromString(c.dialect.driverName()),
 	}
-	context := map[string]string{}
-	tables := []string{}
-	compiled, err := e.Compile(&tables, &context, expr.Expr, true)
+
+	compiled, err := e.Compile(sourceCache, tables, context, expr.Expr, true, true)
 
 	if err != nil {
 		return nil, err
 	}
 
 	return &resolverResult{
-		Syntax:       compiled.Syntax,
-		Args:         expr.Args,
-		buildContext: &context,
-		Tables:       &tables,
+		Syntax: compiled.Syntax,
+		Args:   expr.Args,
 	}, nil
 }

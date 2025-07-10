@@ -4,13 +4,13 @@ import (
 	"fmt"
 )
 
-func (c *CompilerUtils) resolveBinaryField(tables *[]string, context *map[string]string, f *fieldBinary, requireAlias bool) (*resolverResult, error) {
+func (c *CompilerUtils) resolveBinaryField(tables *[]string, context *map[string]string, f *fieldBinary, extractAlias, applyContext bool) (*resolverResult, error) {
 
-	left, err := c.Resolve(tables, context, f.left, requireAlias)
+	left, err := c.Resolve(tables, context, f.left, extractAlias, applyContext)
 	if err != nil {
 		return nil, err
 	}
-	right, err := c.Resolve(tables, context, f.right, requireAlias)
+	right, err := c.Resolve(tables, context, f.right, extractAlias, applyContext)
 	if err != nil {
 		return nil, err
 	}
@@ -29,27 +29,21 @@ func (c *CompilerUtils) resolveBinaryField(tables *[]string, context *map[string
 	}
 
 	if left.Syntax != "" && right.Syntax != "" {
-		c.addMultipleTables(tables, context, left.Tables, right.Tables)
+
 		return &resolverResult{
-			Syntax:       fmt.Sprintf("%s %s %s", left.Syntax, f.op, right.Syntax),
-			Args:         args,
-			Tables:       tables,
-			buildContext: context,
+			Syntax: fmt.Sprintf("%s %s %s", left.Syntax, f.op, right.Syntax),
+			Args:   args,
 		}, nil
 	} else if left.Syntax == "" && right.Syntax != "" {
 		return &resolverResult{
-			Syntax:       fmt.Sprintf("%s %s", f.op, right.Syntax),
-			Args:         args,
-			Tables:       right.Tables,
-			buildContext: context,
+			Syntax: fmt.Sprintf("%s %s", f.op, right.Syntax),
+			Args:   args,
 		}, nil
 
 	} else if left.Syntax != "" && right.Syntax == "" {
 		return &resolverResult{
-			Syntax:       fmt.Sprintf("%s %s", left.Syntax, f.op),
-			Args:         args,
-			Tables:       left.Tables,
-			buildContext: context,
+			Syntax: fmt.Sprintf("%s %s", left.Syntax, f.op),
+			Args:   args,
 		}, nil
 	} else {
 		return nil, fmt.Errorf("invalid binary expression")

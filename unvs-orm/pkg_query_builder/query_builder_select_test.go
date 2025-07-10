@@ -22,13 +22,13 @@ func TestSelect(b *testing.T) {
 		repo.OrderItems.Product,
 	)
 	compilerResult := sql.Compile(dialect)
-	assert.NoError(b, compilerResult.Err)
+	assert.NoError(b, compilerResult.Err())
 	sqlExpected := "SELECT [T1].[note] AS [note], [T1].[created_at] AS [created_at], [T1].[updated_at] AS [updated_at], [T1].[created_by] AS [created_by], [T2].[product] AS [product] FROM [orders] AS [T1] INNER JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
-	assert.Equal(b, sqlExpected, compilerResult.SqlText)
-	sqlText := compilerResult.SqlText
+	assert.Equal(b, sqlExpected, compilerResult.String())
+	sqlText := compilerResult.String()
 
 	assert.Equal(b, []interface{}(nil), compilerResult.Args)
-	assert.Equal(b, sqlText, compilerResult.SqlText)
+	assert.Equal(b, sqlText, compilerResult.String())
 
 }
 func TestSelectLeftJoin(t *testing.T) {
@@ -58,13 +58,13 @@ func TestSelectLeftJoin(t *testing.T) {
 		repo.OrderItems.Product,
 	)
 	compilerResult := sql.Compile(dialect)
-	assert.NoError(t, compilerResult.Err)
+	assert.NoError(t, compilerResult.Err())
 	sqlExpected := "SELECT [T1].[note] AS [note], [T1].[created_at] AS [created_at], [T1].[updated_at] AS [updated_at], [T1].[created_by] AS [created_by], [T2].[product] AS [product] FROM [orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id]"
-	assert.Equal(t, sqlExpected, compilerResult.SqlText)
-	sqlText := compilerResult.SqlText
+	assert.Equal(t, sqlExpected, compilerResult.String())
+	sqlText := compilerResult.String()
 
 	assert.Equal(t, []interface{}(nil), compilerResult.Args)
-	assert.Equal(t, sqlText, compilerResult.SqlText)
+	assert.Equal(t, sqlText, compilerResult.String())
 
 }
 func TestSelectWhere(b *testing.T) {
@@ -87,14 +87,14 @@ func TestSelectWhere(b *testing.T) {
 		),
 	)
 	compilerResult := sql.Compile(dialect)
-	assert.NoError(b, compilerResult.Err)
+	assert.NoError(b, compilerResult.Err())
 
 	sqlExpected := "SELECT [T1].[note] AS [Note], [T1].[created_at] AS [CreatedAt], [T1].[updated_at] AS [UpdatedAt], [T1].[created_by] AS [CreatedBy], [T2].[product] AS [Product] FROM [orders] AS [T1]  JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] WHERE [T1].[note] = ? AND [T1].[updated_at] = ?"
-	assert.Equal(b, sqlExpected, compilerResult.SqlText)
-	sqlText := compilerResult.SqlText
+	assert.Equal(b, sqlExpected, compilerResult.String())
+	sqlText := compilerResult.String()
 
 	assert.Equal(b, []interface{}{content, when}, compilerResult.Args)
-	assert.Equal(b, sqlText, compilerResult.SqlText)
+	assert.Equal(b, sqlText, compilerResult.String())
 
 }
 func TestSelectWhereWithJoinByStatement(b *testing.T) {
@@ -116,14 +116,14 @@ func TestSelectWhereWithJoinByStatement(b *testing.T) {
 		),
 	)
 	compilerResult := sql.Compile(dialect)
-	assert.NoError(b, compilerResult.Err)
+	assert.NoError(b, compilerResult.Err())
 
 	sqlExpected := "SELECT [orders].[note] AS [Note], [orders].[created_at] AS [CreatedAt], [orders].[updated_at] AS [UpdatedAt], [orders].[created_by] AS [CreatedBy], [order_items].[product] AS [Product], len([T1].[name]) + [T2].[orderid] FROM [customers] AS [T1] INNER JOIN [invoices] AS [T2] ON [T1].[customer_id] = [T2].[customer_id] AND [T1].[name] = ? WHERE [orders].[note] = ? AND [orders].[updated_at] = ?"
-	assert.Equal(b, sqlExpected, compilerResult.SqlText)
-	sqlText := compilerResult.SqlText
+	assert.Equal(b, sqlExpected, compilerResult.String())
+	sqlText := compilerResult.String()
 
 	assert.Equal(b, []interface{}{"John", "test", when}, compilerResult.Args)
-	assert.Equal(b, sqlText, compilerResult.SqlText)
+	assert.Equal(b, sqlText, compilerResult.String())
 
 }
 func BenchmarkSelectWhereWithJoinByStatement(b *testing.B) {
@@ -146,14 +146,14 @@ func BenchmarkSelectWhereWithJoinByStatement(b *testing.B) {
 			),
 		)
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 
 		sqlExpected := "SELECT [orders].[note] AS [Note], [orders].[created_at] AS [CreatedAt], [orders].[updated_at] AS [UpdatedAt], [orders].[created_by] AS [CreatedBy], [order_items].[product] AS [Product], len([T1].[name]) + [T2].[orderid] FROM [customers] AS [T1] INNER JOIN [invoices] AS [T2] ON [T1].[customer_id] = [T2].[customer_id] AND [T1].[name] = ? WHERE [orders].[note] = ? AND [orders].[updated_at] = ?"
-		assert.Equal(b, sqlExpected, compilerResult.SqlText)
-		sqlText := compilerResult.SqlText
+		assert.Equal(b, sqlExpected, compilerResult.String())
+		sqlText := compilerResult.String()
 
 		assert.Equal(b, []interface{}{"John", "test", when}, compilerResult.Args)
-		assert.Equal(b, sqlText, compilerResult.SqlText)
+		assert.Equal(b, sqlText, compilerResult.String())
 	}
 
 }

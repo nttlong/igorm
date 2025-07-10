@@ -2,26 +2,59 @@ package pkgquerybuilder
 
 import (
 	"testing"
+	"time"
 	orm "unvs-orm"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func BenchmarkComplexWhereQuery(t *testing.B) {
+	fx := orm.Utils.ToSnakeCase("EmployeeCount")
+	assert.Equal(t, "employee_count", fx)
+	repo := orm.Repository[OrderRepository]() // Giả sử vẫn dùng Departments
+	for i := 0; i < t.N; i++ {
+		// Tạo một ngày cụ thể, ví dụ: 1/1/2023
+		specificDate := time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+		sql := repo.Departments.
+			Filter(
+				repo.Departments.Name.Like("Sales%").
+					Or(
+						repo.Departments.EmployeeCount.Gt(50).
+							And(repo.Departments.CreatedAt.Gt(specificDate)),
+					),
+			).
+			Select(repo.Departments.EmployeeCount) // Chọn tất cả các cột
+
+		dialect := mssql()
+		compilerResult := sql.Compile(dialect)
+		assert.NoError(t, compilerResult.Err())
+
+		// SQL dự kiến (có thể cần điều chỉnh tùy theo cách ORM sinh ra)
+		sqlExpected := "SELECT [employeecount] AS [EmployeeCount], [department_id] AS [DepartmentId], [name] AS [Name], [parent_id] AS [ParentId], [updatedat] AS [UpdatedAt], [order_no] AS [OrderNo], [note] AS [Note], [createdat] AS [CreatedAt], [updated_at] AS [UpdatedAt], [departmentid] AS [DepartmentId], [code] AS [Code], [level] AS [Level], [created_by] AS [CreatedBy], [createdby] AS [CreatedBy], [updated_by] AS [UpdatedBy], [employee_count] AS [EmployeeCount], [parentid] AS [ParentId], [orderno] AS [OrderNo], [created_at] AS [CreatedAt], [updatedby] AS [UpdatedBy] FROM [departments] WHERE [departments].[name] LIKE ? OR [departments].[employee_count] > ? AND [departments].[created_at] > ?"
+		assert.Equal(t, sqlExpected, compilerResult.String())
+		// Ngoài ra, kiểm tra các tham số được truyền vào (parameters) cũng rất quan trọng
+		// assert.Equal(t, []interface{}{"Sales%", 50, specificDate}, compilerResult.Parameters)
+	}
+}
 func BenchmarkAliAsTableSelfJoin(t *testing.B) {
 	repo := orm.Repository[OrderRepository]()
 	for i := 0; i < t.N; i++ {
 
 		childDept := repo.Departments.Alias("childDept") //<-- self join need an alias to avoid table name conflict
 
-		sql := childDept.ParentId.RightJoin(repo.Departments.DepartmentId).Select(
-			childDept.ParentId,
-			childDept.Name,
+		sql := childDept.RightJoin(
+			repo.Departments,
+			childDept.DepartmentId.Eq(repo.Departments.ParentId),
+		).Select(
+			childDept.Name.As("ChildName"),
+			repo.Departments.Name.As("ParentName"),
 		)
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(t, compilerResult.Err)
-		sqlExpected := "SELECT [T1].[parent_id] AS [parent_id], [T1].[name] AS [name] FROM [departments] AS [T2] RIGHT JOIN [departments] AS [T1] ON [T1].[parent_id] = [T2].[department_id]"
-		assert.Equal(t, sqlExpected, compilerResult.SqlText)
+		assert.NoError(t, compilerResult.Err())
+		sqlExpected := "SELECT [T1].[name] AS [ChildName], [T2].[name] AS [ParentName] FROM [departments] AS [T1] RIGHT JOIN [departments] AS [T2] ON [T1].[department_id] = [T2].[parent_id]"
+		assert.Equal(t, sqlExpected, compilerResult.String())
 	}
 }
 func BenchmarkSelfJoin3Levels_RightJoin(t *testing.B) {
@@ -47,11 +80,11 @@ func BenchmarkSelfJoin3Levels_RightJoin(t *testing.B) {
 
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(t, compilerResult.Err)
+		assert.NoError(t, compilerResult.Err())
 
 		expected := "SELECT [T3].[name] AS [ChildName], [T2].[name] AS [ParentName], [T1].[name] AS [GrandName] FROM [departments] AS [T3] RIGHT JOIN [departments] AS [T2] ON [T2].[department_id] = [T3].[parent_id] RIGHT JOIN [departments] AS [T1] ON [T1].[department_id] = [T2].[parent_id]"
 
-		assert.Equal(t, expected, compilerResult.SqlText)
+		assert.Equal(t, expected, compilerResult.String())
 	}
 }
 func BenchmarkJoinEmpDapartment(b *testing.B) {
@@ -65,9 +98,9 @@ func BenchmarkJoinEmpDapartment(b *testing.B) {
 		)
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 		expected := "SELECT [T1].[name] AS [EmpName], [T2].[name] AS [DeptName] FROM [employees] AS [T1] INNER JOIN [departments] AS [T2] ON [T1].[department_id] = [T2].[department_id]"
-		assert.Equal(b, expected, compilerResult.SqlText)
+		assert.Equal(b, expected, compilerResult.String())
 	}
 }
 func BenchmarkLeftJoinEmpDepartment(b *testing.B) {
@@ -86,13 +119,13 @@ func BenchmarkLeftJoinEmpDepartment(b *testing.B) {
 
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 
 		expected := "SELECT [T1].[name] AS [EmpName], [T2].[name] AS [DeptName] " +
 			"FROM [employees] AS [T1] " +
 			"LEFT JOIN [departments] AS [T2] ON [T1].[department_id] = [T2].[department_id]"
 
-		assert.Equal(b, expected, compilerResult.SqlText)
+		assert.Equal(b, expected, compilerResult.String())
 	}
 }
 func BenchmarkEmployeeWithoutDepartment(b *testing.B) {
@@ -111,14 +144,14 @@ func BenchmarkEmployeeWithoutDepartment(b *testing.B) {
 
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 
 		expected := "SELECT [T1].[name] AS [EmpName] " +
 			"FROM [employees] AS [T1] " +
 			"LEFT JOIN [departments] AS [T2] ON [T1].[department_id] = [T2].[department_id] " +
 			"WHERE [T2].[department_id] IS NULL"
 
-		assert.Equal(b, expected, compilerResult.SqlText)
+		assert.Equal(b, expected, compilerResult.String())
 	}
 }
 func BenchmarkDepartmentWithoutEmployee(b *testing.B) {
@@ -136,14 +169,14 @@ func BenchmarkDepartmentWithoutEmployee(b *testing.B) {
 
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 
 		expected := "SELECT [T1].[name] AS [DeptName] " +
 			"FROM [departments] AS [T1] " +
 			"LEFT JOIN [employees] AS [T2] ON [T1].[department_id] = [T2].[department_id] " +
 			"WHERE [T2].[employee_id] IS NULL"
 
-		assert.Equal(b, expected, compilerResult.SqlText)
+		assert.Equal(b, expected, compilerResult.String())
 	}
 }
 func BenchmarkJoinFullEmployeeDepartment_LeftJoin(b *testing.B) {
@@ -166,11 +199,11 @@ func BenchmarkJoinFullEmployeeDepartment_LeftJoin(b *testing.B) {
 
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 
 		expected := "SELECT [T1].[employee_id] AS [EmployeeId], [T1].[name] AS [EmpName], [T1].[email] AS [Email], [T1].[phone] AS [Phone], [T2].[name] AS [DeptName], [T2].[note] AS [Note] FROM [employees] AS [T1] LEFT JOIN [departments] AS [T2] ON [T1].[department_id] = [T2].[department_id]"
 
-		assert.Equal(b, expected, compilerResult.SqlText)
+		assert.Equal(b, expected, compilerResult.String())
 	}
 }
 func BenchmarkJoinEmployeeWithManager(b *testing.B) {
@@ -189,13 +222,13 @@ func BenchmarkJoinEmployeeWithManager(b *testing.B) {
 
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 
 		expected := "SELECT [T1].[name] AS [EmpName], [T2].[name] AS [ManagerName] " +
 			"FROM [employees] AS [T1] " +
 			"LEFT JOIN [employees] AS [T2] ON [T1].[manager_id] = [T2].[employee_id]"
 
-		assert.Equal(b, expected, compilerResult.SqlText)
+		assert.Equal(b, expected, compilerResult.String())
 	}
 }
 func BenchmarkEmployeeWithoutManager(b *testing.B) {
@@ -212,14 +245,14 @@ func BenchmarkEmployeeWithoutManager(b *testing.B) {
 
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 
 		expected := "SELECT [T1].[name] AS [EmpName] " +
 			"FROM [employees] AS [T1] " +
 			"LEFT JOIN [employees] AS [T2] ON [T1].[manager_id] = [T2].[employee_id] " +
 			"WHERE [T2].[employee_id] IS NULL"
 
-		assert.Equal(b, expected, compilerResult.SqlText)
+		assert.Equal(b, expected, compilerResult.String())
 	}
 }
 func BenchmarkEmployeeWithGrandManager(b *testing.B) {
@@ -241,11 +274,11 @@ func BenchmarkEmployeeWithGrandManager(b *testing.B) {
 
 		dialect := mssql()
 		compilerResult := sql.Compile(dialect)
-		assert.NoError(b, compilerResult.Err)
+		assert.NoError(b, compilerResult.Err())
 
 		expected := "SELECT [T3].[name] AS [EmpName], [T2].[name] AS [ManagerName], [T1].[name] AS [GrandManagerName] FROM [employees] AS [T3] INNER JOIN [employees] AS [T2] ON [T3].[manager_id] = [T2].[employee_id] LEFT JOIN [employees] AS [T1] ON [T1].[employee_id] = [T2].[manager_id]"
 
-		assert.Equal(b, expected, compilerResult.SqlText)
+		assert.Equal(b, expected, compilerResult.String())
 		//"SELECT [T3].[name] AS [EmpName], [T2].[name] AS [ManagerName], [T1].[name] AS [GrandManagerName] FROM [employees] AS [T3] INNER JOIN [employees] AS [T2] ON [T3].[manager_id] = [T2].[employee_id] LEFT JOIN [employees] AS [T1] ON [T1].[employee_id] = [T2].[manager_id]"
 	}
 }

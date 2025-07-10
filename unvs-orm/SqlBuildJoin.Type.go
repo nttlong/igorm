@@ -183,9 +183,7 @@ func (f *BoolField) doJoin() *BoolField {
 func (je *JoinExpr) Select(fields ...interface{}) *SqlCmdSelect {
 
 	return &SqlCmdSelect{
-		source: &sqlSelectSource{
-			expr: je,
-		},
+		source: je,
 		fields: fields,
 	}
 }

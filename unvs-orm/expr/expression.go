@@ -1,5 +1,7 @@
 package expr
 
+import "sync"
+
 type DB_TYPE int
 
 const (
@@ -35,10 +37,12 @@ func (t DB_TYPE) String() string {
 }
 
 type expression struct {
-	keywords    []string
-	specialChar []byte
-	DbDriver    DB_TYPE
+	keywords     []string
+	specialChar  []byte
+	DbDriver     DB_TYPE
+	cacheCompile sync.Map
 }
+type EXPR = expression
 type ResolverResult struct {
 	Syntax      string
 	Args        []interface{}
@@ -46,14 +50,14 @@ type ResolverResult struct {
 }
 
 func (e *expression) Quote(str ...string) string {
-	return OnGetQuoteFunc(e.DbDriver, str...)
+	return (OnGetQuoteFunc)(e.DbDriver, str...)
 }
-func (e *expression) resolve(tables *[]string, context *map[string]string, caller interface{}, requireAlias bool) (*ResolverResult, error) {
-	return OnCompileFunc(e.DbDriver, tables, context, caller, requireAlias)
+func (e *expression) resolve(tables *[]string, context *map[string]string, caller interface{}, extractAlias, applyContext bool) (*ResolverResult, error) {
+	return OnCompileFunc(e.DbDriver, tables, context, caller, extractAlias, applyContext)
 	//return nil, nil
 }
 
-type OnCompile = func(dbDriver DB_TYPE, tables *[]string, context *map[string]string, caller interface{}, requireAlias bool) (*ResolverResult, error)
+type OnCompile = func(dbDriver DB_TYPE, tables *[]string, context *map[string]string, caller interface{}, extractAlias, applyContext bool) (*ResolverResult, error)
 type ExpressionTest = expression
 type OnGetQuote = func(dbDriver DB_TYPE, str ...string) string
 

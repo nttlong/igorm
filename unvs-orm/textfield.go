@@ -6,7 +6,7 @@ package orm
 // 	Val        *string
 // }
 type TextField struct {
-	underField interface{}
+	underField underFieldObject
 	Val        *string
 }
 

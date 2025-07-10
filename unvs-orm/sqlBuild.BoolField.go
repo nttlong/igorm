@@ -3,14 +3,11 @@ package orm
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
+	EXPR "unvs-orm/expr"
 )
 
-type sqlSelectSource struct {
-	expr       interface{}
-	sourceText string
-	args       []interface{}
-}
 type sqlSelectFields struct {
 	fields     []interface{}
 	aliasMap   *map[string]string
@@ -18,36 +15,39 @@ type sqlSelectFields struct {
 	args       []interface{}
 }
 
-func (s *sqlSelectSource) build(tables *[]string, context *map[string]string, d DialectCompiler) (*resolverResult, error) {
-	ctx := JoinCompiler.Ctx(d)
-	if bf, ok := s.expr.(*BoolField); ok {
-		return ctx.ResolveBoolFieldAsJoin(tables, context, bf)
-	}
-	if expr, ok := s.expr.(*JoinExpr); ok {
-		return ctx.Resolve(expr)
-		// return nil, errors.New("unsupported expression type: " + fmt.Sprintf("%T", expr))
-	}
-	return nil, errors.New("unsupported expression type: " + fmt.Sprintf("%T", s.expr))
-
-}
-
 type SqlCmdSelect struct {
-	source       *sqlSelectSource
+	source       interface{}
 	fields       []interface{}
 	where        interface{}
+	groups       []interface{}
 	buildContext *map[string]string
+	having       *BoolField
 	cmp          *CompilerUtils
 	Err          error
 	tables       *[]string
+	exprCmp      *EXPR.EXPR
 }
 
+func (sql *SqlCmdSelect) getSelectField(field interface{}) string {
+	v := reflect.ValueOf(field)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+	fieldNameField := v.FieldByName("Name")
+	if !fieldNameField.IsValid() {
+		return ""
+	}
+	fieldName := fieldNameField.String()
+	return fieldName
+
+}
 func (sql *SqlCmdSelect) buildSelect() *sqlCmdSelectResult {
 
 	fields := []string{}
 	args := []interface{}{}
 	for _, field := range sql.fields {
 		if _, ok := field.(*aliasField); ok {
-			fieldCompiler, err := sql.cmp.Resolve(sql.tables, sql.buildContext, field, true)
+			fieldCompiler, err := sql.cmp.Resolve(sql.tables, sql.buildContext, field, false, true)
 			if err != nil {
 				return &sqlCmdSelectResult{
 					Err: err,
@@ -55,6 +55,23 @@ func (sql *SqlCmdSelect) buildSelect() *sqlCmdSelectResult {
 			}
 			fields = append(fields, fieldCompiler.Syntax)
 			args = append(args, fieldCompiler.Args...)
+		} else if exprField, ok := field.(*exprField); ok {
+			if sql.tables == nil {
+				sql.tables = &[]string{}
+			}
+			if sql.buildContext == nil {
+				sql.buildContext = &map[string]string{}
+			}
+
+			exprCmp := EXPR.NewExpressionCompiler(sql.cmp.dialect.driverName())
+			compileResult, err := exprCmp.Compile("", sql.tables, sql.buildContext, exprField.Stmt, false, true)
+			if err != nil {
+				return &sqlCmdSelectResult{
+					Err: err,
+				}
+			}
+			fields = append(fields, compileResult.Syntax)
+
 		} else {
 			txtField, argsField, err := sql.buildSelectField(field)
 			if err != nil {
@@ -73,6 +90,18 @@ func (sql *SqlCmdSelect) buildSelect() *sqlCmdSelectResult {
 	}
 }
 
+type SqlStmt struct {
+	From    string
+	Where   string
+	GroupBy string
+	Having  string
+	OrderBy string
+	Limit   string
+	Offset  string
+	Select  string
+	Args    []interface{}
+	err     error
+}
 type sqlCmdSelectResult struct {
 	Err     error
 	SqlText string
@@ -86,9 +115,7 @@ func (expr *BoolField) Select(fields ...interface{}) *SqlCmdSelect {
 		}
 	}
 	return &SqlCmdSelect{
-		source: &sqlSelectSource{
-			expr: expr,
-		},
+		source: expr,
 		fields: fields,
 	}
 }
@@ -103,52 +130,83 @@ func (sql *SqlCmdSelect) buildWhere() *sqlCmdSelectResult {
 			Args:    []interface{}{},
 		}
 	}
-	whereResult, err := sql.cmp.Resolve(sql.tables, sql.buildContext, sql.where, true)
+	whereResult, err := sql.cmp.Resolve(sql.tables, sql.buildContext, sql.where, false, true)
 	if err != nil {
 		return &sqlCmdSelectResult{
 			Err: err,
 		}
 	}
-	return &sqlCmdSelectResult{
-		SqlText: whereResult.Syntax,
-		Args:    whereResult.Args,
+	if whereResult != nil {
+		return &sqlCmdSelectResult{
+			SqlText: whereResult.Syntax,
+			Args:    whereResult.Args,
+		}
+	} else {
+		return &sqlCmdSelectResult{
+			SqlText: "",
+			Args:    []interface{}{},
+		}
 	}
 
 }
-func (sql *SqlCmdSelect) Compile(d DialectCompiler) *sqlCmdSelectResult {
-	var args []interface{}
-	sql.cmp = Compiler.Ctx(d)
-
-	sourceCompiler, err := sql.source.build(sql.tables, sql.buildContext, d)
+func (sql *SqlCmdSelect) compileSourceByJoinExpr(d DialectCompiler, je *JoinExpr, sourceCache string) *SqlStmt {
+	sql.tables = &[]string{}
+	sql.buildContext = &map[string]string{}
+	join, err := JoinCompiler.Ctx(d).Resolve(je, sql.tables, sql.buildContext, sourceCache)
 	if err != nil {
-		return &sqlCmdSelectResult{
-			Err: err,
+		return &SqlStmt{
+			err: err,
 		}
 	}
-	sql.source.sourceText = sourceCompiler.Syntax
-	sql.source.args = sourceCompiler.Args
-	args = append(args, sourceCompiler.Args...)
 
-	sql.buildContext = sourceCompiler.buildContext
-	resultBuildSelect := sql.buildSelect()
-	if resultBuildSelect.Err != nil {
-		return resultBuildSelect
-	}
-	args = append(args, resultBuildSelect.Args...)
-	resultBuildWhere := sql.buildWhere()
-	if resultBuildWhere.Err != nil {
-		return resultBuildWhere
+	ret := &SqlStmt{
+		From: join.Syntax,
+		Args: join.Args,
 	}
 
-	sqlStr := "SELECT " + resultBuildSelect.SqlText + " FROM " + sql.source.sourceText
-	if resultBuildWhere.SqlText != "" {
-		sqlStr += " WHERE " + resultBuildWhere.SqlText
+	ret.Select = sql.buildSelect2(join.Syntax)
+	return ret
+}
+func (sql *SqlCmdSelect) Compile(d DialectCompiler) *SqlStmt {
+	if sql.exprCmp == nil {
+		sql.exprCmp = EXPR.NewExpressionCompiler(d.driverName())
 	}
-	args = append(args, resultBuildWhere.Args...)
+	if txtSource, ok := sql.source.(string); ok {
+		return sql.simpleSource(txtSource, d)
 
-	return &sqlCmdSelectResult{
-		SqlText: sqlStr,
-		Args:    args,
+	}
+	if exprSource, ok := sql.source.(*BoolField); ok {
+		if je, ok := exprSource.underField.(*JoinExpr); ok {
+
+			return sql.compileSourceByJoinExpr(d, je, "")
+
+		}
+		retCmp, err := JoinCompiler.Ctx(d).ResolveBoolFieldAsJoin(sql.tables, sql.buildContext, exprSource)
+		// retCmp, err := sql.cmp.Resolve(sql.tables, sql.buildContext, exprSource, true, true)
+		if err != nil {
+			return &SqlStmt{
+				err: err,
+			}
+		}
+		selectStmt := sql.buildSelect()
+		ret := &SqlStmt{
+			From: retCmp.Syntax,
+
+			Select: selectStmt.SqlText,
+			Args:   append(selectStmt.Args, retCmp.Args...),
+		}
+		return ret
+
 	}
 
+	panic(fmt.Errorf("not implemented yet"))
+
+}
+func (sql *SqlCmdSelect) GroupBy(fields ...interface{}) *SqlCmdSelect {
+	sql.groups = fields
+	return sql
+}
+func (sql *SqlCmdSelect) Having(expr *BoolField) *SqlCmdSelect {
+	sql.having = expr
+	return sql
 }

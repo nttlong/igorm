@@ -69,11 +69,12 @@ type Department struct {
 	Level        orm.NumberField[int]    `db:"null"`              // Tuỳ chọn: cấp độ phòng ban
 	OrderNo      orm.NumberField[int]    `db:"null"`              // Tuỳ chọn: thứ tự hiển thị
 
-	Note      orm.TextField `db:"length(200);null"`
-	CreatedAt orm.DateTimeField
-	UpdatedAt orm.DateTimeField `db:"null"`
-	CreatedBy orm.TextField     `db:"length(100)"`
-	UpdatedBy orm.TextField     `db:"length(100);null"`
+	Note          orm.TextField `db:"length(200);null"`
+	CreatedAt     orm.DateTimeField
+	UpdatedAt     orm.DateTimeField    `db:"null"`
+	CreatedBy     orm.TextField        `db:"length(100)"`
+	UpdatedBy     orm.TextField        `db:"length(100);null"`
+	EmployeeCount orm.NumberField[int] `db:"null"`
 }
 type Item struct {
 	*orm.Model[Item]

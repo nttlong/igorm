@@ -11,6 +11,7 @@ func (sql *SqlCmdSelect) getFieldName(field interface{}) string {
 	panic(fmt.Errorf("unsupported field type %T, file orm/SqlCmdSelect.buildSelectField.go, line 11", field))
 }
 func (sql *SqlCmdSelect) buildSelectField(field interface{}) (string, []interface{}, error) {
+
 	cmp := sql.cmp
 	txtSql := ""
 	args := []interface{}{}
@@ -122,7 +123,7 @@ func (sql *SqlCmdSelect) buildSelectField(field interface{}) (string, []interfac
 func (sql *SqlCmdSelect) buildSelectFieldNoAlias(field interface{}) (string, []interface{}, error) {
 	cmp := sql.cmp
 
-	ret, err := cmp.Resolve(sql.tables, sql.buildContext, field, true)
+	ret, err := cmp.Resolve(sql.tables, sql.buildContext, field, false, false)
 	if err != nil {
 		return "", nil, err
 	}

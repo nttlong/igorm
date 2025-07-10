@@ -5,12 +5,12 @@ import (
 	"strings"
 )
 
-func (c *CompilerUtils) resolveBoolFieldRightJoin(tables *[]string, context *map[string]string, f *joinField, requireAlias bool) (*resolverResult, error) {
-	left, err := c.Resolve(tables, context, f.left, requireAlias)
+func (c *CompilerUtils) resolveBoolFieldRightJoin(tables *[]string, context *map[string]string, f *joinField, extractAlias, applyContext bool) (*resolverResult, error) {
+	left, err := c.Resolve(tables, context, f.left, extractAlias, applyContext)
 	if err != nil {
 		return nil, err
 	}
-	right, err := c.Resolve(tables, context, f.right, requireAlias)
+	right, err := c.Resolve(tables, context, f.right, extractAlias, applyContext)
 	if err != nil {
 		return nil, err
 	}
@@ -36,17 +36,17 @@ func (c *CompilerUtils) resolveBoolFieldRightJoin(tables *[]string, context *map
 		NextJoin:   left.Syntax,
 	}, nil
 }
-func (c *CompilerUtils) resolveBoolFieldJoin(tables *[]string, context *map[string]string, bf *BoolField, requireAlias bool) (*resolverResult, error) {
+func (c *CompilerUtils) resolveBoolFieldJoin(tables *[]string, context *map[string]string, bf *BoolField, extractAlias, applyContext bool) (*resolverResult, error) {
 	if f, ok := bf.underField.(*joinField); ok {
 		if f.joinType == "RIGHT" {
-			return c.resolveBoolFieldRightJoin(tables, context, f, requireAlias)
+			return c.resolveBoolFieldRightJoin(tables, context, f, extractAlias, applyContext)
 
 		}
-		left, err := c.Resolve(tables, context, f.left, requireAlias)
+		left, err := c.Resolve(tables, context, f.left, extractAlias, applyContext)
 		if err != nil {
 			return nil, err
 		}
-		right, err := c.Resolve(tables, context, f.right, requireAlias)
+		right, err := c.Resolve(tables, context, f.right, extractAlias, applyContext)
 		if err != nil {
 			return nil, err
 		}

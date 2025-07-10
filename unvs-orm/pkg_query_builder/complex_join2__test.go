@@ -14,9 +14,9 @@ func TestAliAsTableSelfJoin(t *testing.T) {
 	sql := customer2.Name.RightJoin(repo.Customers.Name).Select(customer2.Name)
 	dialect := mssql()
 	compilerResult := sql.Compile(dialect)
-	assert.NoError(t, compilerResult.Err)
+	assert.NoError(t, compilerResult.Err())
 	sqlExpected := "SELECT [T1].[name] AS [name] FROM [customers] AS [T2] RIGHT JOIN [customers] AS [T1] ON [T1].[name] = [T2].[name]"
-	assert.Equal(t, sqlExpected, compilerResult.SqlText)
+	assert.Equal(t, sqlExpected, compilerResult.String())
 }
 func TestComplexJoin1(t *testing.T) {
 	dialect := mssql() //<-- create mssql dialect
@@ -36,13 +36,13 @@ func TestComplexJoin1(t *testing.T) {
 		repo.OrderItems.Product,
 	)
 	compilerResult := sql.Compile(dialect)
-	assert.NoError(t, compilerResult.Err)
+	assert.NoError(t, compilerResult.Err())
 	sqlExpected := "SELECT [T1].[note] AS [note], [T1].[created_at] AS [created_at], [T1].[updated_at] AS [updated_at], [T1].[created_by] AS [created_by], [T2].[product] AS [product] FROM [orders] AS [T1] LEFT JOIN [order_items] AS [T2] ON [T1].[order_id] = [T2].[order_id] LEFT JOIN [customers] AS [T3] ON [T1].[order_id] = [T3].[customer_id] LEFT JOIN [invoices] AS [T4] ON [T1].[order_id] = YEAR([T4].[created_at])"
-	assert.Equal(t, sqlExpected, compilerResult.SqlText)
-	sqlText := compilerResult.SqlText
+	assert.Equal(t, sqlExpected, compilerResult.String())
+	sqlText := compilerResult.String()
 
 	assert.Equal(t, []interface{}(nil), compilerResult.Args)
-	assert.Equal(t, sqlText, compilerResult.SqlText)
+	assert.Equal(t, sqlText, compilerResult.String())
 
 }
 func TestComplexJoin2(t *testing.T) {
@@ -51,8 +51,8 @@ func TestComplexJoin2(t *testing.T) {
 	repo := orm.Repository[OrderRepository]()
 	sql := repo.Customers.Note.Like(repo.Customers.Email).Select(repo.Customers.Note)
 	compilerResult := sql.Compile(dialect)
-	assert.NoError(t, compilerResult.Err)
+	assert.NoError(t, compilerResult.Err())
 	sqlExpected := "SELECT [T1].[note] AS [note] FROM [customers] AS [T1] WHERE [T1].[note] LIKE [T1].[email]"
-	assert.Equal(t, sqlExpected, compilerResult.SqlText)
+	assert.Equal(t, sqlExpected, compilerResult.String())
 
 }

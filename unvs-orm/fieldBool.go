@@ -19,7 +19,7 @@ type rawTextField struct {
 	rawText string
 }
 type BoolField struct {
-	underField interface{}
+	underField underFieldObject
 }
 
 func (f *BoolField) Raw(text string) *BoolField {

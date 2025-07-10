@@ -23,9 +23,15 @@ func (c *CompilerUtils) addMultipleTables(tables *[]string, context *map[string]
 		}
 	}
 }
-func (c *CompilerUtils) resolveDBField(tables *[]string, context *map[string]string, f *dbField, requireAlias bool) (*resolverResult, error) {
+func (c *CompilerUtils) resolveDBField(tables *[]string, context *map[string]string, f *dbField, extractAlias, applyContext bool) (*resolverResult, error) {
 	if f == nil {
 		return nil, errors.New("dbField is nil")
+	}
+	if extractAlias {
+		if _, ok := (*context)[f.Table]; !ok {
+			(*context)[f.Table] = "T" + strconv.Itoa(len(*context)+1)
+			*tables = append(*tables, f.Table)
+		}
 	}
 	if context == nil {
 		return &resolverResult{
@@ -35,27 +41,25 @@ func (c *CompilerUtils) resolveDBField(tables *[]string, context *map[string]str
 	}
 	if alias, ok := (*context)[f.Table]; ok {
 		return &resolverResult{
-			Syntax:       c.Quote(alias, f.Name),
-			Args:         nil,
-			buildContext: context,
+			Syntax: c.Quote(alias, f.Name),
+			Args:   nil,
 		}, nil
 	}
 	hasNew := c.addTables(tables, context, f.Table)
-	if requireAlias {
+	if applyContext {
 		return &resolverResult{
-			Syntax:       c.Quote((*context)[f.Table], f.Name),
-			Tables:       tables,
-			Args:         nil,
-			buildContext: context,
+			Syntax: c.Quote((*context)[f.Table], f.Name),
+
+			Args: nil,
+
 			hasNewTable:  hasNew,
 			NewTableName: f.Table,
 		}, nil
 	} else {
 		return &resolverResult{
-			Syntax:       c.Quote(f.Table, f.Name),
-			Tables:       tables,
-			Args:         nil,
-			buildContext: context,
+			Syntax: c.Quote(f.Table, f.Name),
+
+			Args: nil,
 		}, nil
 	}
 
