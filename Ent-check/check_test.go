@@ -9,6 +9,10 @@ import (
 	// alias để tránh trùng tên
 )
 
+func TestSelfJoin(t *testing.T) {
+
+}
+
 func BenchmarkTestEntSelectJoin(b *testing.B) {
 	builder := entSql.Dialect("postgres")
 	b.ResetTimer()

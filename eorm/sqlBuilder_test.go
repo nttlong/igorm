@@ -6,6 +6,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestSelfJoin(t *testing.T) {
+	for i := 0; i < 5; i++ {
+
+		join := "Order AS Child INNER JOIN Order AS Parent ON Child.ParentCode = Parent.Code"
+		builder := SqlBuilder.From(join).Select()
+		sql, args := builder.ToSql(dialectFactory.Create("mssql"))
+		assert.NoError(t, builder.Err)
+		assert.Equal(t, "SELECT [Child].*, [Parent].* FROM [orders] AS [Child] INNER JOIN [orders] AS [Parent] ON [Child].[ParentCode] = [Parent].[Code]", sql)
+		assert.Equal(t, 0, len(args))
+	}
+}
 func TestSqlBuilderSelectField(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		joinExpr := "Departments INNER JOIN User ON User.Code = Departments.Code INNER JOIN Check ON Check.Name = 'John'"

@@ -1,6 +1,6 @@
 package eorm
 
-import "github.com/xwb1989/sqlparser"
+import "eorm/sqlparser"
 
 func (compiler *exprReceiver) StarExpr(context *exprCompileContext, expr *sqlparser.StarExpr) (string, error) {
 	if expr.TableName.IsEmpty() {

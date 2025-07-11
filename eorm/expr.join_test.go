@@ -12,7 +12,7 @@ func TestEormJoin(t *testing.T) {
 		context: &exprCompileContext{
 			tables: []string{},
 			alias:  map[string]string{},
-			schema: map[string]bool{
+			schema: &map[string]bool{
 				"User": true,
 			},
 			dialect: dialectFactory.Create("mssql"),
@@ -31,7 +31,7 @@ func BenchmarkEormJoin(b *testing.B) {
 			context: &exprCompileContext{
 				tables: []string{},
 				alias:  map[string]string{},
-				schema: map[string]bool{
+				schema: &map[string]bool{
 					"User": true,
 				},
 				dialect: dialectFactory.Create("mssql"),

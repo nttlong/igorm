@@ -3,7 +3,7 @@ package eorm
 import (
 	"fmt"
 
-	"github.com/xwb1989/sqlparser"
+	"eorm/sqlparser"
 )
 
 func (compiler *exprReceiver) JoinTableExpr(context *exprCompileContext, expr *sqlparser.JoinTableExpr) (string, error) {

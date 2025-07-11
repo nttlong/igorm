@@ -100,6 +100,7 @@ func (s *SqlExecutor) buildSelectors(compiler *exprCompiler, dialect Dialect) er
 				selectAll = append(selectAll, dialect.Quote(table)+".*")
 			}
 			s.selectors = strings.Join(selectAll, ", ")
+			return nil
 		}
 
 	}

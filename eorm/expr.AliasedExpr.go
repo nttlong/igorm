@@ -1,7 +1,7 @@
 package eorm
 
 import (
-	"github.com/xwb1989/sqlparser"
+	"eorm/sqlparser"
 )
 
 func (compiler *exprReceiver) AliasedExpr(context *exprCompileContext, expr *sqlparser.AliasedExpr) (string, error) {

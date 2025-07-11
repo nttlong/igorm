@@ -1,6 +1,6 @@
 package eorm
 
-import "github.com/xwb1989/sqlparser"
+import "eorm/sqlparser"
 
 //ComparisonExpr
 func (e *exprReceiver) ComparisonExpr(context *exprCompileContext, expr sqlparser.ComparisonExpr) (string, error) {

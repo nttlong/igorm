@@ -1,10 +1,10 @@
 package eorm
 
 import (
+	"eorm/sqlparser"
 	"fmt"
 	"strings"
-
-	"github.com/xwb1989/sqlparser"
+	// "eorm/sqlparser"
 )
 
 type build_purpose int
@@ -22,13 +22,38 @@ const (
 )
 
 type exprCompileContext struct {
-	tables           []string
-	schema           map[string]bool
+	tables []string
+	/*
+		The purpose of this field is track table name is already in database
+	*/
+	schema           *map[string]bool
 	alias            map[string]string
 	dialect          Dialect
 	purpose          build_purpose
 	stackAliasFields stack[string]
+	stackAliasTables stack[string]
 }
+
+func (e *exprCompileContext) pluralTableName(tableName string) string {
+	if e.schema != nil {
+		if _, ok := (*e.schema)[tableName]; ok {
+			return tableName
+		} else {
+			if _, ok := e.alias[tableName]; ok {
+				return tableName
+			} else {
+				return utils.Plural(tableName)
+			}
+		}
+	} else {
+		if _, ok := e.alias[tableName]; ok {
+			return tableName
+		} else {
+			return utils.Plural(tableName)
+		}
+	}
+}
+
 type exprCompiler struct {
 	context *exprCompileContext
 	content string

@@ -1,6 +1,6 @@
 package eorm
 
-import "github.com/xwb1989/sqlparser"
+import "eorm/sqlparser"
 
 func (compiler *exprReceiver) AndExpr(context *exprCompileContext, expr *sqlparser.AndExpr) (string, error) {
 	left, err := compiler.compile(context, expr.Left)

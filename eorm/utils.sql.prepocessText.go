@@ -71,8 +71,77 @@ func (c *exprUtils) extractLiterals(expr string) (string, []string) {
 	buf.WriteString(expr[pos:])
 	return buf.String(), params
 }
-
 func (c *exprUtils) QuoteExpression(expr string) string {
+	// Check cache
+	if cached, ok := c.cache.Load(expr); ok {
+		return cached.(string)
+	}
+
+	expr = strings.ReplaceAll(expr, "\n", "")
+	expr = strings.ReplaceAll(expr, "\t", "")
+	expr = strings.TrimSpace(expr)
+	expr = strings.TrimSuffix(expr, ",")
+
+	exprNoStr, literals := c.extractLiterals(expr)
+
+	// Lấy từng token và vị trí
+	matches := c.reFieldAccess.FindAllStringIndex(exprNoStr, -1)
+
+	// Sử dụng buffer để build lại chuỗi
+	buf := c.bufPool.Get().(*bytes.Buffer)
+	buf.Reset()
+	defer c.bufPool.Put(buf)
+
+	lastPos := 0
+	for _, match := range matches {
+		start, end := match[0], match[1]
+		token := exprNoStr[start:end]
+
+		lowered := strings.ToLower(token)
+		if c.keywords[lowered] {
+			continue
+		}
+		if c.funcWhitelist[strings.ToLower(strings.Split(token, ".")[0])] {
+			continue
+		}
+
+		// Ghi đoạn trước token
+		buf.WriteString(exprNoStr[lastPos:start])
+
+		// Quote token
+		parts := strings.Split(token, ".")
+		for i, p := range parts {
+			if i > 0 {
+				buf.WriteByte('.')
+			}
+			buf.WriteString("`")
+			buf.WriteString(p)
+			buf.WriteString("`")
+		}
+
+		lastPos = end
+	}
+
+	// Ghi phần còn lại
+	buf.WriteString(exprNoStr[lastPos:])
+
+	// Khôi phục các chuỗi literal
+	out := buf.String()
+	for i, val := range literals {
+		placeholder := "<" + strconv.Itoa(i) + ">"
+		out = strings.ReplaceAll(out, placeholder, "'"+val+"'")
+	}
+
+	// Chuyển [] sang ``
+	out = strings.ReplaceAll(out, "[", "`")
+	out = strings.ReplaceAll(out, "]", "`")
+
+	// Cache kết quả
+	c.cache.Store(expr, out)
+	return out
+}
+
+func (c *exprUtils) QuoteExpressionOld(expr string) string {
 	// Check cache
 	if cached, ok := c.cache.Load(expr); ok {
 		return cached.(string)

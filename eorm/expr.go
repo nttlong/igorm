@@ -3,7 +3,7 @@ package eorm
 import (
 	"fmt"
 
-	"github.com/xwb1989/sqlparser"
+	"eorm/sqlparser"
 )
 
 type exprReceiver struct {
@@ -21,8 +21,11 @@ func (e *exprReceiver) compile(context *exprCompileContext, expr interface{}) (s
 		return e.SQLVal(context, expr)
 	case *sqlparser.StarExpr:
 		return e.StarExpr(context, expr)
+
 	case *sqlparser.JoinTableExpr:
 		return e.JoinTableExpr(context, expr)
+	case sqlparser.JoinTableExpr:
+		return e.JoinTableExpr(context, &expr)
 	case *sqlparser.AliasedTableExpr:
 		return e.AliasedTableExpr(context, expr)
 	case sqlparser.JoinCondition:

@@ -3,7 +3,7 @@ package eorm
 import (
 	"strconv"
 
-	"github.com/xwb1989/sqlparser"
+	"eorm/sqlparser"
 )
 
 // ComparisonExpr
@@ -11,15 +11,18 @@ func (e *exprReceiver) ColName(context *exprCompileContext, expr sqlparser.ColNa
 
 	tableName := expr.Qualifier.Name.String()
 	fieldName := expr.Name.String()
-	if _, ok := context.schema[tableName]; !ok {
 
-		tableName = utils.Plural(tableName)
-		fieldName = utils.ToSnakeCase(expr.Name.String())
-	}
+	if _, ok := context.alias[tableName]; !ok { // if not found in alias, then check if it is a schema table
+		if _, ok := (*context.schema)[tableName]; !ok { // if not found in database schema, then assume it is a plural table name
 
-	if _, ok := context.alias[tableName]; !ok {
-		context.tables = append(context.tables, tableName)
-		context.alias[tableName] = "T" + strconv.Itoa(len(context.tables))
+			tableName = utils.Plural(tableName)
+			fieldName = utils.ToSnakeCase(expr.Name.String())
+		}
+		if _, ok := context.alias[tableName]; !ok {
+
+			context.tables = append(context.tables, tableName)
+			context.alias[tableName] = "T" + strconv.Itoa(len(context.tables))
+		}
 	}
 	if context.purpose == build_purpose_for_function {
 		return context.dialect.Quote(context.alias[tableName], fieldName), nil

@@ -3,7 +3,7 @@ package eorm
 import (
 	"strings"
 
-	"github.com/xwb1989/sqlparser"
+	"eorm/sqlparser"
 )
 
 func (compiler *exprReceiver) FuncExpr(context *exprCompileContext, expr *sqlparser.FuncExpr) (string, error) {

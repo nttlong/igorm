@@ -1,6 +1,6 @@
 package eorm
 
-import "github.com/xwb1989/sqlparser"
+import "eorm/sqlparser"
 
 func (compiler *exprReceiver) AliasedTableExpr(context *exprCompileContext, expr *sqlparser.AliasedTableExpr) (string, error) {
 
@@ -10,7 +10,18 @@ func (compiler *exprReceiver) AliasedTableExpr(context *exprCompileContext, expr
 	}
 	if tableName == "" {
 		return compiler.compile(context, expr.Expr)
+	} else {
+		if context.purpose == build_purpose_join {
+			context.stackAliasTables.Push(tableName)
+			ret, err := compiler.compile(context, expr.Expr)
+			if err != nil {
+				return "", err
+			}
+			return ret, nil
+
+		}
+		return compiler.compile(context, expr.Expr)
 	}
-	return tableName, nil
+	// return tableName, nil
 
 }

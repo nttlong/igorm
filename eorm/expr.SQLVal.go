@@ -1,6 +1,6 @@
 package eorm
 
-import "github.com/xwb1989/sqlparser"
+import "eorm/sqlparser"
 
 func (compiler *exprReceiver) SQLVal(context *exprCompileContext, expr *sqlparser.SQLVal) (string, error) {
 	if expr.Type == sqlparser.StrVal {

@@ -1,7 +1,7 @@
 package eorm
 
 import (
-	"github.com/xwb1989/sqlparser"
+	"eorm/sqlparser"
 )
 
 func (compiler *exprReceiver) BinaryExpr(context *exprCompileContext, expr *sqlparser.BinaryExpr) (string, error) {
