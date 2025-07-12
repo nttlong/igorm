@@ -13,6 +13,9 @@ type IMigrator interface {
 	GetSqlAddColumn(entityType reflect.Type) (string, error)
 	GetSqlAddIndex(entityType reflect.Type) (string, error)
 	GetSqlAddUniqueIndex(entityType reflect.Type) (string, error)
+	GetSqlMigrate(entityType reflect.Type) ([]string, error)
+	DoMigrate(entityType reflect.Type) error
+	DoMigrates() error
 }
 
 func NewMigrator(db *tenantDB.TenantDB) (IMigrator, error) {

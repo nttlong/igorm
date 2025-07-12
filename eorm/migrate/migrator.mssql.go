@@ -261,3 +261,48 @@ func (m *migratorMssql) GetSqlAddUniqueIndex(typ reflect.Type) (string, error) {
 	return strings.Join(scripts, ";\n"), nil
 
 }
+func (m *migratorMssql) GetSqlMigrate(entityType reflect.Type) ([]string, error) {
+	scripts := []string{}
+	scriptTable, err := m.GetSqlCreateTable(entityType)
+	if err != nil {
+		return nil, err
+	}
+	if scriptTable == "" {
+		scriptAddColumn, err := m.GetSqlAddColumn(entityType)
+		if err != nil {
+			return nil, err
+		}
+		scripts = append(scripts, scriptTable, scriptAddColumn)
+	}
+
+	scriptAddUniqueIndex, err := m.GetSqlAddUniqueIndex(entityType)
+	if err != nil {
+		return nil, err
+	}
+	scripts = append(scripts, scriptTable, scriptAddUniqueIndex)
+	return scripts, nil
+
+}
+func (m *migratorMssql) DoMigrate(entityType reflect.Type) error {
+	scripts, err := m.GetSqlMigrate(entityType)
+	if err != nil {
+		return err
+	}
+	for _, script := range scripts {
+		_, err := m.db.Exec(script)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+
+}
+func (m *migratorMssql) DoMigrates() error {
+	for _, entity := range ModelRegistry.GetAllModels() {
+		err := m.DoMigrate(entity.entity.entityType)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

@@ -111,3 +111,18 @@ func TestMigratorUniqueIndex2Cols(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "CREATE INDEX [IDX_users__name] ON [users] ([name])", script)
 }
+func TestMigratorToDb(t *testing.T) {
+	sqlServerDns := "sqlserver://sa:123456@localhost?database=a001&fetchSize=10000&encrypt=disable"
+	db, err := tenantDB.Open("mssql", sqlServerDns)
+	assert.NoError(t, err)
+	assert.NotNil(t, db)
+
+	migrator, err := NewMigrator(db)
+	assert.NoError(t, err)
+	scripts, err := migrator.GetSqlMigrate(reflect.TypeOf(User3{}))
+	assert.NoError(t, err)
+	for _, script := range scripts {
+		_, err := db.Exec(script)
+		assert.NoError(t, err)
+	}
+}
