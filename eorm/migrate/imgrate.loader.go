@@ -3,6 +3,7 @@ package migrate
 import (
 	"database/sql"
 	"eorm/tenantDB"
+	"fmt"
 )
 
 type ColumnInfo struct {
@@ -50,7 +51,8 @@ type DbSchema struct {
 	Indexes map[string]ColumnsInfo
 }
 type IMigratorLoader interface {
-	GetDbName(db *sql.DB) string
+	GetError() error
+
 	LoadAllTable(db *sql.DB) (map[string]map[string]ColumnInfo, error)
 	LoadAllPrimaryKey(db *sql.DB) (map[string]ColumnsInfo, error)
 	/*
@@ -70,6 +72,15 @@ type IMigratorLoader interface {
 	LoadFullSchema(db *sql.DB) (*DbSchema, error)
 }
 
-func MigratorLoader(db *tenantDB.TenantDB) IMigratorLoader {
-
+func MigratorLoader(db *tenantDB.TenantDB) (IMigratorLoader, error) {
+	err := db.Detect()
+	if err != nil {
+		return nil, err
+	}
+	switch db.DbType {
+	case tenantDB.DB_DRIVER_MSSQL:
+		return &MigratorLoaderMssql{}, nil
+	default:
+		panic(fmt.Errorf("unsupported database type: %s", db.DbType))
+	}
 }

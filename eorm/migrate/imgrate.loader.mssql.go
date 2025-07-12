@@ -4,7 +4,9 @@ import (
 	"database/sql"
 )
 
-type MigratorLoaderMssql struct{}
+type MigratorLoaderMssql struct {
+	err error
+}
 
 func (m *MigratorLoaderMssql) GetDbName(db *sql.DB) string {
 	var dbName string
@@ -174,4 +176,7 @@ func (m *MigratorLoaderMssql) LoadFullSchema(db *sql.DB) (*DbSchema, error) {
 		schema.Tables[table] = cols
 	}
 	return schema, nil
+}
+func (m *MigratorLoaderMssql) GetError() error {
+	return m.err
 }
