@@ -2,6 +2,7 @@ package migrate
 
 import (
 	"eorm/tenantDB"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,11 +11,13 @@ import (
 func Test_mssql_loader(t *testing.T) {
 	sqlServerDns := "sqlserver://sa:123456@localhost?database=aaa&fetchSize=10000&encrypt=disable"
 	db, err := tenantDB.Open("mssql", sqlServerDns)
+
 	assert.NoError(t, err)
 
-	migrator, err := MigratorLoader(db)
+	migrator, err := NewMigrator(db)
 	assert.NoError(t, err)
-	tables, err := migrator.LoadAllTable(db.DB)
+	tables, err := migrator.GetSqlCreateTable(reflect.TypeOf(User{}))
 	assert.NoError(t, err)
 	assert.NotEmpty(t, tables)
+
 }

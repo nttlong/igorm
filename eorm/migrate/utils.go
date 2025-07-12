@@ -1,11 +1,17 @@
 package migrate
 
 import (
-	"fmt"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
+	"sync"
+	"unicode"
+
+	pluralizeLib "github.com/gertd/go-pluralize"
 )
+
+var pluralize = pluralizeLib.NewClient()
 
 /*
 this struct is used when DEV wants to make their struct as Model
@@ -21,45 +27,111 @@ example:
 	}
 */
 type Entity struct {
-	TableName string
-	Cols      []ColumnDef          //<-- list of all columns
-	MapCols   map[string]ColumnDef //<-- used for faster access to column by name
+	entityType         reflect.Type
+	tableName          string
+	cols               []ColumnDef          //<-- list of all columns
+	mapCols            map[string]ColumnDef //<-- used for faster access to column by name
+	primaryConstraints map[string][]ColumnDef
+	uniqueConstraints  map[string][]ColumnDef
+	indexConstraints   map[string][]ColumnDef
 }
 
 type ColumnDef struct {
+	/*
+		Name of the column in the database.
+		If `db:"column:user_name"` is provided, this value will be "user_name".
+		Otherwise, default to SnakeCase of field name.
+	*/
 	Name string
 
-	Nullable bool
 	/*
-		if tag looks like this:
-			`db:"pk"` or `db:primary` or `db:primaryKey`  => PKName = Name
-			`db:"pk(<name of pk constraint>)"` or `db:primary(<name of pk constraint>)` or `db:primaryKey(<name of pk constraint>)` => PKName = <name of pk constraint>
-		else:
-			PKName = ""
+		SQL data type in target RDBMS. Derived from `type:"..."` tag or Go type mapping.
+		Example: "varchar(255)", "int", "jsonb", etc.
 	*/
-	PKName  string
-	IsAuto  bool
-	Default string
+	Type string
+
 	/*
-		if tag looks like this:
-			`db:"uk"` or `db:unique`   => UniqueName = Name
-			`db:"uk(<name of the unique index>)"` or `db:unique(<name of the unique index>)` => UniqueName = <name of the unique index>
-		else:
-			UniqueName = ""
+		Whether the column allows NULL values.
+		Automatically derived from Go pointer type: e.g., *string → Nullable=true.
+	*/
+	Nullable bool
+
+	/*
+		If tag looks like:
+			`db:"pk"` or `db:"primary"` → PKName = Name
+			`db:"pk(my_pk_name)"` → PKName = "my_pk_name"
+	*/
+	PKName string
+
+	/*
+		Whether this column is auto-increment.
+		Derived from tag `db:"auto"`
+	*/
+	IsAuto bool
+
+	/*
+		Default value for the column. Derived from tag `db:"default(...)"`
+		Example: `default(now)` → Default = "now"
+	*/
+	Default string
+
+	/*
+		If tag looks like:
+			`db:"unique"` → UniqueName = Name
+			`db:"unique(email_uk)"` → UniqueName = "email_uk"
 	*/
 	UniqueName string
+
 	/*
-		if tag looks like this:
-			`db:"idx"` or `db:index`   => IndexName = Name
-			`db:"idx(<name of the index>)"` or `db:index(<name of the index>)` => IndexName = <name of the index>
-		else:
-			IndexName = ""
+		If tag looks like:
+			`db:"index"` → IndexName = Name
+			`db:"index(email_idx)"` → IndexName = "email_idx"
 	*/
 	IndexName string
-	Field     reflect.StructField
+
+	/*
+		Length of the column. Used in varchar(n), nvarchar(n), etc.
+		Example: type:"string(100)" → Length = 100
+	*/
+	Length *int
+
+	/*
+		Precision and Scale. Used for types like decimal(p,s).
+		Example: type:"decimal(10,2)" → Precision=10, Scale=2
+	*/
+	Precision *int
+	Scale     *int
+
+	/*
+		Whether this column should be treated as a JSON/document field.
+		Derived from type like "json", "jsonb", or Go struct tag/type analysis.
+	*/
+	IsJSON bool
+
+	/*
+		Optional comment or description of the column.
+		Derived from: db:"comment(This is the user email)"
+	*/
+	Comment string
+
+	/*
+		Original Go field reference for further metadata.
+	*/
+	Field reflect.StructField
+
+	/*
+		Optional: the referenced table and column if this is a foreign key.
+		Derived from: db:"foreign(users.id)" → RefTable = "users", RefColumn = "id"
+	*/
+	IsForeignKey bool
+	RefTable     string
+	RefColumn    string
 }
 
-type utils struct{}
+type utils struct {
+	cachePlural      sync.Map //<-- cache for pluralize
+	cacheToSnakeCase sync.Map //<-- cache for SnakeCase
+}
 
 var dbTagPattern = regexp.MustCompile(`([a-zA-Z]+)(\((.*?)\))?`)
 
@@ -73,55 +145,99 @@ look at the example below:
 	}
 */
 func (u *utils) ParseTagFromStruct(field reflect.StructField) ColumnDef {
-	tag := field.Tag.Get("db")
-	name := field.Name
-	col := ColumnDef{
-		Name:     u.SnakeCase(name),
-		Field:    field,
-		Nullable: field.Type.Kind() == reflect.Ptr, // auto derive from Go type
+	/*
+		Parses struct tag into a ColumnDef following "db" tag convention.
+		Supports alternative fallback to "gorm" for compatibility.
+		Tag format examples:
+			`db:"column:user_name;pk;auto;default:now;type:string(100)"`
+
+		Recognized keys:
+			- column         : column name
+			- pk, primary    : primary key
+			- uk, unique     : unique constraint
+			- idx, index     : normal index
+			- auto, autoincrement : auto increment flag
+			- default        : default value
+			- type           : type string with optional length (e.g., string(100))
+			- size, length   : explicitly defined length
+	*/
+
+	tagStr := field.Tag.Get("db")
+	if tagStr == "" {
+		tagStr = field.Tag.Get("gorm") // fallback
 	}
 
-	if tag == "" {
+	col := ColumnDef{
+		Name:     u.SnakeCase(field.Name),
+		Field:    field,
+		Nullable: field.Type.Kind() == reflect.Ptr,
+	}
+
+	if tagStr == "" {
 		return col
 	}
 
-	parts := strings.Split(tag, ",")
-	for _, part := range parts {
-		m := dbTagPattern.FindStringSubmatch(part)
-		if len(m) < 2 {
+	tags := strings.Split(tagStr, ";")
+	for _, tag := range tags {
+		tag = strings.TrimSpace(tag)
+		if tag == "" {
 			continue
 		}
-		key := strings.ToLower(m[1])
-		val := ""
-		if len(m) >= 4 {
-			val = m[3]
+
+		var key, val string
+
+		if strings.Contains(tag, ":") {
+			parts := strings.SplitN(tag, ":", 2)
+			key = strings.ToLower(parts[0])
+			val = strings.TrimSpace(parts[1])
+		} else if strings.Contains(tag, "(") && strings.HasSuffix(tag, ")") {
+			// e.g., column(name)
+			parts := strings.SplitN(tag, "(", 2)
+			key = strings.ToLower(parts[0])
+			val = strings.TrimSuffix(parts[1], ")")
+		} else {
+			key = strings.ToLower(tag)
+			val = ""
 		}
+
 		switch key {
+		case "column":
+			if val != "" {
+				col.Name = val
+			}
 		case "pk", "primary", "primarykey":
-			col.PKName = val
-			if col.PKName == "" {
-				col.PKName = col.Name
-			}
+			col.PKName = "PK"
 		case "uk", "unique":
-			col.UniqueName = val
-			if col.UniqueName == "" {
-				col.UniqueName = col.Name
-			}
+			col.UniqueName = col.Name
 		case "idx", "index":
-			col.IndexName = val
-			if col.IndexName == "" {
-				col.IndexName = col.Name
-			}
-		case "auto":
+			col.IndexName = col.Name
+		case "auto", "autoincrement":
 			col.IsAuto = true
 		case "default":
 			col.Default = val
-		case "column":
-			col.Name = val
+		case "type":
+			if length := u.parseLengthFromType(val); length != nil {
+				col.Length = length
+			}
+		case "size", "length":
+			if l, err := strconv.Atoi(val); err == nil {
+				col.Length = &l
+			}
 		}
 	}
 
 	return col
+}
+
+func (u *utils) parseLengthFromType(typeStr string) *int {
+	re := regexp.MustCompile(`\((\d+)\)`)
+	match := re.FindStringSubmatch(typeStr)
+	if len(match) == 2 {
+		if length, err := strconv.Atoi(match[1]); err == nil {
+			return &length
+		}
+	}
+	return nil
 }
 
 /*
@@ -137,10 +253,10 @@ Example:
 		ID int `db:"pk"`
 	}
 */
-func (u *utils) ParseStruct(obj interface{}) ([]ColumnDef, error) {
-	t := reflect.TypeOf(obj)
-	if t.Kind() != reflect.Struct {
-		return nil, fmt.Errorf("only struct is supported")
+func (u *utils) ParseStruct(t reflect.Type) ([]ColumnDef, error) {
+
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
 	}
 
 	var cols []ColumnDef
@@ -150,7 +266,7 @@ func (u *utils) ParseStruct(obj interface{}) ([]ColumnDef, error) {
 			if f.Type == reflect.TypeOf(Entity{}) {
 				continue // skip embedded Entity
 			}
-			subCols, _ := u.ParseStruct(reflect.New(f.Type).Elem().Interface())
+			subCols, _ := u.ParseStruct(f.Type)
 			cols = append(cols, subCols...)
 			continue
 		}
@@ -165,7 +281,7 @@ this function will return a map of primary key columns with their names
 */
 func (u *utils) GetPrimaryKey(e *Entity) map[string][]ColumnDef {
 	m := make(map[string][]ColumnDef)
-	for _, col := range e.Cols {
+	for _, col := range e.cols {
 		if col.PKName != "" {
 			m[col.PKName] = append(m[col.PKName], col)
 		}
@@ -179,7 +295,7 @@ this function will return a map of unique key columns with their names
 */
 func (u *utils) GetUnique(e *Entity) map[string][]ColumnDef {
 	m := make(map[string][]ColumnDef)
-	for _, col := range e.Cols {
+	for _, col := range e.cols {
 		if col.UniqueName != "" {
 			m[col.UniqueName] = append(m[col.UniqueName], col)
 		}
@@ -193,7 +309,7 @@ this function will return a map of index columns with their names
 */
 func (u *utils) GetIndex(e *Entity) map[string][]ColumnDef {
 	m := make(map[string][]ColumnDef)
-	for _, col := range e.Cols {
+	for _, col := range e.cols {
 		if col.IndexName != "" {
 			m[col.IndexName] = append(m[col.IndexName], col)
 		}
@@ -213,28 +329,38 @@ func (u *utils) GetUnSyncColumns(e *Entity, dbColumnName []string) string {
 	}
 
 	var unsync []string
-	for _, col := range e.Cols {
+	for _, col := range e.cols {
 		if _, found := dbCols[col.Name]; !found {
 			unsync = append(unsync, col.Name)
 		}
 	}
 	return strings.Join(unsync, ", ")
 }
+func (u *utils) Pluralize(txt string) string {
+	if v, ok := u.cachePlural.Load(txt); ok {
+		return v.(string)
+	}
+	txt = strings.ToLower(txt)
+	ret := pluralize.Plural(txt)
+	u.cachePlural.Store(txt, ret)
 
-func (u *utils) SnakeCase(s string) string {
-	var out []rune
-	for i, r := range s {
-		if i > 0 && r >= 'A' && r <= 'Z' {
-			out = append(out, '_')
+	return ret
+}
+func (u *utils) SnakeCase(str string) string {
+	if v, ok := u.cacheToSnakeCase.Load(str); ok {
+		return v.(string)
+	}
+	var result []rune
+	for i, r := range str {
+		if i > 0 && unicode.IsUpper(r) &&
+			(unicode.IsLower(rune(str[i-1])) || (i+1 < len(str) && unicode.IsLower(rune(str[i+1])))) {
+			result = append(result, '_')
 		}
-		out = append(out, r)
+		result = append(result, unicode.ToLower(r))
 	}
-	return strings.ToLower(string(out))
+	ret := string(result)
+	u.cacheToSnakeCase.Store(str, ret)
+	return ret
 }
 
-func (u *utils) Pluralize(word string) string {
-	if strings.HasSuffix(word, "s") {
-		return word
-	}
-	return word + "s"
-}
+var utilsInstance = &utils{}

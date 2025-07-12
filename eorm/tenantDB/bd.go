@@ -15,7 +15,8 @@ type TenantDB struct {
 	driverName string
 	DbType     DB_DRIVER_TYPE
 
-	Version string
+	Version     string
+	hasDetected bool
 }
 type DB_DRIVER_TYPE string
 
@@ -40,6 +41,10 @@ type DbDetector struct {
 }
 
 func (db *TenantDB) Detect() error {
+	if db.hasDetected {
+		return nil
+	}
+
 	var version string
 	var dbName string
 
@@ -99,6 +104,7 @@ func (db *TenantDB) Detect() error {
 			db.DbType = dbType
 			db.dbName = dbName
 			db.Version = version
+			db.hasDetected = true
 
 			return nil
 		}
