@@ -77,8 +77,8 @@ func (c *exprUtils) QuoteExpression(expr string) string {
 		return cached.(string)
 	}
 
-	expr = strings.ReplaceAll(expr, "\n", "")
-	expr = strings.ReplaceAll(expr, "\t", "")
+	expr = strings.ReplaceAll(expr, "\n", " ")
+	expr = strings.ReplaceAll(expr, "\t", " ")
 	expr = strings.TrimSpace(expr)
 	expr = strings.TrimSuffix(expr, ",")
 

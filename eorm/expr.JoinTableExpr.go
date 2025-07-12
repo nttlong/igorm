@@ -6,16 +6,22 @@ import (
 	"eorm/sqlparser"
 )
 
+func (compiler *exprReceiver) SimpleTableExpr(context *exprCompileContext, expr sqlparser.SimpleTableExpr) (string, error) {
+	panic("not implemented")
+}
 func (compiler *exprReceiver) JoinTableExpr(context *exprCompileContext, expr *sqlparser.JoinTableExpr) (string, error) {
-	left, err := compiler.compile(context, expr.LeftExpr)
+	var left, right, on string
+	var err error
+
+	left, err = compiler.compile(context, expr.LeftExpr)
 	if err != nil {
 		return "", err
 	}
-	right, err := compiler.compile(context, expr.RightExpr)
+	right, err = compiler.compile(context, expr.RightExpr)
 	if err != nil {
 		return "", err
 	}
-	on, err := compiler.compile(context, expr.Condition)
+	on, err = compiler.compile(context, expr.Condition)
 	if err != nil {
 		return "", err
 	}

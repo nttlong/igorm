@@ -28,6 +28,7 @@ type exprCompileContext struct {
 	*/
 	schema           *map[string]bool
 	alias            map[string]string
+	aliasToDbTable   map[string]string
 	dialect          Dialect
 	purpose          build_purpose
 	stackAliasFields stack[string]

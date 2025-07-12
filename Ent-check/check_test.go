@@ -12,7 +12,24 @@ import (
 func TestSelfJoin(t *testing.T) {
 
 }
+func BenchmarkTestEntSelfJoin(b *testing.B) {
 
+	builder := entSql.Dialect("mssql") // dùng MSSQL để tạo cú pháp có [brackets]
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		q := builder.
+			Select("*").
+			From(entSql.Table("Order").As("Child")).
+			Join(entSql.Table("Order").As("Parent")).
+			OnP(entSql.ExprP("Child.ParentCode = Parent.Code"))
+
+		sqlText, args := q.Query()
+		assert.NoError(b, nil) // vì không có err trả về
+		assert.Equal(b, "SELECT * FROM `Order` AS `Child` JOIN `Order` AS `Parent` ON Child.ParentCode = Parent.Code", sqlText)
+		assert.Equal(b, 0, len(args))
+	}
+}
 func BenchmarkTestEntSelectJoin(b *testing.B) {
 	builder := entSql.Dialect("postgres")
 	b.ResetTimer()
