@@ -1,14 +1,15 @@
 package migrate
 
 import (
-	"database/sql"
+	"eorm/tenantDB"
+	"sync"
 )
 
 type MigratorLoaderMssql struct {
-	err error
+	cacheLoadFullSchema sync.Map
 }
 
-func (m *MigratorLoaderMssql) GetDbName(db *sql.DB) string {
+func (m *MigratorLoaderMssql) GetDbName(db *tenantDB.TenantDB) string {
 	var dbName string
 	err := db.QueryRow("SELECT DB_NAME()").Scan(&dbName)
 	if err != nil {
@@ -17,7 +18,7 @@ func (m *MigratorLoaderMssql) GetDbName(db *sql.DB) string {
 	return dbName
 }
 
-func (m *MigratorLoaderMssql) LoadAllTable(db *sql.DB) (map[string]map[string]ColumnInfo, error) {
+func (m *MigratorLoaderMssql) LoadAllTable(db *tenantDB.TenantDB) (map[string]map[string]ColumnInfo, error) {
 	query := `
 	SELECT
 		t.name AS TableName,
@@ -56,7 +57,7 @@ func (m *MigratorLoaderMssql) LoadAllTable(db *sql.DB) (map[string]map[string]Co
 	return tables, nil
 }
 
-func (m *MigratorLoaderMssql) LoadAllPrimaryKey(db *sql.DB) (map[string]ColumnsInfo, error) {
+func (m *MigratorLoaderMssql) LoadAllPrimaryKey(db *tenantDB.TenantDB) (map[string]ColumnsInfo, error) {
 	query := `
 	SELECT
 		KCU.table_name,
@@ -87,7 +88,7 @@ func (m *MigratorLoaderMssql) LoadAllPrimaryKey(db *sql.DB) (map[string]ColumnsI
 	return result, nil
 }
 
-func (m *MigratorLoaderMssql) LoadAllUniIndex(db *sql.DB) (map[string]ColumnsInfo, error) {
+func (m *MigratorLoaderMssql) LoadAllUniIndex(db *tenantDB.TenantDB) (map[string]ColumnsInfo, error) {
 	query := `
 	SELECT
 		t.name AS TableName,
@@ -119,7 +120,7 @@ func (m *MigratorLoaderMssql) LoadAllUniIndex(db *sql.DB) (map[string]ColumnsInf
 	return result, nil
 }
 
-func (m *MigratorLoaderMssql) LoadAllIndex(db *sql.DB) (map[string]ColumnsInfo, error) {
+func (m *MigratorLoaderMssql) LoadAllIndex(db *tenantDB.TenantDB) (map[string]ColumnsInfo, error) {
 	query := `
 	SELECT
 		t.name AS TableName,
@@ -151,7 +152,11 @@ func (m *MigratorLoaderMssql) LoadAllIndex(db *sql.DB) (map[string]ColumnsInfo, 
 	return result, nil
 }
 
-func (m *MigratorLoaderMssql) LoadFullSchema(db *sql.DB) (*DbSchema, error) {
+func (m *MigratorLoaderMssql) LoadFullSchema(db *tenantDB.TenantDB) (*DbSchema, error) {
+	cacheKey := db.GetDBName()
+	if val, ok := m.cacheLoadFullSchema.Load(cacheKey); ok {
+		return val.(*DbSchema), nil
+	}
 	tables, err := m.LoadAllTable(db)
 	if err != nil {
 		return nil, err
@@ -175,8 +180,6 @@ func (m *MigratorLoaderMssql) LoadFullSchema(db *sql.DB) (*DbSchema, error) {
 		}
 		schema.Tables[table] = cols
 	}
+	m.cacheLoadFullSchema.Store(cacheKey, schema)
 	return schema, nil
-}
-func (m *MigratorLoaderMssql) GetError() error {
-	return m.err
 }

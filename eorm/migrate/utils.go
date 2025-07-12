@@ -1,6 +1,7 @@
 package migrate
 
 import (
+	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -34,6 +35,29 @@ type Entity struct {
 	primaryConstraints map[string][]ColumnDef
 	uniqueConstraints  map[string][]ColumnDef
 	indexConstraints   map[string][]ColumnDef
+}
+
+func (e *Entity) getIndexConstraints() map[string][]ColumnDef {
+	if e.indexConstraints == nil || len(e.indexConstraints) == 0 {
+		e.indexConstraints = map[string][]ColumnDef{}
+		for _, col := range e.cols {
+			if col.IndexName != "" {
+				e.indexConstraints[col.IndexName] = append(e.indexConstraints[col.IndexName], col)
+			}
+		}
+	}
+	return e.indexConstraints
+}
+func (e *Entity) getUniqueConstraints() map[string][]ColumnDef {
+	if len(e.uniqueConstraints) == 0 {
+		e.uniqueConstraints = map[string][]ColumnDef{}
+		for _, col := range e.cols {
+			if col.UniqueName != "" {
+				e.uniqueConstraints[col.UniqueName] = append(e.uniqueConstraints[col.UniqueName], col)
+			}
+		}
+	}
+	return e.uniqueConstraints
 }
 
 type ColumnDef struct {
@@ -166,7 +190,7 @@ func (u *utils) ParseTagFromStruct(field reflect.StructField) ColumnDef {
 	if tagStr == "" {
 		tagStr = field.Tag.Get("gorm") // fallback
 	}
-
+	fmt.Println(tagStr)
 	col := ColumnDef{
 		Name:     u.SnakeCase(field.Name),
 		Field:    field,
@@ -180,11 +204,57 @@ func (u *utils) ParseTagFromStruct(field reflect.StructField) ColumnDef {
 	tags := strings.Split(tagStr, ";")
 	for _, tag := range tags {
 		tag = strings.TrimSpace(tag)
+		key := tag
+		if key == "index" || key == "idx" {
+			col.IndexName = col.Name
+			continue
+		}
+		if key == "uk" || key == "unique" {
+			col.IndexName = col.Name
+			continue
+		}
+		if strings.Contains(key, "index:") {
+			col.IndexName = key[6:]
+			continue
+		}
+		if strings.Contains(key, "idx:") {
+			col.IndexName = key[4:]
+			continue
+		}
+		if strings.Contains(key, "index(") {
+			key = strings.Split(key, "(")[1]
+			col.IndexName = strings.Split(key, "(")[0]
+			continue
+		}
+		if strings.Contains(key, "idx(") {
+			key = strings.Split(key, "(")[1]
+			col.IndexName = strings.Split(key, "(")[0]
+			continue
+		}
+
+		if strings.Contains(key, "unique:") {
+			col.UniqueName = key[7:]
+			continue
+		}
+		if strings.Contains(key, "uk:") {
+			col.UniqueName = key[3:]
+			continue
+		}
+		if strings.Contains(key, "unique(") {
+			key = strings.Split(key, "(")[1]
+			col.UniqueName = strings.Split(key, "(")[0]
+			continue
+		}
+		if strings.Contains(key, "uk(") {
+			key = strings.Split(key, "(")[1]
+			col.UniqueName = strings.Split(key, "(")[0]
+			continue
+		}
 		if tag == "" {
 			continue
 		}
 
-		var key, val string
+		var val string
 
 		if strings.Contains(tag, ":") {
 			parts := strings.SplitN(tag, ":", 2)
@@ -209,8 +279,9 @@ func (u *utils) ParseTagFromStruct(field reflect.StructField) ColumnDef {
 			col.PKName = "PK"
 		case "uk", "unique":
 			col.UniqueName = col.Name
-		case "idx", "index":
+		case "index":
 			col.IndexName = col.Name
+
 		case "auto", "autoincrement":
 			col.IsAuto = true
 		case "default":

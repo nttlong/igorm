@@ -18,6 +18,11 @@ type TenantDB struct {
 	Version     string
 	hasDetected bool
 }
+
+func (db *TenantDB) GetDBName() string {
+	return db.dbName
+}
+
 type DB_DRIVER_TYPE string
 
 const (

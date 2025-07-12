@@ -8,6 +8,7 @@ import (
 type IMigrator interface {
 	Quote(names ...string) string
 	GetColumnDataTypeMapping() map[reflect.Type]string
+	GetGetDefaultValueByFromDbTag() map[string]string
 	GetSqlCreateTable(entityType reflect.Type) (string, error)
 	GetSqlAddColumn(entityType reflect.Type) (string, error)
 	GetSqlAddIndex(entityType reflect.Type) (string, error)

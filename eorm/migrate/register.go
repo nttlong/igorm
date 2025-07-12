@@ -81,8 +81,12 @@ func (reg *modelRegister) GetModelByType(typ reflect.Type) *modelRegistryInfo {
 	var ret *modelRegistryInfo
 	reg.cacheModelRegistry.Range(func(key, value interface{}) bool {
 		m := value.(modelRegistryInfo)
-		ret = &m
-		return true
+		fmt.Println(m.modelType.String(), typ.String())
+		if m.modelType == typ {
+			ret = &m
+			return false // <-- dừng duyệt nếu tìm thấy (RETURN FALSE mới là dừng)
+		}
+		return true // tiếp tục duyệt
 	})
 	reg.cacheGetModelByType.Store(typ, ret)
 	return ret

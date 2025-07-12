@@ -18,6 +18,11 @@ type migratorMssql struct {
 func (m *migratorMssql) Quote(names ...string) string {
 	return "[" + strings.Join(names, "].[") + "]"
 }
+func (m *migratorMssql) GetGetDefaultValueByFromDbTag() map[string]string {
+	return map[string]string{
+		"now": "GETDATE()",
+	}
+}
 func (m *migratorMssql) GetColumnDataTypeMapping() map[reflect.Type]string {
 	return map[reflect.Type]string{
 		reflect.TypeOf(""):          "nvarchar",
@@ -41,9 +46,10 @@ func (m *migratorMssql) GetColumnDataTypeMapping() map[reflect.Type]string {
 }
 func (m *migratorMssql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 	mapType := m.GetColumnDataTypeMapping()
+	defaultValueByFromDbTag := m.GetGetDefaultValueByFromDbTag()
 
 	// Load database schema hiện tại
-	schema, err := m.loader.LoadFullSchema(m.db.DB)
+	schema, err := m.loader.LoadFullSchema(m.db)
 	if err != nil {
 		return "", err
 	}
@@ -51,9 +57,15 @@ func (m *migratorMssql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 	// Lấy entity đã đăng ký
 	entityItem := ModelRegistry.GetModelByType(typ)
 	if entityItem == nil {
+		return "", fmt.Errorf("model %s not found, please register model first by call ModelRegistry.Add(%s)", typ.String(), typ.String())
+	}
+	if entityItem == nil {
 		return "", fmt.Errorf("model %s not found", typ.Name())
 	}
 	tableName := entityItem.tableName
+	if _, ok := schema.Tables[tableName]; ok {
+		return "", nil
+	}
 
 	// Nếu bảng đã tồn tại → không tạo
 	if _, ok := schema.Tables[tableName]; ok {
@@ -86,10 +98,14 @@ func (m *migratorMssql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 		}
 
 		if col.Default != "" {
-			defaultVal := col.Default
-			if strings.EqualFold(defaultVal, "now") {
-				defaultVal = "GETDATE()"
+			defaultVal := ""
+			if val, ok := defaultValueByFromDbTag[col.Default]; ok {
+				defaultVal = val
+			} else {
+				err = fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s ", col.Default, reflect.TypeOf(m).Elem())
+				panic(err)
 			}
+
 			colDef += fmt.Sprintf(" DEFAULT %s", defaultVal)
 		}
 
@@ -127,14 +143,121 @@ func (m *migratorMssql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 }
 
 func (m *migratorMssql) GetSqlAddColumn(typ reflect.Type) (string, error) {
-	panic("not implemented")
+	mapType := m.GetColumnDataTypeMapping()
+	defaultValueByFromDbTag := m.GetGetDefaultValueByFromDbTag()
+
+	// Load database schema hiện tại
+	schema, err := m.loader.LoadFullSchema(m.db)
+	if err != nil {
+		return "", err
+	}
+
+	// Lấy entity đã đăng ký
+	entityItem := ModelRegistry.GetModelByType(typ)
+	if entityItem == nil {
+		return "", fmt.Errorf("model %s not found, please register model first by call ModelRegistry.Add(%s)", typ.String(), typ.String())
+	}
+	scripts := []string{}
+	for _, col := range entityItem.entity.cols {
+		if _, ok := schema.Tables[entityItem.tableName][col.Name]; !ok {
+			fieldType := col.Field.Type
+			if fieldType.Kind() == reflect.Ptr {
+				fieldType = fieldType.Elem()
+			}
+
+			sqlType := mapType[fieldType]
+			if col.Length != nil {
+				sqlType = fmt.Sprintf("%s(%d)", sqlType, *col.Length)
+			}
+
+			colDef := m.Quote(col.Name) + " " + sqlType
+
+			if col.IsAuto {
+				colDef += " IDENTITY(1,1)"
+			}
+
+			if col.Nullable {
+				colDef += " NULL"
+			} else {
+				colDef += " NOT NULL"
+			}
+
+			if col.Default != "" {
+				defaultVal := ""
+				if val, ok := defaultValueByFromDbTag[col.Default]; ok {
+					defaultVal = val
+				} else {
+					err = fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s ", col.Default, reflect.TypeOf(m).Elem())
+					panic(err)
+				}
+
+				colDef += fmt.Sprintf(" DEFAULT %s", defaultVal)
+			}
+
+			scripts = append(scripts, fmt.Sprintf("ALTER TABLE %s ADD %s", m.Quote(entityItem.tableName), colDef))
+		}
+	}
+
+	return strings.Join(scripts, ";\n"), nil
 
 }
 func (m *migratorMssql) GetSqlAddIndex(typ reflect.Type) (string, error) {
-	panic("not implemented")
+	scripts := []string{}
+
+	// Load database schema hiện tại
+	schema, err := m.loader.LoadFullSchema(m.db)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(typ.String())
+	// Lấy entity đã đăng ký
+	entityItem := ModelRegistry.GetModelByType(typ)
+	if entityItem == nil {
+		return "", fmt.Errorf("model %s not found, please register model first by call ModelRegistry.Add(%s)", typ.String(), typ.String())
+	}
+	for _, cols := range entityItem.entity.getIndexConstraints() {
+		var colNames []string
+		colNameInConstraint := []string{}
+		for _, col := range cols {
+			colNames = append(colNames, m.Quote(col.Name))
+			colNameInConstraint = append(colNameInConstraint, col.Name)
+		}
+		constraintName := fmt.Sprintf("IDX_%s__%s", entityItem.tableName, strings.Join(colNameInConstraint, "_"))
+		if _, ok := schema.UniqueKeys[constraintName]; !ok {
+			constraint := fmt.Sprintf("CREATE INDEX %s ON %s (%s)", m.Quote(constraintName), m.Quote(entityItem.tableName), strings.Join(colNames, ", "))
+			scripts = append(scripts, constraint)
+
+		}
+	}
+	return strings.Join(scripts, ";\n"), nil
 
 }
 func (m *migratorMssql) GetSqlAddUniqueIndex(typ reflect.Type) (string, error) {
-	panic("not implemented")
+	scripts := []string{}
+
+	// Load database schema hiện tại
+	schema, err := m.loader.LoadFullSchema(m.db)
+	if err != nil {
+		return "", err
+	}
+
+	// Lấy entity đã đăng ký
+	entityItem := ModelRegistry.GetModelByType(typ)
+	uk := entityItem.entity.getUniqueConstraints()
+	for _, cols := range uk {
+		var colNames []string
+		colNameInConstraint := []string{}
+		for _, col := range cols {
+			colNames = append(colNames, m.Quote(col.Name))
+			colNameInConstraint = append(colNameInConstraint, col.Name)
+		}
+		constraintName := fmt.Sprintf("UQ_%s__%s", entityItem.tableName, strings.Join(colNameInConstraint, "_"))
+		if _, ok := schema.UniqueKeys[constraintName]; !ok {
+			constraint := fmt.Sprintf("CONSTRAINT %s UNIQUE (%s)", m.Quote(constraintName), strings.Join(colNames, ", "))
+			script := fmt.Sprintf("ALTER TABLE %s ADD %s", m.Quote(entityItem.tableName), constraint)
+			scripts = append(scripts, script)
+		}
+	}
+	return strings.Join(scripts, ";\n"), nil
 
 }

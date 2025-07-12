@@ -1,7 +1,6 @@
 package migrate
 
 import (
-	"database/sql"
 	"eorm/tenantDB"
 	"fmt"
 )
@@ -51,10 +50,8 @@ type DbSchema struct {
 	Indexes map[string]ColumnsInfo
 }
 type IMigratorLoader interface {
-	GetError() error
-
-	LoadAllTable(db *sql.DB) (map[string]map[string]ColumnInfo, error)
-	LoadAllPrimaryKey(db *sql.DB) (map[string]ColumnsInfo, error)
+	LoadAllTable(db *tenantDB.TenantDB) (map[string]map[string]ColumnInfo, error)
+	LoadAllPrimaryKey(db *tenantDB.TenantDB) (map[string]ColumnsInfo, error)
 	/*
 		Heed: for SQL Server, we need to use the following query to get the unique keys:
 			SELECT
@@ -64,12 +61,12 @@ type IMigratorLoader interface {
 			JOIN sys.tables t ON i.object_id = t.object_id
 			WHERE i.type_desc = 'NONCLUSTERED' and is_unique_constraint=1
 	*/
-	LoadAllUniIndex(db *sql.DB) (map[string]ColumnsInfo, error)
+	LoadAllUniIndex(db *tenantDB.TenantDB) (map[string]ColumnsInfo, error)
 	/*
 
 	 */
-	LoadAllIndex(db *sql.DB) (map[string]ColumnsInfo, error)
-	LoadFullSchema(db *sql.DB) (*DbSchema, error)
+	LoadAllIndex(db *tenantDB.TenantDB) (map[string]ColumnsInfo, error)
+	LoadFullSchema(db *tenantDB.TenantDB) (*DbSchema, error)
 }
 
 func MigratorLoader(db *tenantDB.TenantDB) (IMigratorLoader, error) {
