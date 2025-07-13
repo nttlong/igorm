@@ -1,6 +1,7 @@
 package tenantDB
 
 import (
+	"context"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
@@ -25,7 +26,49 @@ type tenantDBInfo struct {
 	hasDetected bool
 	key         string
 }
+type TenantTx struct {
+	*sql.Tx
+	info *tenantDBInfo
+}
 
+func (tx *TenantTx) GetDriverName() string {
+	return tx.info.driverName
+}
+func (tx *TenantTx) GetDBName() string {
+	return tx.info.dbName
+}
+func (tx *TenantTx) GetDbType() DB_DRIVER_TYPE {
+	return tx.info.DbType
+}
+func (db *TenantDB) Begin() (*TenantTx, error) {
+	db.Detect()
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	return &TenantTx{
+		Tx:   tx,
+		info: db.info,
+	}, nil
+
+}
+func (db *TenantDB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*TenantTx, error) {
+	db.Detect()
+	tx, err := db.DB.BeginTx(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return &TenantTx{
+		Tx:   tx,
+		info: db.info,
+	}, nil
+}
+
+func (db *TenantDB) GetDriverName() string {
+	return db.info.driverName
+}
 func (db *TenantDB) GetDBName() string {
 	return db.info.dbName
 }
@@ -65,7 +108,10 @@ func (info *tenantDBInfo) Detect(db *sql.DB) (*tenantDBInfo, error) {
 	actual, _ := cacheDbDetector.LoadOrStore(key, &dbDetectInit{})
 	di := actual.(*dbDetectInit)
 	di.once.Do(func() {
-		di.val = tenantDBInfo{}
+		di.val = tenantDBInfo{
+			driverName: info.driverName,
+			key:        info.key,
+		}
 		di.err = di.val.detect(db)
 	})
 	if di.err != nil {

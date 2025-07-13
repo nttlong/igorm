@@ -12,8 +12,6 @@ type cacheSqlExecutorBuildSourceItem struct {
 	source string
 }
 
-var cacheSqlExecutorToSql sync.Map
-
 type SqlBuilderReceiver struct {
 }
 type SqlExecutor struct {
@@ -144,6 +142,14 @@ func (s *SqlExecutor) buildSelectors(compiler *exprCompiler, dialect Dialect) er
 	return nil
 
 }
+
+type toSqlInit struct {
+	once sync.Once
+	val  string
+}
+
+var cacheSqlExecutorToSql sync.Map
+
 func (s *SqlExecutor) ToSql(dialect Dialect) (string, []interface{}) {
 	key := dialect.Name() + "://" + s.source + "?" + s.selectors
 	if s.tableInDataBase != nil {
@@ -152,10 +158,25 @@ func (s *SqlExecutor) ToSql(dialect Dialect) (string, []interface{}) {
 	if s.dbName != "" {
 		key += "@" + s.dbName
 	}
-	if v, ok := cacheSqlExecutorToSql.Load(key); ok {
 
-		return v.(string), s.args
+	actual, _ := cacheSqlExecutorToSql.LoadOrStore(key, &toSqlInit{})
+	v := actual.(*toSqlInit)
+	var err error
+	var sql string
+	v.once.Do(func() {
+		sql, err = s.toSql(dialect)
+		v.val = sql
+
+	})
+	if err != nil {
+		s.Err = err
+		return "", s.args
 	}
+	return v.val, s.args
+
+}
+func (s *SqlExecutor) toSql(dialect Dialect) (string, error) {
+
 	dbSchema := map[string]bool{}
 	if s.tableInDataBase != nil {
 		for _, table := range *s.tableInDataBase {
@@ -173,17 +194,17 @@ func (s *SqlExecutor) ToSql(dialect Dialect) (string, []interface{}) {
 	}
 	err := s.buildSource(exprCompile, dialect)
 	if err != nil {
-		s.Err = err
-		return "", nil
+
+		return "", err
 	}
 	err = s.buildSelectors(exprCompile, dialect)
 	if err != nil {
-		s.Err = err
-		return "", nil
+
+		return "", err
 	}
 	sql := "SELECT " + s.selectors + " FROM " + s.source
-	cacheSqlExecutorToSql.Store(key, sql)
-	return sql, s.args
+
+	return sql, nil
 
 }
 

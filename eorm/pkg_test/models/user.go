@@ -14,4 +14,5 @@ type User struct {
 	Address    string  `db:"size:255"`
 	DeptID     int     `db:"idx:idx_user_dept"`
 	PositionID int     `db:"idx:idx_user_pos"`
+	Username   *string `db:"size:50;unique"`
 }

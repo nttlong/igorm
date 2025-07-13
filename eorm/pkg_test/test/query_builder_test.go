@@ -99,7 +99,10 @@ func BenchmarkCreateMigrateTest(b *testing.B) {
 				db, err := eorm.Open("mssql", msssqlDns)
 				errs[index] = err
 				if err == nil {
-					rm, err := eorm.NewMigrator2(db)
+					rm, err := eorm.NewMigrator(db)
+					if err == nil {
+						err = rm.DoMigrates()
+					}
 					errs[index] = err
 					m[index] = rm
 				}
@@ -116,5 +119,43 @@ func BenchmarkCreateMigrateTest(b *testing.B) {
 		for i := 1; i < len(m); i++ {
 			assert.Equal(b, mcheck, m[i])
 		}
+	}
+}
+func TestInsertUser(t *testing.T) {
+	msssqlDns := "sqlserver://sa:123456@localhost:1433?database=a001"
+	db, err := eorm.Open("mssql", msssqlDns)
+	assert.NoError(t, err)
+	defer db.Close()
+	for i := 19607; i < 19607+10000; i++ {
+		data, err := eorm.Repo[models.User]().Insert(db, &models.User{
+			Name:     "test" + fmt.Sprintf("%d", i),
+			Email:    "test" + fmt.Sprintf("%d", i) + "@gmail.com",
+			Username: eorm.Ptr("test" + fmt.Sprintf("%d", i)),
+		})
+		assert.NoError(t, err)
+		assert.NotEmpty(t, data)
+	}
+
+}
+func BenchmarkInsertUser(b *testing.B) {
+	msssqlDns := "sqlserver://sa:123456@localhost:1433?database=a001"
+	db, err := eorm.Open("mssql", msssqlDns)
+	assert.NoError(b, err)
+	defer db.Close()
+	for i := 0; i < b.N; i++ {
+
+		data, err := eorm.Repo[models.User]().InsertContext(b.Context(), db, &models.User{ //<-- inser to database
+			Name:     "test" + fmt.Sprintf("%d", i+50000),
+			Email:    "test" + fmt.Sprintf("%d", i+50000) + "@gmail.com",
+			Username: eorm.Ptr("test" + fmt.Sprintf("%d", i+30000)),
+		})
+		if err != nil {
+
+			assert.Equal(b, "code=ERR0001, duplicate: duplicate cols username tables users, entity fields Username", err.Error())
+		} else {
+			assert.NoError(b, err)
+		}
+
+		assert.NotEmpty(b, data)
 	}
 }

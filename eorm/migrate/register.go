@@ -74,22 +74,77 @@ func (reg *modelRegister) GetAllModels() []modelRegistryInfo {
 	})
 	return ret
 }
+
+type getModelByTypeInit struct {
+	once sync.Once
+	ret  *modelRegistryInfo
+}
+
 func (reg *modelRegister) GetModelByType(typ reflect.Type) *modelRegistryInfo {
-	if v, ok := reg.cacheGetModelByType.Load(typ); ok {
-		return v.(*modelRegistryInfo)
-	}
+	actual, _ := reg.cacheGetModelByType.LoadOrStore(typ, &getModelByTypeInit{})
+	init := actual.(*getModelByTypeInit)
+	init.once.Do(func() {
+		init.ret = reg.getModelByType(typ)
+	})
+	return init.ret
+}
+func (reg *modelRegister) getModelByType(typ reflect.Type) *modelRegistryInfo {
+
 	var ret *modelRegistryInfo
 	reg.cacheModelRegistry.Range(func(key, value interface{}) bool {
 		m := value.(modelRegistryInfo)
-		fmt.Println(m.modelType.String(), typ.String())
+
 		if m.modelType == typ {
 			ret = &m
 			return false // <-- dừng duyệt nếu tìm thấy (RETURN FALSE mới là dừng)
 		}
 		return true // tiếp tục duyệt
 	})
-	reg.cacheGetModelByType.Store(typ, ret)
+
 	return ret
 }
 
 var ModelRegistry = &modelRegister{}
+
+func (m *modelRegistryInfo) GetTableName() string {
+	return m.tableName
+}
+func (m *modelRegistryInfo) GetEntity() Entity {
+	return m.entity
+
+}
+func GetModelByType(typ reflect.Type) *modelRegistryInfo {
+	return ModelRegistry.GetModelByType(typ)
+}
+
+type initFindUKConstraint struct {
+	once sync.Once
+	val  *UKConstraintResult
+}
+type UKConstraintResult struct {
+	TableName string
+	Columns   []ColumnDef
+}
+
+var cacheFindUKConstraint sync.Map
+
+func FindUKConstraint(name string) *UKConstraintResult {
+	actual, _ := cacheFindUKConstraint.LoadOrStore(name, &initFindUKConstraint{})
+	init := actual.(*initFindUKConstraint)
+	init.once.Do(func() {
+		init.val = findUKConstraint(name)
+	})
+	return init.val
+}
+func findUKConstraint(name string) *UKConstraintResult {
+	for _, model := range ModelRegistry.GetAllModels() {
+		uk := model.entity.getBuildUniqueConstraints()
+		if _, ok := uk[name]; ok {
+			return &UKConstraintResult{
+				TableName: model.tableName,
+				Columns:   uk[name],
+			}
+		}
+	}
+	return nil
+}

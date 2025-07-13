@@ -75,10 +75,13 @@ func (u *dialectFactoryReceiver) DetectDatabaseType(db *sql.DB) (DB_TYPE, string
 
 	return DB_TYPE_Unknown, version, errors.New("unable to detect database type")
 }
-func (d *dialectFactoryReceiver) Create(driverName string) Dialect {
-	if v, ok := d.cacheCreate.Load(driverName); ok {
-		return v.(Dialect)
-	}
+
+type dialectCreateInit struct {
+	once sync.Once
+	val  Dialect
+}
+
+func (d *dialectFactoryReceiver) create(driverName string) Dialect {
 	var ret Dialect
 	switch driverName {
 	case "mysql":
@@ -91,8 +94,18 @@ func (d *dialectFactoryReceiver) Create(driverName string) Dialect {
 	default:
 		panic(fmt.Errorf("unsupported driver: %s", driverName))
 	}
-	d.cacheCreate.Store(driverName, ret)
+
 	return ret
+}
+func (d *dialectFactoryReceiver) Create(driverName string) Dialect {
+
+	actual, _ := d.cacheCreate.LoadOrStore(driverName, &dialectCreateInit{})
+	init := actual.(*dialectCreateInit)
+	init.once.Do(func() {
+		init.val = d.create(driverName)
+	})
+	return init.val
+
 }
 
 var dialectFactory = dialectFactoryReceiver{}

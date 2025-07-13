@@ -27,15 +27,38 @@ example:
 	}
 */
 type Entity struct {
-	entityType         reflect.Type
-	tableName          string
-	cols               []ColumnDef          //<-- list of all columns
-	mapCols            map[string]ColumnDef //<-- used for faster access to column by name
-	primaryConstraints map[string][]ColumnDef
-	uniqueConstraints  map[string][]ColumnDef
-	indexConstraints   map[string][]ColumnDef
+	entityType               reflect.Type
+	tableName                string
+	cols                     []ColumnDef          //<-- list of all columns
+	mapCols                  map[string]ColumnDef //<-- used for faster access to column by name
+	primaryConstraints       map[string][]ColumnDef
+	uniqueConstraints        map[string][]ColumnDef
+	indexConstraints         map[string][]ColumnDef
+	buildUniqueConstraints   map[string][]ColumnDef
+	cacheGetAutoValueColumns sync.Map
+}
+type initGetAutoValueColumns struct {
+	once sync.Once
+	val  []ColumnDef
 }
 
+func (e *Entity) GetAutoValueColumns() []ColumnDef {
+	actual, _ := e.cacheGetAutoValueColumns.LoadOrStore(e.entityType, &initGetAutoValueColumns{})
+	init := actual.(*initGetAutoValueColumns)
+	init.once.Do(func() {
+		init.val = []ColumnDef{}
+		for _, col := range e.cols {
+			if col.IsAuto {
+				init.val = append(init.val, col)
+			}
+		}
+	})
+	return init.val
+}
+
+func (e *Entity) GetColumns() []ColumnDef {
+	return e.cols
+}
 func (e *Entity) getIndexConstraints() map[string][]ColumnDef {
 	if e.indexConstraints == nil || len(e.indexConstraints) == 0 {
 		e.indexConstraints = map[string][]ColumnDef{}
@@ -57,6 +80,37 @@ func (e *Entity) getUniqueConstraints() map[string][]ColumnDef {
 		}
 	}
 	return e.uniqueConstraints
+}
+
+type initGetBuildUniqueConstraints struct {
+	once sync.Once
+	val  map[string][]ColumnDef
+}
+
+var cacheGetBuildUniqueConstraints = sync.Map{}
+
+func (e *Entity) GetBuildUniqueConstraints() map[string][]ColumnDef {
+	actual, _ := cacheGetBuildUniqueConstraints.LoadOrStore(e.entityType, &initGetBuildUniqueConstraints{})
+	init := actual.(*initGetBuildUniqueConstraints)
+	init.once.Do(func() {
+		init.val = e.getBuildUniqueConstraints()
+	})
+	return init.val
+}
+func (e *Entity) getBuildUniqueConstraints() map[string][]ColumnDef {
+	if len(e.buildUniqueConstraints) == 0 {
+		e.buildUniqueConstraints = map[string][]ColumnDef{}
+		for _, constraint := range e.getUniqueConstraints() {
+			tableName := e.tableName
+			cols := []string{}
+			for _, col := range constraint {
+				cols = append(cols, col.Name)
+			}
+			key := "UQ_" + tableName + "__" + strings.Join(cols, "___")
+			e.buildUniqueConstraints[key] = constraint
+		}
+	}
+	return e.buildUniqueConstraints
 }
 
 type ColumnDef struct {
@@ -209,7 +263,7 @@ func (u *utils) ParseTagFromStruct(field reflect.StructField) ColumnDef {
 			continue
 		}
 		if key == "uk" || key == "unique" {
-			col.IndexName = col.Name
+			col.UniqueName = col.Name
 			continue
 		}
 		if strings.Contains(key, "index:") {

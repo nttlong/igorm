@@ -2,6 +2,7 @@ package eorm
 
 import (
 	"database/sql"
+	"eorm/migrate"
 	"fmt"
 	"strings"
 )
@@ -32,4 +33,10 @@ func (d *postgresDialect) SqlFunction(delegator *DialectDelegateFunction) (strin
 
 		return "", nil
 	}
+}
+func (d *postgresDialect) MakeSqlInsert(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{}) {
+	panic(fmt.Errorf("not implemented, see file eorm/dialect.Postgres.go"))
+}
+func (d *postgresDialect) ParseError(err error) DialectError {
+	panic(fmt.Errorf("not implemented, see file eorm/dialect.msPostgressql.go"))
 }

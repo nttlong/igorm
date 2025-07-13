@@ -17,21 +17,39 @@ type utilsReceiver struct {
 	cacheQuoteText   sync.Map
 	EXPR             exprUtils
 }
+type initPlural struct {
+	once sync.Once
+	val  string
+}
 
 func (u *utilsReceiver) Plural(txt string) string {
-	if v, ok := u.cachePlural.Load(txt); ok {
-		return v.(string)
-	}
-	txt = strings.ToLower(txt)
-	ret := pluralize.Plural(txt)
-	u.cachePlural.Store(txt, ret)
+	actual, _ := u.cachePlural.LoadOrStore(txt, &initPlural{})
+	init := actual.(*initPlural)
 
-	return ret
+	init.once.Do(func() {
+		txt = strings.ToLower(txt)
+		ret := pluralize.Plural(txt)
+		init.val = ret
+	})
+	return init.val
 }
+
+type initToSnakeCase struct {
+	once sync.Once
+	val  string
+}
+
 func (u *utilsReceiver) ToSnakeCase(str string) string {
-	if v, ok := u.cacheToSnakeCase.Load(str); ok {
-		return v.(string)
-	}
+	actual, _ := u.cacheToSnakeCase.LoadOrStore(str, &initToSnakeCase{})
+	init := actual.(*initToSnakeCase)
+
+	init.once.Do(func() {
+		init.val = u.toSnakeCase(str)
+	})
+	return init.val
+}
+func (u *utilsReceiver) toSnakeCase(str string) string {
+
 	var result []rune
 	for i, r := range str {
 		if i > 0 && unicode.IsUpper(r) &&
@@ -41,7 +59,7 @@ func (u *utilsReceiver) ToSnakeCase(str string) string {
 		result = append(result, unicode.ToLower(r))
 	}
 	ret := string(result)
-	u.cacheToSnakeCase.Store(str, ret)
+
 	return ret
 }
 

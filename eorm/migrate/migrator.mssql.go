@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -252,7 +253,7 @@ func (m *migratorMssql) GetSqlAddUniqueIndex(typ reflect.Type) (string, error) {
 			colNames = append(colNames, m.Quote(col.Name))
 			colNameInConstraint = append(colNameInConstraint, col.Name)
 		}
-		constraintName := fmt.Sprintf("UQ_%s__%s", entityItem.tableName, strings.Join(colNameInConstraint, "_"))
+		constraintName := fmt.Sprintf("UQ_%s__%s", entityItem.tableName, strings.Join(colNameInConstraint, "___"))
 		if _, ok := schema.UniqueKeys[constraintName]; !ok {
 			constraint := fmt.Sprintf("CONSTRAINT %s UNIQUE (%s)", m.Quote(constraintName), strings.Join(colNames, ", "))
 			script := fmt.Sprintf("ALTER TABLE %s ADD %s", m.Quote(entityItem.tableName), constraint)
@@ -298,12 +299,25 @@ func (m *migratorMssql) DoMigrate(entityType reflect.Type) error {
 	return nil
 
 }
+
+type initDoMigrates struct {
+	once sync.Once
+}
+
+var cacheDoMigrates sync.Map
+
 func (m *migratorMssql) DoMigrates() error {
-	for _, entity := range ModelRegistry.GetAllModels() {
-		err := m.DoMigrate(entity.entity.entityType)
-		if err != nil {
-			return err
+	key := fmt.Sprintf("%s_%s", m.db.GetDBName(), m.db.GetDbType())
+	actual, _ := cacheDoMigrates.LoadOrStore(key, &initDoMigrates{})
+
+	mi := actual.(*initDoMigrates)
+	var err error
+	mi.once.Do(func() {
+
+		for _, entity := range ModelRegistry.GetAllModels() {
+			err = m.DoMigrate(entity.entity.entityType)
+
 		}
-	}
-	return nil
+	})
+	return err
 }
