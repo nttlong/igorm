@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"sync"
+
+	"golang.org/x/sync/singleflight"
 )
 
 type IMigrator interface {
@@ -26,9 +28,9 @@ type migratorInit struct {
 	err  error
 }
 
-var cacheNewMigrator sync.Map
+// var cacheNewMigrator sync.Map
 
-func NewMigrator(db *tenantDB.TenantDB) (IMigrator, error) {
+func NewMigrator2(db *tenantDB.TenantDB) (IMigrator, error) {
 	err := db.Detect()
 	if err != nil {
 		return nil, err
@@ -57,4 +59,54 @@ func NewMigrator(db *tenantDB.TenantDB) (IMigrator, error) {
 	})
 
 	return mi.val, mi.err
+}
+
+var (
+	cacheNewMigrator sync.Map
+	migratorGroup    singleflight.Group
+)
+
+func NewMigrator(db *tenantDB.TenantDB) (IMigrator, error) {
+	err := db.Detect()
+	if err != nil {
+		return nil, err
+	}
+	key := fmt.Sprintf("%s:%s", db.GetDBName(), db.GetDbType())
+
+	// 1. Check cache trước
+	if v, ok := cacheNewMigrator.Load(key); ok {
+		return v.(IMigrator), nil
+	}
+
+	// 2. Dùng singleflight để tránh gọi trùng
+	v, err, _ := migratorGroup.Do(key, func() (interface{}, error) {
+		// Check cache lần nữa trong group (để tránh race)
+		if v, ok := cacheNewMigrator.Load(key); ok {
+			return v, nil
+		}
+
+		var ret IMigrator
+		switch db.GetDbType() {
+		case tenantDB.DB_DRIVER_MSSQL:
+			loader, err := MigratorLoader(db)
+			if err != nil {
+				return nil, err
+			}
+			ret = &migratorMssql{
+				db:     db,
+				loader: loader,
+			}
+		default:
+			return nil, fmt.Errorf("unsupported database type: %s", db.GetDbType())
+		}
+
+		cacheNewMigrator.Store(key, ret)
+		return ret, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return v.(IMigrator), nil
 }

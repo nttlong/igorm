@@ -21,3 +21,6 @@ var ModelRegistry = migrate.ModelRegistry
 func NewMigrator(db *tenantDB.TenantDB) (migrate.IMigrator, error) {
 	return migrate.NewMigrator(db)
 }
+func NewMigrator2(db *tenantDB.TenantDB) (migrate.IMigrator, error) {
+	return migrate.NewMigrator2(db)
+}

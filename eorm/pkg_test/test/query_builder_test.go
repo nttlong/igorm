@@ -83,38 +83,35 @@ func TestCreateMigrate(t *testing.T) {
 func BenchmarkCreateMigrateTest(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 
-		paralel := 1
-		m := make([]migrate.IMigrator, paralel)
-		errs := make([]error, paralel)
+		const parallel = 1000
+		m := make([]migrate.IMigrator, parallel)
+		errs := make([]error, parallel)
 
 		var wg sync.WaitGroup
+		wg.Add(parallel)
 
-		for i := 0; i < paralel; i++ {
-
-			wg.Add(1) // Quan trọng!
-
-			go func() {
+		for j := 0; j < parallel; j++ {
+			j := j // capture đúng j
+			go func(index int) {
 				defer wg.Done()
+
 				msssqlDns := "sqlserver://sa:123456@localhost:1433?database=a001"
 				db, err := eorm.Open("mssql", msssqlDns)
-				errs = append(errs, err)
+				errs[index] = err
 				if err == nil {
-					rm, err := eorm.NewMigrator(db)
-					errs[i] = err
-					m[i] = rm
-
+					rm, err := eorm.NewMigrator2(db)
+					errs[index] = err
+					m[index] = rm
 				}
-			}()
+			}(j)
 		}
 
-		wg.Wait() // Đợi cả 2 goroutine xong
+		wg.Wait()
 
 		for _, err := range errs {
-			if err != nil {
-				fmt.Println(err)
-			}
 			assert.NoError(b, err)
 		}
+
 		mcheck := m[0]
 		for i := 1; i < len(m); i++ {
 			assert.Equal(b, mcheck, m[i])
