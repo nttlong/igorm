@@ -8,15 +8,8 @@ import (
 
 type Model[T any] struct {
 	migrate.Entity
-	obj interface{}
 }
 
-func (m *Model[T]) New() Model[T] {
-	obj := reflect.New(reflect.TypeFor[T]()).Interface().(T)
-	ret := Model[T]{obj: obj}
-	return ret
-
-}
 func (m *Model[T]) Insert(db *tenantDB.TenantDB) error {
 
 	migrator, err := migrate.NewMigrator(db)

@@ -55,7 +55,9 @@ func (e *Entity) GetAutoValueColumns() []ColumnDef {
 	})
 	return init.val
 }
-
+func (e *Entity) GetType() reflect.Type {
+	return e.entityType
+}
 func (e *Entity) GetColumns() []ColumnDef {
 	return e.cols
 }

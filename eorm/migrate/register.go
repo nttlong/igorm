@@ -17,6 +17,18 @@ type modelRegister struct {
 	cacheGetModelByType sync.Map
 }
 
+func (info *modelRegistryInfo) GetColumns() []ColumnDef {
+	return info.entity.cols
+}
+func (info *modelRegistryInfo) GetPrimaryConstraints() map[string][]ColumnDef {
+	return info.entity.primaryConstraints
+}
+func (info *modelRegistryInfo) GetUniqueConstraints() map[string][]ColumnDef {
+	return info.entity.uniqueConstraints
+}
+func (info *modelRegistryInfo) GetIndexConstraints() map[string][]ColumnDef {
+	return info.entity.indexConstraints
+}
 func (reg *modelRegister) getTableName(typ reflect.Type) (string, error) {
 	// scan field
 	for i := 0; i < typ.NumField(); i++ {

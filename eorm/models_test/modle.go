@@ -17,4 +17,5 @@ type User struct {
 
 func init() {
 	eorm.ModelRegistry.Add(&User{})
+
 }
