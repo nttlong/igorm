@@ -137,6 +137,30 @@ func TestInsertUser(t *testing.T) {
 	}
 
 }
+func TestInsertUserWitTx(t *testing.T) {
+	msssqlDns := "sqlserver://sa:123456@localhost:1433?database=a001"
+	db, err := eorm.Open("mssql", msssqlDns)
+	assert.NoError(t, err)
+	defer db.Close()
+	tx, err := db.Begin()
+	assert.NoError(t, err)
+	for i := 19607; i < 19607+10000; i++ {
+		data, err := eorm.Repo[models.User]().InsertWithTx(tx, &models.User{
+			Name:     "test" + fmt.Sprintf("%d", i),
+			Email:    "test" + fmt.Sprintf("%d", i) + "@gmail.com",
+			Username: eorm.Ptr("test" + fmt.Sprintf("%d", i)),
+		})
+		if err != nil {
+
+			assert.Equal(t, "code=ERR0001, duplicate: duplicate cols username tables users, entity fields Username", err.Error())
+		} else {
+			assert.NoError(t, err)
+		}
+		assert.NotEmpty(t, data)
+	}
+	err = tx.Commit()
+	assert.NoError(t, err)
+}
 func BenchmarkInsertUser(b *testing.B) {
 	msssqlDns := "sqlserver://sa:123456@localhost:1433?database=a001"
 	db, err := eorm.Open("mssql", msssqlDns)
