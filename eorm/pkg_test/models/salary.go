@@ -3,7 +3,7 @@ package models
 import "eorm"
 
 type Salary struct {
-	eorm.Model
+	eorm.Model[Salary]
 	BaseModel
 	ID        int     `db:"pk;auto"`
 	UserID    int     `db:"idx:idx_salary_user"`

@@ -1,7 +1,9 @@
 package tenantDB
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"errors"
 	"strings"
 	"sync"
@@ -11,16 +13,24 @@ import (
 
 type TenantDB struct {
 	*sql.DB
-	dbName     string
+	info *tenantDBInfo
+}
+type tenantDBInfo struct {
+	dbName string
+
 	driverName string
 	DbType     DB_DRIVER_TYPE
 
 	Version     string
 	hasDetected bool
+	key         string
 }
 
 func (db *TenantDB) GetDBName() string {
-	return db.dbName
+	return db.info.dbName
+}
+func (db *TenantDB) GetDbType() DB_DRIVER_TYPE {
+	return db.info.DbType
 }
 
 type DB_DRIVER_TYPE string
@@ -38,17 +48,35 @@ const (
 	DB_DRIVER_Unknown   DB_DRIVER_TYPE = "unknown"
 )
 
-type DetectInfo struct {
-}
-
 type DbDetector struct {
 	cacheDetectDatabaseType sync.Map
 }
+type dbDetectInit struct {
+	once sync.Once
+	val  tenantDBInfo
+	err  error
+}
 
-func (db *TenantDB) Detect() error {
-	if db.hasDetected {
-		return nil
+var cacheDbDetector sync.Map
+
+func (info *tenantDBInfo) Detect(db *sql.DB) (*tenantDBInfo, error) {
+
+	key := info.driverName + ":" + info.key
+	actual, _ := cacheDbDetector.LoadOrStore(key, &dbDetectInit{})
+	di := actual.(*dbDetectInit)
+	di.once.Do(func() {
+		di.val = tenantDBInfo{}
+		di.err = di.val.detect(db)
+	})
+	if di.err != nil {
+		return nil, di.err
+	} else {
+
+		return &di.val, nil
 	}
+}
+
+func (info *tenantDBInfo) detect(db *sql.DB) error {
 
 	var version string
 	var dbName string
@@ -106,10 +134,9 @@ func (db *TenantDB) Detect() error {
 			if err != nil {
 				dbName = ""
 			}
-			db.DbType = dbType
-			db.dbName = dbName
-			db.Version = version
-			db.hasDetected = true
+			info.DbType = dbType
+			info.dbName = dbName
+			info.Version = version
 
 			return nil
 		}
@@ -117,13 +144,36 @@ func (db *TenantDB) Detect() error {
 
 	return errors.New("unable to detect database type")
 }
-func Open(driverName string, dataSourceName string) (*TenantDB, error) {
-	DB, err := sql.Open(driverName, dataSourceName)
+func Open(driverName, dsn string) (*TenantDB, error) {
+
+	DB, err := sql.Open(driverName, dsn)
 	if err != nil {
 		return nil, err
 	}
-	return &TenantDB{
-		DB:         DB,
+
+	hash := sha256.Sum256([]byte(dsn))
+	// Truncate nếu cần, ví dụ lấy 16 byte đầu (32 hex chars)
+	key := hex.EncodeToString(hash[:16])
+	info := &tenantDBInfo{
 		driverName: driverName,
-	}, nil
+		key:        key,
+	}
+
+	info, err = info.Detect(DB)
+	ret := &TenantDB{
+		DB:   DB,
+		info: info,
+	}
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
+}
+func (db *TenantDB) Detect() error {
+	info, err := db.info.Detect(db.DB)
+	if err != nil {
+		return err
+	}
+	db.info = info
+	return nil
 }

@@ -36,7 +36,7 @@ type User3 struct {
 }
 
 func init() {
-	ModelRegistry.Add(&User3{})
+	ModelRegistry.Add(&User{})
 }
 
 func TestMigrator(t *testing.T) {

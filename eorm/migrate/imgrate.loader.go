@@ -74,10 +74,10 @@ func MigratorLoader(db *tenantDB.TenantDB) (IMigratorLoader, error) {
 	if err != nil {
 		return nil, err
 	}
-	switch db.DbType {
+	switch db.GetDbType() {
 	case tenantDB.DB_DRIVER_MSSQL:
 		return &MigratorLoaderMssql{}, nil
 	default:
-		panic(fmt.Errorf("unsupported database type: %s", db.DbType))
+		panic(fmt.Errorf("unsupported database type: %s", string(db.GetDbType())))
 	}
 }

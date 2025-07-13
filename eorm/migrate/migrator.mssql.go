@@ -12,7 +12,8 @@ import (
 
 type migratorMssql struct {
 	loader IMigratorLoader
-	db     *tenantDB.TenantDB
+
+	db *tenantDB.TenantDB
 }
 
 func (m *migratorMssql) Quote(names ...string) string {

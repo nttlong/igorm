@@ -3,7 +3,7 @@ package models
 import "eorm"
 
 type Contract struct {
-	eorm.Model
+	eorm.Model[Contract]
 	BaseModel
 	ID        int    `db:"pk;auto"`
 	UserID    int    `db:"idx:idx_contract_user"`

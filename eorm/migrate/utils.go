@@ -1,7 +1,6 @@
 package migrate
 
 import (
-	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -190,7 +189,7 @@ func (u *utils) ParseTagFromStruct(field reflect.StructField) ColumnDef {
 	if tagStr == "" {
 		tagStr = field.Tag.Get("gorm") // fallback
 	}
-	fmt.Println(tagStr)
+
 	col := ColumnDef{
 		Name:     u.SnakeCase(field.Name),
 		Field:    field,
@@ -333,6 +332,7 @@ func (u *utils) ParseStruct(t reflect.Type) ([]ColumnDef, error) {
 	var cols []ColumnDef
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
+
 		if f.Anonymous {
 			if f.Type == reflect.TypeOf(Entity{}) {
 				continue // skip embedded Entity
@@ -340,8 +340,9 @@ func (u *utils) ParseStruct(t reflect.Type) ([]ColumnDef, error) {
 			subCols, _ := u.ParseStruct(f.Type)
 			cols = append(cols, subCols...)
 			continue
+		} else if f.IsExported() {
+			cols = append(cols, u.ParseTagFromStruct(f))
 		}
-		cols = append(cols, u.ParseTagFromStruct(f))
 	}
 	return cols, nil
 }

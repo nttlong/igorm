@@ -3,7 +3,7 @@ package models
 import "eorm"
 
 type LeaveRequest struct {
-	eorm.Model
+	eorm.Model[LeaveRequest]
 	BaseModel
 	ID        int    `db:"pk;auto"`
 	UserID    int    `db:"idx:idx_leave_user"`
