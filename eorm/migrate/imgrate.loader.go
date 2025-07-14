@@ -27,6 +27,18 @@ type ColumnsInfo struct {
 	TableName string
 	Columns   []ColumnInfo
 }
+
+/*
+This struct is used to store the foreign key information from the database .
+*/
+type DbForeignKeyInfo struct {
+	/**/
+	ConstraintName string
+	Table          string
+	Columns        []string
+	RefTable       string
+	RefColumns     []string
+}
 type DbSchema struct {
 	/*
 		Database name
@@ -47,7 +59,8 @@ type DbSchema struct {
 	/*
 		map[<Index name>]ColumnsInfo
 	*/
-	Indexes map[string]ColumnsInfo
+	Indexes     map[string]ColumnsInfo
+	ForeignKeys map[string]DbForeignKeyInfo
 }
 type IMigratorLoader interface {
 	LoadAllTable(db *tenantDB.TenantDB) (map[string]map[string]ColumnInfo, error)
@@ -67,6 +80,7 @@ type IMigratorLoader interface {
 	 */
 	LoadAllIndex(db *tenantDB.TenantDB) (map[string]ColumnsInfo, error)
 	LoadFullSchema(db *tenantDB.TenantDB) (*DbSchema, error)
+	LoadForeignKey(db *tenantDB.TenantDB) ([]DbForeignKeyInfo, error)
 }
 
 func MigratorLoader(db *tenantDB.TenantDB) (IMigratorLoader, error) {

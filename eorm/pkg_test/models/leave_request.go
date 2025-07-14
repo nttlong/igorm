@@ -12,3 +12,9 @@ type LeaveRequest struct {
 	Reason    string `db:"size:255"`
 	Status    string `db:"size:20"` // pending, approved, rejected
 }
+
+func init() {
+	eorm.ModelRegistry.Add(&LeaveRequest{})
+	(&LeaveRequest{}).AddForeignKey("UserID", &User{}, "ID")
+
+}

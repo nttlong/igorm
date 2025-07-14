@@ -12,7 +12,8 @@ import (
 )
 
 type migratorMssql struct {
-	loader IMigratorLoader
+	loader             IMigratorLoader
+	cacheGetFullScript sync.Map
 
 	db *tenantDB.TenantDB
 }
@@ -76,7 +77,9 @@ func (m *migratorMssql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 
 	// Danh sách các cột để tạo bảng
 	strCols := []string{}
+	newTableMap := map[string]bool{}
 	for _, col := range entityItem.entity.cols {
+		newTableMap[col.Name] = true
 		fieldType := col.Field.Type
 		if fieldType.Kind() == reflect.Ptr {
 			fieldType = fieldType.Elem()
@@ -137,10 +140,13 @@ func (m *migratorMssql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 		// constraintName = fmt.Sprintf("PK_%s__%s", tableName, strings.Join(colNameInConstraint, "___"))
 		//constraint := fmt.Sprintf("CONSTRAINT %s PRIMARY KEY (%s)", m.Quote(pkConstraintName), strings.Join(colNames, ", "))
 		strCols = append(strCols)
+
 	}
 
 	// Kết hợp thành câu lệnh CREATE TABLE
 	sql := fmt.Sprintf("CREATE TABLE %s (\n  %s\n)", m.Quote(tableName), strings.Join(strCols, ",\n  "))
+	schema.Tables[tableName] = newTableMap
+
 	return sql, nil
 }
 
@@ -197,6 +203,8 @@ func (m *migratorMssql) GetSqlAddColumn(typ reflect.Type) (string, error) {
 			}
 
 			scripts = append(scripts, fmt.Sprintf("ALTER TABLE %s ADD %s", m.Quote(entityItem.tableName), colDef))
+
+			schema.Tables[entityItem.tableName][col.Name] = true
 		}
 	}
 
@@ -314,10 +322,91 @@ func (m *migratorMssql) DoMigrates() error {
 	var err error
 	mi.once.Do(func() {
 
-		for _, entity := range ModelRegistry.GetAllModels() {
-			err = m.DoMigrate(entity.entity.entityType)
-
+		scripts, err := m.GetFullScript()
+		if err != nil {
+			return
 		}
+		for _, script := range scripts {
+			_, err := m.db.Exec(script)
+			if err != nil {
+				break
+			}
+		}
+		// for _, entity := range ModelRegistry.GetAllModels() {
+		// 	err = m.DoMigrate(entity.entity.entityType)
+
+		// }
 	})
 	return err
+}
+func (m *migratorMssql) GetSqlAddForeignKey() ([]string, error) {
+	ret := []string{}
+	schema, err := m.loader.LoadFullSchema(m.db)
+	if err != nil {
+		return nil, err
+	}
+
+	for fk, info := range ForeignKeyRegistry.fkMap {
+		if _, ok := schema.ForeignKeys[fk]; !ok {
+
+			formCols := "[" + strings.Join(info.FromCols, "],[") + "]"
+			toCols := "[" + strings.Join(info.ToCols, "],[") + "]"
+			script := fmt.Sprintf("ALTER TABLE %s ADD CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s)", m.Quote(info.FromTable), m.Quote(fk), formCols, m.Quote(info.ToTable), toCols)
+			schema.ForeignKeys[fk] = DbForeignKeyInfo{
+				ConstraintName: fk,
+				Table:          info.ToTable,
+				Columns:        info.FromCols,
+				RefTable:       info.ToTable,
+				RefColumns:     info.ToCols,
+			}
+			ret = append(ret, script)
+		}
+	}
+	return ret, nil
+}
+
+type getFullScriptInit struct {
+	once sync.Once
+	ret  []string
+}
+
+func (m *migratorMssql) GetFullScript() ([]string, error) {
+	key := fmt.Sprintf("%s_%s", m.db.GetDBName(), m.db.GetDbType())
+	actual, _ := m.cacheGetFullScript.LoadOrStore(key, &getFullScriptInit{})
+	init := actual.(*getFullScriptInit)
+	var err error
+	init.once.Do(func() {
+		init.ret, err = m.getFullScript()
+	})
+	return init.ret, err
+}
+func (m *migratorMssql) getFullScript() ([]string, error) {
+
+	scripts := []string{}
+	for _, entity := range ModelRegistry.GetAllModels() {
+		script, err := m.GetSqlCreateTable(entity.entity.entityType)
+		if err != nil {
+			return nil, err
+		}
+		if script != "" {
+			scripts = append(scripts, script)
+		}
+
+	}
+	for _, entity := range ModelRegistry.GetAllModels() {
+		script, err := m.GetSqlAddColumn(entity.entity.entityType)
+		if err != nil {
+			return nil, err
+		}
+		if script != "" {
+			scripts = append(scripts, script)
+		}
+	}
+	scriptForeignKey, err := m.GetSqlAddForeignKey()
+	if err != nil {
+		return nil, err
+	}
+	scripts = append(scripts, scriptForeignKey...)
+
+	return scripts, nil
 }

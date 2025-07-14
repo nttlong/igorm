@@ -173,6 +173,14 @@ func (m *MigratorLoaderMssql) LoadFullSchema(db *tenantDB.TenantDB) (*DbSchema, 
 		UniqueKeys:  uks,
 		Indexes:     idxs,
 	}
+	foreignKeys, err := m.LoadForeignKey(db)
+	if err != nil {
+		return nil, err
+	}
+	schema.ForeignKeys = map[string]DbForeignKeyInfo{}
+	for _, fk := range foreignKeys {
+		schema.ForeignKeys[fk.ConstraintName] = fk
+	}
 	for table, columns := range tables {
 		cols := make(map[string]bool)
 		for col := range columns {
@@ -182,4 +190,72 @@ func (m *MigratorLoaderMssql) LoadFullSchema(db *tenantDB.TenantDB) (*DbSchema, 
 	}
 	m.cacheLoadFullSchema.Store(cacheKey, schema)
 	return schema, nil
+}
+func (m *MigratorLoaderMssql) LoadForeignKey(db *tenantDB.TenantDB) ([]DbForeignKeyInfo, error) {
+	query := `
+		SELECT
+			fk.name AS constraint_name,
+			tp.name AS table_name,
+			cp.name AS column_name,
+			tr.name AS referenced_table_name,
+			cr.name AS referenced_column_name,
+			fkc.constraint_column_id
+		FROM sys.foreign_keys AS fk
+		INNER JOIN sys.foreign_key_columns AS fkc ON fk.object_id = fkc.constraint_object_id
+		INNER JOIN sys.tables AS tp ON fk.parent_object_id = tp.object_id
+		INNER JOIN sys.columns AS cp ON fkc.parent_column_id = cp.column_id AND cp.object_id = tp.object_id
+		INNER JOIN sys.tables AS tr ON fk.referenced_object_id = tr.object_id
+		INNER JOIN sys.columns AS cr ON fkc.referenced_column_id = cr.column_id AND cr.object_id = tr.object_id
+		ORDER BY fk.name, fkc.constraint_column_id;
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	type rawRow struct {
+		ConstraintName string
+		TableName      string
+		ColumnName     string
+		RefTableName   string
+		RefColumnName  string
+		ColumnOrder    int
+	}
+
+	fkMap := map[string]*DbForeignKeyInfo{}
+
+	for rows.Next() {
+		var r rawRow
+		if err := rows.Scan(
+			&r.ConstraintName,
+			&r.TableName,
+			&r.ColumnName,
+			&r.RefTableName,
+			&r.RefColumnName,
+			&r.ColumnOrder,
+		); err != nil {
+			return nil, err
+		}
+
+		if _, exists := fkMap[r.ConstraintName]; !exists {
+			fkMap[r.ConstraintName] = &DbForeignKeyInfo{
+				ConstraintName: r.ConstraintName,
+				Table:          r.TableName,
+				RefTable:       r.RefTableName,
+			}
+		}
+
+		fkMap[r.ConstraintName].Columns = append(fkMap[r.ConstraintName].Columns, r.ColumnName)
+		fkMap[r.ConstraintName].RefColumns = append(fkMap[r.ConstraintName].RefColumns, r.RefColumnName)
+	}
+
+	// Convert map to slice
+	result := make([]DbForeignKeyInfo, 0, len(fkMap))
+	for _, fk := range fkMap {
+		result = append(result, *fk)
+	}
+
+	return result, nil
 }

@@ -21,14 +21,18 @@ func (m *Model[T]) getPrimaryKeys() []migrate.ColumnDef {
 	}
 	return nil
 }
-func (m *Model[T]) AddForeignKey(FkEntity interface{}, foreignKey, keys string) *Model[T] {
+func (m *Model[T]) AddForeignKey(foreignKey string, FkEntity interface{}, keys string) *Model[T] {
+
 	ks := strings.Split(keys, ",")
 	fks := strings.Split(foreignKey, ",")
-	ownerType := reflect.TypeFor[T]()
-	FkEntityType := reflect.TypeOf(FkEntity)
-	if FkEntityType.Kind() == reflect.Ptr {
-		FkEntityType = FkEntityType.Elem()
+	FkEntityType := reflect.TypeFor[T]()
+	ownerType := reflect.TypeOf(FkEntity)
+	if ownerType.Kind() == reflect.Ptr {
+		ownerType = ownerType.Elem()
 	}
+	ModelRegistry.RegisterType(ownerType)
+	ModelRegistry.RegisterType(FkEntityType)
+
 	ownerInfo := ModelRegistry.GetModelByType(ownerType)
 	fkInfo := ModelRegistry.GetModelByType(FkEntityType)
 	if FkEntityType.Kind() == reflect.Ptr {
@@ -62,33 +66,13 @@ func (m *Model[T]) AddForeignKey(FkEntity interface{}, foreignKey, keys string) 
 
 	}
 
-	ForeignKeyRegistry.Register(&foreignKeyInfo{
-		fromTable: ownerInfo.GetTableName(),
-		fromCols:  fkColsName,
-		toTable:   fkInfo.GetTableName(),
-		toCols:    fkColsName,
+	migrate.ForeignKeyRegistry.Register(&migrate.ForeignKeyInfo{
+		FromTable: fkInfo.GetTableName(),
+		FromCols:  fkColsName,
+		ToTable:   ownerInfo.GetTableName(),
+		ToCols:    pkCols,
 	})
 
 	return m
 
-}
-
-type foreignKeyInfo struct {
-	fromTable string
-	fromCols  []string
-	toTable   string
-	toCols    []string
-}
-type foreignKeyRegistry struct {
-	fkMap map[string]*foreignKeyInfo
-}
-
-func (r *foreignKeyRegistry) Register(fk *foreignKeyInfo) {
-	key := fmt.Sprintf("FK_%s__%s_____%s__%s", fk.fromTable, strings.Join(fk.fromCols, "_____"), fk.toTable, strings.Join(fk.toCols, "_____"))
-	r.fkMap[key] = fk
-
-}
-
-var ForeignKeyRegistry = foreignKeyRegistry{
-	fkMap: map[string]*foreignKeyInfo{},
 }

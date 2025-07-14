@@ -44,6 +44,39 @@ func (reg *modelRegister) getTableName(typ reflect.Type) (string, error) {
 	}
 	return "", fmt.Errorf("model %s has no table tag", typ.String())
 }
+func (reg *modelRegister) RegisterType(typ reflect.Type) {
+	if _, ok := reg.cacheModelRegistry.Load(typ); ok {
+		return
+	}
+	tableName, err := reg.getTableName(typ)
+
+	if err != nil {
+		fmt.Println(typ.String())
+		panic(err)
+	}
+	cols, err := utilsInstance.ParseStruct(typ)
+	if err != nil {
+		panic(err)
+	}
+	entity := Entity{
+		entityType: typ,
+		tableName:  tableName,
+		cols:       cols,
+	}
+
+	entity.primaryConstraints = utilsInstance.GetPrimaryKey(&entity)
+	entity.uniqueConstraints = make(map[string][]ColumnDef)
+	entity.indexConstraints = make(map[string][]ColumnDef)
+
+	cacheItem := modelRegistryInfo{
+		tableName: tableName,
+		modelType: typ,
+		entity:    entity,
+	}
+
+	reg.cacheModelRegistry.Store(typ, cacheItem)
+}
+
 func (reg *modelRegister) Add(m ...interface{}) {
 	for _, model := range m {
 
@@ -51,31 +84,7 @@ func (reg *modelRegister) Add(m ...interface{}) {
 		if typ.Kind() == reflect.Ptr {
 			typ = typ.Elem()
 		}
-		tableName, err := reg.getTableName(typ)
-		if err != nil {
-			panic(err)
-		}
-		cols, err := utilsInstance.ParseStruct(typ)
-		if err != nil {
-			panic(err)
-		}
-		entity := Entity{
-			entityType: typ,
-			tableName:  tableName,
-			cols:       cols,
-		}
-
-		entity.primaryConstraints = utilsInstance.GetPrimaryKey(&entity)
-		entity.uniqueConstraints = make(map[string][]ColumnDef)
-		entity.indexConstraints = make(map[string][]ColumnDef)
-
-		cacheItem := modelRegistryInfo{
-			tableName: tableName,
-			modelType: typ,
-			entity:    entity,
-		}
-
-		reg.cacheModelRegistry.Store(typ, cacheItem)
+		reg.RegisterType(typ)
 	}
 }
 func (reg *modelRegister) GetAllModels() []modelRegistryInfo {

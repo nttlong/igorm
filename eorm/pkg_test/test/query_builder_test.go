@@ -13,6 +13,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestForeignKey(t *testing.T) {
+	msssqlDns := "sqlserver://sa:123456@localhost:1433?database=a001"
+	db, err := eorm.Open("mssql", msssqlDns)
+	assert.NoError(t, err)
+	defer db.Close()
+	m, err := eorm.NewMigrator(db)
+	assert.NoError(t, err)
+
+	m.DoMigrates()
+}
 func TestQueryBuilder(t *testing.T) {
 	msssqlDns := "sqlserver://sa:123456@localhost:1433?database=a001"
 	db, err := eorm.Open("mssql", msssqlDns)

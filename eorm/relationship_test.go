@@ -12,14 +12,14 @@ type Department struct {
 }
 
 func (d *Department) Build() {
-	d.AddForeignKey(&Department{}, "ParentId", "ID")
+	d.AddForeignKey("ParentId", &Department{}, "ID")
 
 }
 func init() {
 	ModelRegistry.Add(&Department{})
 }
 func TestRelationship(t *testing.T) {
-	pk := (&Department{ID: 1}).AddForeignKey(&Department{}, "ID", "ParentId")
+	pk := (&Department{ID: 1}).AddForeignKey("ParentId", &Department{}, "ID")
 	t.Log(pk)
 
 }

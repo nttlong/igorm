@@ -18,6 +18,8 @@ type IMigrator interface {
 	GetSqlAddIndex(entityType reflect.Type) (string, error)
 	GetSqlAddUniqueIndex(entityType reflect.Type) (string, error)
 	GetSqlMigrate(entityType reflect.Type) ([]string, error)
+	GetSqlAddForeignKey() ([]string, error)
+	GetFullScript() ([]string, error)
 	DoMigrate(entityType reflect.Type) error
 	DoMigrates() error
 }
