@@ -21,15 +21,6 @@ func (m *migratorPostgres) Quote(names ...string) string {
 	return "\"" + strings.Join(names, "\".\"") + "\""
 }
 
-func (m *migratorPostgres) GetColumnDataTypeMapping() map[reflect.Type]string {
-	panic("not implemented")
-}
-func (m *migratorPostgres) GetGetDefaultValueByFromDbTag() map[string]string {
-	panic("not implemented")
-}
-func (m *migratorPostgres) GetSqlCreateTable(entityType reflect.Type) (string, error) {
-	panic("not implemented")
-}
 func (m *migratorPostgres) GetSqlAddColumn(entityType reflect.Type) (string, error) {
 	panic("not implemented")
 }

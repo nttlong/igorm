@@ -13,6 +13,7 @@ import (
 type IMigrator interface {
 	GetLoader() IMigratorLoader
 	Quote(names ...string) string
+	GetSqlInstallDb() ([]string, error)
 	GetColumnDataTypeMapping() map[reflect.Type]string
 	GetGetDefaultValueByFromDbTag() map[string]string
 	GetSqlCreateTable(entityType reflect.Type) (string, error)

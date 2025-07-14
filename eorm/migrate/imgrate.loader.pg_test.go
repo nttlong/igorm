@@ -2,6 +2,7 @@ package migrate
 
 import (
 	"eorm/tenantDB"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -40,6 +41,23 @@ func TestPGMigrate(t *testing.T) {
 	tables, err := migrator.GetSqlCreateTable(reflect.TypeOf(User{}))
 	assert.NoError(t, err)
 	assert.NotEmpty(t, tables)
+}
+func TestPGGenerateSQLCreateTable(t *testing.T) {
+	pgDsn := "postgres://postgres:123456@localhost:5432/fx001?sslmode=disable"
+	// create new migrate instance
+	db, err := tenantDB.Open("postgres", pgDsn)
+
+	assert.NoError(t, err)
+
+	migrator, err := NewMigrator(db)
+	assert.NoError(t, err)
+	pgm := migrator.(*migratorPostgres)
+	sql, err := pgm.GetSqlCreateTable(reflect.TypeOf(User{}))
+	assert.NoError(t, err)
+
+	fmt.Println(sql)
+	assert.NotEmpty(t, sql)
+
 }
 func BenchmarkLoadFullSchema(b *testing.B) {
 	pgDsn := "postgres://postgres:123456@localhost:5432/fx001?sslmode=disable"
