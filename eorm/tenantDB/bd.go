@@ -5,8 +5,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
-	"errors"
-	"strings"
+	"fmt"
 	"sync"
 
 	_ "github.com/microsoft/go-mssqldb"
@@ -126,69 +125,62 @@ func (info *tenantDBInfo) detect(db *sql.DB) error {
 
 	var version string
 	var dbName string
-
-	queries := []struct {
-		query string
-	}{
-		{"SELECT version();"},        // PostgreSQL, MySQL, Cockroach, Greenplum
-		{"SELECT @@VERSION;"},        // SQL Server, Sybase
-		{"SELECT sqlite_version();"}, // SQLite
-		{"SELECT tidb_version();"},   // TiDB
-		{"SELECT * FROM v$version"},  // Oracle
+	sqlGetDbName := map[string]string{
+		"postgres":  "SELECT current_database()",
+		"mysql":     "SELECT DATABASE()",
+		"sqlite":    "SELECT name FROM sqlite_master WHERE type='table' AND name='sqlite_sequence'",
+		"tidb":      "SELECT DATABASE()",
+		"oracle":    "SELECT SYS_CONTEXT('USERENV', 'DB_NAME') FROM dual",
+		"cockroach": "SELECT current_database()",
+		"greenplum": "SELECT current_database()",
+		"sqlserver": "SELECT DB_NAME()",
+	}
+	sqlGetVersion := map[string]string{
+		"postgres":  "SELECT version()",
+		"mysql":     "SELECT @@VERSION",
+		"sqlite":    "SELECT sqlite_version()",
+		"tidb":      "SELECT tidb_version()",
+		"oracle":    "SELECT * FROM v$version",
+		"cockroach": "SELECT version()",
+		"greenplum": "SELECT version()",
+		"sqlserver": "SELECT @@VERSION",
+	}
+	dbTypeMap := map[string]DB_DRIVER_TYPE{
+		"postgres":  DB_DRIVER_Postgres,
+		"mysql":     DB_DRIVER_MySQL,
+		"sqlite":    DB_DRIVER_SQLite,
+		"tidb":      DB_DRIVER_TiDB,
+		"oracle":    DB_DRIVER_Oracle,
+		"cockroach": DB_DRIVER_Cockroach,
+		"greenplum": DB_DRIVER_Greenplum,
+		"sqlserver": DB_DRIVER_MSSQL,
+	}
+	err := db.Ping()
+	if err != nil {
+		return err
 	}
 
-	var dbType DB_DRIVER_TYPE = DB_DRIVER_Unknown
-
-	for _, q := range queries {
-		err := db.QueryRow(q.query).Scan(&version)
-		if err == nil && version != "" {
-			v := strings.ToLower(version)
-
-			switch {
-			case strings.Contains(v, "postgres"):
-				dbType = DB_DRIVER_Postgres
-				if strings.Contains(v, "greenplum") {
-					dbType = DB_DRIVER_Greenplum
-				}
-				err = db.QueryRow("SELECT current_database();").Scan(&dbName)
-			case strings.Contains(v, "cockroach"):
-				dbType = DB_DRIVER_Cockroach
-				err = db.QueryRow("SELECT current_database();").Scan(&dbName)
-			case strings.Contains(v, "mysql"):
-				dbType = DB_DRIVER_MySQL
-				if strings.Contains(v, "mariadb") {
-					dbType = DB_DRIVER_MariaDB
-				}
-				err = db.QueryRow("SELECT DATABASE();").Scan(&dbName)
-			case strings.Contains(v, "mariadb"):
-				dbType = DB_DRIVER_MariaDB
-				err = db.QueryRow("SELECT DATABASE();").Scan(&dbName)
-			case strings.Contains(v, "microsoft"), strings.Contains(v, "sql server"):
-				dbType = DB_DRIVER_MSSQL
-				err = db.QueryRow("SELECT DB_NAME();").Scan(&dbName)
-			case strings.Contains(v, "sqlite"):
-				dbType = DB_DRIVER_SQLite
-				dbName = "main"
-			case strings.Contains(v, "tidb"):
-				dbType = DB_DRIVER_TiDB
-				err = db.QueryRow("SELECT DATABASE();").Scan(&dbName)
-			case strings.Contains(v, "oracle"):
-				dbType = DB_DRIVER_Oracle
-				err = db.QueryRow("SELECT SYS_CONTEXT('USERENV', 'DB_NAME') FROM dual").Scan(&dbName)
-			}
-
-			if err != nil {
-				dbName = ""
-			}
-			info.DbType = dbType
-			info.dbName = dbName
-			info.Version = version
-
-			return nil
+	dbName = "defaultdb"
+	if _, ok := sqlGetDbName[info.driverName]; ok {
+		err := db.QueryRow(sqlGetDbName[info.driverName]).Scan(&dbName)
+		if err != nil {
+			dbName = ""
 		}
+	} else {
+		return fmt.Errorf("unsupported database type: %s", string(info.driverName))
 	}
+	if _, ok := sqlGetDbName[info.driverName]; ok {
+		err = db.QueryRow(sqlGetVersion[info.driverName]).Scan(&version)
+		if err != nil {
+			return err
+		}
 
-	return errors.New("unable to detect database type")
+	}
+	info.dbName = dbName
+	info.Version = version
+	info.DbType = dbTypeMap[info.driverName]
+	info.hasDetected = true
+	return nil
 }
 func Open(driverName, dsn string) (*TenantDB, error) {
 

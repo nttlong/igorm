@@ -63,6 +63,7 @@ type DbSchema struct {
 	ForeignKeys map[string]DbForeignKeyInfo
 }
 type IMigratorLoader interface {
+	GetDbName(db *tenantDB.TenantDB) string
 	LoadAllTable(db *tenantDB.TenantDB) (map[string]map[string]ColumnInfo, error)
 	LoadAllPrimaryKey(db *tenantDB.TenantDB) (map[string]ColumnsInfo, error)
 	/*
@@ -91,6 +92,9 @@ func MigratorLoader(db *tenantDB.TenantDB) (IMigratorLoader, error) {
 	switch db.GetDbType() {
 	case tenantDB.DB_DRIVER_MSSQL:
 		return &MigratorLoaderMssql{}, nil
+	case tenantDB.DB_DRIVER_Postgres:
+		return &MigratorLoaderPostgres{}, nil
+
 	default:
 		panic(fmt.Errorf("unsupported database type: %s", string(db.GetDbType())))
 	}

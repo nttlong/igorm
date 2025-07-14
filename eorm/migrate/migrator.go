@@ -6,10 +6,12 @@ import (
 	"reflect"
 	"sync"
 
+	_ "github.com/lib/pq"
 	"golang.org/x/sync/singleflight"
 )
 
 type IMigrator interface {
+	GetLoader() IMigratorLoader
 	Quote(names ...string) string
 	GetColumnDataTypeMapping() map[reflect.Type]string
 	GetGetDefaultValueByFromDbTag() map[string]string
@@ -88,13 +90,18 @@ func NewMigrator(db *tenantDB.TenantDB) (IMigrator, error) {
 		}
 
 		var ret IMigrator
+		loader, err := MigratorLoader(db)
+		if err != nil {
+			return nil, err
+		}
 		switch db.GetDbType() {
 		case tenantDB.DB_DRIVER_MSSQL:
-			loader, err := MigratorLoader(db)
-			if err != nil {
-				return nil, err
-			}
 			ret = &migratorMssql{
+				db:     db,
+				loader: loader,
+			}
+		case tenantDB.DB_DRIVER_Postgres:
+			ret = &migratorPostgres{
 				db:     db,
 				loader: loader,
 			}

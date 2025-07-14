@@ -21,7 +21,16 @@ func (m *Model[T]) getPrimaryKeys() []migrate.ColumnDef {
 	}
 	return nil
 }
-func (m *Model[T]) AddForeignKey(foreignKey string, FkEntity interface{}, keys string) *Model[T] {
+
+type CascadeOption migrate.CascadeOption
+
+func (m *Model[T]) AddForeignKey(foreignKey string, FkEntity interface{}, keys string, cascadeOption *CascadeOption) *Model[T] {
+	if cascadeOption == nil {
+		cascadeOption = &CascadeOption{
+			OnDelete: true,
+			OnUpdate: true,
+		}
+	}
 
 	ks := strings.Split(keys, ",")
 	fks := strings.Split(foreignKey, ",")

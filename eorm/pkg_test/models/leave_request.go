@@ -15,6 +15,6 @@ type LeaveRequest struct {
 
 func init() {
 	eorm.ModelRegistry.Add(&LeaveRequest{})
-	(&LeaveRequest{}).AddForeignKey("UserID", &User{}, "ID")
+	(&LeaveRequest{}).AddForeignKey("UserID", &User{}, "ID", nil)
 
 }

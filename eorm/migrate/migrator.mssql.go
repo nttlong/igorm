@@ -359,6 +359,12 @@ func (m *migratorMssql) GetSqlAddForeignKey() ([]string, error) {
 				RefTable:       info.ToTable,
 				RefColumns:     info.ToCols,
 			}
+			if info.Cascade.OnDelete {
+				script += " ON DELETE CASCADE"
+			}
+			if info.Cascade.OnUpdate {
+				script += " ON UPDATE CASCADE"
+			}
 			ret = append(ret, script)
 		}
 	}
@@ -409,4 +415,8 @@ func (m *migratorMssql) getFullScript() ([]string, error) {
 	scripts = append(scripts, scriptForeignKey...)
 
 	return scripts, nil
+}
+
+func (m *migratorMssql) GetLoader() IMigratorLoader {
+	return m.loader
 }

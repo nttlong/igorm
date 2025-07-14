@@ -12,6 +12,9 @@ type Department struct {
 }
 
 func init() {
-	(&Department{}).AddForeignKey("ParentID", &Department{}, "ID")
+	(&Department{}).AddForeignKey("ParentID", &Department{}, "ID", &eorm.CascadeOption{
+		OnDelete: false,
+		OnUpdate: false,
+	})
 
 }
