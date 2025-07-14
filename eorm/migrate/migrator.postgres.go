@@ -2,6 +2,7 @@ package migrate
 
 import (
 	"eorm/tenantDB"
+	"fmt"
 	"reflect"
 	"strings"
 	"sync"
@@ -21,27 +22,37 @@ func (m *migratorPostgres) Quote(names ...string) string {
 	return "\"" + strings.Join(names, "\".\"") + "\""
 }
 
-func (m *migratorPostgres) GetSqlAddColumn(entityType reflect.Type) (string, error) {
-	panic("not implemented")
-}
-func (m *migratorPostgres) GetSqlAddIndex(entityType reflect.Type) (string, error) {
-	panic("not implemented")
-}
-func (m *migratorPostgres) GetSqlAddUniqueIndex(entityType reflect.Type) (string, error) {
-	panic("not implemented")
-}
 func (m *migratorPostgres) GetSqlMigrate(entityType reflect.Type) ([]string, error) {
 	panic("not implemented")
 }
-func (m *migratorPostgres) GetSqlAddForeignKey() ([]string, error) {
-	panic("not implemented")
-}
-func (m *migratorPostgres) GetFullScript() ([]string, error) {
-	panic("not implemented")
-}
+
 func (m *migratorPostgres) DoMigrate(entityType reflect.Type) error {
 	panic("not implemented")
 }
+
+type postgresInitDoMigrates struct {
+	once sync.Once
+}
+
 func (m *migratorPostgres) DoMigrates() error {
-	panic("not implemented")
+	key := fmt.Sprintf("%s_%s", m.db.GetDBName(), m.db.GetDbType())
+	actual, _ := cacheDoMigrates.LoadOrStore(key, &postgresInitDoMigrates{})
+
+	mi := actual.(*postgresInitDoMigrates)
+	var err error
+	mi.once.Do(func() {
+
+		scripts, err := m.GetFullScript()
+		if err != nil {
+			return
+		}
+		for _, script := range scripts {
+			_, err := m.db.Exec(script)
+			if err != nil {
+				break
+			}
+		}
+
+	})
+	return err
 }

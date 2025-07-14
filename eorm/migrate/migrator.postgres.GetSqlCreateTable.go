@@ -57,10 +57,7 @@ func (m *migratorPostgres) GetSqlCreateTable(typ reflect.Type) (string, error) {
 
 		if col.Length != nil {
 			/*ADD CONSTRAINT chk_email_length CHECK (char_length(email) <= 255);*/
-			checkSyntax := fmt.Sprintf("CHECK (char_length(%s) <= %d)", m.Quote(col.Name), *col.Length)
-			constraintCheckName := fmt.Sprintf("%s_chk_%s_length", tableName, col.Name)
-			sqlCreateCheckLen := fmt.Sprintf("ALTER TABLE %s ADD CONSTRAINT %s %s;", m.Quote(tableName), m.Quote(constraintCheckName), checkSyntax)
-			scriptSqlCheckLength = append(scriptSqlCheckLength, sqlCreateCheckLen)
+			scriptSqlCheckLength = append(scriptSqlCheckLength, m.createCheckLenConstraint(tableName, col))
 
 			// sqlType = fmt.Sprintf("%s(%d)", sqlType, *col.Length)
 		}
@@ -114,6 +111,6 @@ func (m *migratorPostgres) GetSqlCreateTable(typ reflect.Type) (string, error) {
 
 	sql := fmt.Sprintf("CREATE TABLE %s (\n  %s\n);", m.Quote(tableName), strings.Join(strCols, ",\n  "))
 	schema.Tables[tableName] = newTableMap
-	sqlCiText := "CREATE EXTENSION IF NOT EXISTS citext;"
-	return sqlCiText + "\n" + sql + strings.Join(scriptSqlCheckLength, "\n"), nil
+	sqlCiText := "CREATE EXTENSION IF NOT EXISTS citext"
+	return sqlCiText + ";\n" + sql + strings.Join(scriptSqlCheckLength, ";\n"), nil
 }

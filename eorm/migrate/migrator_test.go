@@ -15,13 +15,14 @@ type Model struct {
 type User struct {
 	Model `db:"table:users"`
 
-	ID        int       `db:"pk;auto"`                         // primary key, auto increment
-	Name      string    `db:"pk;size:50;index"`                // mapped column name, varchar(50)
-	Email     string    `db:"uk:test_email;size:120"`          // unique constraint named "test_email"
-	Profile   *string   `db:"size:255"`                        // nullable string
-	CreatedAt time.Time `db:"default:now;type:datetime"`       // default timestamp
-	Price     float64   `db:"type:decimal(10,2);column:price"` // custom type and column name
-
+	ID           int       `db:"pk;auto"`                         // primary key, auto increment
+	Name         string    `db:"pk;size:50;index"`                // mapped column name, varchar(50)
+	Email        string    `db:"uk:test_email;size:120"`          // unique constraint named "test_email"
+	Profile      *string   `db:"size:255"`                        // nullable string
+	CreatedAt    time.Time `db:"default:now;type:datetime"`       // default timestamp
+	Price        float64   `db:"type:decimal(10,2);column:price"` // custom type and column name
+	HashPassword string    `db:"size(250)"`
+	Username     string    `db:"size(50)"`
 }
 type User2 struct {
 	Model `db:"table:users2"`

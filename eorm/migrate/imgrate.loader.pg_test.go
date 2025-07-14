@@ -59,6 +59,74 @@ func TestPGGenerateSQLCreateTable(t *testing.T) {
 	assert.NotEmpty(t, sql)
 
 }
+func TestPGSqlAddColumns(t *testing.T) {
+	pgDsn := "postgres://postgres:123456@localhost:5432/fx001?sslmode=disable"
+
+	// create new migrate instance
+	db, err := tenantDB.Open("postgres", pgDsn)
+
+	assert.NoError(t, err)
+
+	migrator, err := NewMigrator(db)
+	assert.NoError(t, err)
+	pgm := migrator.(*migratorPostgres)
+	sql, err := pgm.GetSqlAddColumn(reflect.TypeOf(User{}))
+	assert.NoError(t, err)
+
+	fmt.Println(sql)
+	assert.NotEmpty(t, sql)
+}
+func TestPGAddIndex(t *testing.T) {
+	pgDsn := "postgres://postgres:123456@localhost:5432/fx001?sslmode=disable"
+
+	// create new migrate instance
+	db, err := tenantDB.Open("postgres", pgDsn)
+
+	assert.NoError(t, err)
+
+	migrator, err := NewMigrator(db)
+	assert.NoError(t, err)
+	pgm := migrator.(*migratorPostgres)
+	sql, err := pgm.GetSqlAddIndex(reflect.TypeOf(User{}))
+	assert.NoError(t, err)
+
+	fmt.Println(sql)
+	assert.NotEmpty(t, sql)
+}
+func TestGetSqlAddUniqueIndex(t *testing.T) {
+	pgDsn := "postgres://postgres:123456@localhost:5432/fx001?sslmode=disable"
+
+	// create new migrate instance
+	db, err := tenantDB.Open("postgres", pgDsn)
+
+	assert.NoError(t, err)
+
+	migrator, err := NewMigrator(db)
+	assert.NoError(t, err)
+	pgm := migrator.(*migratorPostgres)
+	sql, err := pgm.GetSqlAddUniqueIndex(reflect.TypeOf(User{}))
+	assert.NoError(t, err)
+
+	fmt.Println(sql)
+	assert.NotEmpty(t, sql)
+}
+func TestGetAddForeignKey(t *testing.T) {
+	pgDsn := "postgres://postgres:123456@localhost:5432/fx001?sslmode=disable"
+
+	// create new migrate instance
+	db, err := tenantDB.Open("postgres", pgDsn)
+
+	assert.NoError(t, err)
+
+	migrator, err := NewMigrator(db)
+	assert.NoError(t, err)
+	pgm := migrator.(*migratorPostgres)
+	sql, err := pgm.GetSqlAddForeignKey()
+	assert.NoError(t, err)
+
+	fmt.Println(sql)
+	assert.NotEmpty(t, sql)
+}
 func BenchmarkLoadFullSchema(b *testing.B) {
 	pgDsn := "postgres://postgres:123456@localhost:5432/fx001?sslmode=disable"
 	db, err := tenantDB.Open("postgres", pgDsn)
