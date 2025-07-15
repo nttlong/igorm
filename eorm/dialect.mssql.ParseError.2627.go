@@ -9,7 +9,7 @@ import (
 	mssql "github.com/microsoft/go-mssqldb"
 )
 
-func (d *mssqlDialect) Error2627(err mssql.Error) DialectError {
+func (d *mssqlDialect) Error2627(err mssql.Error) *DialectError {
 
 	if strings.Contains(err.Message, "'") {
 		constraint := strings.Split(err.Message, "'")[1]
@@ -23,7 +23,7 @@ func (d *mssqlDialect) Error2627(err mssql.Error) DialectError {
 				cols = append(cols, col.Name)
 				fields = append(fields, col.Field.Name)
 			}
-			ret := DialectError{
+			ret := &DialectError{
 				Err:          err,
 				ErrorType:    DIALECT_DB_ERROR_TYPE_DUPLICATE,
 				ErrorMessage: err.Message,

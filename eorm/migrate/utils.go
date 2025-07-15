@@ -61,6 +61,14 @@ func (e *Entity) GetType() reflect.Type {
 func (e *Entity) GetColumns() []ColumnDef {
 	return e.cols
 }
+func (e *Entity) GetFieldByColumnName(colName string) string {
+	col, ok := e.mapCols[colName]
+	if ok {
+		return col.Field.Name
+	}
+	return ""
+}
+
 func (e *Entity) getIndexConstraints() map[string][]ColumnDef {
 	if e.indexConstraints == nil || len(e.indexConstraints) == 0 {
 		e.indexConstraints = map[string][]ColumnDef{}

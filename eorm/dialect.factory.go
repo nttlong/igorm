@@ -87,9 +87,11 @@ func (d *dialectFactoryReceiver) create(driverName string) Dialect {
 	case "mysql":
 		ret = &mySqlDialect{}
 	case "postgres":
+
 		ret = &postgresDialect{}
 
 	case "mssql":
+
 		ret = &mssqlDialect{}
 	default:
 		panic(fmt.Errorf("unsupported driver: %s", driverName))

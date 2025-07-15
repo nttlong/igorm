@@ -2,12 +2,13 @@ package eorm
 
 import (
 	"database/sql"
-	"eorm/migrate"
 	"fmt"
 	"strings"
+	"sync"
 )
 
 type mySqlDialect struct {
+	cacheMakeSqlInsert sync.Map
 }
 
 func (d *mySqlDialect) Quote(name ...string) string {
@@ -31,10 +32,4 @@ func (d *mySqlDialect) SqlFunction(delegator *DialectDelegateFunction) (string, 
 
 		return "", nil
 	}
-}
-func (d *mySqlDialect) MakeSqlInsert(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{}) {
-	panic(fmt.Errorf("not implemented, see file eorm/dialect.mssql.go"))
-}
-func (d *mySqlDialect) ParseError(err error) DialectError {
-	panic(fmt.Errorf("not implemented, see file eorm/dialect.mssql.go"))
 }

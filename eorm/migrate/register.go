@@ -102,6 +102,9 @@ type getModelByTypeInit struct {
 }
 
 func (reg *modelRegister) GetModelByType(typ reflect.Type) *modelRegistryInfo {
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
 	actual, _ := reg.cacheGetModelByType.LoadOrStore(typ, &getModelByTypeInit{})
 	init := actual.(*getModelByTypeInit)
 	init.once.Do(func() {

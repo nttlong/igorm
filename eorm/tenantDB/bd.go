@@ -29,6 +29,7 @@ type tenantDBInfo struct {
 type TenantTx struct {
 	*sql.Tx
 	info *tenantDBInfo
+	Db   *TenantDB
 }
 
 func (tx *TenantTx) GetDriverName() string {
@@ -50,6 +51,7 @@ func (db *TenantDB) Begin() (*TenantTx, error) {
 	return &TenantTx{
 		Tx:   tx,
 		info: db.info,
+		Db:   db,
 	}, nil
 
 }

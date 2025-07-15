@@ -21,6 +21,7 @@ const (
 	DIALECT_DB_ERROR_TYPE_UNKNOWN DIALECT_DB_ERROR_TYPE = iota
 	DIALECT_DB_ERROR_TYPE_DUPLICATE
 	DIALECT_DB_ERROR_TYPE_REFERENCES // ✅ refrences_violation
+	DIALECT_DB_ERROR_TYPE_REQUIRED
 )
 
 func ErrorMessage(t DIALECT_DB_ERROR_TYPE) string {
@@ -31,6 +32,8 @@ func ErrorMessage(t DIALECT_DB_ERROR_TYPE) string {
 		return "duplicate"
 	case DIALECT_DB_ERROR_TYPE_REFERENCES:
 		return "references"
+	case DIALECT_DB_ERROR_TYPE_REQUIRED:
+		return "required"
 	default:
 		return "unknown"
 	}
@@ -58,11 +61,12 @@ func (e *DialectError) Reload() {
 }
 
 type Dialect interface {
-	ParseError(err error) DialectError
+	ParseError(err error) error
 	Name() string
 	Quote(str ...string) string
 	GetTableAndColumnsDictionary(db *sql.DB) (map[string]string, error)
 	ToText(value string) string
 	SqlFunction(delegator *DialectDelegateFunction) (string, error)
 	MakeSqlInsert(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{})
+	MakeSqlInsertBatch(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{})
 }

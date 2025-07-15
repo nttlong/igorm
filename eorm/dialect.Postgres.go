@@ -37,6 +37,6 @@ func (d *postgresDialect) SqlFunction(delegator *DialectDelegateFunction) (strin
 func (d *postgresDialect) MakeSqlInsert(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{}) {
 	panic(fmt.Errorf("not implemented, see file eorm/dialect.Postgres.go"))
 }
-func (d *postgresDialect) ParseError(err error) DialectError {
+func (d *postgresDialect) ParseError(err error) error {
 	panic(fmt.Errorf("not implemented, see file eorm/dialect.msPostgressql.go"))
 }
