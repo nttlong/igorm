@@ -106,6 +106,11 @@ func NewMigrator(db *tenantDB.TenantDB) (IMigrator, error) {
 				db:     db,
 				loader: loader,
 			}
+		case tenantDB.DB_DRIVER_MySQL:
+			ret = &migratorMySql{
+				db:     db,
+				loader: loader,
+			}
 		default:
 			return nil, fmt.Errorf("unsupported database type: %s", db.GetDbType())
 		}

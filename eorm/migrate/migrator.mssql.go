@@ -58,11 +58,13 @@ func (m *migratorMssql) DoMigrate(entityType reflect.Type) error {
 
 type mssqlInitDoMigrates struct {
 	once sync.Once
+	err  error
 }
 
 var cacheDoMigrates sync.Map
 
 func (m *migratorMssql) DoMigrates() error {
+
 	key := fmt.Sprintf("%s_%s", m.db.GetDBName(), m.db.GetDbType())
 	actual, _ := cacheDoMigrates.LoadOrStore(key, &mssqlInitDoMigrates{})
 

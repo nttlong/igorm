@@ -13,7 +13,7 @@ func (m *MigratorLoaderPostgres) GetDbName(db *tenantDB.TenantDB) string {
 	return db.GetDBName()
 }
 
-type initLoadFullSchema struct {
+type initPostgresLoadFullSchema struct {
 	once sync.Once
 	val  *DbSchema
 	err  error
@@ -21,8 +21,8 @@ type initLoadFullSchema struct {
 
 func (m *MigratorLoaderPostgres) LoadFullSchema(db *tenantDB.TenantDB) (*DbSchema, error) {
 	cacheKey := db.GetDBName()
-	actual, _ := m.cacheLoadFullSchema.LoadOrStore(cacheKey, &initLoadFullSchema{})
-	init := actual.(*initLoadFullSchema)
+	actual, _ := m.cacheLoadFullSchema.LoadOrStore(cacheKey, &initPostgresLoadFullSchema{})
+	init := actual.(*initPostgresLoadFullSchema)
 	init.once.Do(func() {
 		init.val, init.err = m.loadFullSchema(db)
 	})

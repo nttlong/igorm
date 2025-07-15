@@ -94,6 +94,8 @@ func MigratorLoader(db *tenantDB.TenantDB) (IMigratorLoader, error) {
 		return &MigratorLoaderMssql{}, nil
 	case tenantDB.DB_DRIVER_Postgres:
 		return &MigratorLoaderPostgres{}, nil
+	case tenantDB.DB_DRIVER_MySQL:
+		return &MigratorLoaderMysql{}, nil
 
 	default:
 		panic(fmt.Errorf("unsupported database type: %s", string(db.GetDbType())))

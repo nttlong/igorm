@@ -5,23 +5,22 @@ import (
 	"sync"
 )
 
-type mssqlGetFullScriptInit struct {
+type mysqlGetFullScriptInit struct {
 	once sync.Once
 	ret  []string
 }
 
-func (m *migratorMssql) GetFullScript() ([]string, error) {
+func (m *migratorMySql) GetFullScript() ([]string, error) {
 	key := fmt.Sprintf("%s_%s", m.db.GetDBName(), m.db.GetDbType())
-	actual, _ := m.cacheGetFullScript.LoadOrStore(key, &mssqlGetFullScriptInit{})
-	init := actual.(*mssqlGetFullScriptInit)
+	actual, _ := m.cacheGetFullScript.LoadOrStore(key, &mysqlGetFullScriptInit{})
+	init := actual.(*mysqlGetFullScriptInit)
 	var err error
 	init.once.Do(func() {
 		init.ret, err = m.getFullScript()
 	})
 	return init.ret, err
 }
-func (m *migratorMssql) getFullScript() ([]string, error) {
-
+func (m *migratorMySql) getFullScript() ([]string, error) {
 	sqlInstall, err := m.GetSqlInstallDb()
 	if err != nil {
 		return nil, err

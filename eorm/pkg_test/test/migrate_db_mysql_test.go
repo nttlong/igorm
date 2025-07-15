@@ -10,14 +10,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPGGenerateSQLCreateTable(t *testing.T) {
-	pgDsn := "postgres://postgres:123456@localhost:5432/a001?sslmode=disable"
+func TestMySqlGenerateSQLCreateTable(t *testing.T) {
+
+	mySqlDsn := "root:123456@tcp(127.0.0.1:3306)/a001"
 	// create new migrate instance
-	db, err := tenantDB.Open("postgres", pgDsn)
+	db, err := tenantDB.Open("mysql", mySqlDsn)
 
 	assert.NoError(t, err)
 
 	migrator, err := eorm.NewMigrator(db)
+
 	assert.NoError(t, err)
 	err = migrator.DoMigrates()
 	assert.NoError(t, err)
