@@ -34,7 +34,16 @@ func (r inserter) fetchAfterInsert(dialect Dialect, res sql.Result, entity *migr
 		return nil
 	}
 
-	lastID, err := res.LastInsertId()
+	lastID, err := res.LastInsertId() //<--loi khi chay voi mssql
+	/*
+		Cau query thuc the duoc goi den mssql nhu co dang sau
+		 vi du
+		 "LastInsertId is not supported. Please use the OUTPUT clause or add `select ID = convert(bigint, SCOPE_IDENTITY())` to the end of your query"  khi chay cau query sau
+		 "INSERT INTO [departments] (
+		 	[name],
+			[code],
+			[parent_id], ...) OUTPUT INSERTED.[id] VALUES (@p1, @p2, @p3, ...)"
+	*/
 	if err != nil {
 		return dialect.ParseError(err)
 	}
@@ -49,6 +58,52 @@ func (r inserter) fetchAfterInsert(dialect Dialect, res sql.Result, entity *migr
 				return fmt.Errorf("unsupported auto-increment type: %s", valField.Kind())
 			}
 		}
+	}
+
+	return nil
+}
+
+/*
+Rac roi o cho muon lay gia tri cua cac cot tự tăng khi insert trong sql server
+phai dung db.Queryrow(sql, args)
+Vi vay ham nay chi dung voi sqlserver
+------------------------
+There is confusion about how to get the value of auto-increment columns when inserting in SQL Server.
+You must use db.QueryRow(sql, args).
+Therefore, this function only works with SQL Server.
+*/
+func fetchAfterInsertForQueryRow(entity *migrate.Entity, dataValue reflect.Value, insertedValue any) error {
+	autoCols := entity.GetAutoValueColumns()
+	if len(autoCols) == 0 || insertedValue == nil {
+		return nil
+	}
+	if len(autoCols) != 1 {
+		return fmt.Errorf("only single auto-increment column is supported for QueryRow insert")
+	}
+
+	col := autoCols[0]
+	field := dataValue.FieldByName(col.Field.Name)
+	if !field.IsValid() || !field.CanSet() {
+		return fmt.Errorf("cannot set field %s", col.Field.Name)
+	}
+
+	val := reflect.ValueOf(insertedValue)
+	// Nếu là ptr như *int64
+	if val.Kind() == reflect.Ptr {
+		if val.IsNil() {
+			return nil
+		}
+		val = val.Elem()
+	}
+
+	// Gán giá trị nếu kiểu phù hợp
+	if val.Type().AssignableTo(field.Type()) {
+		field.Set(val)
+	} else if val.Type().ConvertibleTo(field.Type()) {
+		field.Set(val.Convert(field.Type()))
+	} else {
+		return fmt.Errorf("cannot assign insert id type %s to field %s type %s",
+			val.Type(), col.Field.Name, field.Type())
 	}
 
 	return nil
@@ -98,13 +153,27 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 		dataValue = dataValue.Elem()
 	}
 	repoType := r.getEntityInfo(typ)
+	var err error
 	sql, args := dialect.MakeSqlInsert(repoType.tableName, repoType.entity.GetColumns(), data)
 	sqlStmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
 	}
 	defer sqlStmt.Close()
-	sqlResult, err := sqlStmt.Exec(args...)
+	if dialect.Name() == "mssql" {
+		var insertedID int64
+		err = sqlStmt.QueryRow(args...).Scan(&insertedID)
+		if err == nil {
+			err = fetchAfterInsertForQueryRow(repoType.entity, dataValue, insertedID)
+		}
+	} else {
+		sqlResult, err := sqlStmt.Exec(args...)
+		if err == nil {
+			err = r.fetchAfterInsert(dialect, sqlResult, repoType.entity, dataValue)
+
+		}
+	}
+
 	if err != nil {
 		errParse := dialect.ParseError(err)
 		if errParse, ok := errParse.(*DialectError); ok {
@@ -112,15 +181,6 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 			errParse.Fields = []string{repoType.entity.GetFieldByColumnName(errParse.DbCols[0])}
 		}
 		return errParse
-	}
-
-	err = r.fetchAfterInsert(dialect, sqlResult, repoType.entity, dataValue)
-	if err != nil {
-		if dialectError, ok := err.(*DialectError); ok {
-			dialectError.Tables = []string{repoType.tableName}
-			dialectError.Fields = []string{repoType.entity.GetFieldByColumnName(dialectError.DbCols[0])}
-		}
-		return err
 	}
 	return nil
 }
@@ -368,4 +428,10 @@ func InsertBatch[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
 	}
 
 	return totalRows, nil
+}
+func init() {
+	tenantDB.OnDbInsertFunc = func(db *tenantDB.TenantDB, data interface{}) error {
+		return Insert(db, data)
+	}
+
 }

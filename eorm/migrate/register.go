@@ -54,7 +54,7 @@ func (reg *modelRegister) RegisterType(typ reflect.Type) {
 		fmt.Println(typ.String())
 		panic(err)
 	}
-	cols, err := utilsInstance.ParseStruct(typ)
+	cols, err := utilsInstance.ParseStruct(typ, []int{})
 	if err != nil {
 		panic(err)
 	}

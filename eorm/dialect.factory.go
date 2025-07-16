@@ -93,6 +93,8 @@ func (d *dialectFactoryReceiver) create(driverName string) Dialect {
 	case "mssql":
 
 		ret = &mssqlDialect{}
+	case "sqlserver":
+		ret = &mssqlDialect{}
 	default:
 		panic(fmt.Errorf("unsupported driver: %s", driverName))
 	}

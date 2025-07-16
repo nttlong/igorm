@@ -213,6 +213,7 @@ type ColumnDef struct {
 	IsForeignKey bool
 	RefTable     string
 	RefColumn    string
+	IndexOfField []int
 }
 
 type utils struct {
@@ -231,7 +232,7 @@ look at the example below:
 		Name:     name of the field, // the other info is default
 	}
 */
-func (u *utils) ParseTagFromStruct(field reflect.StructField) ColumnDef {
+func (u *utils) ParseTagFromStruct(field reflect.StructField, parentIndexOfField []int) ColumnDef {
 	/*
 		Parses struct tag into a ColumnDef following "db" tag convention.
 		Supports alternative fallback to "gorm" for compatibility.
@@ -255,9 +256,10 @@ func (u *utils) ParseTagFromStruct(field reflect.StructField) ColumnDef {
 	}
 
 	col := ColumnDef{
-		Name:     u.SnakeCase(field.Name),
-		Field:    field,
-		Nullable: field.Type.Kind() == reflect.Ptr,
+		Name:         u.SnakeCase(field.Name),
+		Field:        field,
+		Nullable:     field.Type.Kind() == reflect.Ptr,
+		IndexOfField: append(parentIndexOfField, field.Index[0]),
 	}
 
 	if tagStr == "" {
@@ -387,7 +389,7 @@ Example:
 		ID int `db:"pk"`
 	}
 */
-func (u *utils) ParseStruct(t reflect.Type) ([]ColumnDef, error) {
+func (u *utils) ParseStruct(t reflect.Type, parentIndexOfField []int) ([]ColumnDef, error) {
 
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
@@ -401,11 +403,12 @@ func (u *utils) ParseStruct(t reflect.Type) ([]ColumnDef, error) {
 			if f.Type == reflect.TypeOf(Entity{}) {
 				continue // skip embedded Entity
 			}
-			subCols, _ := u.ParseStruct(f.Type)
+			nextParentFieldIndex := append(parentIndexOfField, f.Index[0])
+			subCols, _ := u.ParseStruct(f.Type, nextParentFieldIndex)
 			cols = append(cols, subCols...)
 			continue
 		} else if f.IsExported() {
-			cols = append(cols, u.ParseTagFromStruct(f))
+			cols = append(cols, u.ParseTagFromStruct(f, parentIndexOfField))
 		}
 	}
 	return cols, nil
