@@ -1,6 +1,6 @@
-package eorm
+package dbv
 
-import "eorm/sqlparser"
+import "dbv/sqlparser"
 
 func (compiler *exprReceiver) AliasedTableExpr(context *exprCompileContext, expr *sqlparser.AliasedTableExpr) (string, error) {
 	if context.purpose == build_purpose_join {

@@ -1,7 +1,7 @@
-package eorm
+package dbv
 
 import (
-	"eorm/migrate"
+	"dbv/migrate"
 	"reflect"
 	"strings"
 	"sync"

@@ -19,7 +19,7 @@ package sqltypes
 import (
 	"fmt"
 
-	"eorm/sqlparser/dependency/querypb"
+	"dbv/sqlparser/dependency/querypb"
 )
 
 // This file provides wrappers and support

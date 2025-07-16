@@ -1,6 +1,6 @@
-package eorm
+package dbv
 
-import "eorm/migrate"
+import "dbv/migrate"
 
 func (d *postgresDialect) MakeSqlInsertBatch(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{}) {
 	panic("not implemented")

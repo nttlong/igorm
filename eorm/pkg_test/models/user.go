@@ -1,12 +1,12 @@
 package models
 
 import (
-	"eorm"
+	"dbv"
 	"time"
 )
 
 type User struct {
-	eorm.Model[User]
+	dbv.Model[User]
 	BaseModel
 	ID         int    `db:"pk;auto"`
 	Name       string `db:"size:100"`

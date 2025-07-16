@@ -1,9 +1,9 @@
-package eorm
+package dbv
 
 import (
 	"fmt"
 
-	"eorm/sqlparser"
+	"dbv/sqlparser"
 )
 
 func (compiler *exprReceiver) JoinCondition(context *exprCompileContext, expr *sqlparser.JoinCondition) (string, error) {

@@ -1,13 +1,13 @@
 package modelstest
 
 import (
-	"eorm"
+	"dbv"
 	"testing"
 )
 
 func TestModel(t *testing.T) {
 
-	for _, m := range eorm.ModelRegistry.GetAllModels() {
+	for _, m := range dbv.ModelRegistry.GetAllModels() {
 		t.Log(m)
 	}
 

@@ -1,7 +1,7 @@
 package test
 
 import (
-	_ "eorm"
+	_ "dbv"
 	"testing"
 )
 

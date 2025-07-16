@@ -1,9 +1,9 @@
 package models
 
-import "eorm"
+import "dbv"
 
 type Position struct {
-	eorm.Model[Position]
+	dbv.Model[Position]
 	Code  string `db:"size:100;uk:uq_pos_code"`
 	Name  string `db:"size:100;uk:uq_pos_name"`
 	ID    int    `db:"pk;auto"`

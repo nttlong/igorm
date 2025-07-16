@@ -1,10 +1,10 @@
-package eorm
+package dbv
 
 import (
-	"eorm/sqlparser"
+	"dbv/sqlparser"
 	"fmt"
 	"strings"
-	// "eorm/sqlparser"
+	// "dbv/sqlparser"
 )
 
 type build_purpose int

@@ -1,9 +1,9 @@
 package models
 
-import "eorm"
+import "dbv"
 
 type Department struct {
-	eorm.Model[Department]
+	dbv.Model[Department]
 
 	ID       int    `db:"pk;auto"`
 	Name     string `db:"size:100;uk:uq_dept_name"`
@@ -13,7 +13,7 @@ type Department struct {
 }
 
 func init() {
-	(&Department{}).AddForeignKey("ParentID", &Department{}, "ID", &eorm.CascadeOption{
+	(&Department{}).AddForeignKey("ParentID", &Department{}, "ID", &dbv.CascadeOption{
 		OnDelete: false,
 		OnUpdate: false,
 	})

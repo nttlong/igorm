@@ -1,4 +1,4 @@
-module eorm
+module dbv
 
 go 1.24.3
 

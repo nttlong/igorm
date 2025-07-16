@@ -1,9 +1,9 @@
-package eorm
+package dbv
 
 import (
 	"fmt"
 
-	"eorm/sqlparser"
+	"dbv/sqlparser"
 )
 
 func (compiler *exprReceiver) SimpleTableExpr(context *exprCompileContext, expr sqlparser.SimpleTableExpr) (string, error) {

@@ -23,10 +23,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"eorm/sqlparser/dependency/bytes2"
-	"eorm/sqlparser/dependency/hack"
+	"dbv/sqlparser/dependency/bytes2"
+	"dbv/sqlparser/dependency/hack"
 
-	"eorm/sqlparser/dependency/querypb"
+	"dbv/sqlparser/dependency/querypb"
 )
 
 var (

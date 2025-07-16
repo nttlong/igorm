@@ -1,4 +1,4 @@
-package eorm
+package dbv
 
 import (
 	mssql "github.com/microsoft/go-mssqldb"

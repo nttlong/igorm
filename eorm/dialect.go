@@ -1,8 +1,8 @@
-package eorm
+package dbv
 
 import (
 	"database/sql"
-	"eorm/migrate"
+	"dbv/migrate"
 	"fmt"
 	"strings"
 )
@@ -68,5 +68,4 @@ type Dialect interface {
 	ToText(value string) string
 	SqlFunction(delegator *DialectDelegateFunction) (string, error)
 	MakeSqlInsert(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{})
-	MakeSqlInsertBatch(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{})
 }

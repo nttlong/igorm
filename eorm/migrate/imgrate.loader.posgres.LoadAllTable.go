@@ -1,7 +1,7 @@
 package migrate
 
 import (
-	"eorm/tenantDB"
+	"dbv/tenantDB"
 	"fmt"
 )
 

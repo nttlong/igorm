@@ -1,4 +1,4 @@
-package eorm
+package dbv
 
 import (
 	"database/sql"

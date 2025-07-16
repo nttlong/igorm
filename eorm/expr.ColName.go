@@ -1,7 +1,7 @@
-package eorm
+package dbv
 
 import (
-	"eorm/sqlparser"
+	"dbv/sqlparser"
 	"strconv"
 )
 

@@ -1,8 +1,8 @@
-package eorm
+package dbv
 
 import (
-	"eorm/migrate"
-	"eorm/tenantDB"
+	"dbv/migrate"
+	"dbv/tenantDB"
 
 	_ "github.com/microsoft/go-mssqldb"
 )

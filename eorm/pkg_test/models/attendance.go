@@ -1,11 +1,11 @@
 package models
 
 import (
-	"eorm"
+	"dbv"
 )
 
 type Attendance struct {
-	eorm.Model[Attendance] `db:"table:attendances"`
+	dbv.Model[Attendance] `db:"table:attendances"`
 	BaseModel
 	ID       int    `db:"pk;auto"`
 	UserID   int    `db:"idx:idx_att_user"`

@@ -1,9 +1,9 @@
-package eorm
+package dbv
 
 import (
 	"strconv"
 
-	"eorm/sqlparser"
+	"dbv/sqlparser"
 )
 
 func (compiler *exprReceiver) TableName(context *exprCompileContext, expr *sqlparser.TableName) (string, error) {

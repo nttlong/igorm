@@ -22,7 +22,7 @@ import (
 	"reflect"
 	"strconv"
 
-	"eorm/sqlparser/dependency/querypb"
+	"dbv/sqlparser/dependency/querypb"
 )
 
 // NullBindVariable is a bindvar with NULL value.

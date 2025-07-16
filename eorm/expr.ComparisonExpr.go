@@ -1,6 +1,6 @@
-package eorm
+package dbv
 
-import "eorm/sqlparser"
+import "dbv/sqlparser"
 
 //ComparisonExpr
 func (e *exprReceiver) ComparisonExpr(context *exprCompileContext, expr sqlparser.ComparisonExpr) (string, error) {

@@ -1,10 +1,10 @@
-package eorm
+package dbv
 
 import (
 	"context"
 	"database/sql"
-	"eorm/migrate"
-	"eorm/tenantDB"
+	"dbv/migrate"
+	"dbv/tenantDB"
 	"reflect"
 )
 

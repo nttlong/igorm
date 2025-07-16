@@ -1,6 +1,6 @@
-package eorm
+package dbv
 
-import "eorm/sqlparser"
+import "dbv/sqlparser"
 
 func (compiler *exprReceiver) StarExpr(context *exprCompileContext, expr *sqlparser.StarExpr) (string, error) {
 	if expr.TableName.IsEmpty() {

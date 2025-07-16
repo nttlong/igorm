@@ -1,7 +1,7 @@
 package main
 
 import (
-	"eorm"
+	"dbv"
 	"os"
 	"runtime/pprof"
 )
@@ -14,7 +14,7 @@ func main() {
 	defer pprof.StopCPUProfile()
 	for i := 0; i < 1000000; i++ {
 		joinExpr := "Departments INNER JOIN User ON User.Code = Departments.Code INNER JOIN Check ON Check.Name = 'John'"
-		builder := eorm.SqlBuilder.From(joinExpr).Select()
-		builder.ToSql(eorm.DialectFactory.Create("mssql"))
+		builder := dbv.SqlBuilder.From(joinExpr).Select()
+		builder.ToSql(dbv.DialectFactory.Create("mssql"))
 	}
 }

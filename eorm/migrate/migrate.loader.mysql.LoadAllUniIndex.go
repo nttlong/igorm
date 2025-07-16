@@ -2,7 +2,7 @@ package migrate
 
 import (
 	"database/sql"
-	"eorm/tenantDB"
+	"dbv/tenantDB"
 	"fmt"
 )
 

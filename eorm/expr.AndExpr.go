@@ -1,6 +1,6 @@
-package eorm
+package dbv
 
-import "eorm/sqlparser"
+import "dbv/sqlparser"
 
 func (compiler *exprReceiver) AndExpr(context *exprCompileContext, expr *sqlparser.AndExpr) (string, error) {
 	left, err := compiler.compile(context, expr.Left)

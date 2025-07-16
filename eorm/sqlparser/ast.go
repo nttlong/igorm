@@ -18,10 +18,10 @@ package sqlparser
 
 import (
 	"bytes"
+	"dbv/sqlparser/dependency/querypb"
+	"dbv/sqlparser/dependency/sqltypes"
 	"encoding/hex"
 	"encoding/json"
-	"eorm/sqlparser/dependency/querypb"
-	"eorm/sqlparser/dependency/sqltypes"
 	"fmt"
 	"io"
 	"log"

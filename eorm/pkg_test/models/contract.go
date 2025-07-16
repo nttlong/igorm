@@ -1,12 +1,12 @@
 package models
 
 import (
-	"eorm"
+	"dbv"
 	"time"
 )
 
 type Contract struct {
-	eorm.Model[Contract]
+	dbv.Model[Contract]
 	BaseModel
 	ID        int `db:"pk;auto"`
 	UserID    int `db:"idx:idx_contract_user"`

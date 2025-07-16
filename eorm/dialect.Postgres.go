@@ -1,8 +1,8 @@
-package eorm
+package dbv
 
 import (
 	"database/sql"
-	"eorm/migrate"
+	"dbv/migrate"
 	"fmt"
 	"strings"
 )

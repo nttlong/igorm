@@ -1,11 +1,11 @@
 package models
 
 import (
-	"eorm"
+	"dbv"
 )
 
 func init() {
-	eorm.ModelRegistry.Add(
+	dbv.ModelRegistry.Add(
 		&Contract{},
 		&User{},
 

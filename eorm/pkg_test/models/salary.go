@@ -1,9 +1,9 @@
 package models
 
-import "eorm"
+import "dbv"
 
 type Salary struct {
-	eorm.Model[Salary]
+	dbv.Model[Salary]
 	BaseModel
 	ID        int     `db:"pk;auto"`
 	UserID    int     `db:"idx:idx_salary_user"`

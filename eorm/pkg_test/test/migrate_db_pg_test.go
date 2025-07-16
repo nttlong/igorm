@@ -1,11 +1,11 @@
 package test
 
 import (
-	"eorm"
-	"eorm/tenantDB"
+	"dbv"
+	"dbv/tenantDB"
 	"testing"
 
-	_ "eorm/pkg_test/models"
+	_ "dbv/pkg_test/models"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -17,7 +17,7 @@ func TestPGGenerateSQLCreateTable(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	migrator, err := eorm.NewMigrator(db)
+	migrator, err := dbv.NewMigrator(db)
 	assert.NoError(t, err)
 	err = migrator.DoMigrates()
 	assert.NoError(t, err)

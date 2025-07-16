@@ -1,11 +1,13 @@
-package eorm
+package dbv
 
 import (
 	"database/sql"
-	"eorm/migrate"
-	"eorm/tenantDB"
+	"dbv/migrate"
+	"dbv/tenantDB"
 	"fmt"
 	"reflect"
+	"strings"
+	"sync"
 )
 
 type entityInfo struct {
@@ -177,47 +179,193 @@ func InsertWithTx(tx *tenantDB.TenantTx, data interface{}) error {
 
 	return inserterObj.InsertWithTx(tx, data)
 }
-func InsertBatch[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
+
+type encoderFunc func(v reflect.Value, args *[]interface{})
+
+func InsertBatchOld[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
+	if len(data) == 0 {
+		return 0, nil
+	}
+
+	const maxBatchSize = 200 // nên chọn nhỏ để tránh lỗi "too many placeholders"
+
 	m, err := NewMigrator(db)
 	if err != nil {
 		return 0, err
 	}
-	err = m.DoMigrates()
-	if err != nil {
+	if err = m.DoMigrates(); err != nil {
 		return 0, err
 	}
 
 	dialect := dialectFactory.Create(db.GetDriverName())
 	repoType := inserterObj.getEntityInfo(reflect.TypeOf(data[0]))
-	sql, args := dialect.MakeSqlInsertBatch(repoType.tableName, repoType.entity.GetColumns(), data)
-	sqlStmt, err := db.Prepare(sql)
-	if err != nil {
-		errParse := dialect.ParseError(err)
-		if errParse, ok := errParse.(*DialectError); ok {
-			errParse.Tables = []string{repoType.tableName}
-			errParse.Fields = []string{repoType.entity.GetFieldByColumnName(errParse.DbCols[0])}
+	tableName := repoType.tableName
+	columns := []string{}
+	colDefs := []migrate.ColumnDef{}
+
+	// Chỉ lấy các cột không phải Auto
+	for _, col := range repoType.entity.GetColumns() {
+		if !col.IsAuto {
+			columns = append(columns, dialect.Quote(col.Name))
+			colDefs = append(colDefs, col)
 		}
-		return 0, errParse
-	}
-	defer sqlStmt.Close()
-	sqlResult, err := sqlStmt.Exec(args...)
-	if err != nil {
-		errParse := dialect.ParseError(err)
-		if errParse, ok := errParse.(*DialectError); ok {
-			errParse.Tables = []string{repoType.tableName}
-			errParse.Fields = []string{repoType.entity.GetFieldByColumnName(errParse.DbCols[0])}
-		}
-		return 0, errParse
-	}
-	rowsAff, err := sqlResult.RowsAffected()
-	if err != nil {
-		errParse := dialect.ParseError(err)
-		if errParse, ok := errParse.(*DialectError); ok {
-			errParse.Tables = []string{repoType.tableName}
-			errParse.Fields = []string{repoType.entity.GetFieldByColumnName(errParse.DbCols[0])}
-		}
-		return 0, errParse
 	}
 
-	return rowsAff, nil
+	placeholdersPerRow := "(" + strings.Repeat("?, ", len(colDefs)-1) + "?" + ")"
+	var totalRows int64
+
+	for i := 0; i < len(data); i += maxBatchSize {
+		end := i + maxBatchSize
+		if end > len(data) {
+			end = len(data)
+		}
+
+		batch := data[i:end]
+		placeholderList := []string{}
+		args := []interface{}{}
+
+		for _, row := range batch {
+			val := reflect.ValueOf(row)
+			if val.Kind() == reflect.Ptr {
+				val = val.Elem()
+			}
+			placeholderList = append(placeholderList, placeholdersPerRow)
+
+			for _, col := range colDefs {
+				fieldVal := val.FieldByName(col.Field.Name)
+				if fieldVal.CanInterface() {
+					args = append(args, fieldVal.Interface())
+				} else {
+					args = append(args, nil)
+				}
+			}
+		}
+
+		sql := "INSERT INTO " + dialect.Quote(tableName) + " (" +
+			strings.Join(columns, ", ") + ") VALUES " +
+			strings.Join(placeholderList, ", ")
+
+		sqlResult, err := db.Exec(sql, args...)
+		if err != nil {
+			errParse := dialect.ParseError(err)
+			if derr, ok := errParse.(*DialectError); ok {
+				derr.Tables = []string{tableName}
+				if len(derr.DbCols) > 0 {
+					derr.Fields = []string{repoType.entity.GetFieldByColumnName(derr.DbCols[0])}
+				}
+			}
+			return totalRows, errParse
+		}
+
+		affected, err := sqlResult.RowsAffected()
+		if err != nil {
+			return totalRows, err
+		}
+		totalRows += affected
+	}
+
+	return totalRows, nil
+}
+
+var encoderCache sync.Map // map[reflect.Type]func(reflect.Value, *[]interface{})
+
+func getEncoder(t reflect.Type, cols []migrate.ColumnDef) func(reflect.Value, *[]interface{}) {
+	if fn, ok := encoderCache.Load(t); ok {
+		return fn.(func(reflect.Value, *[]interface{})) // ✅ đúng cách
+	}
+
+	fn := func(v reflect.Value, args *[]interface{}) {
+		if v.Kind() == reflect.Ptr {
+			v = v.Elem()
+		}
+		for _, col := range cols {
+			field := v.FieldByName(col.Field.Name)
+			if field.CanInterface() {
+				*args = append(*args, field.Interface())
+			} else {
+				*args = append(*args, nil)
+			}
+		}
+	}
+	encoderCache.Store(t, fn)
+	return fn
+}
+
+func InsertBatch[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
+	if len(data) == 0 {
+		return 0, nil
+	}
+
+	const batchSize = 200
+
+	m, err := NewMigrator(db)
+	if err != nil {
+		return 0, err
+	}
+	if err := m.DoMigrates(); err != nil {
+		return 0, err
+	}
+
+	dialect := dialectFactory.Create(db.GetDriverName())
+	repoType := inserterObj.getEntityInfo(reflect.TypeOf(data[0]))
+	tableName := dialect.Quote(repoType.tableName)
+
+	columns := []string{}
+	colDefs := []migrate.ColumnDef{}
+	for _, col := range repoType.entity.GetColumns() {
+		if !col.IsAuto {
+			columns = append(columns, dialect.Quote(col.Name))
+			colDefs = append(colDefs, col)
+		}
+	}
+	placeholder := "(" + strings.Repeat("?, ", len(colDefs)-1) + "?" + ")"
+	encoder := getEncoder(reflect.TypeOf(data[0]), colDefs)
+
+	var totalRows int64
+
+	for i := 0; i < len(data); i += batchSize {
+		end := i + batchSize
+		if end > len(data) {
+			end = len(data)
+		}
+		batch := data[i:end]
+
+		var sb strings.Builder
+		sb.WriteString("INSERT INTO ")
+		sb.WriteString(tableName)
+		sb.WriteString(" (")
+		sb.WriteString(strings.Join(columns, ", "))
+		sb.WriteString(") VALUES ")
+
+		args := make([]interface{}, 0, len(batch)*len(colDefs))
+		for j, row := range batch {
+			if j > 0 {
+				sb.WriteString(", ")
+			}
+			sb.WriteString(placeholder)
+			val := reflect.ValueOf(row)
+			encoder(val, &args)
+		}
+
+		sql := sb.String()
+		sqlResult, err := db.Exec(sql, args...)
+		if err != nil {
+			errParse := dialect.ParseError(err)
+			if derr, ok := errParse.(*DialectError); ok {
+				derr.Tables = []string{repoType.tableName}
+				if len(derr.DbCols) > 0 {
+					derr.Fields = []string{repoType.entity.GetFieldByColumnName(derr.DbCols[0])}
+				}
+			}
+			return totalRows, errParse
+		}
+
+		rowsAff, err := sqlResult.RowsAffected()
+		if err != nil {
+			return totalRows, err
+		}
+		totalRows += rowsAff
+	}
+
+	return totalRows, nil
 }

@@ -1,12 +1,12 @@
 package models
 
 import (
-	"eorm"
+	"dbv"
 	"time"
 )
 
 type LeaveRequest struct {
-	eorm.Model[LeaveRequest]
+	dbv.Model[LeaveRequest]
 	BaseModel
 	ID        int `db:"pk;auto"`
 	UserID    int `db:"idx:idx_leave_user"`
@@ -17,7 +17,7 @@ type LeaveRequest struct {
 }
 
 func init() {
-	eorm.ModelRegistry.Add(&LeaveRequest{})
+	dbv.ModelRegistry.Add(&LeaveRequest{})
 	(&LeaveRequest{}).AddForeignKey("UserID", &User{}, "ID", nil)
 
 }

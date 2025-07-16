@@ -1,7 +1,7 @@
-package eorm
+package dbv
 
 import (
-	"eorm/sqlparser"
+	"dbv/sqlparser"
 )
 
 func (compiler *exprReceiver) AliasedExpr(context *exprCompileContext, expr *sqlparser.AliasedExpr) (string, error) {
