@@ -1,0 +1,322 @@
+package tenantDB
+
+import (
+	"database/sql"
+	"fmt"
+	"reflect"
+	"strings"
+	"sync"
+	"time"
+)
+
+func (db *TenantDB) ExecToArray(typ reflect.Type, query string, args ...interface{}) ([]interface{}, error) {
+	return exec2array(db, typ, query, args...)
+}
+func execToArray_original(db *TenantDB, typ reflect.Type, query string, args ...interface{}) ([]interface{}, error) {
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []interface{}
+	cols, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		row := reflect.New(typ).Interface()
+		scanArgs := make([]interface{}, len(cols))
+		for i, col := range cols {
+			scanArgs[i] = reflect.ValueOf(row).Elem().FieldByName(col).Addr().Interface()
+		}
+		err = rows.Scan(scanArgs...)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, row)
+	}
+	return result, nil
+
+}
+func execToArrayFromChatGPT_V1(db *TenantDB, typ reflect.Type, query string, args ...interface{}) ([]interface{}, error) {
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	cols, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	// Precompute: field index for each column name
+	fieldIndexes := make([][]int, len(cols))
+	for i, colName := range cols {
+		field, ok := typ.FieldByName(colName)
+		if !ok {
+			return nil, fmt.Errorf("column '%s' not found in struct %s", colName, typ.Name())
+		}
+		fieldIndexes[i] = field.Index
+	}
+
+	// Result list
+	var result []interface{}
+
+	for rows.Next() {
+		// Create new struct
+		rowVal := reflect.New(typ).Elem()
+
+		// Prepare scan targets
+		scanArgs := make([]interface{}, len(cols))
+		for i, fieldIdx := range fieldIndexes {
+			field := rowVal.FieldByIndex(fieldIdx)
+			scanArgs[i] = field.Addr().Interface()
+		}
+
+		// Scan row into struct
+		if err := rows.Scan(scanArgs...); err != nil {
+			return nil, err
+		}
+
+		result = append(result, rowVal.Addr().Interface())
+	}
+
+	return result, nil
+}
+
+type fieldEncoder struct {
+	fieldIndexes []int
+}
+
+var encoderCache sync.Map // map[reflect.Type]*fieldEncoder
+
+var scanArgsPool = sync.Pool{
+	New: func() interface{} {
+		return make([]interface{}, 0, 20)
+	},
+}
+
+var rowValPool sync.Pool // per-type struct pool
+
+func getFieldEncoder(typ reflect.Type, cols []string) (*fieldEncoder, error) {
+	cacheKey := struct {
+		typ  reflect.Type
+		cols string // concat column names for uniqueness
+	}{
+		typ:  typ,
+		cols: strings.Join(cols, ","),
+	}
+
+	if cached, ok := encoderCache.Load(cacheKey); ok {
+		return cached.(*fieldEncoder), nil
+	}
+
+	fields := make([]int, len(cols))
+	for i, col := range cols {
+		// Try exact match first
+		field, ok := typ.FieldByName(col)
+		if !ok {
+			// Try case-insensitive match
+			for j := 0; j < typ.NumField(); j++ {
+				if strings.EqualFold(typ.Field(j).Name, col) {
+					field = typ.Field(j)
+					ok = true
+					break
+				}
+			}
+		}
+		if !ok {
+			return nil, fmt.Errorf("column %s not found in struct", col)
+		}
+		fields[i] = field.Index[0] // only flat struct supported here
+	}
+
+	encoder := &fieldEncoder{fieldIndexes: fields}
+	encoderCache.Store(cacheKey, encoder)
+	return encoder, nil
+}
+
+func execToArrayOptimized(db *TenantDB, typ reflect.Type, query string, args ...interface{}) ([]interface{}, error) {
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	cols, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	encoder, err := getFieldEncoder(typ, cols)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []interface{}
+
+	for rows.Next() {
+		// Reuse from pool if available
+		var row interface{}
+		val := rowValPool.Get()
+		if val == nil {
+			row = reflect.New(typ).Interface()
+		} else {
+			row = val
+		}
+
+		rowVal := reflect.ValueOf(row).Elem()
+
+		scanArgs := scanArgsPool.Get().([]interface{})[:0] // reuse slice
+		for _, idx := range encoder.fieldIndexes {
+			scanArgs = append(scanArgs, rowVal.Field(idx).Addr().Interface())
+		}
+
+		err = rows.Scan(scanArgs...)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, row)
+		rowValPool.Put(row)
+		scanArgsPool.Put(scanArgs)
+	}
+
+	return result, nil
+}
+
+type exec2arrayFn func(db *TenantDB, typ reflect.Type, query string, args ...interface{}) ([]interface{}, error)
+
+var exec2array exec2arrayFn = execToArraySafe
+
+type FieldDecoder struct {
+	Index    int                                        // field index trong struct
+	ScanType reflect.Type                               // type dùng trong rows.Scan (ex: *sql.NullString)
+	SetValue func(field reflect.Value, val interface{}) // logic convert từ scan value → gán vào struct
+}
+
+var decoderCache sync.Map // map[reflect.Type][]FieldDecoder
+func getOrBuildFieldDecoders(typ reflect.Type) []FieldDecoder {
+	if cached, ok := decoderCache.Load(typ); ok {
+		return cached.([]FieldDecoder)
+	}
+
+	var decoders []FieldDecoder
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		dec := FieldDecoder{
+			Index: i,
+		}
+
+		switch field.Type.Kind() {
+		case reflect.String:
+			dec.ScanType = reflect.TypeOf(new(sql.NullString)).Elem()
+			dec.SetValue = func(f reflect.Value, v interface{}) {
+				val := v.(sql.NullString)
+				if val.Valid {
+					f.SetString(val.String)
+				} else {
+					f.SetString("")
+				}
+			}
+		case reflect.Int, reflect.Int64, reflect.Int32:
+			dec.ScanType = reflect.TypeOf(new(sql.NullInt64)).Elem()
+			dec.SetValue = func(f reflect.Value, v interface{}) {
+				val := v.(sql.NullInt64)
+				if val.Valid {
+					f.SetInt(val.Int64)
+				} else {
+					f.SetInt(0)
+				}
+			}
+		case reflect.Float64:
+			dec.ScanType = reflect.TypeOf(new(sql.NullFloat64)).Elem()
+			dec.SetValue = func(f reflect.Value, v interface{}) {
+				val := v.(sql.NullFloat64)
+				if val.Valid {
+					f.SetFloat(val.Float64)
+				} else {
+					f.SetFloat(0)
+				}
+			}
+		case reflect.Bool:
+			dec.ScanType = reflect.TypeOf(new(sql.NullBool)).Elem()
+			dec.SetValue = func(f reflect.Value, v interface{}) {
+				val := v.(sql.NullBool)
+				if val.Valid {
+					f.SetBool(val.Bool)
+				} else {
+					f.SetBool(false)
+				}
+			}
+		case reflect.Struct:
+			if field.Type == reflect.TypeOf(time.Time{}) {
+				dec.ScanType = reflect.TypeOf(new(sql.NullTime)).Elem()
+				dec.SetValue = func(f reflect.Value, v interface{}) {
+					val := v.(sql.NullTime)
+					if val.Valid {
+						f.Set(reflect.ValueOf(val.Time))
+					} else {
+						f.Set(reflect.Zero(f.Type()))
+					}
+				}
+			}
+		default:
+			continue // hoặc fallback
+		}
+		decoders = append(decoders, dec)
+	}
+	decoderCache.Store(typ, decoders)
+	return decoders
+}
+
+var scanPool = sync.Pool{
+	New: func() interface{} {
+		return make([]interface{}, 0, 32)
+	},
+}
+
+func execToArraySafe(db *TenantDB, typ reflect.Type, query string, args ...any) ([]interface{}, error) {
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	decoders := getOrBuildFieldDecoders(typ)
+	n := len(decoders)
+
+	poolItem := scanPool.Get().([]interface{})
+	if cap(poolItem) < n {
+		poolItem = make([]interface{}, n)
+	} else {
+		poolItem = poolItem[:n]
+	}
+	defer scanPool.Put(poolItem)
+
+	var result []interface{}
+
+	for rows.Next() {
+		rowVal := reflect.New(typ).Elem()
+		for i, dec := range decoders {
+			ptr := reflect.New(dec.ScanType)
+			poolItem[i] = ptr.Interface()
+		}
+
+		if err := rows.Scan(poolItem[:n]...); err != nil {
+			return nil, err
+		}
+
+		for i, dec := range decoders {
+			val := reflect.ValueOf(poolItem[i]).Elem().Interface()
+			field := rowVal.Field(dec.Index)
+			dec.SetValue(field, val)
+		}
+
+		result = append(result, rowVal.Addr().Interface())
+	}
+
+	return result, nil
+}

@@ -22,6 +22,9 @@ func (d *postgresDialect) GetTableAndColumnsDictionary(db *sql.DB) (map[string]s
 func (d *postgresDialect) ToText(value string) string {
 	return fmt.Sprintf("'%s'::citext", value)
 }
+func (d *postgresDialect) ToParam(index int) string {
+	return fmt.Sprintf("$%d", index)
+}
 func (d *postgresDialect) SqlFunction(delegator *DialectDelegateFunction) (string, error) {
 	switch delegator.FuncName {
 	case "LEN":

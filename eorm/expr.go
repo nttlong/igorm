@@ -17,6 +17,8 @@ func (e *exprReceiver) compile(context *exprCompileContext, expr interface{}) (s
 		return e.ColName(context, *expr)
 	case *sqlparser.AndExpr:
 		return e.AndExpr(context, expr)
+	case *sqlparser.OrExpr:
+		return e.OrExpr(context, expr)
 	case *sqlparser.SQLVal:
 		return e.SQLVal(context, expr)
 	case *sqlparser.StarExpr:

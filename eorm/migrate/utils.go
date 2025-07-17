@@ -61,6 +61,9 @@ func (e *Entity) GetType() reflect.Type {
 func (e *Entity) GetColumns() []ColumnDef {
 	return e.cols
 }
+func (e *Entity) TableName() string {
+	return e.tableName
+}
 func (e *Entity) GetFieldByColumnName(colName string) string {
 	col, ok := e.mapCols[colName]
 	if ok {

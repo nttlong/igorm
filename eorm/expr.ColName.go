@@ -38,7 +38,11 @@ func (e *exprReceiver) ColName(context *exprCompileContext, expr sqlparser.ColNa
 				context.alias[tableName] = "T" + strconv.Itoa(len(context.tables))
 				tableName = context.alias[tableName]
 			} else {
-				tableName = utils.Plural(tableName)
+				if tableName == "" && len(context.tables) == 1 {
+					tableName = context.alias[context.tables[0]]
+				} else {
+					tableName = utils.Plural(tableName)
+				}
 			}
 		}
 		if aliasFieldFromStack, ok := context.stackAliasFields.Pop(); ok {

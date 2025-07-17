@@ -124,6 +124,17 @@ func (r *inserter) InsertWithTx(tx *tenantDB.TenantTx, data interface{}) error {
 		return err
 	}
 	defer sqlStmt.Close()
+	if dialect.Name() == "mssql" {
+		var insertedID int64
+		err = sqlStmt.QueryRow(args...).Scan(&insertedID)
+		if err == nil {
+			err = fetchAfterInsertForQueryRow(repoType.entity, dataValue, insertedID)
+			if err != nil {
+				return err
+			}
+		}
+		return err
+	}
 	sqlResult, err := sqlStmt.Exec(args...)
 	if err != nil {
 		errParse := dialect.ParseError(err)
@@ -432,6 +443,9 @@ func InsertBatch[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
 func init() {
 	tenantDB.OnDbInsertFunc = func(db *tenantDB.TenantDB, data interface{}) error {
 		return Insert(db, data)
+	}
+	tenantDB.OnTxDbInsertFunc = func(tx *tenantDB.TenantTx, data interface{}) error {
+		return InsertWithTx(tx, data)
 	}
 
 }

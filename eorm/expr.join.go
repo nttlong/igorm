@@ -2,8 +2,10 @@ package dbv
 
 import (
 	"dbv/sqlparser"
+	"dbv/tenantDB"
 	"fmt"
 	"strings"
+	"sync"
 	// "dbv/sqlparser"
 )
 
@@ -33,6 +35,7 @@ type exprCompileContext struct {
 	purpose          build_purpose
 	stackAliasFields stack[string]
 	stackAliasTables stack[string]
+	paramIndex       int
 }
 
 func (e *exprCompileContext) pluralTableName(tableName string) string {
@@ -114,4 +117,103 @@ func (e *exprCompiler) build(joinText string) error {
 
 	return nil
 
+}
+func (e *exprCompiler) buildWhere(where string) error {
+	where = utils.EXPR.QuoteExpression(where)
+	e.context.purpose = build_purpose_where
+
+	sqlTest := "select * from tmp where" + where
+	stm, err := sqlparser.Parse(sqlTest)
+	if err != nil {
+		return err
+	}
+	if sqlSelect, ok := stm.(*sqlparser.Select); ok {
+		strResult, err := exprs.compile(e.context, sqlSelect.Where.Expr)
+		// for _, expr := range sqlSelect.From {
+		// 	strResult, err := exprs.compile(e.context, expr)
+		if err != nil {
+			return err
+		}
+		e.content = strResult
+	}
+
+	return nil
+
+}
+
+type initNewExprCompiler struct {
+	once sync.Once
+	val  *cacheNewExprCompilerItem
+	err  error
+}
+type cacheNewExprCompilerItem struct {
+	schema  map[string]bool
+	dialect Dialect
+}
+
+var exprCompilerCache sync.Map
+
+func NewExprCompiler(db *tenantDB.TenantDB) (*exprCompiler, error) {
+	key := db.GetDriverName() + "://" + db.GetDBName()
+	actual, _ := exprCompilerCache.LoadOrStore(key, &initNewExprCompiler{})
+
+	init := actual.(*initNewExprCompiler)
+	init.once.Do(func() { //<-- thiet lap cau hinh bien dich
+		init.val = &cacheNewExprCompilerItem{}
+		m, err := NewMigrator(db) //<-- bao dam cac ban phai duoc migrate
+		if err != nil {
+			init.err = err
+			return
+		}
+
+		err = m.DoMigrates() //<-- thuc hien migrate
+		if err != nil {
+			init.err = err //<-- loi bo bien dich khoi dong bi hong
+			return
+		}
+		loader := m.GetLoader()                //<-- khoi tao bo loader cua migrate
+		tables, err := loader.LoadAllTable(db) // <--- lay danh sach cac bang trong database va danh sach cac ban da duoc migrate
+		if err != nil {
+			init.err = err
+			return
+		}
+		dialect := dialectFactory.Create(db.GetDriverName()) //<-- khoi tao dialect, neu kg co dialect se kg the bien dich cua phap dung
+		schema := map[string]bool{}
+		for k, _ := range tables {
+			schema[k] = true
+		}
+		init.val.schema = schema   //<-- bo bien dich can danh sach cac bang trong database
+		init.val.dialect = dialect //<-- bo bien dich can dialect de quote va parse parameter,
+		//cung nhu xua ly cac ham theo tu RDMMS rieng  biet vi du voi MSSQL la LEN khi su dung voi PostgreSQL la LENGTH,
+		//haoc DAY trong SQLServer -> Postgres la DateExtract
+	})
+	if init.err != nil {
+		return nil, init.err
+	}
+
+	ret := &exprCompiler{
+		context: &exprCompileContext{
+			tables:           make([]string, 0),
+			schema:           &init.val.schema,
+			alias:            make(map[string]string),
+			aliasToDbTable:   make(map[string]string),
+			dialect:          init.val.dialect,
+			purpose:          build_purpose_select,
+			stackAliasFields: stack[string]{},
+			stackAliasTables: stack[string]{},
+		},
+	}
+	return ret, nil
+}
+func CompileJoin(joinText string, db *tenantDB.TenantDB) (*exprCompiler, error) {
+	compiler, err := NewExprCompiler(db)
+	if err != nil {
+		return nil, err
+	}
+	compiler.context.purpose = build_purpose_join
+	err = compiler.build(joinText)
+	if err != nil {
+		return nil, err
+	}
+	return compiler, nil
 }

@@ -56,7 +56,7 @@ func getSelectorDecoder[T any](typ reflect.Type, cols []migrate.ColumnDef) func(
 	return fn
 }
 
-func SelectAll[T any](db *tenantDB.TenantDB) ([]*T, error) {
+func SelectAllOriginalVersion[T any](db *tenantDB.TenantDB) ([]*T, error) {
 	// 1. Khởi tạo thông tin entity
 	dialect := dialectFactory.Create(db.GetDriverName())
 	repoType := inserterObj.getEntityInfo(reflect.TypeFor[T]())
@@ -82,7 +82,7 @@ func SelectAll[T any](db *tenantDB.TenantDB) ([]*T, error) {
 	fieldIndexes := make([][]int, len(columns)) // cache field index paths
 	fieldTypes := make([]reflect.Type, len(columns))
 	for i, col := range columns {
-		fieldIndexes[i] = col.Field.Index
+		fieldIndexes[i] = col.IndexOfField
 		fieldTypes[i] = col.Field.Type
 	}
 
@@ -435,4 +435,9 @@ func SelectAllZeroAllocScanDirect[T any](db *tenantDB.TenantDB) ([]T, error) {
 		return nil, err
 	}
 	return result, nil
+}
+
+func SelectAll[T any](db *tenantDB.TenantDB) ([]*T, error) {
+	return SelectAllOriginalVersion[T](db)
+
 }

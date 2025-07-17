@@ -23,6 +23,9 @@ func (d *mySqlDialect) GetTableAndColumnsDictionary(db *sql.DB) (map[string]stri
 func (d *mySqlDialect) ToText(value string) string {
 	return fmt.Sprintf("'%s'", value)
 }
+func (d *mySqlDialect) ToParam(index int) string {
+	return fmt.Sprintf(":%d", index)
+}
 func (d *mySqlDialect) SqlFunction(delegator *DialectDelegateFunction) (string, error) {
 	switch delegator.FuncName {
 	case "NOW":

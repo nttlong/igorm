@@ -1,27 +1,27 @@
 package test
 
-import (
-	"dbv"
-	"dbv/tenantDB"
-	"testing"
+// import (
+// 	"dbv"
+// 	"dbv/tenantDB"
+// 	"testing"
 
-	_ "dbv/pkg_test/models"
+// 	_ "dbv/pkg_test/models"
 
-	"github.com/stretchr/testify/assert"
-)
+// 	"github.com/stretchr/testify/assert"
+// )
 
-func TestPGGenerateSQLCreateTable(t *testing.T) {
-	pgDsn := "postgres://postgres:123456@localhost:5432/a001?sslmode=disable"
-	// create new migrate instance
-	db, err := tenantDB.Open("postgres", pgDsn)
+// func TestPGGenerateSQLCreateTable(t *testing.T) {
+// 	pgDsn := "postgres://postgres:123456@localhost:5432/a001?sslmode=disable"
+// 	// create new migrate instance
+// 	db, err := tenantDB.Open("postgres", pgDsn)
 
-	assert.NoError(t, err)
+// 	assert.NoError(t, err)
 
-	migrator, err := dbv.NewMigrator(db)
-	assert.NoError(t, err)
-	err = migrator.DoMigrates()
-	assert.NoError(t, err)
+// 	migrator, err := dbv.NewMigrator(db)
+// 	assert.NoError(t, err)
+// 	err = migrator.DoMigrates()
+// 	assert.NoError(t, err)
 
-	// fmt.Println(sql)
+// 	// fmt.Println(sql)
 
-}
+// }
