@@ -63,6 +63,26 @@ type exprCompiler struct {
 	content string
 }
 
+func (e *exprCompiler) buildSortField(selector string) error {
+	e.context.purpose = build_purpose_order
+	selector = utils.EXPR.QuoteExpression(selector)
+	sqlTest := "select tmp order by " + selector
+	stm, err := sqlparser.Parse(sqlTest)
+	if err != nil {
+		return err
+	}
+	if sqlSelect, ok := stm.(*sqlparser.Select); ok {
+
+		ret, err := exprs.compile(e.context, sqlSelect.OrderBy)
+		if err != nil {
+			return err
+		}
+		e.content = ret
+
+	}
+
+	return nil
+}
 func (e *exprCompiler) buildSelectField(selector string) error {
 	e.context.purpose = build_purpose_select
 	selector = utils.EXPR.QuoteExpression(selector)

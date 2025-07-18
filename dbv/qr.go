@@ -15,7 +15,9 @@ type QueryParts struct {
 	whereExprs   string
 	whereArgs    []interface{}
 	orderByExprs []string
+	orderByArgs  []interface{}
 	groupByExprs []string
+	groupByArgs  []interface{}
 	Limit        *int
 	Offset       *int
 	Err          error
@@ -76,32 +78,19 @@ func (q *QueryParts) Select(exprsAndArgs ...interface{}) *QueryParts {
 	}
 	q.selectFields = expressions
 	q.argsSelect = args
-	// argIdx := 0
-	// for _, exprStr := range expressions {
-	// 	numArgs := strings.Count(exprStr, "?")
-	// 	if argIdx+numArgs > len(args) {
-	// 		panic(fmt.Sprintf("Select: not enough arguments for expression '%s' — expected %d but have %d left", exprStr, numArgs, len(args)-argIdx))
-	// 	}
-
-	// 	exprArgs := []interface{}{}
-	// 	for _, a := range args[argIdx : argIdx+numArgs] {
-	// 		if lit, isLit := a.(litOfString); isLit {
-	// 			exprArgs = append(exprArgs, lit.val)
-	// 		} else {
-	// 			exprArgs = append(exprArgs, a)
-	// 		}
-	// 	}
-
-	// 	argIdx += numArgs
-	// }
-
-	// if argIdx != len(args) {
-	// 	panic(fmt.Sprintf("Select: too many arguments — used %d but received %d", argIdx, len(args)))
-	// }
 
 	return q
 }
-
+func (q *QueryParts) InnerJoin(table string, onExpr string, args ...interface{}) *QueryParts {
+	q.fromExpr = q.fromExpr + " INNER JOIN " + table + " ON " + onExpr
+	q.argsSelect = append(q.argsSelect, args...)
+	return q
+}
+func (q *QueryParts) LeftJoin(table string, onExpr string, args ...interface{}) *QueryParts {
+	q.fromExpr = q.fromExpr + " LEFT JOIN " + table + " ON " + onExpr
+	q.argsSelect = append(q.argsSelect, args...)
+	return q
+}
 func (q *QueryParts) From(table string) *QueryParts {
 	q.fromExpr = table
 	return q
@@ -113,17 +102,43 @@ func (q *QueryParts) Where(expr string, args ...interface{}) *QueryParts {
 	return q
 }
 
-func (q *QueryParts) OrderBy(exprs ...string) *QueryParts {
-	q.orderByExprs = append(q.orderByExprs, exprs...)
+func (q *QueryParts) OrderBy(args ...interface{}) *QueryParts {
+	exprs := []string{}
+	for _, item := range args {
+		switch v := item.(type) {
+		case string:
+			exprs = append(exprs, v)
+		case litOfString:
+			// LitOfString là literal, sẽ dùng làm arg
+			q.orderByArgs = append(q.orderByArgs, v)
+		default:
+			// Các kiểu khác cũng là arg
+			q.orderByArgs = append(q.orderByArgs, v)
+		}
+	}
+	q.orderByExprs = exprs
 	return q
 }
 
-func (q *QueryParts) GroupBy(exprs ...string) *QueryParts {
-	q.groupByExprs = append(q.groupByExprs, exprs...)
+func (q *QueryParts) GroupBy(args ...interface{}) *QueryParts {
+	exprs := []string{}
+	for _, item := range args {
+		switch v := item.(type) {
+		case string:
+			exprs = append(exprs, v)
+		case litOfString:
+			// LitOfString là literal, sẽ dùng làm arg
+			q.groupByArgs = append(q.groupByArgs, v)
+		default:
+			// Các kiểu khác cũng là arg
+			q.groupByArgs = append(q.groupByArgs, v)
+		}
+	}
+	q.groupByExprs = exprs
 	return q
 }
 
-func (q *QueryParts) LimitOffset(limit, offset int) *QueryParts {
+func (q *QueryParts) OffsetLimit(offset, limit int) *QueryParts {
 	q.Limit = &limit
 	q.Offset = &offset
 	return q
@@ -200,7 +215,12 @@ func (q *QueryParts) buildSQL(db *tenantDB.TenantDB) (string, error) {
 	// ORDER BY
 	if len(q.orderByExprs) > 0 {
 		sb.WriteString(" ORDER BY ")
-		sb.WriteString(strings.Join(q.orderByExprs, ", "))
+		sortExpr := strings.Join(q.orderByExprs, ", ")
+		err = compiler.buildSortField(sortExpr)
+		if err != nil {
+			return "", nil
+		}
+		sb.WriteString(compiler.content)
 	}
 	return sb.String(), nil
 
@@ -223,17 +243,28 @@ func (q *QueryParts) BuildSQL(db *tenantDB.TenantDB) (string, []interface{}) {
 		return "", nil
 	}
 	reqSql := initBuild.val
+	if db.GetDriverName() == "sqlserver" {
+		//OFFSET 100 ROWS FETCH NEXT 0 ROWS ONLY;
+		if q.Limit == nil {
+			*q.Limit = 0
+		}
+		if q.Offset == nil {
+			*q.Offset = 0
+		}
+		reqSql += " OFFSET " + strconv.Itoa(*q.Offset) + " ROWS FETCH NEXT " + strconv.Itoa(*q.Limit) + " ROWS ONLY"
 
-	// LIMIT OFFSET
-	if q.Limit != nil {
-		reqSql += " LIMIT " + strconv.Itoa(*q.Limit)
-		// sb.WriteString(" LIMIT ?")
+	} else {
+		// LIMIT OFFSET
+		if q.Limit != nil {
+			reqSql += " LIMIT " + strconv.Itoa(*q.Limit)
+			// sb.WriteString(" LIMIT ?")
 
-	}
-	if q.Offset != nil {
-		//sb.WriteString(" OFFSET ?")
-		reqSql += " OFFSET " + strconv.Itoa(*q.Limit)
+		}
+		if q.Offset != nil {
+			//sb.WriteString(" OFFSET ?")
+			reqSql += " OFFSET " + strconv.Itoa(*q.Offset)
 
+		}
 	}
 	args := []interface{}{}
 
@@ -255,4 +286,45 @@ func (q *QueryParts) BuildSQL(db *tenantDB.TenantDB) (string, []interface{}) {
 }
 func Qr() *QueryParts {
 	return NewQueryParts()
+}
+func init() {
+	tenantDB.OnNewQrFn = func() interface{} {
+		return NewQueryParts()
+	}
+	tenantDB.OnQrSelect = func(q interface{}, exprsAndArgs ...interface{}) interface{} {
+		qr := q.(*QueryParts)
+		return qr.Select(exprsAndArgs...)
+	}
+	tenantDB.OnInnerJoin = func(q interface{}, table string, onExpr string, args ...interface{}) interface{} {
+		qr := q.(*QueryParts)
+		return qr.InnerJoin(table, onExpr, args...)
+	}
+	tenantDB.OnLeftJoin = func(q interface{}, table string, onExpr string, args ...interface{}) interface{} {
+		qr := q.(*QueryParts)
+		return qr.LeftJoin(table, onExpr, args...)
+	}
+	tenantDB.OnWhere = func(q interface{}, expr string, args ...interface{}) interface{} {
+		qr := q.(*QueryParts)
+		return qr.Where(expr, args...)
+	}
+	tenantDB.OnOrderBy = func(q interface{}, args ...interface{}) interface{} {
+		qr := q.(*QueryParts)
+		return qr.OrderBy(args...)
+	}
+	tenantDB.OnGroupBy = func(q interface{}, args ...interface{}) interface{} {
+		qr := q.(*QueryParts)
+		return qr.GroupBy(args...)
+	}
+	tenantDB.OnOffsetLimit = func(q interface{}, offset, limit int) interface{} {
+		qr := q.(*QueryParts)
+		return qr.OffsetLimit(offset, limit)
+	}
+	tenantDB.OnBuildSql = func(q interface{}, db *tenantDB.TenantDB) (string, []interface{}) {
+		qr := q.(*QueryParts)
+		return qr.BuildSQL(db)
+	}
+	tenantDB.OnFrom = func(q interface{}, table string, args ...interface{}) interface{} {
+		qr := q.(*QueryParts)
+		return qr.From(table)
+	}
 }

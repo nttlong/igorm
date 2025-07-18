@@ -9,8 +9,17 @@ import (
 	"time"
 )
 
-func (db *TenantDB) ExecToArray(typ reflect.Type, query string, args ...interface{}) ([]interface{}, error) {
-	return exec2array(db, typ, query, args...)
+func (db *TenantDB) ExecToArray(result interface{}, query string, args ...interface{}) error {
+	if result == nil {
+		return fmt.Errorf("result must not be nil")
+	}
+
+	typ := reflect.TypeOf(result)
+	if typ.Kind() != reflect.Ptr {
+		return fmt.Errorf("result must be a pointer to slice")
+	}
+
+	return exec2array(db, result, query, args...)
 }
 func execToArray_original(db *TenantDB, typ reflect.Type, query string, args ...interface{}) ([]interface{}, error) {
 	rows, err := db.Query(query, args...)
@@ -138,58 +147,91 @@ func getFieldEncoder(typ reflect.Type, cols []string) (*fieldEncoder, error) {
 	return encoder, nil
 }
 
-func execToArrayOptimized(db *TenantDB, typ reflect.Type, query string, args ...interface{}) ([]interface{}, error) {
+/*
+	 Example usage:
+		type MyStruct struct {
+			ID   int
+		}
+		items:=[]MyStruct{}
+		execToArrayOptimized(db,&result,"SELECT * FROM my_table", args...)
+*/
+func execToArrayOptimized(db *TenantDB, result interface{}, query string, args ...interface{}) error {
+	ptrVal := reflect.ValueOf(result)
+	if ptrVal.Kind() != reflect.Ptr {
+		return fmt.Errorf("result must be a pointer to slice")
+	}
+
+	sliceVal := ptrVal.Elem()
+	if sliceVal.Kind() != reflect.Slice {
+		return fmt.Errorf("result must be a pointer to a slice")
+	}
+
+	elemType := sliceVal.Type().Elem() // MyStruct hoặc *MyStruct
+	typ := elemType
+	if elemType.Kind() == reflect.Ptr {
+		typ = elemType.Elem()
+	}
+
 	rows, err := db.Query(query, args...)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer rows.Close()
 
 	cols, err := rows.Columns()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	encoder, err := getFieldEncoder(typ, cols)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var result []interface{}
+	newSlice := reflect.MakeSlice(sliceVal.Type(), 0, 0)
 
 	for rows.Next() {
-		// Reuse from pool if available
-		var row interface{}
+		var row reflect.Value
+
 		val := rowValPool.Get()
 		if val == nil {
-			row = reflect.New(typ).Interface()
+			row = reflect.New(typ)
 		} else {
-			row = val
+			row = reflect.ValueOf(val)
 		}
 
-		rowVal := reflect.ValueOf(row).Elem()
+		rowVal := row.Elem()
 
-		scanArgs := scanArgsPool.Get().([]interface{})[:0] // reuse slice
+		scanArgs := scanArgsPool.Get().([]interface{})[:0]
 		for _, idx := range encoder.fieldIndexes {
 			scanArgs = append(scanArgs, rowVal.Field(idx).Addr().Interface())
 		}
 
-		err = rows.Scan(scanArgs...)
-		if err != nil {
-			return nil, err
+		if err := rows.Scan(scanArgs...); err != nil {
+			return err
 		}
 
-		result = append(result, row)
-		rowValPool.Put(row)
+		// Gán row vào slice
+		var finalVal reflect.Value
+		if elemType.Kind() == reflect.Ptr {
+			finalVal = row
+		} else {
+			finalVal = row.Elem()
+		}
+		newSlice = reflect.Append(newSlice, finalVal)
+
+		rowValPool.Put(row.Interface())
 		scanArgsPool.Put(scanArgs)
 	}
 
-	return result, nil
+	// Gán lại vào `*result`
+	sliceVal.Set(newSlice)
+	return nil
 }
 
-type exec2arrayFn func(db *TenantDB, typ reflect.Type, query string, args ...interface{}) ([]interface{}, error)
+type exec2arrayFn func(db *TenantDB, result interface{}, query string, args ...interface{}) error
 
-var exec2array exec2arrayFn = execToArraySafe
+var exec2array exec2arrayFn = execToArrayOptimized
 
 type FieldDecoder struct {
 	Index    int                                        // field index trong struct

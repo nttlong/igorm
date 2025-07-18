@@ -2,6 +2,7 @@ package test
 
 import (
 	"dbv"
+	"dbv/pkg_test/models"
 	"testing"
 	"time"
 
@@ -15,9 +16,148 @@ import (
 // 	"testing"
 // 	"time"
 
-// 	"github.com/stretchr/testify/assert"
+//	"github.com/stretchr/testify/assert"
+//
 // )
+func TestMssqlDbQuery(t *testing.T) {
+	mssqlDns := "sqlserver://sa:123456@localhost?database=a003"
+	db, err := dbv.Open("sqlserver", mssqlDns)
+	// dialect := dbv.DialectFactory.Create(db.GetDriverName())
+	assert.NoError(t, err)
+	err = db.Ping()
+	assert.NoError(t, err)
+	qr := db.From("users").OrderBy("id").Select("ID, Name").OrderBy("id").OffsetLimit(0, 100)
+	sql, _ := qr.BuildSql()
+	expectSql := "SELECT [T1].[id] AS [id], [T1].[name] AS [name] FROM [users] AS [T1] OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY"
+	assert.Equal(t, expectSql, sql)
+	users := []models.User{}
+	err = qr.ToArray(users)
+	assert.NoError(t, err)
+	assert.Equal(t, 100, len(users))
 
+}
+func BenchmarkTestMssqlDbQuery(t *testing.B) {
+	mssqlDns := "sqlserver://sa:123456@localhost?database=a003"
+	db, err := dbv.Open("sqlserver", mssqlDns)
+	// dialect := dbv.DialectFactory.Create(db.GetDriverName())
+	assert.NoError(t, err)
+	err = db.Ping()
+	assert.NoError(t, err)
+	for i := 0; i < t.N; i++ {
+		qr := db.From("users").Select("id, name, age").OrderBy("id").OffsetLimit(0, 100)
+		sql, _ := qr.BuildSql()
+		expectSql := "SELECT [T1].[id] AS [id], [T1].[name] AS [name], [T1].[age] AS [age] FROM [users] AS [T1] OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY"
+		assert.Equal(t, expectSql, sql)
+	}
+}
+func TestMssqlSelectJoinExprAndSort(t *testing.T) {
+	mssqlDns := "sqlserver://sa:123456@localhost?database=a003"
+	db, err := dbv.Open("sqlserver", mssqlDns)
+	// dialect := dbv.DialectFactory.Create(db.GetDriverName())
+	assert.NoError(t, err)
+	err = db.Ping()
+	assert.NoError(t, err)
+
+	type OutPut struct { //<-- vi du day la dau ra
+		Username       *string
+		DepartmentName *string
+		PositionName   *string
+		Email          *string
+		UserBirthday   *time.Time
+	}
+	qr := dbv.Qr().From("user u").LeftJoin("department d", "u.deptId= d.id")
+	qr.LeftJoin("position p", "u.positionId= p.id")
+	qr.Select(
+		"u.username",
+		"d.name DepartmentName",
+		"p.name PositionName",
+		"u.email",
+		"u.birthday UserBirthday",
+	)
+	qr.OrderBy("u.id")
+	qr.OffsetLimit(0, 100)
+
+	sql, _ := qr.BuildSQL(db)
+	expectSql := "SELECT [u].[username] AS [username], [d].[name] AS [DepartmentName], [p].[name] AS [PositionName], [u].[email] AS [email], [u].[birthday] AS [UserBirthday] FROM [users] AS [u] LEFT JOIN [departments] AS [d] ON [u].[dept_id] = [d].[id] LEFT JOIN [positions] AS [p] ON [u].[position_id] = [p].[id] ORDER BY [u].[id] ASC OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY"
+	assert.Equal(t, expectSql, sql)
+	items := []OutPut{}
+	err = db.ExecToArray(&items, sql)
+	assert.NoError(t, err)
+	assert.Equal(t, 100, len(items))
+
+}
+func BenchmarkTestMssqlSelectJoinExpr(t *testing.B) {
+
+	//go test -bench='^BenchmarkTestMssqlSelectJoinExpr$' -run=^$ -benchmem -count=10
+
+	mssqlDns := "sqlserver://sa:123456@localhost?database=a003"
+	db, err := dbv.Open("sqlserver", mssqlDns)
+	// dialect := dbv.DialectFactory.Create(db.GetDriverName())
+	assert.NoError(t, err)
+	err = db.Ping()
+	assert.NoError(t, err)
+	for i := 0; i < t.N; i++ {
+		qr := dbv.Qr().From("user u").LeftJoin("department d", "u.deptId= d.id")
+		qr.LeftJoin("position p", "u.positionId= p.id")
+		qr.Select(
+			"u.username",
+			"d.name DepartmentName",
+			"p.name PositionName",
+			"u.email",
+			"u.birthday UserBirthday",
+		).OrderBy("u.id").OffsetLimit(0, 10000)
+
+		sql, _ := qr.BuildSQL(db)
+		// expectSql := "SELECT [u].[username] AS [username], [d].[name] AS [DepartmentName], [p].[name] AS [PositionName], [u].[email] AS [email], [u].[birthday] AS [UserBirthday] FROM [users] AS [u] LEFT JOIN [departments] AS [d] ON [u].[dept_id] = [d].[id] LEFT JOIN [positions] AS [p] ON [u].[position_id] = [p].[id]"
+		// assert.Equal(t, expectSql, sql)
+		type OutPut struct { //<-- vi du day la dau ra
+			Username       *string
+			DepartmentName *string
+			PositionName   *string
+			Email          *string
+			UserBirthday   *time.Time
+		}
+		items := []OutPut{}
+		err := db.ExecToArray(&items, sql)
+		assert.NoError(t, err)
+		assert.Equal(t, 10000, len(items))
+	}
+}
+func TestMssqlSelectJoinExpr(t *testing.T) {
+	mssqlDns := "sqlserver://sa:123456@localhost?database=a003"
+	db, err := dbv.Open("sqlserver", mssqlDns)
+	// dialect := dbv.DialectFactory.Create(db.GetDriverName())
+	assert.NoError(t, err)
+	err = db.Ping()
+	assert.NoError(t, err)
+
+	type OutPut struct { //<-- vi du day la dau ra
+		Username       *string
+		DepartmentName *string
+		PositionName   *string
+		Email          *string
+		UserBirthday   *time.Time
+	}
+	qr := dbv.Qr().From("user u").LeftJoin("department d", "u.deptId= d.id")
+	qr.LeftJoin("position p", "u.positionId= p.id")
+	qr.Select(
+		"u.username",
+		"d.name DepartmentName",
+		"p.name PositionName",
+		"u.email",
+		"u.birthday UserBirthday",
+	)
+
+	sql, _ := qr.BuildSQL(db)
+	expectSql := "SELECT [u].[username] AS [username], [d].[name] AS [DepartmentName], [p].[name] AS [PositionName], [u].[email] AS [email], [u].[birthday] AS [UserBirthday] FROM [users] AS [u] LEFT JOIN [departments] AS [d] ON [u].[dept_id] = [d].[id] LEFT JOIN [positions] AS [p] ON [u].[position_id] = [p].[id]"
+	assert.Equal(t, expectSql, sql)
+	items := []OutPut{}
+
+	err = db.ExecToArray(items, sql)
+	assert.NoError(t, err)
+	assert.Equal(t, 26004, len(items))
+
+}
 func TestMssqlQueryBuilder(t *testing.T) {
 	mssqlDns := "sqlserver://sa:123456@localhost?database=a003"
 	db, err := dbv.Open("sqlserver", mssqlDns)
@@ -44,6 +184,11 @@ func TestMssqlQueryBuilder(t *testing.T) {
 		expectSql := "SELECT CONCAT([T1].[first_name], @p1, [T1].[last_name]), [T1].[code] AS [Code], [T1].[salary] * @p2 AS [Salary] FROM [users] AS [T1] WHERE [T1].[id] = @p3 OR [T1].[id] = @p4"
 		assert.Equal(t, expectSql, sql)
 		assert.Equal(t, []interface{}{" ", 0.12, 10, 100}, args)
+		items := []OutPut{}
+
+		err := db.ExecToArray(items, sql)
+		assert.NoError(t, err)
+		assert.Equal(t, 1, len(items))
 	}
 
 }

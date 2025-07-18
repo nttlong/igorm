@@ -40,6 +40,12 @@ func (e *exprReceiver) compile(context *exprCompileContext, expr interface{}) (s
 		return e.FuncExpr(context, expr)
 	case *sqlparser.AliasedExpr:
 		return e.AliasedExpr(context, expr)
+	case *sqlparser.Order:
+		return e.Order(context, expr)
+	case sqlparser.Order:
+		return e.Order(context, &expr)
+	case sqlparser.OrderBy:
+		return e.OrderBy(context, expr)
 
 	default:
 		panic(fmt.Errorf("unsupported expression type %T in file eorm/expr.go, line 17", expr))
