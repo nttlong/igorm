@@ -9,29 +9,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// import (
-// 	"dbv"
-// 	"dbv/pkg_test/models"
-// 	"reflect"
-// 	"testing"
-// 	"time"
+func TestMssqlDbTestFind(t *testing.T) {
+	mssqlDns := "sqlserver://sa:123456@localhost?database=a001"
+	db, err := dbv.Open("sqlserver", mssqlDns)
 
-//	"github.com/stretchr/testify/assert"
-//
-// )
+	assert.NoError(t, err)
+	defer db.Close()
+	user := models.User{}
+	err = db.First(&user, "id=?", 1)
+	assert.NoError(t, err)
+
+}
 func TestMssqlDbQuery(t *testing.T) {
 	mssqlDns := "sqlserver://sa:123456@localhost?database=a003"
 	db, err := dbv.Open("sqlserver", mssqlDns)
+
 	// dialect := dbv.DialectFactory.Create(db.GetDriverName())
 	assert.NoError(t, err)
 	err = db.Ping()
 	assert.NoError(t, err)
-	qr := db.From("users").OrderBy("id").Select("ID, Name").OrderBy("id").OffsetLimit(0, 100)
+	qr := db.From("users").OrderBy("id").Select("ID, Name").OrderBy("id").OffsetLimit(0, 10000)
 	sql, _ := qr.BuildSql()
 	expectSql := "SELECT [T1].[id] AS [id], [T1].[name] AS [name] FROM [users] AS [T1] OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY"
 	assert.Equal(t, expectSql, sql)
 	users := []models.User{}
-	err = qr.ToArray(users)
+	err = qr.ToArray(&users)
 	assert.NoError(t, err)
 	assert.Equal(t, 100, len(users))
 
@@ -44,10 +46,18 @@ func BenchmarkTestMssqlDbQuery(t *testing.B) {
 	err = db.Ping()
 	assert.NoError(t, err)
 	for i := 0; i < t.N; i++ {
-		qr := db.From("users").Select("id, name, age").OrderBy("id").OffsetLimit(0, 100)
-		sql, _ := qr.BuildSql()
-		expectSql := "SELECT [T1].[id] AS [id], [T1].[name] AS [name], [T1].[age] AS [age] FROM [users] AS [T1] OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY"
-		assert.Equal(t, expectSql, sql)
+		qr := db.From("users").Select(
+			"id",
+			"Name",
+			"concat(Name, ?,Name) as Email",
+			"Birthday",
+			db.Lit(" "),
+		).OrderBy("ID").OffsetLimit(0, 10000)
+
+		users := []models.User{}
+		err = qr.ToArray(&users)
+		assert.NoError(t, err)
+		assert.Equal(t, 10000, len(users))
 	}
 }
 func TestMssqlSelectJoinExprAndSort(t *testing.T) {
@@ -77,7 +87,7 @@ func TestMssqlSelectJoinExprAndSort(t *testing.T) {
 	qr.OrderBy("u.id")
 	qr.OffsetLimit(0, 100)
 
-	sql, _ := qr.BuildSQL(db)
+	sql, _ := qr.BuildSQL(db.TenantDB)
 	expectSql := "SELECT [u].[username] AS [username], [d].[name] AS [DepartmentName], [p].[name] AS [PositionName], [u].[email] AS [email], [u].[birthday] AS [UserBirthday] FROM [users] AS [u] LEFT JOIN [departments] AS [d] ON [u].[dept_id] = [d].[id] LEFT JOIN [positions] AS [p] ON [u].[position_id] = [p].[id] ORDER BY [u].[id] ASC OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY"
 	assert.Equal(t, expectSql, sql)
 	items := []OutPut{}
@@ -107,7 +117,7 @@ func BenchmarkTestMssqlSelectJoinExpr(t *testing.B) {
 			"u.birthday UserBirthday",
 		).OrderBy("u.id").OffsetLimit(0, 10000)
 
-		sql, _ := qr.BuildSQL(db)
+		sql, _ := qr.BuildSQL(db.TenantDB)
 		// expectSql := "SELECT [u].[username] AS [username], [d].[name] AS [DepartmentName], [p].[name] AS [PositionName], [u].[email] AS [email], [u].[birthday] AS [UserBirthday] FROM [users] AS [u] LEFT JOIN [departments] AS [d] ON [u].[dept_id] = [d].[id] LEFT JOIN [positions] AS [p] ON [u].[position_id] = [p].[id]"
 		// assert.Equal(t, expectSql, sql)
 		type OutPut struct { //<-- vi du day la dau ra
@@ -148,7 +158,7 @@ func TestMssqlSelectJoinExpr(t *testing.T) {
 		"u.birthday UserBirthday",
 	)
 
-	sql, _ := qr.BuildSQL(db)
+	sql, _ := qr.BuildSQL(db.TenantDB)
 	expectSql := "SELECT [u].[username] AS [username], [d].[name] AS [DepartmentName], [p].[name] AS [PositionName], [u].[email] AS [email], [u].[birthday] AS [UserBirthday] FROM [users] AS [u] LEFT JOIN [departments] AS [d] ON [u].[dept_id] = [d].[id] LEFT JOIN [positions] AS [p] ON [u].[position_id] = [p].[id]"
 	assert.Equal(t, expectSql, sql)
 	items := []OutPut{}
@@ -180,7 +190,7 @@ func TestMssqlQueryBuilder(t *testing.T) {
 			"salary*? as Salary", dbv.Lit(" "), 0.12)
 		qr.Where("id =? or id =?", 10, 100)
 
-		sql, args := qr.BuildSQL(db)
+		sql, args := qr.BuildSQL(db.TenantDB)
 		expectSql := "SELECT CONCAT([T1].[first_name], @p1, [T1].[last_name]), [T1].[code] AS [Code], [T1].[salary] * @p2 AS [Salary] FROM [users] AS [T1] WHERE [T1].[id] = @p3 OR [T1].[id] = @p4"
 		assert.Equal(t, expectSql, sql)
 		assert.Equal(t, []interface{}{" ", 0.12, 10, 100}, args)
@@ -199,7 +209,7 @@ func BenchmarkTestMssqlQueryBuilder(t *testing.B) {
 	assert.NoError(t, err)
 	err = db.Ping()
 	assert.NoError(t, err)
-	dbv.NewExprCompiler(db)
+	dbv.NewExprCompiler(db.TenantDB)
 	t.ResetTimer()
 	for i := 0; i < t.N; i++ {
 
@@ -208,7 +218,7 @@ func BenchmarkTestMssqlQueryBuilder(t *testing.B) {
 			"Code",
 			"salary*? as Salary", dbv.Lit(" "), 0.12)
 		qr.Where("id =? or id =?", 10, 100)
-		sql, args := qr.BuildSQL(db)
+		sql, args := qr.BuildSQL(db.TenantDB)
 		expectSql := "SELECT CONCAT([T1].[first_name], @p1, [T1].[last_name]), [T1].[code] AS [Code], [T1].[salary] * @p2 AS [Salary] FROM [users] AS [T1] WHERE [T1].[id] = @p3 OR [T1].[id] = @p4"
 		assert.Equal(t, expectSql, sql)
 		assert.Equal(t, []interface{}{" ", 0.12, 10, 100}, args)

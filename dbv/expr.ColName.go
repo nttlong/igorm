@@ -45,9 +45,7 @@ func (e *exprReceiver) ColName(context *exprCompileContext, expr sqlparser.ColNa
 				}
 			}
 		}
-		if aliasFieldFromStack, ok := context.stackAliasFields.Pop(); ok {
-			aliasFieldName = aliasFieldFromStack
-		}
+
 	} else {
 		/*
 			if found in database calculate alias field name

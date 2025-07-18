@@ -3,6 +3,8 @@ package dbv
 import (
 	// EXPR "dbv/expr"
 	"dbv/tenantDB"
+	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -153,6 +155,14 @@ type initBuildSQL struct {
 var cacheBuildSQL sync.Map
 
 func (q *QueryParts) buildSQL(db *tenantDB.TenantDB) (string, error) {
+	migrator, err := NewMigrator(db)
+	if err != nil {
+		return "", err
+	}
+	err = migrator.DoMigrates()
+	if err != nil {
+		return "", err
+	}
 	var sb strings.Builder
 
 	compiler, err := CompileJoin(q.fromExpr, db)
@@ -287,6 +297,115 @@ func (q *QueryParts) BuildSQL(db *tenantDB.TenantDB) (string, []interface{}) {
 func Qr() *QueryParts {
 	return NewQueryParts()
 }
+func buildBasicSqlNoCache(typ reflect.Type, db *tenantDB.TenantDB, filter string) (string, error) {
+
+	repoType := inserterObj.getEntityInfo(typ)
+	tableName := repoType.tableName
+	compiler, err := CompileJoin(tableName, db)
+	if err != nil {
+		return "", err
+	}
+	tableName = compiler.content
+	columns := repoType.entity.GetColumns()
+
+	fieldsSelect := make([]string, len(columns))
+	for i, col := range columns {
+		fieldsSelect[i] = col.Name + " AS " + col.Field.Name
+	}
+	compiler.context.purpose = build_purpose_select
+	err = compiler.buildSelectField(strings.Join(fieldsSelect, ", "))
+	if err != nil {
+		return "", err
+	}
+	strField := compiler.content
+
+	sql := fmt.Sprintf("SELECT %s FROM %s", strField, tableName)
+	if filter != "" {
+		compiler.context.purpose = build_purpose_where
+		err = compiler.buildWhere(filter)
+		if err != nil {
+			return "", err
+		}
+		sql += " WHERE " + compiler.content
+	}
+
+	return sql, nil
+}
+
+type initBuildBasicSql struct {
+	once sync.Once
+	val  string
+	err  error
+}
+
+var cacheBuildBasicSql sync.Map
+
+func buildBasicSql(typ reflect.Type, db *tenantDB.TenantDB, filter string) (string, error) {
+	key := db.GetDriverName() + "://" + db.GetDBName() + "/" + typ.String() + "/" + filter
+	actual, _ := cacheBuildBasicSql.LoadOrStore(key, &initBuildBasicSql{})
+	initBuild := actual.(*initBuildBasicSql)
+	initBuild.once.Do(func() {
+		sql, err := buildBasicSqlNoCache(typ, db, filter)
+		initBuild.val = sql
+		initBuild.err = err
+	})
+	return initBuild.val, initBuild.err
+}
+
+type initBuildBasicSqlFirstItem struct {
+	once sync.Once
+	val  string
+	err  error
+}
+
+func buildBasicSqlFirstItemNoCache(typ reflect.Type, db *tenantDB.TenantDB, filter string) (string, error) {
+
+	repoType := inserterObj.getEntityInfo(typ)
+	tableName := repoType.tableName
+	compiler, err := CompileJoin(tableName, db)
+	if err != nil {
+		return "", err
+	}
+	tableName = compiler.content
+	columns := repoType.entity.GetColumns()
+
+	fieldsSelect := make([]string, len(columns))
+	for i, col := range columns {
+		fieldsSelect[i] = col.Field.Name
+	}
+	compiler.context.purpose = build_purpose_select
+	err = compiler.buildSelectField(strings.Join(fieldsSelect, ", "))
+	if err != nil {
+		return "", err
+	}
+	strField := compiler.content
+
+	sql := fmt.Sprintf("SELECT TOP 1 %s FROM %s", strField, tableName)
+	if filter != "" {
+		compiler.context.purpose = build_purpose_where
+		err = compiler.buildWhere(filter)
+		if err != nil {
+			return "", err
+		}
+		sql += " WHERE " + compiler.content
+	}
+
+	return sql, nil
+}
+
+var cacheBuildBasicSqlFirstItem sync.Map
+
+func buildBasicSqlFirstItem(typ reflect.Type, db *tenantDB.TenantDB, filter string) (string, error) {
+	key := db.GetDriverName() + "://" + db.GetDBName() + "/" + typ.String() + "/" + filter
+	actual, _ := cacheBuildBasicSqlFirstItem.LoadOrStore(key, &initBuildBasicSqlFirstItem{})
+	initBuild := actual.(*initBuildBasicSqlFirstItem)
+	initBuild.once.Do(func() {
+		sql, err := buildBasicSqlFirstItemNoCache(typ, db, filter)
+		initBuild.val = sql
+		initBuild.err = err
+	})
+	return initBuild.val, initBuild.err
+}
 func init() {
 	tenantDB.OnNewQrFn = func() interface{} {
 		return NewQueryParts()
@@ -326,5 +445,18 @@ func init() {
 	tenantDB.OnFrom = func(q interface{}, table string, args ...interface{}) interface{} {
 		qr := q.(*QueryParts)
 		return qr.From(table)
+	}
+	tenantDB.OnLiterals = func(str string) interface{} {
+		return litOfString{val: str}
+	}
+	tenantDB.OnBuildSQL = buildBasicSql
+	tenantDB.OnBuildSQLFirstItem = buildBasicSqlFirstItem
+	tenantDB.OnGetMapIndex = func(typ reflect.Type) map[string][]int {
+		repoType := inserterObj.getEntityInfo(typ)
+		ret := map[string][]int{}
+		for _, col := range repoType.entity.GetColumns() {
+			ret[col.Field.Name] = col.IndexOfField
+		}
+		return ret
 	}
 }

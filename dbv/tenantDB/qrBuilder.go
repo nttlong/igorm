@@ -1,7 +1,6 @@
 package tenantDB
 
 import (
-	"errors"
 	"reflect"
 )
 
@@ -16,6 +15,13 @@ type OnNewQr func() interface{}
 var OnNewQrFn OnNewQr
 var OnFrom OnExpr
 
+type onLiterals = func(string) interface{}
+
+var OnLiterals onLiterals
+
+func (db *TenantDB) Lit(str string) interface{} {
+	return OnLiterals(str)
+}
 func (db *TenantDB) From(table string) *query {
 	ret := createQr(db)
 	ret.qrInstance = OnFrom(ret.qrInstance, table)
@@ -36,10 +42,6 @@ type selectExpr struct {
 }
 type litOfString struct {
 	val string
-}
-
-func (db *TenantDB) Lit(str string) litOfString {
-	return litOfString{val: str}
 }
 
 /*
@@ -135,29 +137,49 @@ func (q *query) BuildSql() (string, []interface{}) {
 func (q *query) ToArray(items interface{}) error {
 	sql, args := q.BuildSql()
 
-	ptrValue := reflect.ValueOf(items)
-	if ptrValue.Kind() != reflect.Ptr {
-		return errors.New("items must be a pointer to slice")
-	}
-
-	sliceValue := ptrValue.Elem()
-	if sliceValue.Kind() != reflect.Slice {
-		return errors.New("items must be a pointer to slice")
-	}
-
-	// Lấy kiểu phần tử
-	elemType := sliceValue.Type().Elem()
-	if elemType.Kind() == reflect.Ptr {
-		elemType = elemType.Elem()
-	}
-
-	// Truy vấn DB và trả về slice kết quả
 	err := q.db.ExecToArray(items, sql, args...)
 	if err != nil {
 		return err
 	}
 
-	// Ép `ret` về `reflect.Value` và gán vào `items`
-
 	return nil
+}
+
+type onBuildSQL func(typ reflect.Type, db *TenantDB, filter string) (string, error)
+
+var OnBuildSQL onBuildSQL
+
+/*
+Example:
+
+	r.db.Find(&users, "email = ? OR username = ?", identifier, identifier)
+*/
+func (db *TenantDB) Find(entity interface{}, filter string, args ...interface{}) error {
+	typ := reflect.TypeOf(entity)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	sql, err := OnBuildSQL(typ, db, filter)
+	if err != nil {
+		return err
+	}
+	return db.ExecToArray(entity, sql, args...)
+
+}
+
+type onBuildSQLFirstItem func(typ reflect.Type, db *TenantDB, filter string) (string, error)
+
+var OnBuildSQLFirstItem onBuildSQLFirstItem
+
+func (db *TenantDB) First(entity interface{}, filter string, args ...interface{}) error {
+	typ := reflect.TypeOf(entity)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	sql, err := OnBuildSQLFirstItem(typ, db, filter)
+	if err != nil {
+		return err
+	}
+	return db.ExecToItem(entity, sql, args...)
+
 }

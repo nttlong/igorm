@@ -69,7 +69,7 @@ func (m *migratorMssql) DoMigrates() error {
 	actual, _ := cacheDoMigrates.LoadOrStore(key, &mssqlInitDoMigrates{})
 
 	mi := actual.(*mssqlInitDoMigrates)
-	var err error
+
 	mi.once.Do(func() {
 
 		scripts, err := m.GetFullScript()
@@ -79,6 +79,7 @@ func (m *migratorMssql) DoMigrates() error {
 		for _, script := range scripts {
 			_, err := m.db.Exec(script)
 			if err != nil {
+				mi.err = err
 				break
 			}
 		}
@@ -87,7 +88,7 @@ func (m *migratorMssql) DoMigrates() error {
 
 		// }
 	})
-	return err
+	return mi.err
 }
 
 func (m *migratorMssql) GetLoader() IMigratorLoader {

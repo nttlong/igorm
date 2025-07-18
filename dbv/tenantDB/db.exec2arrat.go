@@ -2,6 +2,7 @@ package tenantDB
 
 import (
 	"database/sql"
+
 	"fmt"
 	"reflect"
 	"strings"
@@ -9,6 +10,23 @@ import (
 	"time"
 )
 
+type onGetMapIndex func(typ reflect.Type) map[string][]int
+
+var OnGetMapIndex onGetMapIndex
+
+func (db *TenantDB) ExecToItem(result interface{}, query string, args ...interface{}) error {
+	if result == nil {
+		return fmt.Errorf("result must not be nil")
+	}
+	typ := reflect.TypeOf(result)
+	if typ.Kind() != reflect.Ptr {
+		return fmt.Errorf("result must be a pointer to struct")
+	}
+	typ = typ.Elem()
+	mapIndex := OnGetMapIndex(typ)
+
+	return execToItemOptimized(db, result, &mapIndex, query, args...)
+}
 func (db *TenantDB) ExecToArray(result interface{}, query string, args ...interface{}) error {
 	if result == nil {
 		return fmt.Errorf("result must not be nil")
@@ -96,7 +114,7 @@ func execToArrayFromChatGPT_V1(db *TenantDB, typ reflect.Type, query string, arg
 }
 
 type fieldEncoder struct {
-	fieldIndexes []int
+	fieldIndexes [][]int
 }
 
 var encoderCache sync.Map // map[reflect.Type]*fieldEncoder
@@ -109,20 +127,23 @@ var scanArgsPool = sync.Pool{
 
 var rowValPool sync.Pool // per-type struct pool
 
-func getFieldEncoder(typ reflect.Type, cols []string) (*fieldEncoder, error) {
+func getFieldEncoder(typ reflect.Type, cols []string, mapIndex *map[string][]int) (*fieldEncoder, error) {
 	cacheKey := struct {
-		typ  reflect.Type
-		cols string // concat column names for uniqueness
+		typ      reflect.Type
+		cols     string            // concat column names for uniqueness
+		mapIndex *map[string][]int // map[column name] = field index
 	}{
 		typ:  typ,
 		cols: strings.Join(cols, ","),
 	}
 
+	cacheKey.mapIndex = mapIndex
+
 	if cached, ok := encoderCache.Load(cacheKey); ok {
 		return cached.(*fieldEncoder), nil
 	}
 
-	fields := make([]int, len(cols))
+	fields := make([][]int, len(cols))
 	for i, col := range cols {
 		// Try exact match first
 		field, ok := typ.FieldByName(col)
@@ -139,7 +160,12 @@ func getFieldEncoder(typ reflect.Type, cols []string) (*fieldEncoder, error) {
 		if !ok {
 			return nil, fmt.Errorf("column %s not found in struct", col)
 		}
-		fields[i] = field.Index[0] // only flat struct supported here
+		if mapIndex == nil {
+			fields[i] = field.Index
+		} else {
+
+			fields[i] = (*mapIndex)[field.Name]
+		}
 	}
 
 	encoder := &fieldEncoder{fieldIndexes: fields}
@@ -171,8 +197,11 @@ func execToArrayOptimized(db *TenantDB, result interface{}, query string, args .
 	if elemType.Kind() == reflect.Ptr {
 		typ = elemType.Elem()
 	}
-
-	rows, err := db.Query(query, args...)
+	stm, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	rows, err := stm.Query(args...)
 	if err != nil {
 		return err
 	}
@@ -183,7 +212,7 @@ func execToArrayOptimized(db *TenantDB, result interface{}, query string, args .
 		return err
 	}
 
-	encoder, err := getFieldEncoder(typ, cols)
+	encoder, err := getFieldEncoder(typ, cols, nil)
 	if err != nil {
 		return err
 	}
@@ -204,7 +233,7 @@ func execToArrayOptimized(db *TenantDB, result interface{}, query string, args .
 
 		scanArgs := scanArgsPool.Get().([]interface{})[:0]
 		for _, idx := range encoder.fieldIndexes {
-			scanArgs = append(scanArgs, rowVal.Field(idx).Addr().Interface())
+			scanArgs = append(scanArgs, rowVal.FieldByIndex(idx).Addr().Interface())
 		}
 
 		if err := rows.Scan(scanArgs...); err != nil {
@@ -226,6 +255,58 @@ func execToArrayOptimized(db *TenantDB, result interface{}, query string, args .
 
 	// Gán lại vào `*result`
 	sliceVal.Set(newSlice)
+	return nil
+}
+func execToItemOptimized(db *TenantDB, result interface{}, mapIndex *map[string][]int, query string, args ...interface{}) error {
+	ptrVal := reflect.ValueOf(result)
+	if ptrVal.Kind() != reflect.Ptr {
+		return fmt.Errorf("result must be a pointer to slice")
+	}
+
+	typ := reflect.TypeOf(result)
+	if typ.Kind() != reflect.Ptr {
+		return fmt.Errorf("result must be a pointer to struct")
+	}
+	typ = typ.Elem()
+
+	stm, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	rows, err := stm.Query(args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	cols, err := rows.Columns()
+	if err != nil {
+		return err
+	}
+
+	encoder, err := getFieldEncoder(typ, cols, mapIndex)
+	if err != nil {
+		return err
+	}
+	row := reflect.ValueOf(result).Elem()
+
+	for rows.Next() {
+
+		scanArgs := scanArgsPool.Get().([]interface{})[:0]
+		for _, idx := range encoder.fieldIndexes {
+			scanArgs = append(scanArgs, row.FieldByIndex(idx).Addr().Interface())
+		}
+
+		if err := rows.Scan(scanArgs...); err != nil {
+			return err
+		}
+
+		// Gán row vào slice
+
+	}
+
+	// Gán lại vào `*result`
+
 	return nil
 }
 

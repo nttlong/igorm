@@ -7,9 +7,25 @@ import (
 	_ "github.com/microsoft/go-mssqldb"
 )
 
-func Open(driverName, dns string) (*tenantDB.TenantDB, error) {
+type TenantDB struct {
+	*tenantDB.TenantDB
+}
 
-	return tenantDB.Open(driverName, dns)
+func Open(driverName, dns string) (*TenantDB, error) {
+	ret, err := tenantDB.Open(driverName, dns)
+	migrator, err := NewMigrator(ret)
+	if err != nil {
+		return nil, err
+	}
+	err = migrator.DoMigrates()
+	if err != nil {
+		return nil, err
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &TenantDB{TenantDB: ret}, nil
+
 }
 
 //	type Model struct {
