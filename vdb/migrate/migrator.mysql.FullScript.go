@@ -45,6 +45,24 @@ func (m *migratorMySql) getFullScript() ([]string, error) {
 			scripts = append(scripts, script)
 		}
 	}
+	for _, entity := range ModelRegistry.GetAllModels() {
+		script, err := m.GetSqlAddIndex(entity.entity.entityType)
+		if err != nil {
+			return nil, err
+		}
+		if script != "" {
+			scripts = append(scripts, script)
+		}
+	}
+	for _, entity := range ModelRegistry.GetAllModels() {
+		script, err := m.GetSqlAddUniqueIndex(entity.entity.entityType)
+		if err != nil {
+			return nil, err
+		}
+		if script != "" {
+			scripts = append(scripts, script)
+		}
+	}
 	scriptForeignKey, err := m.GetSqlAddForeignKey()
 	if err != nil {
 		return nil, err

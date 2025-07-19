@@ -12,6 +12,10 @@ func (d *mySqlDialect) ParseError(err error) error {
 			return d.ParseError1048(mysqlErr)
 
 		}
+		if mysqlErr.Number == 1062 {
+			return d.ParseError1062(mysqlErr)
+
+		}
 		fmt.Println(mysqlErr.Number)
 
 	}

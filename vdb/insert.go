@@ -178,10 +178,14 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 			err = fetchAfterInsertForQueryRow(repoType.entity, dataValue, insertedID)
 		}
 	} else {
-		sqlResult, err := sqlStmt.Exec(args...)
-		if err == nil {
-			err = r.fetchAfterInsert(dialect, sqlResult, repoType.entity, dataValue)
-
+		sqlResult, errExec := sqlStmt.Exec(args...)
+		if errExec == nil {
+			errExec = r.fetchAfterInsert(dialect, sqlResult, repoType.entity, dataValue)
+			if errExec != nil {
+				err = errExec
+			}
+		} else {
+			err = errExec
 		}
 	}
 

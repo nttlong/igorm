@@ -126,22 +126,25 @@ var scanArgsPool = sync.Pool{
 }
 
 var rowValPool sync.Pool // per-type struct pool
+type initGetFieldEncoder struct {
+	once sync.Once
+	val  fieldEncoder
+	err  error
+}
 
 func getFieldEncoder(typ reflect.Type, cols []string, mapIndex *map[string][]int) (*fieldEncoder, error) {
-	cacheKey := struct {
-		typ      reflect.Type
-		cols     string            // concat column names for uniqueness
-		mapIndex *map[string][]int // map[column name] = field index
-	}{
-		typ:  typ,
-		cols: strings.Join(cols, ","),
-	}
+	key := typ.String() + "://" + strings.Join(cols, ",")
+	actual, _ := encoderCache.LoadOrStore(key, &initGetFieldEncoder{})
+	init := actual.(*initGetFieldEncoder)
+	init.once.Do(func() {
+		val, err := getFieldEncoderNoCache(typ, cols, mapIndex)
+		init.val = *val
+		init.err = err
+	})
+	return &init.val, init.err
 
-	cacheKey.mapIndex = mapIndex
-
-	if cached, ok := encoderCache.Load(cacheKey); ok {
-		return cached.(*fieldEncoder), nil
-	}
+}
+func getFieldEncoderNoCache(typ reflect.Type, cols []string, mapIndex *map[string][]int) (*fieldEncoder, error) {
 
 	fields := make([][]int, len(cols))
 	for i, col := range cols {
@@ -169,7 +172,7 @@ func getFieldEncoder(typ reflect.Type, cols []string, mapIndex *map[string][]int
 	}
 
 	encoder := &fieldEncoder{fieldIndexes: fields}
-	encoderCache.Store(cacheKey, encoder)
+
 	return encoder, nil
 }
 
@@ -257,6 +260,11 @@ func execToArrayOptimized(db *TenantDB, result interface{}, query string, args .
 	sliceVal.Set(newSlice)
 	return nil
 }
+
+type execToItemOptimizedErrorNotFound func() error
+
+var ExecToItemOptimizedErrorNotFound execToItemOptimizedErrorNotFound
+
 func execToItemOptimized(db *TenantDB, result interface{}, mapIndex *map[string][]int, query string, args ...interface{}) error {
 	ptrVal := reflect.ValueOf(result)
 	if ptrVal.Kind() != reflect.Ptr {
@@ -290,6 +298,8 @@ func execToItemOptimized(db *TenantDB, result interface{}, mapIndex *map[string]
 	}
 	row := reflect.ValueOf(result).Elem()
 
+	rowCount := 0
+
 	for rows.Next() {
 
 		scanArgs := scanArgsPool.Get().([]interface{})[:0]
@@ -300,9 +310,12 @@ func execToItemOptimized(db *TenantDB, result interface{}, mapIndex *map[string]
 		if err := rows.Scan(scanArgs...); err != nil {
 			return err
 		}
-
+		rowCount++
 		// Gán row vào slice
 
+	}
+	if rowCount == 0 {
+		return ExecToItemOptimizedErrorNotFound()
 	}
 
 	// Gán lại vào `*result`

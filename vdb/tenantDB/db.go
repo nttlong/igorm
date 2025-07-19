@@ -226,9 +226,7 @@ func Open(driverName, dsn string) (*TenantDB, error) {
 	}
 	return ret, nil
 }
-func (db *TenantDB) SetDbName(dbName string) {
-	db.info.dbName = dbName
-}
+
 func (db *TenantDB) Detect() error {
 	info, err := db.info.Detect(db.DB)
 	if err != nil {

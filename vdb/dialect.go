@@ -46,13 +46,14 @@ func (e DialectError) Unwrap() error {
 }
 
 type DialectError struct {
-	Err          error
-	ErrorType    DIALECT_DB_ERROR_TYPE
-	Code         string
-	ErrorMessage string
-	DbCols       []string
-	Fields       []string
-	Tables       []string
+	Err            error
+	ErrorType      DIALECT_DB_ERROR_TYPE
+	Code           string
+	ErrorMessage   string
+	DbCols         []string
+	Fields         []string
+	Tables         []string
+	ConstraintName string
 }
 
 func (e *DialectError) Reload() {

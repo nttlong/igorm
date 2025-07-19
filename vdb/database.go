@@ -66,7 +66,7 @@ func (db *TenantDB) CreateDB(dbName string) (*TenantDB, error) {
 	if err != nil {
 		return nil, err
 	}
-	ret.SetDbName(dbName)
+
 	return ret, nil
 }
 

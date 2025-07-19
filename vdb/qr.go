@@ -407,6 +407,39 @@ func buildBasicSqlFirstItem(typ reflect.Type, db *tenantDB.TenantDB, filter stri
 	})
 	return initBuild.val, initBuild.err
 }
+
+type ErrRecordNotFound struct {
+	Err error
+}
+
+func (e *ErrRecordNotFound) Error() string {
+	return e.Err.Error()
+}
+func onTenantDbNeedGetMapIndexNoCache(typ reflect.Type) map[string][]int {
+	repoType := inserterObj.getEntityInfo(typ)
+	ret := map[string][]int{}
+	for _, col := range repoType.entity.GetColumns() {
+		ret[col.Field.Name] = col.IndexOfField
+	}
+	return ret
+}
+
+type initOnTenantDbNeedGetMapIndex struct {
+	once sync.Once
+	val  map[string][]int
+}
+
+var onTenantDbNeedGetMapIndexCache sync.Map
+
+func onTenantDbNeedGetMapIndex(typ reflect.Type) map[string][]int {
+	key := typ.String()
+	actual, _ := onTenantDbNeedGetMapIndexCache.LoadOrStore(key, &initOnTenantDbNeedGetMapIndex{})
+	initBuild := actual.(*initOnTenantDbNeedGetMapIndex)
+	initBuild.once.Do(func() {
+		initBuild.val = onTenantDbNeedGetMapIndexNoCache(typ)
+	})
+	return initBuild.val
+}
 func init() {
 	tenantDB.OnNewQrFn = func() interface{} {
 		return NewQueryParts()
@@ -452,12 +485,13 @@ func init() {
 	}
 	tenantDB.OnBuildSQL = buildBasicSql
 	tenantDB.OnBuildSQLFirstItem = buildBasicSqlFirstItem
-	tenantDB.OnGetMapIndex = func(typ reflect.Type) map[string][]int {
-		repoType := inserterObj.getEntityInfo(typ)
-		ret := map[string][]int{}
-		for _, col := range repoType.entity.GetColumns() {
-			ret[col.Field.Name] = col.IndexOfField
+	tenantDB.OnGetMapIndex = onTenantDbNeedGetMapIndex
+	tenantDB.ExecToItemOptimizedErrorNotFound = func() error {
+		return &ErrRecordNotFound{
+			Err: fmt.Errorf("item not found"),
 		}
-		return ret
+	}
+	tenantDB.OnCreateEntity = func(db *tenantDB.TenantDB, entity interface{}) error {
+		return Insert(db, entity)
 	}
 }

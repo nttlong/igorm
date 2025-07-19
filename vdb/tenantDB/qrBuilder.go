@@ -183,3 +183,38 @@ func (db *TenantDB) First(entity interface{}, filter string, args ...interface{}
 	return db.ExecToItem(entity, sql, args...)
 
 }
+
+type whereExpr struct {
+	expr string
+	args []interface{}
+	db   *TenantDB
+}
+
+func (db *TenantDB) Where(expr string, args ...interface{}) *whereExpr {
+	return &whereExpr{
+		db:   db,
+		expr: expr,
+		args: args,
+	}
+}
+func (we *whereExpr) And(expr string, args ...interface{}) *whereExpr {
+	we.expr += " AND " + expr
+	we.args = append(we.args, args...)
+	return we
+}
+func (we *whereExpr) Or(expr string, args ...interface{}) *whereExpr {
+	we.expr += " OR " + expr
+	we.args = append(we.args, args...)
+	return we
+}
+func (we *whereExpr) First(entity interface{}) error {
+	return we.db.First(entity, we.expr, we.args...)
+}
+
+type onCreateEntity = func(db *TenantDB, entity interface{}) error
+
+var OnCreateEntity onCreateEntity
+
+func (db *TenantDB) Create(entity interface{}) error {
+	return OnCreateEntity(db, entity)
+}
