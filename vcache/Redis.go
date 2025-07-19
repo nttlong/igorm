@@ -30,13 +30,12 @@ type RedisCache struct {
 // password là mật khẩu Redis, db là số database (0-15).
 func NewRedisCache(
 	//ctx context.Context,
-	ownerType reflect.Type,
+
 	addr, password string,
+	prefixKey string,
 	db int,
 	timeOut time.Duration) Cache {
-	prefixKey := fmt.Sprintf("%s:%s", ownerType.PkgPath(), ownerType.Name())
-	hKey := sha256.Sum256([]byte(prefixKey))
-	prefixKey = hex.EncodeToString(hKey[:])
+
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: password, // no password set

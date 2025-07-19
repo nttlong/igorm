@@ -70,4 +70,5 @@ type Dialect interface {
 	SqlFunction(delegator *DialectDelegateFunction) (string, error)
 	MakeSqlInsert(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{})
 	NewDataBase(db *sql.DB, sampleDsn string, dbName string) (string, error)
+	MakeSelectTop(sql string, top int) string
 }

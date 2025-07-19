@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"reflect"
+	"strings"
 	"sync"
 	"time"
 
@@ -25,14 +26,14 @@ var (
 	once     sync.Once
 )
 
-func NewMemcachedCache(ownerType reflect.Type, servers []string) Cache {
+func NewMemcachedCache(strServers string, prefixKey string) Cache {
 	once.Do(func() {
+		servers := strings.Split(strServers, ",")
 		mcClient = memcache.New(servers...)
 	})
-	mc := memcache.New(servers...)
-	prefixKey := fmt.Sprintf("%s:%s:", ownerType.PkgPath(), ownerType.Name())
+
 	return &MemcachedCache{
-		client:    mc,
+		client:    mcClient,
 		prefixKey: prefixKey,
 	}
 }

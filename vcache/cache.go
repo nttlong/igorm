@@ -9,8 +9,24 @@ import (
 /*
 this interface provide basic cache operations
 In order to
+Usage:
+
+	1- Create a new instance with InMemoryCache
+		var cache vcache.Cache
+		cache = vcache.NewInMemoryCache(10*time.Second, 10*time.Second)
+	2- Create a new Cache with Bagger:
+		var cache vcache.Cache
+		cache, err := vcache.NewBadgerCache(<path to db>,  <prefix key>)
+	3- Create a new Cache with Redis:
+	   var cache vcache.Cache
+		cache = vcache.NewRedisCache(<server>, <password>, <prefix key>, 0, 10*time.Second)
+	4- Create a new Cache with Memcached:
+		var cache vcache.Cache
+		cache = vcache.NewMemcachedCache([server1, server2], <prefix key>)
+	Heed: all cache implementations were already tested and proven to work correctly.
 */
 type Cache interface {
+
 	// get object from cache
 	// example: Get("key", &obj)
 	// @description: This function will combine  key and package path of object and name of object type to create a unique key for cache.

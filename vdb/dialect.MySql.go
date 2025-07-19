@@ -24,7 +24,7 @@ func (d *mySqlDialect) ToText(value string) string {
 	return fmt.Sprintf("'%s'", value)
 }
 func (d *mySqlDialect) ToParam(index int) string {
-	return fmt.Sprintf(":%d", index)
+	return "?"
 }
 func (d *mySqlDialect) SqlFunction(delegator *DialectDelegateFunction) (string, error) {
 	switch delegator.FuncName {

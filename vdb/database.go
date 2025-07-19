@@ -19,17 +19,17 @@ func Open(driverName, dns string) (*TenantDB, error) {
 	if err != nil {
 		return nil, err
 	}
-	migrator, err := NewMigrator(ret)
-	if err != nil {
-		return nil, err
+	if ret.GetDBName() != "" {
+		migrator, err := NewMigrator(ret)
+		if err != nil {
+			return nil, err
+		}
+		err = migrator.DoMigrates()
+		if err != nil {
+			return nil, err
+		}
 	}
-	err = migrator.DoMigrates()
-	if err != nil {
-		return nil, err
-	}
-	if err != nil {
-		return nil, err
-	}
+
 	return &TenantDB{TenantDB: ret, dsn: dns}, nil
 
 }
@@ -63,7 +63,11 @@ func (db *TenantDB) CreateDB(dbName string) (*TenantDB, error) {
 		return nil, err
 	}
 	ret, err := Open(db.GetDriverName(), dsn)
-	return ret, err
+	if err != nil {
+		return nil, err
+	}
+	ret.SetDbName(dbName)
+	return ret, nil
 }
 
 //	type Model struct {
@@ -77,4 +81,27 @@ func NewMigrator(db *tenantDB.TenantDB) (migrate.IMigrator, error) {
 }
 func NewMigrator2(db *tenantDB.TenantDB) (migrate.IMigrator, error) {
 	return migrate.NewMigrator2(db)
+}
+
+type tenantDbManager struct {
+	mapManagerDb map[string]bool
+}
+
+func (t *tenantDbManager) SetManagerDb(driver string, dbName string) {
+	t.mapManagerDb[dbName+"://"+driver] = true
+}
+func (t *tenantDbManager) isManagerDb(driver string, dbName string) bool {
+	if _, ok := t.mapManagerDb[dbName+"://"+driver]; ok {
+		return true
+	}
+	return false
+}
+func SetManagerDb(driver string, dbName string) {
+	tenantDbManagerInstance.SetManagerDb(driver, dbName)
+}
+
+var tenantDbManagerInstance = &tenantDbManager{mapManagerDb: make(map[string]bool)}
+
+func init() {
+	tenantDB.IsManagerDb = tenantDbManagerInstance.isManagerDb
 }

@@ -124,10 +124,15 @@ func (info *tenantDBInfo) Detect(db *sql.DB) (*tenantDBInfo, error) {
 	}
 }
 
+type isManagerDb func(driver string, dbName string) bool
+
+var IsManagerDb isManagerDb
+
 func (info *tenantDBInfo) detect(db *sql.DB) error {
 
 	var version string
-	var dbName string
+	dbName := ""
+
 	sqlGetDbName := map[string]string{
 		"postgres":  "SELECT current_database()",
 		"mysql":     "SELECT DATABASE()",
@@ -163,10 +168,18 @@ func (info *tenantDBInfo) detect(db *sql.DB) error {
 		return err
 	}
 
-	dbName = "defaultdb"
 	if _, ok := sqlGetDbName[info.driverName]; ok {
-		err := db.QueryRow(sqlGetDbName[info.driverName]).Scan(&dbName)
+		sqlGetDbName := sqlGetDbName[info.driverName]
+		var dbNameString sql.NullString
+		err := db.QueryRow(sqlGetDbName).Scan(&dbNameString)
 		if err != nil {
+
+			return err
+		}
+		if dbNameString.Valid {
+			dbName = dbNameString.String
+		}
+		if IsManagerDb(info.driverName, dbName) {
 			dbName = ""
 		}
 	} else {
@@ -201,6 +214,9 @@ func Open(driverName, dsn string) (*TenantDB, error) {
 	}
 
 	info, err = info.Detect(DB)
+	if err != nil {
+		return nil, err
+	}
 	ret := &TenantDB{
 		DB:   DB,
 		info: info,
@@ -209,6 +225,9 @@ func Open(driverName, dsn string) (*TenantDB, error) {
 		return nil, err
 	}
 	return ret, nil
+}
+func (db *TenantDB) SetDbName(dbName string) {
+	db.info.dbName = dbName
 }
 func (db *TenantDB) Detect() error {
 	info, err := db.info.Detect(db.DB)

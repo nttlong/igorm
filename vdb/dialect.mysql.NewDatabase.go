@@ -13,6 +13,8 @@ func (d *mySqlDialect) NewDataBase(db *sql.DB, sampleDsn string, dbName string) 
 		return "", fmt.Errorf("failed to create database %s: %v", dbName, err)
 	}
 	items := strings.Split(sampleDsn, "?")
-	dsn := items[0] + "?" + dbName + "&" + items[1]
+	items[0] = strings.Split(items[0], "/")[0]
+
+	dsn := items[0] + "/" + dbName + "?" + items[1]
 	return dsn, nil
 }

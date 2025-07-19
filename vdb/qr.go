@@ -359,6 +359,7 @@ type initBuildBasicSqlFirstItem struct {
 }
 
 func buildBasicSqlFirstItemNoCache(typ reflect.Type, db *tenantDB.TenantDB, filter string) (string, error) {
+	dialect := dialectFactory.create(db.GetDriverName())
 
 	repoType := inserterObj.getEntityInfo(typ)
 	tableName := repoType.tableName
@@ -380,7 +381,7 @@ func buildBasicSqlFirstItemNoCache(typ reflect.Type, db *tenantDB.TenantDB, filt
 	}
 	strField := compiler.content
 
-	sql := fmt.Sprintf("SELECT TOP 1 %s FROM %s", strField, tableName)
+	sql := fmt.Sprintf("SELECT %s FROM %s", strField, tableName)
 	if filter != "" {
 		compiler.context.purpose = build_purpose_where
 		err = compiler.buildWhere(filter)
@@ -389,7 +390,7 @@ func buildBasicSqlFirstItemNoCache(typ reflect.Type, db *tenantDB.TenantDB, filt
 		}
 		sql += " WHERE " + compiler.content
 	}
-
+	sql = dialect.MakeSelectTop(sql, 1)
 	return sql, nil
 }
 
