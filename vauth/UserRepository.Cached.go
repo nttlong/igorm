@@ -1,6 +1,6 @@
-package unvsauth
+package vauth
 
-import "unvs-auth/models"
+import "vauth/models"
 
 type UserRepositoryCached struct {
 	db    UserRepository

@@ -1,4 +1,4 @@
-package unvsauth
+package vauth
 
 type NoopHasher struct{}
 

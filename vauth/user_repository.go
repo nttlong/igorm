@@ -1,8 +1,8 @@
-package unvsauth
+package vauth
 
 import (
 	"errors"
-	"unvs-auth/models"
+	"vauth/models"
 )
 
 type UserRepository interface {

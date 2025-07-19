@@ -1,4 +1,4 @@
-package unvsauth
+package vauth
 
 import "golang.org/x/crypto/bcrypt"
 

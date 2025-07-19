@@ -1,10 +1,10 @@
-package unvsauth
+package vauth
 
 import (
 	"context"
 	"encoding/json"
 	"time"
-	"unvs-auth/models"
+	"vauth/models"
 
 	"github.com/go-redis/redis/v8"
 )

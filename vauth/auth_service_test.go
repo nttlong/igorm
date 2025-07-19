@@ -1,4 +1,4 @@
-package unvsauth
+package vauth
 
 import (
 	"fmt"
@@ -63,11 +63,7 @@ func initAuthService() *AuthService {
 				SaltLen: 16,
 			}
 		}
-		svc.UserCache.Init = func(owner *AuthService) *UserRepositoryCached {
-			return &UserRepositoryCached{
-				db: *svc.UserRepo.Get(),
-			}
-		}
+
 		return nil
 	})
 	service, _ := di.Resolve[AuthService]()

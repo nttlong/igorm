@@ -1,8 +1,8 @@
-package unvsauth
+package vauth
 
 import (
 	"errors"
-	models "unvs-auth/models"
+	models "vauth/models"
 	"vdb"
 	di "vdi"
 

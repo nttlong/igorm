@@ -1,8 +1,8 @@
-package unvsauth
+package vauth
 
 import (
 	"encoding/json"
-	"unvs-auth/models"
+	"vauth/models"
 
 	"github.com/bradfitz/gomemcache/memcache"
 )

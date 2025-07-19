@@ -1,9 +1,9 @@
-package unvsauth
+package vauth
 
 import (
 	"encoding/json"
 	"time"
-	"unvs-auth/models"
+	"vauth/models"
 
 	"github.com/dgraph-io/badger/v4"
 )

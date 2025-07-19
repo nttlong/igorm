@@ -1,10 +1,10 @@
-package unvsauth
+package vauth
 
 import (
 	"vdb"
 	_ "vdb"
 
-	models "unvs-auth/models"
+	models "vauth/models"
 )
 
 type UserRepositorySQL struct {

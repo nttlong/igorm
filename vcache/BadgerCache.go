@@ -26,11 +26,8 @@ type BadgerCache struct {
 
 // NewBadgerCache tạo một instance mới của BadgerCache.
 // dbPath là đường dẫn tới thư mục lưu trữ dữ liệu của Badger.
-func NewBadgerCache(ownerType reflect.Type, dbPath string) (Cache, error) {
+func NewBadgerCache(dbPath string, prefixKey string) (Cache, error) {
 
-	prefixType := ownerType.PkgPath() + "." + ownerType.Name()
-	h := sha256.Sum256([]byte(prefixType))
-	prefixType = string(h[:])
 	// Đảm bảo thư mục tồn tại
 
 	if err := os.MkdirAll(dbPath, 0755); err != nil {
@@ -53,7 +50,7 @@ func NewBadgerCache(ownerType reflect.Type, dbPath string) (Cache, error) {
 	// db.RunValueLogGC(0.7) // Cần quản lý việc này liên tục
 
 	log.Printf("BadgerCache đã mở tại: %s\n", dbPath)
-	return &BadgerCache{db: db, prefixKey: prefixType}, nil
+	return &BadgerCache{db: db, prefixKey: prefixKey}, nil
 }
 
 // Get implements Cache.Get for BadgerCache

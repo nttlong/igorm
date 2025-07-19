@@ -6,12 +6,10 @@ import (
 	"time"
 )
 
-// Mặc dù không sử dụng trực tiếp trong go-cache/badger đơn giản, nhưng tốt cho tương lai (ví dụ: Redis client)
-
-// Để dùng BadgerCache
-// Đổi tên import để tránh xung đột với package "cache" này
-
-// Cache interface định nghĩa các phương thức mà bất kỳ triển khai cache nào cũng phải có.
+/*
+this interface provide basic cache operations
+In order to
+*/
 type Cache interface {
 	// get object from cache
 	// example: Get("key", &obj)
@@ -24,8 +22,9 @@ type Cache interface {
 	// @param value: interface{}, value of object to store in cache
 	// @param ttl: time.Duration, time to live of object in cache 0 is default value which means no expiration
 	Set(ctx context.Context, key string, value interface{}, ttl time.Duration) // Đặt giá trị vào cache với TTL
-	Delete(ctx context.Context, key string)                                    // Xóa một key khỏi cache
-	Close() error                                                              // Đóng kết nối/giải phóng tài nguyên của cache
+	// Đặt giá trị vào cache với TTL
+	Delete(ctx context.Context, key string) // Xóa một key khỏi cache
+	Close() error                           // Đóng kết nối/giải phóng tài nguyên của cache
 }
 
 // === Triển khai InMemoryCache sử dụng github.com/patrickmn/go-cache ===

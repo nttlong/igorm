@@ -1,4 +1,4 @@
-module unvs-auth
+module vauth
 
 go 1.24.3
 

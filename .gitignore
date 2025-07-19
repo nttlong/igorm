@@ -10,3 +10,4 @@ node_modules/*
 DISCARD
 KEYREGISTRY
 .mem
+vexample/cache.db

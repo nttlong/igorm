@@ -1,4 +1,4 @@
-package unvsauth
+package vauth
 
 import (
 	"time"

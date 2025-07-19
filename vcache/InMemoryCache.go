@@ -2,7 +2,6 @@ package vcache
 
 import (
 	"context"
-	"crypto/sha256"
 	"log"
 	"reflect"
 	"time"
@@ -18,17 +17,15 @@ type InMemoryCache struct {
 // NewInMemoryCache tạo một instance mới của InMemoryCache
 // use "github.com/patrickmn/go-cache"
 func NewInMemoryCache(
-	ownerType reflect.Type,
+
 	defaultExpiration,
 	cleanupInterval time.Duration) Cache {
-	prefixKey := ownerType.PkgPath() + "." + ownerType.Name()
-	hashKey := sha256.Sum256([]byte(prefixKey))
+
 	//strHasKey is string version of hashKey
 
 	// for in-memory cache, default expiration and cleanup interval are ignored
 	return &InMemoryCache{
-		client:    gocache.New(defaultExpiration, cleanupInterval),
-		prefixKey: string(hashKey[:]),
+		client: gocache.New(defaultExpiration, cleanupInterval),
 	} // no check error here, so just return nil
 }
 

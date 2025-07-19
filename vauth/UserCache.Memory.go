@@ -1,8 +1,8 @@
-package unvsauth
+package vauth
 
 import (
 	"sync"
-	"unvs-auth/models"
+	"vauth/models"
 )
 
 type MemoryUserCache struct {
