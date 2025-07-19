@@ -69,4 +69,5 @@ type Dialect interface {
 	ToParam(index int) string
 	SqlFunction(delegator *DialectDelegateFunction) (string, error)
 	MakeSqlInsert(tableName string, columns []migrate.ColumnDef, data interface{}) (string, []interface{})
+	NewDataBase(db *sql.DB, sampleDsn string, dbName string) (string, error)
 }
