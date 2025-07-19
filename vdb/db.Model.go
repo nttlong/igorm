@@ -38,7 +38,9 @@ type initTenantDBModel struct {
 type initTenantDBModelCacheItem struct {
 	tableName string
 	cols      *[]migrate.ColumnDef
+	keyCols   []migrate.ColumnDef
 	mapCols   map[string]migrate.ColumnDef
+	dialect   Dialect
 }
 
 var initTenantDBModelCache sync.Map
@@ -52,13 +54,19 @@ func (db *TenantDB) getModelFromCache(modelType reflect.Type) initTenantDBModelC
 		tableName := repoType.tableName
 		columns := repoType.entity.GetColumns()
 		mapCols := make(map[string]migrate.ColumnDef)
+		keyCols := []migrate.ColumnDef{}
 		for _, col := range columns {
 			mapCols[strings.ToLower(col.Name)] = col
+			if col.PKName != "" {
+				keyCols = append(keyCols, col)
+			}
 		}
 		init.val = initTenantDBModelCacheItem{
 			tableName: tableName,
 			cols:      &columns,
 			mapCols:   mapCols,
+			dialect:   dialectFactory.create(db.GetDriverName()),
+			keyCols:   keyCols,
 		}
 	})
 	return init.val
@@ -202,5 +210,39 @@ func (m *dbModel) Update(field string, value interface{}) UpdateResult {
 	return UpdateResult{
 		RowsAffected: r,
 	}
+
+}
+
+type DeleteResult struct {
+	RowsAffected int64
+	Error        error
+}
+
+func (m *dbModel) Delete() DeleteResult {
+	dialect := dialectFactory.create(m.db.GetDriverName())
+	source := dialect.Quote(m.tableName)
+	panic(source)
+	if m.where != "" {
+		compiler, err := NewExprCompiler(m.db.TenantDB)
+		if err != nil {
+			return DeleteResult{
+				Error: err,
+			}
+		}
+
+		compiler.context.purpose = build_purpose_where
+		compiler.context.tables = []string{m.tableName}
+		compiler.context.alias = map[string]string{m.tableName: m.tableName}
+		compiler.context.paramIndex = 1
+		err = compiler.buildWhere(m.where)
+		if err != nil {
+			return DeleteResult{
+				Error: err,
+			}
+		}
+
+		m.where = compiler.content
+	}
+	panic("not implemented")
 
 }

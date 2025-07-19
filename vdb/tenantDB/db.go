@@ -224,6 +224,7 @@ func Open(driverName, dsn string) (*TenantDB, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return ret, nil
 }
 

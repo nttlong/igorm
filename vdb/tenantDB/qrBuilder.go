@@ -218,3 +218,21 @@ var OnCreateEntity onCreateEntity
 func (db *TenantDB) Create(entity interface{}) error {
 	return OnCreateEntity(db, entity)
 }
+
+type DeleteResult struct {
+	RowsAffected int64
+	Error        error
+}
+
+type onDeleteEntity = func(db *TenantDB, entity interface{}, filter string, args ...interface{}) (int64, error)
+
+var OnDeleteEntity onDeleteEntity
+
+func (we *whereExpr) Delete(entity interface{}) DeleteResult {
+	rowsAffected, err := OnDeleteEntity(we.db, entity, we.expr, we.args...)
+	return DeleteResult{
+		RowsAffected: rowsAffected,
+		Error:        err,
+	}
+
+}

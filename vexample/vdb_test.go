@@ -145,22 +145,75 @@ func BenchmarkTestCreateUserMysql(t *testing.B) {
 	assert.NoError(t, err)
 	assert.NotNil(t, tenantDb)
 	for i := 0; i < t.N; i++ {
-		user := models.User{}
+		for j := 0; j < 10000; j++ {
+			user := models.User{}
 
-		err = tenantDb.Where("email = ?", "test"+strconv.Itoa(i)+"@test.com").First(&user)
-		if _, ok := err.(*vdb.ErrRecordNotFound); ok {
-			user.Email = "test" + strconv.Itoa(i) + "@test.com"
-			user.Username = "test" + strconv.Itoa(i)
-			user.HashPassword = "123456"
-			user.UserId = uuid.NewString()
-			user.IsActive = true
-			user.CreatedAt = time.Now()
-			err = tenantDb.Create(&user)
-			assert.NoError(t, err)
+			err = tenantDb.Where("email = ?", "test"+strconv.Itoa(i*100+j)+"@test.com").First(&user)
+			if _, ok := err.(*vdb.ErrRecordNotFound); ok {
+				user.Email = "test" + strconv.Itoa(i*100+j) + "@test.com"
+				user.Username = "test" + strconv.Itoa(i*100+j)
+				user.HashPassword = "123456"
+				user.UserId = uuid.NewString()
+				user.IsActive = true
+				user.CreatedAt = time.Now()
+				err = tenantDb.Create(&user)
+				assert.NoError(t, err)
 
-		} else {
+			} else {
+				assert.NoError(t, err)
+			}
 			assert.NoError(t, err)
 		}
+	}
+}
+func TestDeleteUserMysql(t *testing.T) {
+	vdb.SetManagerDb("mysql", "sys")
+	err := initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/sys?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true")
+	assert.NoError(t, err)
+	tenantDb, err := db.CreateDB("a002")
+	assert.NoError(t, err)
+	assert.NotNil(t, tenantDb)
+	user := models.User{}
+	err = tenantDb.First(&user, "id > ?", 1)
+	if _, ok := err.(*vdb.ErrRecordNotFound); ok {
+		fmt.Print("not found")
+	} else {
+		err = tenantDb.Delete(&user).Error
 		assert.NoError(t, err)
 	}
+
+}
+func BenchmarkTestDeleteUserMysql(t *testing.B) {
+	vdb.SetManagerDb("mysql", "sys")
+	err := initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/sys?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true")
+	assert.NoError(t, err)
+	tenantDb, err := db.CreateDB("a002")
+	assert.NoError(t, err)
+	assert.NotNil(t, tenantDb)
+	for i := 0; i < t.N; i++ {
+		user := models.User{}
+
+		err = tenantDb.Where("id = ?", 1).Delete(&user).Error
+		assert.NoError(t, err)
+	}
+
+}
+func BenchmarkTestGetThenDeleteUserMysql(b *testing.B) {
+	vdb.SetManagerDb("mysql", "sys")
+	err := initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/sys?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true")
+	assert.NoError(b, err)
+	tenantDb, err := db.CreateDB("a002")
+	assert.NoError(b, err)
+	assert.NotNil(b, tenantDb)
+	user := models.User{}
+	for i := 0; i < b.N; i++ {
+		err = tenantDb.First(&user, "id > ?", 1)
+		if _, ok := err.(*vdb.ErrRecordNotFound); ok {
+			fmt.Print("not found")
+		} else {
+			err = tenantDb.Delete(&user).Error
+			assert.NoError(b, err)
+		}
+	}
+
 }
