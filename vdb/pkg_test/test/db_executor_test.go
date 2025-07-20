@@ -233,7 +233,7 @@ func TestInsertPositionAndDepartmentOnce(t *testing.T) {
 	}
 
 }
-func TestSelectAllepmloyeeAndUserer(t *testing.T) {
+func TestSelectAllepmloyeeAndUser(t *testing.T) {
 	TestCreateTenantDb(t) //<--- chạy test trước khi test này
 	type QueryResult struct {
 		FullName     *string
@@ -244,7 +244,7 @@ func TestSelectAllepmloyeeAndUserer(t *testing.T) {
 	}
 	items := []QueryResult{}
 
-	qr := testDb.From((&models.Employee{}).As("e")).LeftJoin(
+	qr := testDb.From((&models.Employee{}).As("e")).LeftJoin( //<-- inner join, left join ,right join and full join just change function
 		(&models.User{}).As("u"), "e.id = u.userId",
 	).Select(
 		"concat(e.FirstName,' ', e.LastName) as fullName",
@@ -260,5 +260,29 @@ func TestSelectAllepmloyeeAndUserer(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(items))
 	assert.Equal(t, "John Doe", *items[0].FullName)
+
+}
+func TestSelfJoin(t *testing.T) {
+	TestCreateTenantDb(t) //<--- chạy test trước khi test này
+	type QueryResult struct {
+		Name      *string
+		ChildName *string
+	}
+	items := []QueryResult{}
+
+	qr := testDb.From(
+		(&models.Department{}).As("d"),
+	).LeftJoin(
+		(&models.Department{}).As("c"), "d.id = c.parentId",
+	).Select(
+		"d.name",              //<-- autho change to pascal case, because Go can not fill value to non-pascal case field
+		"c.name as childName", //<-- autho change to pascal case, because Go can not fill value to non-pascal case field
+	)
+
+	err := qr.ToArray(&items)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(items))
+	assert.Equal(t, "CEO01", *items[0].Name)
+	assert.Equal(t, "CEO02", *items[0].ChildName)
 
 }

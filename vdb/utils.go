@@ -11,11 +11,12 @@ import (
 var pluralize = pluralizeLib.NewClient()
 
 type utilsReceiver struct {
-	cacheToSnakeCase sync.Map
-	cachePlural      sync.Map
-	cacheQueryable   sync.Map
-	cacheQuoteText   sync.Map
-	EXPR             exprUtils
+	cacheSnakeToPascal sync.Map
+	cacheToSnakeCase   sync.Map
+	cachePlural        sync.Map
+	cacheQueryable     sync.Map
+	cacheQuoteText     sync.Map
+	EXPR               exprUtils
 }
 type initPlural struct {
 	once sync.Once
@@ -34,12 +35,12 @@ func (u *utilsReceiver) Plural(txt string) string {
 	return init.val
 }
 
-type initToSnakeCase struct {
+type initSnakeToPascal struct {
 	once sync.Once
 	val  string
 }
 
-func (u *utilsReceiver) SnakeToPascal(snake string) string {
+func (u *utilsReceiver) snakeToPascal(snake string) string {
 	// Handle empty string
 	if snake == "" {
 		return ""
@@ -63,6 +64,19 @@ func (u *utilsReceiver) SnakeToPascal(snake string) string {
 	}
 
 	return result
+}
+func (u *utilsReceiver) SnakeToPascal(snake string) string {
+	actual, _ := u.cacheSnakeToPascal.LoadOrStore(snake, &initSnakeToPascal{})
+	init := actual.(*initSnakeToPascal)
+	init.once.Do(func() {
+		init.val = u.snakeToPascal(snake)
+	})
+	return init.val
+}
+
+type initToSnakeCase struct {
+	once sync.Once
+	val  string
 }
 
 func (u *utilsReceiver) ToSnakeCase(str string) string {
