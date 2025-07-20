@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 	"sync"
+	"vdb/tenantDB"
 )
 
 type modelRegistryInfo struct {
@@ -29,7 +30,24 @@ func (info *modelRegistryInfo) GetUniqueConstraints() map[string][]ColumnDef {
 func (info *modelRegistryInfo) GetIndexConstraints() map[string][]ColumnDef {
 	return info.entity.indexConstraints
 }
+
+type initGetTableName struct {
+	once sync.Once
+	val  string
+	err  error
+}
+
+var cacheGetTableName sync.Map
+
 func (reg *modelRegister) getTableName(typ reflect.Type) (string, error) {
+	actual, _ := cacheGetTableName.LoadOrStore(typ, &initGetTableName{})
+	init := actual.(*initGetTableName)
+	init.once.Do(func() {
+		init.val, init.err = reg.getTableNameNoCache(typ)
+	})
+	return init.val, init.err
+}
+func (reg *modelRegister) getTableNameNoCache(typ reflect.Type) (string, error) {
 	// scan field
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
@@ -148,6 +166,9 @@ type initFindUKConstraint struct {
 type UKConstraintResult struct {
 	TableName string
 	Columns   []ColumnDef
+	DbCols    []string
+	Fields    []string
+	//Columns   []string
 }
 
 var cacheFindUKConstraint sync.Map
@@ -160,15 +181,37 @@ func FindUKConstraint(name string) *UKConstraintResult {
 	})
 	return init.val
 }
+
 func findUKConstraint(name string) *UKConstraintResult {
 	for _, model := range ModelRegistry.GetAllModels() {
 		uk := model.entity.getBuildUniqueConstraints()
 		if _, ok := uk[name]; ok {
-			return &UKConstraintResult{
+			ret := UKConstraintResult{
 				TableName: model.tableName,
 				Columns:   uk[name],
 			}
+			for _, col := range uk[name] {
+				ret.DbCols = append(ret.DbCols, col.Name)
+				ret.Fields = append(ret.Fields, col.Field.Name)
+			}
+			return &ret
 		}
 	}
 	return nil
+}
+
+type FKConstraintResult struct {
+	FormTable  string
+	ToTable    string
+	FromCols   []string
+	ToCols     []string
+	FromFields []string
+	ToFields   []string
+}
+
+func init() {
+	tenantDB.OnGetTableName = func(typ reflect.Type) (string, error) {
+		return ModelRegistry.getTableName(typ)
+	}
+
 }

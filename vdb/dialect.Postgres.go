@@ -10,6 +10,10 @@ import (
 type postgresDialect struct {
 }
 
+func (d *postgresDialect) LikeValue(val string) string {
+
+	return replaceStarWithCache("postgres", val, '*', '%')
+}
 func (d *postgresDialect) Name() string {
 	return "postgres"
 }

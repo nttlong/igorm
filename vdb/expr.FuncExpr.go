@@ -17,6 +17,7 @@ func (compiler *exprReceiver) FuncExpr(context *exprCompileContext, expr *sqlpar
 	for _, arg := range expr.Exprs {
 		argStr, err := compiler.compile(context, arg)
 		if err != nil {
+			context.purpose = backup_purpose
 			return "", err
 		}
 		strArgs = append(strArgs, argStr)
@@ -29,9 +30,11 @@ func (compiler *exprReceiver) FuncExpr(context *exprCompileContext, expr *sqlpar
 
 	ret, err := context.dialect.SqlFunction(&dialectDelegateFunction)
 	if err != nil {
+
 		return "", err
 	}
 	if dialectDelegateFunction.HandledByDialect {
+
 		return ret, nil
 	}
 
@@ -40,6 +43,7 @@ func (compiler *exprReceiver) FuncExpr(context *exprCompileContext, expr *sqlpar
 		retTxt = retTxt + " AS " + context.dialect.Quote(aliasField)
 
 	}
+
 	return retTxt, nil
 
 }

@@ -217,3 +217,15 @@ func BenchmarkTestGetThenDeleteUserMysql(b *testing.B) {
 	}
 
 }
+
+// func TestSelectWithJoinMySql(t *testing.T) {
+// 	vdb.SetManagerDb("mysql", "tenantManager") //<--- Cài đặt database quản lý tenannt
+// 	// Data base quản lý tenant phai co trước, đặc điểm của nó là kg migrate các model dựng sẵn,
+// 	// Nó chỉ tập trung vào việc quản lý tenant, không có migrate các model dựng sẵn.
+// 	// Việc chỉ định database quản lý tenant , bằng cách gọi hàm vdb.SetManagerDb("mysql", "tenantManager"), là rất quan trọng
+// 	// Nó giúp vdb biết database quản lý tenant là database nào để thực hiện các thao tác liên quan đến tenant.
+// 	err := initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/tenantManager?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true")
+// 	assert.NoError(t, err)
+// 	tenantDb, err := db.CreateDB("a001") //<-- khởi tạo tenant, ngay tại bước này các model được đang ký sẽ được migrate vào database tenant
+
+// }

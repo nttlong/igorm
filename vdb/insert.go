@@ -139,7 +139,33 @@ func (r *inserter) InsertWithTx(tx *tenantDB.TenantTx, data interface{}) error {
 	if err != nil {
 		errParse := dialect.ParseError(err)
 		if errParse, ok := errParse.(*DialectError); ok {
-			errParse.Tables = []string{repoType.tableName}
+			if errParse.ConstraintName != "" && errParse.ErrorType == DIALECT_DB_ERROR_TYPE_DUPLICATE {
+				uk := migrate.FindUKConstraint(errParse.ConstraintName)
+				if uk != nil {
+					errParse.StructName = repoType.entity.GetType().String()
+					errParse.Table = repoType.tableName
+					errParse.Fields = uk.Fields
+					errParse.DbCols = uk.DbCols
+					return errParse
+				}
+			}
+			if errParse.ConstraintName != "" && errParse.ErrorType == DIALECT_DB_ERROR_TYPE_REFERENCES {
+				fk := migrate.ForeignKeyRegistry.FindByConstraintName(errParse.ConstraintName)
+				if fk != nil {
+
+					errParse.Table = fk.ToTable
+					errParse.Fields = fk.ToFiels
+					errParse.DbCols = fk.ToCols
+					errParse.RefTable = fk.FromTable
+					errParse.RefCols = fk.FromCols
+					errParse.RefFields = fk.FromFiels
+					errParse.RefStructName = fk.FromStructName
+
+					return errParse
+				}
+			}
+			errParse.Table = repoType.tableName
+			errParse.StructName = repoType.entity.GetType().String()
 			errParse.Fields = []string{repoType.entity.GetFieldByColumnName(errParse.DbCols[0])}
 		}
 		return errParse
@@ -148,7 +174,8 @@ func (r *inserter) InsertWithTx(tx *tenantDB.TenantTx, data interface{}) error {
 	err = r.fetchAfterInsert(dialect, sqlResult, repoType.entity, dataValue)
 	if err != nil {
 		if dialectError, ok := err.(*DialectError); ok {
-			dialectError.Tables = []string{repoType.tableName}
+			dialectError.Table = repoType.tableName
+			dialectError.StructName = repoType.entity.GetType().String()
 			dialectError.Fields = []string{repoType.entity.GetFieldByColumnName(dialectError.DbCols[0])}
 		}
 		return err
@@ -192,8 +219,23 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 	if err != nil {
 		errParse := dialect.ParseError(err)
 		if errParse, ok := errParse.(*DialectError); ok {
-			errParse.Tables = []string{repoType.tableName}
-			errParse.Fields = []string{repoType.entity.GetFieldByColumnName(errParse.DbCols[0])}
+			if errParse.ConstraintName != "" {
+				uk := migrate.FindUKConstraint(errParse.ConstraintName)
+				if uk != nil {
+
+					errParse.Table = repoType.tableName
+					errParse.StructName = repoType.entity.GetType().String()
+					errParse.Fields = uk.Fields
+					errParse.DbCols = uk.DbCols
+					return errParse
+				}
+
+			} else {
+				errParse.Table = repoType.tableName
+				errParse.StructName = repoType.entity.GetType().String()
+				errParse.Fields = []string{repoType.entity.GetFieldByColumnName(errParse.DbCols[0])}
+			}
+
 		}
 		return errParse
 	}
@@ -324,7 +366,8 @@ func InsertBatchOld[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
 		if err != nil {
 			errParse := dialect.ParseError(err)
 			if derr, ok := errParse.(*DialectError); ok {
-				derr.Tables = []string{tableName}
+				derr.Table = tableName
+				derr.StructName = repoType.entity.GetType().String()
 				if len(derr.DbCols) > 0 {
 					derr.Fields = []string{repoType.entity.GetFieldByColumnName(derr.DbCols[0])}
 				}
@@ -427,7 +470,8 @@ func InsertBatch[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
 		if err != nil {
 			errParse := dialect.ParseError(err)
 			if derr, ok := errParse.(*DialectError); ok {
-				derr.Tables = []string{repoType.tableName}
+				derr.Table = repoType.tableName
+				derr.StructName = repoType.entity.GetType().String()
 				if len(derr.DbCols) > 0 {
 					derr.Fields = []string{repoType.entity.GetFieldByColumnName(derr.DbCols[0])}
 				}

@@ -27,6 +27,7 @@ func newExprUtils() *exprUtils {
 			"case": true, "when": true, "then": true, "else": true, "end": true,
 			"inner": true, "left": true, "right": true, "full": true, "join": true,
 			"on": true, "using": true, "where": true, "group": true, "by": true,
+			"like": true,
 		},
 		funcWhitelist: map[string]bool{
 			"min": true, "max": true, "abs": true, "len": true,

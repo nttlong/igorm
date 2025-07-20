@@ -183,6 +183,16 @@ func (q *QueryParts) buildSQL(db *tenantDB.TenantDB) (string, error) {
 	} else {
 
 		selectSyntax := strings.Join(q.selectFields, ", ")
+		if err != nil {
+			q.Err = err
+			return "", nil
+		}
+		// if len(compiler.context.aliasToDbTable) > 0 {
+		// 	compiler.context.alias = map[string]string{}
+		// 	for k, v := range compiler.context.aliasToDbTable {
+		// 		compiler.context.alias[v] = k
+		// 	}
+		// }
 		err = compiler.buildSelectField(selectSyntax)
 		if err != nil {
 			q.Err = err
@@ -472,9 +482,13 @@ func init() {
 		qr := q.(*QueryParts)
 		return qr.OffsetLimit(offset, limit)
 	}
-	tenantDB.OnBuildSql = func(q interface{}, db *tenantDB.TenantDB) (string, []interface{}) {
+	tenantDB.OnBuildSql = func(q interface{}, db *tenantDB.TenantDB) (string, []interface{}, error) {
 		qr := q.(*QueryParts)
-		return qr.BuildSQL(db)
+		ret, args := qr.BuildSQL(db)
+		if qr.Err != nil {
+			return "", nil, qr.Err
+		}
+		return ret, args, nil
 	}
 	tenantDB.OnFrom = func(q interface{}, table string, args ...interface{}) interface{} {
 		qr := q.(*QueryParts)

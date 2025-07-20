@@ -29,7 +29,7 @@ func (d *mssqlDialect) Error2627(err mssql.Error) *DialectError {
 				ErrorMessage: err.Message,
 				DbCols:       cols,
 				Fields:       fields,
-				Tables:       []string{result.TableName},
+				Table:        result.TableName,
 			}
 			ret.Reload()
 			return ret

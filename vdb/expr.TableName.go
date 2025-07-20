@@ -21,10 +21,12 @@ func (compiler *exprReceiver) TableName(context *exprCompileContext, expr *sqlpa
 			if _, ok := context.alias[aliasTableName]; !ok {
 				context.tables = append(context.tables, aliasTableName)
 				context.alias[aliasTableName] = aliasTableName
+				context.aliasToDbTable[aliasTableName] = tableName
 			}
 			compileTableName := tableName
 			if _, ok := (*context.schema)[tableName]; !ok {
 				compileTableName = utils.Plural(tableName)
+				context.aliasToDbTable[aliasTableName] = tableName
 
 			} else {
 				if context.aliasToDbTable == nil {

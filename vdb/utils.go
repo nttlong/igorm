@@ -39,6 +39,32 @@ type initToSnakeCase struct {
 	val  string
 }
 
+func (u *utilsReceiver) SnakeToPascal(snake string) string {
+	// Handle empty string
+	if snake == "" {
+		return ""
+	}
+
+	// Split the string by underscores
+	words := strings.Split(strings.ToLower(snake), "_")
+	if len(words) == 0 {
+		return ""
+	}
+
+	// Initialize result
+	result := ""
+
+	// Capitalize the first letter of each word
+	for _, word := range words {
+		if word != "" {
+			runes := []rune(word)
+			result += string(unicode.ToUpper(runes[0])) + string(runes[1:])
+		}
+	}
+
+	return result
+}
+
 func (u *utilsReceiver) ToSnakeCase(str string) string {
 	actual, _ := u.cacheToSnakeCase.LoadOrStore(str, &initToSnakeCase{})
 	init := actual.(*initToSnakeCase)

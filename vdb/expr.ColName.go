@@ -13,9 +13,16 @@ func (e *exprReceiver) ColName(context *exprCompileContext, expr sqlparser.ColNa
 
 	tableName := expr.Qualifier.Name.String()
 	fieldName := expr.Name.String()
-	aliasFieldName := expr.Name.String()
+	aliasFieldName := ""
+	if context.purpose == build_purpose_select {
+		aliasFieldName = expr.Name.String()
+	}
 	if context.schema == nil {
 		context.schema = &map[string]bool{}
+	}
+	checlAlaisTableName := utils.Plural(tableName)
+	if _, ok := (context.alias)[checlAlaisTableName]; ok { // if not found in database schema, then assume it is a plural table name
+		tableName = checlAlaisTableName
 	}
 
 	if _, ok := (*context.schema)[tableName]; !ok {
@@ -23,8 +30,8 @@ func (e *exprReceiver) ColName(context *exprCompileContext, expr sqlparser.ColNa
 			if not found in database calculate alias table name , field name and alias field name
 		*/
 
-		if _, ok := context.aliasToDbTable[tableName]; !ok {
-			fieldName = utils.ToSnakeCase(fieldName)
+		if _, ok := context.aliasToDbTable[tableName]; ok { //<-- if compiled before for join purpose has alias table name
+			fieldName = utils.ToSnakeCase(fieldName) //<-- 100% sure that field name is in snake case
 		}
 		if aliasTable, ok := context.alias[tableName]; ok {
 			tableName = aliasTable
@@ -46,7 +53,7 @@ func (e *exprReceiver) ColName(context *exprCompileContext, expr sqlparser.ColNa
 			}
 		}
 
-	} else {
+	} else if context.purpose == build_purpose_offset {
 		/*
 			if found in database calculate alias field name
 			tableName from database schema
@@ -67,9 +74,20 @@ func (e *exprReceiver) ColName(context *exprCompileContext, expr sqlparser.ColNa
 			if purpose is select, then return tablename.fieldname as aliasfieldname
 			Heed: quote all the things
 		*/
+		if alias, ok := context.alias[tableName]; ok {
+			tableName = alias
+			fieldName = utils.ToSnakeCase(fieldName)
+			aliasFieldName = utils.SnakeToPascal(fieldName)
+		}
 		return context.dialect.Quote(tableName, fieldName) + " AS " + context.dialect.Quote(aliasFieldName), nil
 
 	} else {
+		if alias, ok := context.alias[tableName]; ok {
+			tableName = alias
+
+			fieldName = utils.ToSnakeCase(fieldName)
+
+		}
 		return context.dialect.Quote(tableName, fieldName), nil
 	}
 

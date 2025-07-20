@@ -1,6 +1,7 @@
 package tenantDB
 
 import (
+	"fmt"
 	"reflect"
 )
 
@@ -9,6 +10,7 @@ type query struct {
 	qrInstance interface{}
 	sql        string
 	args       []interface{}
+	Err        error
 }
 type OnNewQr func() interface{}
 
@@ -22,9 +24,42 @@ var OnLiterals onLiterals
 func (db *TenantDB) Lit(str string) interface{} {
 	return OnLiterals(str)
 }
-func (db *TenantDB) From(table string) *query {
+
+type onGetTableName func(typ reflect.Type) (string, error)
+
+var OnGetTableName onGetTableName
+
+func (db *TenantDB) From(table interface{}) *query {
+	if table == nil {
+		return &query{
+			Err: fmt.Errorf("table is nil"),
+		}
+	}
+	var err error
+	tableName := ""
+	if strTableName, ok := table.(string); ok {
+		tableName = strTableName
+	} else {
+		typ := reflect.TypeOf(table)
+		if typ.Kind() == reflect.Ptr {
+			typ = typ.Elem()
+		}
+
+		tableName, err = OnGetTableName(typ)
+		if err != nil {
+			return &query{
+				Err: err,
+			}
+		} else if tableName == "" {
+			return &query{
+				Err: fmt.Errorf("table name was not fonud for type %s", typ.String()),
+			}
+		}
+
+	}
+
 	ret := createQr(db)
-	ret.qrInstance = OnFrom(ret.qrInstance, table)
+	ret.qrInstance = OnFrom(ret.qrInstance, tableName)
 
 	return ret
 }
@@ -75,8 +110,30 @@ func (q *query) InnerJoin(table string, onExpr string, args ...interface{}) *que
 	q.qrInstance = OnInnerJoin(q.qrInstance, table, onExpr, args...)
 	return q
 }
-func (q *query) LeftJoin(table string, onExpr string, args ...interface{}) *query {
-	q.qrInstance = OnLeftJoin(q.qrInstance, table, onExpr, args...)
+func (q *query) LeftJoin(table interface{}, onExpr string, args ...interface{}) *query {
+	tableName := ""
+	var err error
+	if strTableName, ok := table.(string); ok {
+		tableName = strTableName
+	} else {
+		typ := reflect.TypeOf(table)
+		if typ.Kind() == reflect.Ptr {
+			typ = typ.Elem()
+		}
+		tableName, err = OnGetTableName(typ)
+		if err != nil {
+			return &query{
+				Err: err,
+			}
+		}
+		if tableName == "" {
+			return &query{
+				Err: fmt.Errorf("table name was not fonud for type %s", typ.String()),
+			}
+		}
+	}
+
+	q.qrInstance = OnLeftJoin(q.qrInstance, tableName, onExpr, args...)
 	return q
 }
 
@@ -121,7 +178,7 @@ func (q *query) Having(expr string, args ...interface{}) *query {
 	return q
 }
 
-type onBuildSql = func(qrInstance interface{}, db *TenantDB) (string, []interface{})
+type onBuildSql = func(qrInstance interface{}, db *TenantDB) (string, []interface{}, error)
 
 var OnBuildSql onBuildSql
 
@@ -129,7 +186,12 @@ func (q *query) BuildSql() (string, []interface{}) {
 	if q.sql != "" {
 		return q.sql, q.args
 	}
-	sql, args := OnBuildSql(q.qrInstance, q.db)
+	sql, args, err := OnBuildSql(q.qrInstance, q.db)
+	if err != nil {
+		q.Err = err
+		return "", nil
+	}
+
 	q.sql = sql
 	q.args = args
 	return sql, args

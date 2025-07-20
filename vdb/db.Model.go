@@ -1,6 +1,7 @@
 package vdb
 
 import (
+	"database/sql"
 	"fmt"
 	"reflect"
 	"strings"
@@ -152,19 +153,144 @@ func (m *dbModel) BuildSql() (string, error) {
 
 }
 
-func (m *dbModel) Update(field string, value interface{}) UpdateResult {
+type initBuildSqlUpdateWithFieldsAndWhere struct {
+	once sync.Once
+	val  string
+	err  error
+}
+
+var buildSqlUpdateWithFieldsAndWhereCache sync.Map
+
+func buildSqlUpdateWithFieldsAndWhereWithCache(db *TenantDB, tableName string, fields []string, where string) (string, error) {
+	key := db.GetDriverName() + "://" + db.GetDBName() + "/" + tableName + "/[" + strings.Join(fields, "][") + "]/" + where
+	actual, _ := buildSqlUpdateWithFieldsAndWhereCache.LoadOrStore(key, &initBuildSqlUpdateWithFieldsAndWhere{})
+	initBuild := actual.(*initBuildSqlUpdateWithFieldsAndWhere)
+	initBuild.once.Do(func() {
+		sql, err := buildSqlUpdateWithFieldsAndWhere(db, tableName, fields, where)
+		initBuild.val = sql
+		initBuild.err = err
+	})
+	return initBuild.val, initBuild.err
+}
+
+func buildSqlUpdateWithFieldsAndWhere(db *TenantDB, tableName string, fields []string, where string) (string, error) {
+	dialect := dialectFactory.create(db.GetDriverName())
+	source := dialect.Quote(tableName)
+	compiler, err := NewExprCompiler(db.TenantDB)
+	if err != nil {
+		return "", err
+	}
+
+	compiler.context.tables = []string{tableName}
+	compiler.context.alias = map[string]string{tableName: tableName}
+	if where != "" {
+		compiler.context.purpose = build_purpose_where
+		compiler.context.paramIndex = 1
+		err = compiler.buildWhere(where)
+		if err != nil {
+			return "", err
+		}
+
+		where = compiler.content
+
+	}
+
+	strSet := strings.Join(fields, ", ")
+	compiler.context.purpose = build_purpose_for_update
+	err = compiler.buildSetter(strSet)
+	if err != nil {
+		return "", err
+	}
+
+	strSet = compiler.content
+
+	sql := ""
+	if where != "" {
+		sql = fmt.Sprintf("UPDATE %s SET %s WHERE %s", source, strSet, where)
+	} else {
+		sql = fmt.Sprintf("UPDATE %s SET %s", source, strSet)
+	}
+	return sql, nil
+
+}
+func (m *dbModel) updateByMap(data map[string]interface{}) (sql.Result, error) {
+	args := []interface{}{}
+	strFields := []string{}
+	for k, v := range data {
+		k = strings.TrimSuffix(strings.TrimPrefix(strings.ToLower(k), " "), " ")
+		col, ok := (*m.mapCols)[k]
+		if col.PKName != "" {
+			continue
+		}
+		if !ok {
+			return nil, fmt.Errorf("field %s not found in table %s", k, m.tableName)
+		}
+		dbField := ""
+		if fn, ok := v.(dbFunCall); ok {
+			args = append(args, fn.args...)
+			dbField = col.Name + "=" + fn.expr
+
+		} else {
+			dbField = col.Name + "=?"
+			args = append(args, v)
+		}
+
+		strFields = append(strFields, dbField)
+	}
+
+	sql, err := buildSqlUpdateWithFieldsAndWhereWithCache(m.db, m.tableName, strFields, m.where)
+
+	if err != nil {
+		return nil, err
+	}
+	args = append(args, m.whereArgs...)
+
+	return m.db.Exec(sql, args...)
+	/*
+
+	 */
+
+}
+func (m *dbModel) updateFieldAndValue(field string, value interface{}) (sql.Result, error) {
 	m.fieldUpdate = field
 	m.valueUpdate = value
+	if fn, ok := value.(dbFunCall); ok {
+		compiler, err := NewExprCompiler(m.db.TenantDB)
+		if err != nil {
+			return nil, err
+		}
+
+		compiler.context.purpose = build_purpose_for_function
+		compiler.context.tables = []string{m.tableName}
+		compiler.context.alias = map[string]string{m.tableName: m.tableName}
+		compiler.context.paramIndex = 1
+		err = compiler.buildSelectField(fn.expr)
+		if err != nil {
+			return nil, err
+		}
+
+		m.valueUpdate = compiler.content
+		sql, err := m.BuildSql()
+		sql = strings.Replace(sql, "?", compiler.content, 1)
+		if err != nil {
+			return nil, err
+		}
+
+		args := fn.args
+		args = append(args, m.whereArgs...)
+		return m.db.Exec(sql, args...)
+	}
 	sql, err := m.BuildSql()
 	if err != nil {
-		return UpdateResult{
-			Error: err,
-		}
+		return nil, err
 	}
 
 	args := []interface{}{value}
 	args = append(args, m.whereArgs...)
-	result, err := m.db.Exec(sql, args...)
+	return m.db.Exec(sql, args...)
+
+}
+func (m *dbModel) parseUPdateError(result sql.Result, err error) UpdateResult {
 	if err != nil {
 		dialect := dialectFactory.create(m.db.GetDriverName())
 		dError := dialect.ParseError(err)
@@ -175,7 +301,7 @@ func (m *dbModel) Update(field string, value interface{}) UpdateResult {
 					schema, errLoader := loader.LoadFullSchema(m.db.TenantDB)
 					if errLoader == nil {
 						cols := schema.UniqueKeys[dialectError.ConstraintName]
-						dialectError.Tables = append(dialectError.Tables, m.tableName)
+						dialectError.Table = m.tableName
 
 						for _, col := range cols.Columns {
 							dialectError.DbCols = append(dialectError.Fields, col.Name)
@@ -210,7 +336,25 @@ func (m *dbModel) Update(field string, value interface{}) UpdateResult {
 	return UpdateResult{
 		RowsAffected: r,
 	}
+}
+func (m *dbModel) Update(args ...interface{}) UpdateResult {
+	if len(args) == 2 {
+		if field, ok := args[0].(string); ok {
+			r, err := m.updateFieldAndValue(field, args[1])
+			return m.parseUPdateError(r, err)
 
+		} else {
+			panic("first argument must be a string")
+		}
+	} else if len(args) == 1 {
+		if data, ok := args[0].(map[string]interface{}); ok {
+			r, err := m.updateByMap(data)
+			return m.parseUPdateError(r, err)
+		} else {
+			panic("first argument must be a map[string]interface{}")
+		}
+	}
+	panic("invalid arguments, please use Update(field string, value interface{}) or Update(data map[string]interface{})")
 }
 
 type DeleteResult struct {

@@ -39,7 +39,7 @@ func ErrorMessage(t DIALECT_DB_ERROR_TYPE) string {
 	}
 }
 func (e DialectError) Error() string {
-	return fmt.Sprintf("code=%s, %s: %s cols %v tables %v, entity fields %v", e.Code, ErrorMessage(e.ErrorType), e.ErrorMessage, strings.Join(e.DbCols, ","), strings.Join(e.Tables, ","), strings.Join(e.Fields, ","))
+	return fmt.Sprintf("code=%s, %s: %s cols %v tables %v, entity fields %v", e.Code, ErrorMessage(e.ErrorType), e.ErrorMessage, strings.Join(e.DbCols, ","), e.Table, strings.Join(e.Fields, ","))
 }
 func (e DialectError) Unwrap() error {
 	return e.Err
@@ -52,8 +52,13 @@ type DialectError struct {
 	ErrorMessage   string
 	DbCols         []string
 	Fields         []string
-	Tables         []string
-	ConstraintName string
+	Table          string
+	StructName     string
+	RefTable       string   //<-- table cause error
+	RefStructName  string   //<-- Struct cause error
+	RefCols        []string //<-- Columns in database cause error
+	RefFields      []string //<-- Fields in struct cause error
+	ConstraintName string   //<-- Constraint name cause error
 }
 
 func (e *DialectError) Reload() {
@@ -62,6 +67,8 @@ func (e *DialectError) Reload() {
 }
 
 type Dialect interface {
+	LikeValue(val string) string
+
 	ParseError(err error) error
 	Name() string
 	Quote(str ...string) string

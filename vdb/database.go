@@ -100,6 +100,19 @@ func SetManagerDb(driver string, dbName string) {
 	tenantDbManagerInstance.SetManagerDb(driver, dbName)
 }
 
+type dbFunCall struct {
+	expr string
+	args []interface{}
+}
+
+func DbFunCall(expr string, args ...interface{}) dbFunCall {
+	return dbFunCall{expr: expr, args: args}
+}
+func (db *TenantDB) LikeValue(value string) string {
+	dialect := dialectFactory.create(db.GetDriverName())
+	return dialect.LikeValue(value)
+}
+
 var tenantDbManagerInstance = &tenantDbManager{mapManagerDb: make(map[string]bool)}
 
 func init() {

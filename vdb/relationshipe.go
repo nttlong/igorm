@@ -62,7 +62,9 @@ func (m *Model[T]) AddForeignKey(foreignKey string, FkEntity interface{}, keys s
 
 	}
 	pkCols := []string{}
+	pkFields := []string{}
 	fkColsName := []string{}
+	fkFieldsName := []string{}
 	for i, key := range ks {
 		keyCol := ownerMap[strings.ToLower(key)]
 		fkCol := fkMap[strings.ToLower(fks[i])]
@@ -71,15 +73,21 @@ func (m *Model[T]) AddForeignKey(foreignKey string, FkEntity interface{}, keys s
 			panic(errors.New(errText))
 		}
 		pkCols = append(pkCols, keyCol.Name)
+		pkFields = append(pkFields, keyCol.Field.Name)
 		fkColsName = append(fkColsName, fkCol.Name)
+		fkFieldsName = append(fkFieldsName, fkCol.Field.Name)
 
 	}
 
 	migrate.ForeignKeyRegistry.Register(&migrate.ForeignKeyInfo{
-		FromTable: fkInfo.GetTableName(),
-		FromCols:  fkColsName,
-		ToTable:   ownerInfo.GetTableName(),
-		ToCols:    pkCols,
+		FromTable:      fkInfo.GetTableName(),
+		FromCols:       fkColsName,
+		ToTable:        ownerInfo.GetTableName(),
+		ToCols:         pkCols,
+		FromStructName: FkEntityType.String(),
+		ToStructName:   ownerType.String(),
+		FromFiels:      fkFieldsName,
+		ToFiels:        pkFields,
 	})
 
 	return m

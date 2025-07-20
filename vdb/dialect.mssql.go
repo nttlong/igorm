@@ -13,6 +13,10 @@ type mssqlDialect struct {
 	cacheMakeSqlInsert sync.Map
 }
 
+func (d *mssqlDialect) LikeValue(val string) string {
+
+	return val
+}
 func (d *mssqlDialect) Quote(name ...string) string {
 	return "[" + strings.Join(name, "].[") + "]"
 }

@@ -21,6 +21,7 @@ const (
 	build_purpose_limit
 	build_purpose_offset
 	build_purpose_for_function
+	build_purpose_for_update
 )
 
 type exprCompileContext struct {
@@ -30,6 +31,7 @@ type exprCompileContext struct {
 	*/
 	schema           *map[string]bool
 	alias            map[string]string
+	joinAlias        map[string]string
 	aliasToDbTable   map[string]string
 	dialect          Dialect
 	purpose          build_purpose
@@ -112,6 +114,29 @@ func (e *exprCompiler) buildSelectField(selector string) error {
 			}
 		}
 		e.content = strings.Join(selectors, ", ")
+	}
+
+	return nil
+}
+func (e *exprCompiler) buildSetter(stterExpr string) error {
+	stterExpr = utils.EXPR.QuoteExpression(stterExpr)
+
+	sqlTest := "update test set " + stterExpr
+	stm, err := sqlparser.Parse(sqlTest)
+	if err != nil {
+		return err
+	}
+	if sqlUpdate, ok := stm.(*sqlparser.Update); ok {
+		strResults := []string{}
+		for _, expr := range sqlUpdate.Exprs {
+			strResult, err := exprs.compile(e.context, expr)
+			if err != nil {
+				return err
+			}
+			strResults = append(strResults, strResult)
+
+		}
+		e.content = strings.Join(strResults, ", ")
 	}
 
 	return nil

@@ -6,10 +6,14 @@ import (
 )
 
 func (compiler *exprReceiver) SQLVal(context *exprCompileContext, expr *sqlparser.SQLVal) (string, error) {
-	if expr.Type == sqlparser.StrVal {
-
+	switch expr.Type {
+	case sqlparser.StrVal:
 		return context.dialect.ToText(string(expr.Val)), nil
-	} else {
+	case sqlparser.IntVal:
+		return string(expr.Val), nil
+	case sqlparser.FloatVal:
+		return string(expr.Val), nil
+	case sqlparser.ValArg:
 		if context.paramIndex == 0 {
 			context.paramIndex = 1
 		}
@@ -23,6 +27,9 @@ func (compiler *exprReceiver) SQLVal(context *exprCompileContext, expr *sqlparse
 		} else {
 			return string(expr.Val), nil
 		}
+
 	}
+
+	return string(expr.Val), nil
 
 }

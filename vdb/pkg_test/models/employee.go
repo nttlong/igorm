@@ -9,9 +9,9 @@ type Employee struct {
 	ID           int    `json:"id" db:"pk;auto;"`
 	FirstName    string `json:"name" db:"size(50);idx"`
 	LastName     string `json:"lastName" db:"size(50);idx"`
-	DepartmentID int    `json:"departmentId" db:"fk(Department.ID)"`
-	PositionID   int    `json:"positionId" db:"fk(Position.ID)"`
-	UserID       int    `json:"userId" db:"fk(User.ID)"`
+	DepartmentID int    `json:"departmentId"`
+	PositionID   int    `json:"positionId"`
+	UserID       int    `json:"userId"`
 	BaseModel
 }
 
