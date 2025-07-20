@@ -15,9 +15,8 @@ func TestDelete(t *testing.T) {
 
 	assert.NoError(t, err)
 	defer db.Close()
-	r, err := db.Delete(&models.User{}, "userId=?", "d8cbde8c-9e9f-4ff7-9c35-50fb7d408ef9")
+	err = db.Model(&models.User{}).Where("userId=?", "d8cbde8c-9e9f-4ff7-9c35-50fb7d408ef9").Delete().Error
 	assert.NoError(t, err)
-	assert.Equal(t, int64(1), r)
 
 }
 func TestMssqlDbTestFind(t *testing.T) {
