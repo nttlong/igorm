@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>EfCoreInsertTransactionBenchmark-20250721-211405</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.2, Windows 11 (10.0.22631.5335/23H2/2023Update/SunValley3)
+12th Gen Intel Core i7-12650H 2.30GHz, 1 CPU, 16 logical and 10 physical cores
+.NET SDK 10.0.100-preview.6.25358.103
+  [Host]     : .NET 10.0.0 (10.0.25.35903), X64 RyuJIT AVX2
+  DefaultJob : .NET 10.0.0 (10.0.25.35903), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method                        </th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>InsertPositionDepartmentUserEmployee</td><td>12.55 ms</td><td>1.735 ms</td><td>5.115 ms</td><td>2453.1250</td><td>93.7500</td><td>15.6250</td><td>29.66 MB</td>
+</tr></tbody></table>
+</body>
+</html>

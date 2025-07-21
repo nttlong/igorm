@@ -62,13 +62,3 @@ func (d *mySqlDialect) ToText(value string) string {
 func (d *mySqlDialect) ToParam(index int) string {
 	return "?"
 }
-func (d *mySqlDialect) SqlFunction(delegator *DialectDelegateFunction) (string, error) {
-	switch delegator.FuncName {
-	case "NOW":
-		delegator.HandledByDialect = true
-		return "NOW()", nil
-	default:
-
-		return "", nil
-	}
-}

@@ -6,7 +6,9 @@ import (
 	"reflect"
 	"strings"
 	"sync"
+	"time"
 	"vdb/migrate"
+	"vdb/tenantDB"
 )
 
 type dbModel struct {
@@ -22,6 +24,7 @@ type dbModel struct {
 type UpdateResult struct {
 	RowsAffected int64
 	Error        error
+	Sql          string //<-- if error is not nil, this field will be not empty
 }
 type ErrFieldNotFound struct {
 	Field     string
@@ -213,7 +216,7 @@ func buildSqlUpdateWithFieldsAndWhere(db *TenantDB, tableName string, fields []s
 	return sql, nil
 
 }
-func (m *dbModel) updateByMap(data map[string]interface{}) (sql.Result, error) {
+func (m *dbModel) updateByMap(data map[string]interface{}) (sql.Result, string, error) {
 	args := []interface{}{}
 	strFields := []string{}
 	for k, v := range data {
@@ -223,7 +226,7 @@ func (m *dbModel) updateByMap(data map[string]interface{}) (sql.Result, error) {
 			continue
 		}
 		if !ok {
-			return nil, fmt.Errorf("field %s not found in table %s", k, m.tableName)
+			return nil, "", fmt.Errorf("field %s not found in table %s", k, m.tableName)
 		}
 		dbField := ""
 		if fn, ok := v.(dbFunCall); ok {
@@ -241,56 +244,93 @@ func (m *dbModel) updateByMap(data map[string]interface{}) (sql.Result, error) {
 	sql, err := buildSqlUpdateWithFieldsAndWhereWithCache(m.db, m.tableName, strFields, m.where)
 
 	if err != nil {
-		return nil, err
+		return nil, sql, err
 	}
 	args = append(args, m.whereArgs...)
-
-	return m.db.Exec(sql, args...)
+	start := time.Now()
+	r, err := m.db.Exec(sql, args...)
+	n := time.Since(start).Nanoseconds()
+	fmt.Println("Update time:", n, "ns")
+	if err != nil {
+		return nil, sql, err
+	}
+	return r, sql, nil
 	/*
 
 	 */
 
 }
-func (m *dbModel) updateFieldAndValue(field string, value interface{}) (sql.Result, error) {
+
+type initBuldExrForUpdateFieldAndValue struct {
+	once sync.Once
+	val  string
+	err  error
+}
+
+var buldExrForUpdateFieldAndValueCacheData sync.Map
+
+func buldExrForUpdateFieldAndValueCache(db *tenantDB.TenantDB, tableName, expr string) (string, error) {
+	key := db.GetDriverName() + "://" + db.GetDBName() + "/" + tableName + "/" + expr
+	actual, _ := buldExrForUpdateFieldAndValueCacheData.LoadOrStore(key, &initBuldExrForUpdateFieldAndValue{})
+	initBuild := actual.(*initBuldExrForUpdateFieldAndValue)
+	initBuild.once.Do(func() {
+		sql, err := buldExrForUpdateFieldAndValue(db, tableName, expr)
+		initBuild.val = sql
+		initBuild.err = err
+	})
+	return initBuild.val, initBuild.err
+}
+func buldExrForUpdateFieldAndValue(db *tenantDB.TenantDB, tableName, expr string) (string, error) {
+	compiler, err := NewExprCompiler(db)
+	if err != nil {
+		return "", err
+	}
+	compiler.context.purpose = build_purpose_for_function
+	compiler.context.tables = []string{tableName}
+	compiler.context.alias = map[string]string{tableName: tableName}
+	compiler.context.paramIndex = 1
+	err = compiler.buildSelectField(expr)
+	if err != nil {
+		return "", err
+	}
+	return compiler.content, nil
+}
+func (m *dbModel) updateFieldAndValue(field string, value interface{}) (sql.Result, string, error) {
 	m.fieldUpdate = field
 	m.valueUpdate = value
 	if fn, ok := value.(dbFunCall); ok {
-		compiler, err := NewExprCompiler(m.db.TenantDB)
+		expr, err := buldExrForUpdateFieldAndValueCache(m.db.TenantDB, m.tableName, fn.expr)
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
-
-		compiler.context.purpose = build_purpose_for_function
-		compiler.context.tables = []string{m.tableName}
-		compiler.context.alias = map[string]string{m.tableName: m.tableName}
-		compiler.context.paramIndex = 1
-		err = compiler.buildSelectField(fn.expr)
-		if err != nil {
-			return nil, err
-		}
-
-		m.valueUpdate = compiler.content
+		m.valueUpdate = expr
 		sql, err := m.BuildSql()
-		sql = strings.Replace(sql, "?", compiler.content, 1)
+		sql = strings.Replace(sql, "?", expr, 1)
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
 
 		args := fn.args
 		args = append(args, m.whereArgs...)
-		return m.db.Exec(sql, args...)
+		r, err := m.db.Exec(sql, args...)
+		if err != nil {
+			return nil, "", err
+		}
+		return r, sql, nil
+
 	}
 	sql, err := m.BuildSql()
 	if err != nil {
-		return nil, err
+		return nil, sql, err
 	}
 
 	args := []interface{}{value}
 	args = append(args, m.whereArgs...)
-	return m.db.Exec(sql, args...)
+	r, err := m.db.Exec(sql, args...)
+	return r, sql, err
 
 }
-func (m *dbModel) parseUPdateError(result sql.Result, err error) UpdateResult {
+func (m *dbModel) parseUPdateError(result sql.Result, sql string, err error) UpdateResult {
 	if err != nil {
 		dialect := dialectFactory.create(m.db.GetDriverName())
 		dError := dialect.ParseError(err)
@@ -315,6 +355,7 @@ func (m *dbModel) parseUPdateError(result sql.Result, err error) UpdateResult {
 
 						return UpdateResult{
 							Error: dialectError,
+							Sql:   sql,
 						}
 					}
 
@@ -325,12 +366,20 @@ func (m *dbModel) parseUPdateError(result sql.Result, err error) UpdateResult {
 
 		return UpdateResult{
 			Error: dError,
+			Sql:   sql,
 		}
 	}
 	r, err := result.RowsAffected()
 	if err != nil {
 		return UpdateResult{
 			Error: err,
+			Sql:   sql,
+		}
+	}
+	if r == 0 {
+		return UpdateResult{
+			RowsAffected: r,
+			Sql:          sql,
 		}
 	}
 	return UpdateResult{
@@ -340,16 +389,16 @@ func (m *dbModel) parseUPdateError(result sql.Result, err error) UpdateResult {
 func (m *dbModel) Update(args ...interface{}) UpdateResult {
 	if len(args) == 2 {
 		if field, ok := args[0].(string); ok {
-			r, err := m.updateFieldAndValue(field, args[1])
-			return m.parseUPdateError(r, err)
+			r, sql, err := m.updateFieldAndValue(field, args[1])
+			return m.parseUPdateError(r, sql, err)
 
 		} else {
 			panic("first argument must be a string")
 		}
 	} else if len(args) == 1 {
 		if data, ok := args[0].(map[string]interface{}); ok {
-			r, err := m.updateByMap(data)
-			return m.parseUPdateError(r, err)
+			r, sql, err := m.updateByMap(data)
+			return m.parseUPdateError(r, sql, err)
 		} else {
 			panic("first argument must be a map[string]interface{}")
 		}

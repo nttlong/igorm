@@ -200,14 +200,19 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 	defer sqlStmt.Close()
 	if dialect.Name() == "mssql" {
 		var insertedID int64
+
 		err = sqlStmt.QueryRow(args...).Scan(&insertedID)
 		if err == nil {
 			err = fetchAfterInsertForQueryRow(repoType.entity, dataValue, insertedID)
+
 		}
 	} else {
+		// start := time.Now()
 		sqlResult, errExec := sqlStmt.Exec(args...)
 		if errExec == nil {
 			errExec = r.fetchAfterInsert(dialect, sqlResult, repoType.entity, dataValue)
+			// n := time.Since(start).Milliseconds()
+			// fmt.Println("time elapsed:", n)
 			if errExec != nil {
 				err = errExec
 			}

@@ -7,7 +7,7 @@ type Department struct {
 
 	ID       int    `db:"pk;auto"`
 	Name     string `db:"size:100;uk:uq_dept_name"`
-	Code     string `db:"size:20;uk:uq_dept_code"`
+	Code     string `db:"size:50;uk:uq_dept_code"`
 	ParentID *int
 	BaseModel
 }

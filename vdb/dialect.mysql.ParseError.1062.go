@@ -7,6 +7,7 @@ import (
 )
 
 func (d *mySqlDialect) ParseError1452(err *mysql.MySQLError) *DialectError {
+
 	re := regexp.MustCompile("CONSTRAINT `([^`]+)`")
 	match := re.FindStringSubmatch(err.Message)
 	if len(match) > 1 {

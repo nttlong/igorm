@@ -108,6 +108,9 @@ type dbFunCall struct {
 func DbFunCall(expr string, args ...interface{}) dbFunCall {
 	return dbFunCall{expr: expr, args: args}
 }
+func Expr(expr string, args ...interface{}) dbFunCall {
+	return dbFunCall{expr: expr, args: args}
+}
 func (db *TenantDB) LikeValue(value string) string {
 	dialect := dialectFactory.create(db.GetDriverName())
 	return dialect.LikeValue(value)
