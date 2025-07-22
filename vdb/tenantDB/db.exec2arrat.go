@@ -36,8 +36,12 @@ func (db *TenantDB) ExecToArray(result interface{}, query string, args ...interf
 	if typ.Kind() != reflect.Ptr {
 		return fmt.Errorf("result must be a pointer to slice")
 	}
-
-	return exec2array(db, result, query, args...)
+	start := time.Now()
+	ret := execToArrayOptimized(db, result, query, args...)
+	//ret := exec2array(db, result, query, args...)
+	n := time.Since(start).Milliseconds()
+	fmt.Println(n)
+	return ret
 }
 func execToArray_original(db *TenantDB, typ reflect.Type, query string, args ...interface{}) ([]interface{}, error) {
 	rows, err := db.Query(query, args...)

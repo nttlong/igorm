@@ -196,16 +196,6 @@ func (q *query) BuildSql() (string, []interface{}) {
 	q.args = args
 	return sql, args
 }
-func (q *query) ToArray(items interface{}) error {
-	sql, args := q.BuildSql()
-
-	err := q.db.ExecToArray(items, sql, args...)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
 
 type onBuildSQL func(typ reflect.Type, db *TenantDB, filter string) (string, error)
 

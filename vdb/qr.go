@@ -4,7 +4,6 @@ import (
 	// EXPR "vdb/expr"
 	"fmt"
 	"reflect"
-	"strconv"
 	"strings"
 	"sync"
 	"vdb/tenantDB"
@@ -263,6 +262,11 @@ func (q *QueryParts) BuildSQL(db *tenantDB.TenantDB) (string, []interface{}) {
 		return "", nil
 	}
 	reqSql := initBuild.val
+
+	args := []interface{}{}
+
+	args = append(args, q.argsSelect...)
+	args = append(args, q.whereArgs...)
 	if db.GetDriverName() == "sqlserver" {
 		//OFFSET 100 ROWS FETCH NEXT 0 ROWS ONLY;
 		if q.Limit == nil {
@@ -271,25 +275,27 @@ func (q *QueryParts) BuildSQL(db *tenantDB.TenantDB) (string, []interface{}) {
 		if q.Offset == nil {
 			*q.Offset = 0
 		}
-		reqSql += " OFFSET " + strconv.Itoa(*q.Offset) + " ROWS FETCH NEXT " + strconv.Itoa(*q.Limit) + " ROWS ONLY"
+		dialec := dialectFactory.create(db.GetDriverName())
+		p1 := dialec.ToParam(len(args) + 1)
+		p2 := dialec.ToParam(len(args) + 2)
+		reqSql += " OFFSET " + p1 + " ROWS FETCH NEXT " + p2 + " ROWS ONLY"
 
 	} else {
 		// LIMIT OFFSET
+		dialec := dialectFactory.create(db.GetDriverName())
 		if q.Limit != nil {
-			reqSql += " LIMIT " + strconv.Itoa(*q.Limit)
+			p1 := dialec.ToParam(len(args) + 1)
+			reqSql += " LIMIT " + p1
 			// sb.WriteString(" LIMIT ?")
 
 		}
 		if q.Offset != nil {
+			p2 := dialec.ToParam(len(args) + 1)
 			//sb.WriteString(" OFFSET ?")
-			reqSql += " OFFSET " + strconv.Itoa(*q.Offset)
+			reqSql += " OFFSET " + p2
 
 		}
 	}
-	args := []interface{}{}
-
-	args = append(args, q.argsSelect...)
-	args = append(args, q.whereArgs...)
 	if q.Limit != nil {
 		args = append(args, *q.Limit)
 	}

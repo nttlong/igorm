@@ -1,6 +1,7 @@
 package vdbgorm_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -13,6 +14,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert" // Hoặc driver bạn đang dùng, ví dụ: postgres.Open("...")
+
+	//"github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -27,7 +30,8 @@ func createTenantDbGorm() error {
 	// Lưu ý: GORM không tự động TẠO database vật lý.
 	// Bạn cần đảm bảo database "test001" đã được tạo trên MySQL server của bạn TRƯỚC KHI chạy code này.
 	// Ví dụ: Bạn có thể chạy lệnh SQL "CREATE DATABASE test001;" trong MySQL client.
-	tenantDbName := "gorm_test004" // Tên database của tenant
+	//tenantDbName := "gorm_test004" // Tên database của tenant
+	tenantDbName := "vdb_test005"
 	dsnTenant := fmt.Sprintf("root:123456@tcp(127.0.0.1:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True", tenantDbName)
 
 	gormDb, err = gorm.Open(mysql.Open(dsnTenant), &gorm.Config{
@@ -44,7 +48,7 @@ func createTenantDbGorm() error {
 	// 2. Quan trọng: AutoMigrate các model cho database của tenant này
 	// Điều này sẽ tạo bảng `users` (và các bảng khác nếu bạn có model khác)
 	// trong database `test001` nếu chúng chưa tồn tại, hoặc cập nhật schema.
-	err = models.MigrateAllModels(gormDb)
+	//err = models.MigrateAllModels(gormDb)
 	if err != nil {
 		return fmt.Errorf("failed to auto migrate models for tenant DB '%s': %w", tenantDbName, err)
 	}
@@ -274,4 +278,97 @@ func Benchmark_TestInsertPositionAndDepartmentOnce_GORM(b *testing.B) {
 		}
 
 	}
+}
+func Benchmark_TestSelectEmployeeAndUser_GORM(b *testing.B) {
+	//go test -bench=Benchmark_TestSelectEmployeeAndUser_GORM -run=^$ -benchmem -benchtime=5s -count=10 > gorm5.txt
+	// Chạy setup một lần
+	dsn := "root:123456@tcp(127.0.0.1:3306)/vdb_test005?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True"
+
+	gormDb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		//Logger: logger.Default.LogMode(logger.Info), // Thay đổi logger.Info thành logger.Silent để tắt log queries
+		// SỬA ĐOẠN NÀY ĐỂ TẮT LOG QUERIES:
+		Logger: logger.Default.LogMode(logger.Silent), // Thay đổi logger.Info thành logger.Silent
+	})
+	assert.NoError(b, err, "Failed to connect to GORM DB")
+	type BaseModel struct {
+		FullName   *string
+		PositionID *int64
+	}
+	type QueryResult struct {
+		BaseModel
+		DepartmentID *int64
+		Email        *string
+		Phone        *string
+	}
+
+	for i := 0; i < b.N; i++ {
+		var items []QueryResult
+
+		qr := gormDb.
+			Table("employees AS e").
+			Select(`
+				concat(e.first_name, ' ', e.last_name) AS full_name,
+				e.position_id,
+				e.department_id,
+				u.email,
+				u.phone`).
+			Joins("LEFT JOIN users u ON e.user_id = u.id").
+			Order("e.id").
+			Offset(0). // Giả sử bạn muốn lấy từ bản ghi thứ 1000
+			Limit(1000)
+		// start := time.Now()
+		err := qr.Scan(&items).Error
+		// n := time.Since(start).Milliseconds()
+		// fmt.Println("Time: ", n) // In ra thời gian thực hiện truy vấn 6ms
+		assert.NoError(b, err)
+		assert.Equal(b, 1000, len(items))
+		assert.Equal(b, "John Doe", *items[0].FullName)
+	}
+}
+func BenchmarkRawSelect(b *testing.B) {
+
+	dsn := "root:123456@tcp(127.0.0.1:3306)/vdb_test005?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True"
+
+	gormDb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		//Logger: logger.Default.LogMode(logger.Info), // Thay đổi logger.Info thành logger.Silent để tắt log queries
+		// SỬA ĐOẠN NÀY ĐỂ TẮT LOG QUERIES:
+		Logger: logger.Default.LogMode(logger.Silent), // Thay đổi logger.Info thành logger.Silent
+	})
+	assert.NoError(b, err, "Failed to connect to GORM DB")
+
+	// db2, err := sqlx.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/vdb_test005")
+
+	type QueryResult struct {
+		FullName     string `db:"FullName"`
+		PositionId   int64  `db:"PositionId"`
+		DepartmentId int64  `db:"DepartmentId"`
+		Email        string `db:"Email"`
+		Phone        string `db:"Phone"`
+	}
+
+	sql := "SELECT " +
+		"concat(`e`.`first_name`, ' ', `e`.`last_name`) AS `full_name`," +
+		"`e`.`position_id`," +
+		"`e`.`department_id`," +
+		"`u`.`email`," +
+		"`u`.`phone` FROM `employees` AS `e` LEFT JOIN `users` `u` ON `e`.`user_id` = `u`.`id` ORDER BY `e`.`id` LIMIT 1000"
+	start := time.Now()
+	rows, err := gormDb.ConnPool.QueryContext(context.Background(), sql)
+	if err != nil {
+		panic(fmt.Errorf("failed to execute query: %w", err))
+	}
+	defer rows.Close()
+
+	results := make([]QueryResult, 0, 1000)
+	for rows.Next() {
+		var item QueryResult
+		err := rows.Scan(&item.FullName, &item.PositionId, &item.DepartmentId, &item.Email, &item.Phone)
+		if err != nil {
+			panic(fmt.Errorf("failed to execute query: %w", err))
+		}
+		results = append(results, item)
+	}
+	n := time.Since(start).Milliseconds()
+	fmt.Printf("Load took %dms\n", n) //<--2 ms
+
 }

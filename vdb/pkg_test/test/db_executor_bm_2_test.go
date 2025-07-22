@@ -19,7 +19,8 @@ func createTenantDb() error {
 	// 	// Nó chỉ tập trung vào việc quản lý tenant, không có migrate các model dựng sẵn.
 	// 	// Việc chỉ định database quản lý tenant , bằng cách gọi hàm vdb.SetManagerDb("mysql", "tenantManager"), là rất quan trọng
 	// 	// Nó giúp vdb biết database quản lý tenant là database nào để thực hiện các thao tác liên quan đến tenant.
-	initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/tenant_manager?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True")
+	db := initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/tenant_manager?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True")
+	defer db.Close()
 	testDb, err = db.CreateDB("vdb_test005") //<--- Tạo database tenant tên là test004 dong thoi migrate các model dựng sẵn
 	return err
 
@@ -201,4 +202,43 @@ func Benchmark_TestInsertPositionAndDepartmentOnce(b *testing.B) {
 
 		b.StopTimer()
 	}
+}
+func Benchmark_TestSelectAllepmloyeeAndUser(b *testing.B) {
+	//go test -bench=Benchmark_TestSelectAllepmloyeeAndUser -run=^$ -benchmem -benchtime=5s -count=10 > vdb11.txt
+	setupOnce.Do(func() {
+		assert.NoError(b, createTenantDb())
+	}) //<--- chạy test trước khi test này
+	type Base struct {
+		FullName   *string
+		PositionID *int64
+	}
+	type QueryResult struct {
+		Base
+		DepartmentID *int64
+		Email        *string
+		Phone        *string
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		items := []QueryResult{}
+		qr := testDb.From((&models.Employee{}).As("e")).LeftJoin( //<-- inner join, left join ,right join and full join just change function
+			(&models.User{}).As("u"), "e.userId = u.id",
+		).Select(
+			"concat(e.FirstName,' ', e.LastName) as FullName",
+			"e.positionId",
+			"e.departmentId",
+			"u.email",
+			"u.phone",
+		).OrderBy("e.id").OffsetLimit(0, 1000) //<-- offset limit for paging, if you want to get all data, just remove this line
+
+		//<-- count tong so user
+		//start := time.Now()
+		err := qr.ToArray(&items)
+		//n := time.Since(start).Milliseconds()
+		//fmt.Print("Thoi gian lay toan bo user: ", n, "ms\n")
+
+		assert.NoError(b, err)
+
+	}
+
 }

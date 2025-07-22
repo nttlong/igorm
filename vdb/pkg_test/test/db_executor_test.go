@@ -13,14 +13,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var db *vdb.TenantDB //<-- khai báo database quản lý tenant
+//<-- khai báo database quản lý tenant
 /*
 hàm này sẽ được gọi từ các test case để khởi tạo database quản lý tenant
 @param driver: driver của database, vdb hiện tại hỗ trợ sqlserver mysql và postgres
 */
-func initDb(driver string, conn string) {
+func initDb(driver string, conn string) *vdb.TenantDB {
 	var err error
-	db, err = vdb.Open(driver, conn)
+	db, err := vdb.Open(driver, conn)
 	if err != nil {
 		panic(err)
 	}
@@ -28,6 +28,7 @@ func initDb(driver string, conn string) {
 	if err != nil {
 		panic(err)
 	}
+	return db
 }
 
 var testDb *vdb.TenantDB //<-- khai báo database quản lý tenant
@@ -38,7 +39,8 @@ func TestCreateTenantDb(t *testing.T) {
 	// 	// Nó chỉ tập trung vào việc quản lý tenant, không có migrate các model dựng sẵn.
 	// 	// Việc chỉ định database quản lý tenant , bằng cách gọi hàm vdb.SetManagerDb("mysql", "tenantManager"), là rất quan trọng
 	// 	// Nó giúp vdb biết database quản lý tenant là database nào để thực hiện các thao tác liên quan đến tenant.
-	initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/tenant_manager?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True")
+	db := initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/tenant_manager?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True")
+	defer db.Close()                     //<-- đóng kết nối database sau khi test xong
 	testDb, err = db.CreateDB("test001") //<--- Tạo database tenant tên là test001
 	assert.NoError(t, err)
 	assert.Equal(t, "test001", testDb.GetDBName())
