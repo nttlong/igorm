@@ -1,7 +1,11 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using System;
-
+using System.Data;
+using System.Data.Common;
+using Microsoft.EntityFrameworkCore;                  // đã có
+using Microsoft.EntityFrameworkCore.Infrastructure;   // cần thêm
+using System.Data.Common;    
 [MemoryDiagnoser]
 public class EfCoreInsertBenchmark
 {
@@ -117,5 +121,78 @@ public class EfCoreInsertTransactionBenchmark
             tx.Rollback();
             throw;
         }
+    }
+}
+public class QueryResult
+{
+    public string FullName { get; set; } = string.Empty;
+    public int PositionId { get; set; }
+    public int DepartmentId { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+}
+[MemoryDiagnoser]
+public class EfCoreRawSqlBenchmark
+{
+    private HrDbContext db = null!;
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        db = new HrDbContext();
+        db.Database.OpenConnection(); // Quan trọng: mở kết nối trước để dùng low-level
+    }
+
+    [Benchmark]
+    public void BenchmarkRawSelect()
+    {
+        //     var sql = @"
+        //         SELECT 
+        //             CONCAT(e.first_name, ' ', e.last_name) AS FullName,
+        //             e.position_id AS PositionId,
+        //             e.department_id AS DepartmentId,
+        //             u.email AS Email,
+        //             u.phone AS Phone
+        //         FROM employees e
+        //         LEFT JOIN users u ON e.user_id = u.id
+        //         ORDER BY e.id
+        //         LIMIT 1000";
+
+        //     using var command = db.Database.GetDbConnection().CreateCommand();
+        //     command.CommandText = sql;
+        //     command.CommandType = CommandType.Text;
+
+        //     using var reader = command.ExecuteReader();
+        //     var results = new List<QueryResult>(1000);
+        //     while (reader.Read())
+        //     {
+        //         results.Add(new QueryResult
+        //         {
+        //             FullName = reader.GetString(0),
+        //             PositionId = reader.GetInt32(1),
+        //             DepartmentId = reader.GetInt32(2),
+        //             Email = reader.GetString(3),
+        //             Phone = reader.GetString(4)
+        //         });
+        //     }
+        // }
+        var results = (from e in db.Employees
+                       join u in db.Users on e.UserId equals u.Id into joined
+                       from u in joined.DefaultIfEmpty()
+                       orderby e.Id
+                       select new QueryResult
+                       {
+                           FullName = e.FirstName + " " + e.LastName,
+                           PositionId = e.PositionId,
+                           DepartmentId = e.DepartmentId,
+                           Email = u != null ? u.Email : null,
+                           Phone = u != null ? u.Phone : null
+                       })
+                      .AsNoTracking()
+                      .Skip(0)
+                      .Take(5000)
+                      .ToList();
+                      
+        
     }
 }

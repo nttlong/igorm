@@ -1,0 +1,101 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 1 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// start dotnet  restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true /p:ArtifactsPath="D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1/" /p:OutDir="D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1\bin\Release\net10.0/" /p:OutputPath="D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1\bin\Release\net10.0/" /p:PublishDir="D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1\publish/" in D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1
+// command took 1.2 sec and exited with 0
+// start dotnet  build -c Release --no-restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true /p:ArtifactsPath="D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1/" /p:OutDir="D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1\bin\Release\net10.0/" /p:OutputPath="D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1\bin\Release\net10.0/" /p:PublishDir="D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1\publish/" --output "D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1\bin\Release\net10.0/" in D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1
+// command took 4.39 sec and exited with 0
+// ***** Done, took 00:00:05 (5.69 sec)   *****
+// Found 1 benchmarks:
+//   EfCoreInsertBenchmark.InsertSingleUser: DefaultJob
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: EfCoreInsertBenchmark.InsertSingleUser: DefaultJob
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet VDotnetOrmTest-DefaultJob-1.dll --anonymousPipes 3648 3652 --benchmarkName EfCoreInsertBenchmark.InsertSingleUser --job Default --benchmarkId 0 in D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net10.0\VDotnetOrmTest-DefaultJob-1\bin\Release\net10.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.2
+// Runtime=.NET 10.0.0 (10.0.25.35903), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: DefaultJob
+
+OverheadJitting  1: 1 op, 109600.00 ns, 109.6000 us/op
+WorkloadJitting  1: 1 op, 128320400.00 ns, 128.3204 ms/op
+
+WorkloadPilot    1: 2 op, 20210900.00 ns, 10.1055 ms/op
+WorkloadPilot    2: 3 op, 9541200.00 ns, 3.1804 ms/op
+WorkloadPilot    3: 4 op, 10428200.00 ns, 2.6071 ms/op
+WorkloadPilot    4: 5 op, 13236400.00 ns, 2.6473 ms/op
+WorkloadPilot    5: 6 op, 15155300.00 ns, 2.5259 ms/op
+WorkloadPilot    6: 7 op, 18575900.00 ns, 2.6537 ms/op
+WorkloadPilot    7: 8 op, 22507800.00 ns, 2.8135 ms/op
+WorkloadPilot    8: 9 op, 26005400.00 ns, 2.8895 ms/op
+WorkloadPilot    9: 10 op, 27686200.00 ns, 2.7686 ms/op
+WorkloadPilot   10: 11 op, 40094200.00 ns, 3.6449 ms/op
+WorkloadPilot   11: 12 op, 51586100.00 ns, 4.2988 ms/op
+WorkloadPilot   12: 13 op, 45272100.00 ns, 3.4825 ms/op
+WorkloadPilot   13: 14 op, 44456000.00 ns, 3.1754 ms/op
+WorkloadPilot   14: 15 op, 41651600.00 ns, 2.7768 ms/op
+WorkloadPilot   15: 16 op, 42373300.00 ns, 2.6483 ms/op
+WorkloadPilot   16: 32 op, 86691900.00 ns, 2.7091 ms/op
+WorkloadPilot   17: 64 op, 165882600.00 ns, 2.5919 ms/op
+WorkloadPilot   18: 128 op, 341621500.00 ns, 2.6689 ms/op
+WorkloadPilot   19: 256 op, 691214000.00 ns, 2.7001 ms/op
+
+OverheadWarmup   1: 256 op, 2100.00 ns, 8.2031 ns/op
+OverheadWarmup   2: 256 op, 800.00 ns, 3.1250 ns/op
+OverheadWarmup   3: 256 op, 1500.00 ns, 5.8594 ns/op
+OverheadWarmup   4: 256 op, 900.00 ns, 3.5156 ns/op
+OverheadWarmup   5: 256 op, 900.00 ns, 3.5156 ns/op
+OverheadWarmup   6: 256 op, 1000.00 ns, 3.9063 ns/op
+
+// BeforeActualRun
+WorkloadActual   1: 256 op, 663446100.00 ns, 2.5916 ms/op
+WorkloadActual   2: 256 op, 642120800.00 ns, 2.5083 ms/op
+WorkloadActual   3: 256 op, 604655000.00 ns, 2.3619 ms/op
+WorkloadActual   4: 256 op, 611933900.00 ns, 2.3904 ms/op
+WorkloadActual   5: 256 op, 668291200.00 ns, 2.6105 ms/op
+WorkloadActual   6: 256 op, 645881500.00 ns, 2.5230 ms/op
+WorkloadActual   7: 256 op, 662529100.00 ns, 2.5880 ms/op
+WorkloadActual   8: 256 op, 644184500.00 ns, 2.5163 ms/op
+WorkloadActual   9: 256 op, 671630300.00 ns, 2.6236 ms/op
+WorkloadActual  10: 256 op, 681249100.00 ns, 2.6611 ms/op
+WorkloadActual  11: 256 op, 682754900.00 ns, 2.6670 ms/op
+WorkloadActual  12: 256 op, 722858900.00 ns, 2.8237 ms/op
+WorkloadActual  13: 256 op, 704560300.00 ns, 2.7522 ms/op
+WorkloadActual  14: 256 op, 785249000.00 ns, 3.0674 ms/op
+WorkloadActual  15: 256 op, 841890900.00 ns, 3.2886 ms/op
+WorkloadActual  16: 256 op, 807287000.00 ns, 3.1535 ms/op
+WorkloadActual  17: 256 op, 788642700.00 ns, 3.0806 ms/op
+WorkloadActual  18: 256 op, 827657900.00 ns, 3.2330 ms/op
+WorkloadActual  19: 256 op, 809806700.00 ns, 3.1633 ms/op
+WorkloadActual  20: 256 op, 849275200.00 ns, 3.3175 ms/op
+WorkloadActual  21: 256 op, 880895500.00 ns, 3.4410 ms/op
+WorkloadActual  22: 256 op, 1018428400.00 ns, 3.9782 ms/op
+WorkloadActual  23: 256 op, 1002091900.00 ns, 3.9144 ms/op
+WorkloadActual  24: 256 op, 1024755900.00 ns, 4.0030 ms/op
+WorkloadActual  25: 256 op, 1084179700.00 ns, 4.2351 ms/op
+WorkloadActual  26: 256 op, 1077252900.00 ns, 4.2080 ms/op
+WorkloadActual  27: 256 op, 1081768100.00 ns, 4.2257 ms/op
+WorkloadActual  28: 256 op, 1124285300.00 ns, 4.3917 ms/op
+WorkloadActual  29: 256 op, 1517926300.00 ns, 5.9294 ms/op
+WorkloadActual  30: 256 op, 1137932200.00 ns, 4.4450 ms/op
+WorkloadActual  31: 256 op, 1296443500.00 ns, 5.0642 ms/op
+WorkloadActual  32: 256 op, 1293329400.00 ns, 5.0521 ms/op
+WorkloadActual  33: 256 op, 1196364200.00 ns, 4.6733 ms/op
+WorkloadActual  34: 256 op, 1191154700.00 ns, 4.6529 ms/op
+WorkloadActual  35: 256 op, 1308677100.00 ns, 5.1120 ms/op
+WorkloadActual  36: 256 op, 1220610200.00 ns, 4.7680 ms/op
+WorkloadActual  37: 256 op, 1302680500.00 ns, 5.0886 ms/op
+WorkloadActual  38: 256 op, 1287637100.00 ns, 5.0298 ms/op
+WorkloadActual  39: 256 op, 1261641600.00 ns, 4.9283 ms/op
+WorkloadActual  40: 256 op, 1157159700.00 ns, 4.5202 ms/op
+WorkloadActual  41: 256 op, 1096642600.00 ns, 4.2838 ms/op
+WorkloadActual  42: 256 op, 1094017900.00 ns, 4.2735 ms/op
+Successfully reverted power plan (GUID: 381b4222-f694-41f0-9685-ff5bb260df2e FriendlyName: Balanced)

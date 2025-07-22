@@ -10,4 +10,4 @@ BenchmarkDotNet v0.15.2, Windows 11 (10.0.22631.5335/23H2/2023Update/SunValley3)
 ```
 | Method                               | Mean     | Error    | StdDev   | Gen0      | Gen1    | Gen2    | Allocated |
 |------------------------------------- |---------:|---------:|---------:|----------:|--------:|--------:|----------:|
-| InsertPositionDepartmentUserEmployee | 12.55 ms | 1.735 ms | 5.115 ms | 2453.1250 | 93.7500 | 15.6250 |  29.66 MB |
+| InsertPositionDepartmentUserEmployee | 20.77 ms | 3.517 ms | 10.20 ms | 4867.1875 | 93.7500 | 23.4375 |  58.79 MB |

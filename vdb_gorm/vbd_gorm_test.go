@@ -1,7 +1,6 @@
 package vdbgorm_test
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -324,51 +323,4 @@ func Benchmark_TestSelectEmployeeAndUser_GORM(b *testing.B) {
 		assert.Equal(b, 1000, len(items))
 		assert.Equal(b, "John Doe", *items[0].FullName)
 	}
-}
-func BenchmarkRawSelect(b *testing.B) {
-
-	dsn := "root:123456@tcp(127.0.0.1:3306)/vdb_test005?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True"
-
-	gormDb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		//Logger: logger.Default.LogMode(logger.Info), // Thay đổi logger.Info thành logger.Silent để tắt log queries
-		// SỬA ĐOẠN NÀY ĐỂ TẮT LOG QUERIES:
-		Logger: logger.Default.LogMode(logger.Silent), // Thay đổi logger.Info thành logger.Silent
-	})
-	assert.NoError(b, err, "Failed to connect to GORM DB")
-
-	// db2, err := sqlx.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/vdb_test005")
-
-	type QueryResult struct {
-		FullName     string `db:"FullName"`
-		PositionId   int64  `db:"PositionId"`
-		DepartmentId int64  `db:"DepartmentId"`
-		Email        string `db:"Email"`
-		Phone        string `db:"Phone"`
-	}
-
-	sql := "SELECT " +
-		"concat(`e`.`first_name`, ' ', `e`.`last_name`) AS `full_name`," +
-		"`e`.`position_id`," +
-		"`e`.`department_id`," +
-		"`u`.`email`," +
-		"`u`.`phone` FROM `employees` AS `e` LEFT JOIN `users` `u` ON `e`.`user_id` = `u`.`id` ORDER BY `e`.`id` LIMIT 1000"
-	start := time.Now()
-	rows, err := gormDb.ConnPool.QueryContext(context.Background(), sql)
-	if err != nil {
-		panic(fmt.Errorf("failed to execute query: %w", err))
-	}
-	defer rows.Close()
-
-	results := make([]QueryResult, 0, 1000)
-	for rows.Next() {
-		var item QueryResult
-		err := rows.Scan(&item.FullName, &item.PositionId, &item.DepartmentId, &item.Email, &item.Phone)
-		if err != nil {
-			panic(fmt.Errorf("failed to execute query: %w", err))
-		}
-		results = append(results, item)
-	}
-	n := time.Since(start).Milliseconds()
-	fmt.Printf("Load took %dms\n", n) //<--2 ms
-
 }
