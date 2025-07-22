@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "RGV2tptk97s=",
+  "success": true,
+  "projectFilePath": "D:\\code\\go\\igorm\\vdotnet\\TodoApi\\TodoApi.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\MSI CYBORG\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.0-preview.6.25358.103\\microsoft.aspnetcore.openapi.10.0.0-preview.6.25358.103.nupkg.sha512",
+    "C:\\Users\\MSI CYBORG\\.nuget\\packages\\microsoft.openapi\\2.0.0-preview.29\\microsoft.openapi.2.0.0-preview.29.nupkg.sha512"
+  ],
+  "logs": []
+}
