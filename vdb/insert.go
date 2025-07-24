@@ -119,12 +119,13 @@ func (r *inserter) InsertWithTx(tx *tenantDB.TenantTx, data interface{}) error {
 	}
 	repoType := r.getEntityInfo(typ)
 	sql, args := dialect.MakeSqlInsert(repoType.tableName, repoType.entity.GetColumns(), data)
+
 	sqlStmt, err := tx.Prepare(sql)
 	if err != nil {
 		return err
 	}
 	defer sqlStmt.Close()
-	if dialect.Name() == "mssql" {
+	if dialect.Name() == "mssql" || dialect.Name() == "postgres" {
 		var insertedID int64
 		err = sqlStmt.QueryRow(args...).Scan(&insertedID)
 		if err == nil {
@@ -206,6 +207,12 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 			err = fetchAfterInsertForQueryRow(repoType.entity, dataValue, insertedID)
 
 		}
+	} else if dialect.Name() == "postgres" {
+		var insertedID int64
+
+		err = sqlStmt.QueryRow(args...).Scan(&insertedID)
+		err = fetchAfterInsertForQueryRow(repoType.entity, dataValue, insertedID)
+
 	} else {
 		// start := time.Now()
 		sqlResult, errExec := sqlStmt.Exec(args...)

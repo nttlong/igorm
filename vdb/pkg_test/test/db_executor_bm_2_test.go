@@ -1,7 +1,12 @@
 package test
 
 import (
+	"context"
+	"database/sql"
+	"fmt"
+	"reflect"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -9,17 +14,23 @@ import (
 	"vdb/pkg_test/models"
 
 	"github.com/google/uuid"
+	_ "github.com/microsoft/go-mssqldb"
 	"github.com/stretchr/testify/assert"
 )
 
 func createTenantDb() error {
 	var err error
-	vdb.SetManagerDb("mysql", "tenant_manager") //<--- Cài đặt database quản lý tenannt
+	vdb.SetManagerDb("mssql", "tenant_manager") //<--- Cài đặt database quản lý tenannt
 	// 	// Data base quản lý tenant phai co trước, đặc điểm của nó là kg migrate các model dựng sẵn,
 	// 	// Nó chỉ tập trung vào việc quản lý tenant, không có migrate các model dựng sẵn.
 	// 	// Việc chỉ định database quản lý tenant , bằng cách gọi hàm vdb.SetManagerDb("mysql", "tenantManager"), là rất quan trọng
 	// 	// Nó giúp vdb biết database quản lý tenant là database nào để thực hiện các thao tác liên quan đến tenant.
 	db := initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/tenant_manager?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True")
+	// mssqlDns := "sqlserver://sa:123456@localhost?database=tenant_manager"
+	//pgDsn := "postgres://postgres:123456@localhost:5432/tenant_manager?sslmode=disable"
+
+	//db := initDb("postgres", pgDsn)
+	// db := initDb("sqlserver", mssqlDns)
 	defer db.Close()
 	testDb, err = db.CreateDB("vdb_test005") //<--- Tạo database tenant tên là test004 dong thoi migrate các model dựng sẵn
 	return err
@@ -137,7 +148,8 @@ var setupOnce sync.Once
 func Benchmark_TestInsertPositionAndDepartmentOnce(b *testing.B) {
 
 	setupOnce.Do(func() {
-		assert.NoError(b, createTenantDb())
+		err := createTenantDb()
+		assert.NoError(b, err)
 	})
 
 	for i := 0; i < b.N; i++ {
@@ -203,42 +215,264 @@ func Benchmark_TestInsertPositionAndDepartmentOnce(b *testing.B) {
 		b.StopTimer()
 	}
 }
-func Benchmark_TestSelectAllepmloyeeAndUser(b *testing.B) {
-	//go test -bench=Benchmark_TestSelectAllepmloyeeAndUser -run=^$ -benchmem -benchtime=5s -count=10 > vdb11.txt
-	setupOnce.Do(func() {
-		assert.NoError(b, createTenantDb())
-	}) //<--- chạy test trước khi test này
-	type Base struct {
-		FullName   *string
-		PositionID *int64
+
+var scanCache sync.Map // map[reflect.Type]scanMeta
+
+type scanMeta struct {
+	colToField map[string]int
+	fields     []reflect.StructField
+}
+
+// Fast scanner with reflection cache
+func ScanToStructFastCached[T any](ctx context.Context, db *sql.DB, query string, args ...any) ([]T, error) {
+	rows, err := db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
 	}
+	defer rows.Close()
+
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	var result []T
+	tType := reflect.TypeOf((*T)(nil)).Elem()
+
+	meta, ok := scanCache.Load(tType)
+	var colToField map[string]int
+	if !ok {
+		colToField = make(map[string]int)
+		for i := 0; i < tType.NumField(); i++ {
+			f := tType.Field(i)
+			colName := strings.ToLower(f.Name)
+			colToField[colName] = i
+		}
+		scanCache.Store(tType, scanMeta{
+			colToField: colToField,
+		})
+	} else {
+		colToField = meta.(scanMeta).colToField
+	}
+
+	for rows.Next() {
+		var t T
+		tVal := reflect.ValueOf(&t).Elem()
+
+		// Preallocate scanDest
+		scanDest := make([]interface{}, len(columns))
+		for i, col := range columns {
+			fieldIdx, ok := colToField[strings.ToLower(col)]
+			if ok {
+				field := tVal.Field(fieldIdx)
+				scanDest[i] = field.Addr().Interface()
+			} else {
+				var dummy interface{}
+				scanDest[i] = &dummy // scan bỏ
+			}
+		}
+
+		if err := rows.Scan(scanDest...); err != nil {
+			return nil, err
+		}
+		result = append(result, t)
+	}
+	return result, nil
+}
+func ScanToStructFast[T any](ctx context.Context, db *sql.DB, query string, args ...any) ([]T, error) {
+	rows, err := db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	colCount := len(columns)
+	results := make([]T, 0, 1000) // preallocate
+
+	for rows.Next() {
+		var t T
+		v := reflect.ValueOf(&t).Elem()
+		tType := v.Type()
+
+		dest := make([]interface{}, colCount)
+
+		for i := 0; i < colCount; i++ {
+			if i < tType.NumField() {
+				f := v.Field(i)
+				if f.CanAddr() {
+					dest[i] = f.Addr().Interface()
+				} else {
+					var dummy interface{}
+					dest[i] = &dummy
+				}
+			} else {
+				var dummy interface{}
+				dest[i] = &dummy
+			}
+		}
+
+		if err := rows.Scan(dest...); err != nil {
+			return nil, err
+		}
+
+		results = append(results, t)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func Benchmark_TestSelectAllepmloyeeAndUser(b *testing.B) {
+	//testDb, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/dotenet_test_001?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True")
+	//assert.NoError(b, err)
+	// setupOnce.Do(func() {
+	// 	assert.NoError(b, createTenantDb())
+	// })
+	setupOnce.Do(func() {
+		err := createTenantDb()
+		assert.NoError(b, err)
+	})
+	testDb.SetMaxOpenConns(10)
+	testDb.SetMaxIdleConns(5)
+	testDb.SetConnMaxLifetime(time.Hour)
 	type QueryResult struct {
-		Base
+		FullName     *string
+		PositionID   *int64
 		DepartmentID *int64
 		Email        *string
 		Phone        *string
 	}
+	// sqlSelect := "SELECT CONCAT(CONCAT(`e`.`FirstName`, ' '), `e`.`LastName`) AS `FullName`, `e`.`PositionId`, `e`.`DepartmentId`, `u`.`Email`, `u`.`Phone`" +
+	// 	"FROM `Employees` AS `e`" +
+	// 	"LEFT JOIN `Users` AS `u` ON `e`.`UserId` = `u`.`Id`" +
+	// 	"ORDER BY `e`.`Id`" +
+	// 	"LIMIT 1000 OFFSET 0"
+
+	qr := testDb.From((&models.Employee{}).As("e")).LeftJoin(
+		(&models.User{}).As("u"), "e.userId = u.id",
+	).Select(
+		"concat(e.FirstName,' ', e.LastName) as FullName",
+		"e.positionId",
+		"e.departmentId",
+		"u.email",
+		"u.phone",
+	).OrderBy("e.id").OffsetLimit(0, 10000)
+
+	// Warmup
+
+	// Pilot phase
+
+	// Benchmark
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		items := []QueryResult{}
-		qr := testDb.From((&models.Employee{}).As("e")).LeftJoin( //<-- inner join, left join ,right join and full join just change function
-			(&models.User{}).As("u"), "e.userId = u.id",
-		).Select(
-			"concat(e.FirstName,' ', e.LastName) as FullName",
-			"e.positionId",
-			"e.departmentId",
-			"u.email",
-			"u.phone",
-		).OrderBy("e.id").OffsetLimit(0, 1000) //<-- offset limit for paging, if you want to get all data, just remove this line
-
-		//<-- count tong so user
-		//start := time.Now()
-		err := qr.ToArray(&items)
-		//n := time.Since(start).Milliseconds()
-		//fmt.Print("Thoi gian lay toan bo user: ", n, "ms\n")
-
+		// items := []QueryResult{}
+		//err := qr.ToArray(&items)
+		sql, args := qr.BuildSql()
+		items, err := ScanToStructFastCached[QueryResult](context.Background(), testDb.DB, sql, args...)
 		assert.NoError(b, err)
+		assert.Equal(b, 10000, len(items), "Expected 1000 items, got %d", len(items))
 
 	}
+}
+func Benchmark_ScanToStructFast_Compare(b *testing.B) {
+	setupOnce.Do(func() {
+		err := createTenantDb()
+		assert.NoError(b, err)
+	})
+	testDb.SetMaxOpenConns(10)
+	testDb.SetMaxIdleConns(5)
+	testDb.SetConnMaxLifetime(time.Hour)
+	expected := 2000
+	type QueryResult struct {
+		FullName     *string
+		PositionID   *int64
+		DepartmentID *int64
+		Email        *string
+		Phone        *string
+	}
+	type QueryResultNotNil struct {
+		FullName     string
+		PositionID   int64
+		DepartmentID int64
+		Email        string
+		Phone        string
+	}
+	qr := testDb.From((&models.Employee{}).As("e")).LeftJoin(
+		(&models.User{}).As("u"), "e.userId = u.id",
+	).Select(
+		"concat(e.FirstName,' ', e.LastName) as FullName",
+		"e.positionId",
+		"e.departmentId",
+		"u.email",
+		"u.phone",
+	).OrderBy("e.id").OffsetLimit(0, expected)
+
+	sql, args := qr.BuildSql()
+
+	b.Run("ScanToStructUnsafeCachedImprove", func(b *testing.B) {
+
+		for i := 0; i < b.N; i++ {
+			rows, _ := testDb.DB.Query(sql, args...)
+
+			items, err := vdb.ScanToStructValueCachedFix[QueryResultNotNil](rows)
+			assert.NoError(b, err)
+			v := items[0].FullName
+			fmt.Println(v)
+
+			assert.Equal(b, expected, len(items))
+		}
+	})
+	b.Run("ScanToStructUnsafeCachedImproveV2", func(b *testing.B) {
+
+		for i := 0; i < b.N; i++ {
+			rows, _ := testDb.DB.Query(sql, args...)
+
+			items, err := vdb.ScanToStructUnsafeCachedImproveV2[QueryResult](rows)
+			assert.NoError(b, err)
+			assert.Equal(b, expected, len(items))
+		}
+	})
+	b.Run("ToArray", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			items := []QueryResult{}
+			err := qr.ToArray(&items)
+			assert.NoError(b, err)
+			fmt.Println(items[0].FullName)
+			assert.Equal(b, expected, len(items))
+		}
+	})
+	b.Run("NoCache", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			items, err := ScanToStructFast[QueryResult](context.Background(), testDb.DB, sql, args...)
+			assert.NoError(b, err)
+			assert.Equal(b, expected, len(items))
+		}
+	})
+
+	b.Run("WithCache", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			items, err := ScanToStructFastCached[QueryResult](context.Background(), testDb.DB, sql, args...)
+			assert.NoError(b, err)
+			assert.Equal(b, expected, len(items))
+		}
+	})
+	b.Run("ScanToStructUnsafeCached", func(b *testing.B) {
+
+		for i := 0; i < b.N; i++ {
+			rows, _ := testDb.DB.Query(sql, args...)
+			items := []QueryResult{}
+
+			vdb.ScanToStructUnsafeCached(rows, &items)
+			assert.Equal(b, expected, len(items))
+		}
+	})
 
 }

@@ -1,0 +1,66 @@
+package vdi
+
+import (
+	"fmt"
+	"reflect"
+	"sync"
+)
+
+type RootContainer struct {
+	lock      sync.RWMutex
+	singleton map[reflect.Type]any
+	providers map[reflect.Type]func() any
+}
+
+// Tạo container gốc
+func NewRootContainer() *RootContainer {
+	return &RootContainer{
+		singleton: make(map[reflect.Type]any),
+		providers: make(map[reflect.Type]func() any),
+	}
+}
+
+// Đăng ký Singleton
+func (c *RootContainer) RegisterSingletonType(t reflect.Type, factory func() any) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	c.providers[t] = factory
+}
+
+// Resolve theo type
+func (c *RootContainer) ResolveByType(t reflect.Type) (any, error) {
+	c.lock.RLock()
+	val, ok := c.singleton[t]
+	c.lock.RUnlock()
+	if ok {
+		return val, nil
+	}
+
+	// Lazy init
+	c.lock.Lock()
+	defer c.lock.Unlock()
+
+	// Check lại lần nữa tránh race
+	if val, ok := c.singleton[t]; ok {
+		return val, nil
+	}
+
+	provider, found := c.providers[t]
+	if !found {
+		return nil, fmt.Errorf("type %v not registered", t)
+	}
+
+	instance := provider()
+	c.singleton[t] = instance
+	return instance, nil
+}
+
+// Tạo ScopedContainer mới
+func (c *RootContainer) CreateScope() Container {
+	return NewScopedContainer(c)
+}
+
+// Nếu cần: Dispose() để cleanup (dành cho scoped container)
+func (c *RootContainer) Dispose() {
+	// Optional: clear singleton map
+}

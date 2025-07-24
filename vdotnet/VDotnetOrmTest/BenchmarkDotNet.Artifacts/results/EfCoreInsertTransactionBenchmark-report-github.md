@@ -8,6 +8,9 @@ BenchmarkDotNet v0.15.2, Windows 11 (10.0.22631.5335/23H2/2023Update/SunValley3)
 
 
 ```
-| Method                               | Mean     | Error    | StdDev   | Gen0      | Gen1    | Gen2    | Allocated |
-|------------------------------------- |---------:|---------:|---------:|----------:|--------:|--------:|----------:|
-| InsertPositionDepartmentUserEmployee | 20.77 ms | 3.517 ms | 10.20 ms | 4867.1875 | 93.7500 | 23.4375 |  58.79 MB |
+| Method                               | Mean | Error |
+|------------------------------------- |-----:|------:|
+| InsertPositionDepartmentUserEmployee |   NA |    NA |
+
+Benchmarks with issues:
+  EfCoreInsertTransactionBenchmark.InsertPositionDepartmentUserEmployee: DefaultJob

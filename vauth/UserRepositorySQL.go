@@ -32,6 +32,6 @@ func (r *UserRepositorySQL) Create(u *models.User) error {
 	return err
 }
 func (r *UserRepositorySQL) Delete(id string) error {
-	_, err := r.db.Delete(&models.User{}, "userId = ?", id)
-	return err
+	rx := r.db.Delete(&models.User{}, "userId = ?", id)
+	return rx.Error
 }

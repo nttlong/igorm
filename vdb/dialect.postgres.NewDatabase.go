@@ -13,17 +13,21 @@ func (d *postgresDialect) NewDataBase(db *sql.DB, sampleDsn string, dbName strin
 		return "", err
 	}
 	if !exists {
-		_, err := db.Exec(`CREATE DATABASE a001`)
+		_, err := db.Exec(`CREATE DATABASE ` + dbName + ``)
 		if err != nil {
 			return "", err
 		}
 	}
 	items := strings.Split(sampleDsn, "?")
 	if len(items) > 1 {
-		dsn := items[0] + "/" + dbName + "?" + items[1]
+		subItems := strings.Split(items[0], "/")
+		subItems[len(subItems)-1] = dbName // replace the last item with the new dbName
+		dsn := strings.Join(subItems, "/") + "?" + items[1]
 		return dsn, nil
 	} else {
-		dsn := items[0] + "/" + dbName
+		subItems := strings.Split(items[0], "/")
+		subItems[len(subItems)-1] = dbName // replace the last item with the new dbName
+		dsn := strings.Join(subItems, "/")
 		return dsn, nil
 	}
 

@@ -187,6 +187,7 @@ func (q *query) BuildSql() (string, []interface{}) {
 		return q.sql, q.args
 	}
 	sql, args, err := OnBuildSql(q.qrInstance, q.db)
+	// fmt.Println("BuildSql", sql, args, err)
 	if err != nil {
 		q.Err = err
 		return "", nil

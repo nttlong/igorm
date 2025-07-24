@@ -11,3 +11,4 @@ DISCARD
 KEYREGISTRY
 .mem
 vexample/cache.db
+chess\config.yaml

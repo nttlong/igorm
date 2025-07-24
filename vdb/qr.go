@@ -279,6 +279,35 @@ func (q *QueryParts) BuildSQL(db *tenantDB.TenantDB) (string, []interface{}) {
 		p1 := dialec.ToParam(len(args) + 1)
 		p2 := dialec.ToParam(len(args) + 2)
 		reqSql += " OFFSET " + p1 + " ROWS FETCH NEXT " + p2 + " ROWS ONLY"
+		if q.Offset != nil {
+
+			args = append(args, *q.Offset)
+		}
+		if q.Limit != nil {
+			args = append(args, *q.Limit)
+		}
+	} else if db.GetDriverName() == "postgres" {
+		// LIMIT OFFSET
+		dialec := dialectFactory.create(db.GetDriverName())
+		if q.Limit != nil {
+			p1 := dialec.ToParam(len(args) + 1)
+			reqSql += " LIMIT " + p1
+			// sb.WriteString(" LIMIT ?")
+
+		}
+		if q.Offset != nil {
+			p2 := dialec.ToParam(len(args) + 2)
+			//sb.WriteString(" OFFSET ?")
+			reqSql += " OFFSET " + p2
+
+		}
+		if q.Limit != nil {
+			args = append(args, *q.Limit)
+		}
+		if q.Offset != nil {
+
+			args = append(args, *q.Offset)
+		}
 
 	} else {
 		// LIMIT OFFSET
@@ -290,19 +319,20 @@ func (q *QueryParts) BuildSQL(db *tenantDB.TenantDB) (string, []interface{}) {
 
 		}
 		if q.Offset != nil {
-			p2 := dialec.ToParam(len(args) + 1)
+			p2 := dialec.ToParam(len(args) + 2)
 			//sb.WriteString(" OFFSET ?")
 			reqSql += " OFFSET " + p2
+			if q.Limit != nil {
+				args = append(args, *q.Limit)
+			}
+			if q.Offset != nil {
+
+				args = append(args, *q.Offset)
+			}
 
 		}
 	}
-	if q.Limit != nil {
-		args = append(args, *q.Limit)
-	}
-	if q.Offset != nil {
 
-		args = append(args, *q.Offset)
-	}
 	for i, a := range args {
 		if litOfString, isLit := a.(litOfString); isLit {
 			args[i] = litOfString.val

@@ -1,0 +1,1751 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 1 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// start dotnet  restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true in D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net8.0\82b4513c-8310-4a1e-a52c-31c0fad467c0
+// command took 2.11 sec and exited with 0
+// start dotnet  build -c Release --no-restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true in D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net8.0\82b4513c-8310-4a1e-a52c-31c0fad467c0
+// command took 3.12 sec and exited with 0
+// ***** Done, took 00:00:05 (5.32 sec)   *****
+// Found 1 benchmarks:
+//   EfCoreRawSqlBenchmark.BenchmarkRawSelect: DefaultJob
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: EfCoreRawSqlBenchmark.BenchmarkRawSelect: DefaultJob
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 82b4513c-8310-4a1e-a52c-31c0fad467c0.dll --anonymousPipes 3292 3248 --benchmarkName EfCoreRawSqlBenchmark.BenchmarkRawSelect --job Default --benchmarkId 0 in D:\code\go\igorm\vdotnet\VDotnetOrmTest\bin\Release\net8.0\82b4513c-8310-4a1e-a52c-31c0fad467c0\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.8
+// Runtime=.NET 8.0.18 (8.0.1825.31117), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: DefaultJob
+
+OverheadJitting  1: 1 op, 151900.00 ns, 151.9000 us/op
+Elapsed: 209,2001 ms
+Count: 20000
+WorkloadJitting  1: 1 op, 218992900.00 ns, 218.9929 ms/op
+
+Elapsed: 106,5498 ms
+Count: 20000
+Elapsed: 81,1768 ms
+Count: 20000
+WorkloadPilot    1: 2 op, 188515000.00 ns, 94.2575 ms/op
+Elapsed: 87,6508 ms
+Count: 20000
+Elapsed: 51,4439 ms
+Count: 20000
+Elapsed: 100,1965 ms
+Count: 20000
+WorkloadPilot    2: 3 op, 240183200.00 ns, 80.0611 ms/op
+Elapsed: 101,857 ms
+Count: 20000
+Elapsed: 61,0902 ms
+Count: 20000
+Elapsed: 134,0712 ms
+Count: 20000
+Elapsed: 100,4997 ms
+Count: 20000
+WorkloadPilot    3: 4 op, 398578900.00 ns, 99.6447 ms/op
+Elapsed: 59,509 ms
+Count: 20000
+Elapsed: 61,319 ms
+Count: 20000
+Elapsed: 46,0153 ms
+Count: 20000
+Elapsed: 80,5565 ms
+Count: 20000
+Elapsed: 78,6022 ms
+Count: 20000
+WorkloadPilot    4: 5 op, 327260100.00 ns, 65.4520 ms/op
+Elapsed: 60,1336 ms
+Count: 20000
+Elapsed: 143,6925 ms
+Count: 20000
+Elapsed: 87,1251 ms
+Count: 20000
+Elapsed: 63,679 ms
+Count: 20000
+Elapsed: 53,5666 ms
+Count: 20000
+Elapsed: 110,5738 ms
+Count: 20000
+WorkloadPilot    5: 6 op, 520071600.00 ns, 86.6786 ms/op
+
+Elapsed: 152,9432 ms
+Count: 20000
+Elapsed: 64,3488 ms
+Count: 20000
+Elapsed: 122,8552 ms
+Count: 20000
+Elapsed: 99,1209 ms
+Count: 20000
+Elapsed: 68,9915 ms
+Count: 20000
+Elapsed: 64,9143 ms
+Count: 20000
+WorkloadWarmup   1: 6 op, 574215700.00 ns, 95.7026 ms/op
+Elapsed: 53,6332 ms
+Count: 20000
+Elapsed: 84,5759 ms
+Count: 20000
+Elapsed: 69,2179 ms
+Count: 20000
+Elapsed: 34,591 ms
+Count: 20000
+Elapsed: 117,8076 ms
+Count: 20000
+Elapsed: 58,1382 ms
+Count: 20000
+WorkloadWarmup   2: 6 op, 419044000.00 ns, 69.8407 ms/op
+Elapsed: 39,8 ms
+Count: 20000
+Elapsed: 44,0037 ms
+Count: 20000
+Elapsed: 68,2548 ms
+Count: 20000
+Elapsed: 52,6902 ms
+Count: 20000
+Elapsed: 68,1433 ms
+Count: 20000
+Elapsed: 40,9507 ms
+Count: 20000
+WorkloadWarmup   3: 6 op, 314752500.00 ns, 52.4588 ms/op
+Elapsed: 42,1044 ms
+Count: 20000
+Elapsed: 44,6909 ms
+Count: 20000
+Elapsed: 45,6932 ms
+Count: 20000
+Elapsed: 41,9762 ms
+Count: 20000
+Elapsed: 42,575 ms
+Count: 20000
+Elapsed: 63,8877 ms
+Count: 20000
+WorkloadWarmup   4: 6 op, 281668200.00 ns, 46.9447 ms/op
+Elapsed: 97,8288 ms
+Count: 20000
+Elapsed: 33,9179 ms
+Count: 20000
+Elapsed: 83,2638 ms
+Count: 20000
+Elapsed: 84,0168 ms
+Count: 20000
+Elapsed: 37,0249 ms
+Count: 20000
+Elapsed: 35,1291 ms
+Count: 20000
+WorkloadWarmup   5: 6 op, 371889900.00 ns, 61.9817 ms/op
+Elapsed: 89,5282 ms
+Count: 20000
+Elapsed: 55,8482 ms
+Count: 20000
+Elapsed: 97,8035 ms
+Count: 20000
+Elapsed: 60,5416 ms
+Count: 20000
+Elapsed: 43,833 ms
+Count: 20000
+Elapsed: 46,606 ms
+Count: 20000
+WorkloadWarmup   6: 6 op, 394871500.00 ns, 65.8119 ms/op
+Elapsed: 62,4848 ms
+Count: 20000
+Elapsed: 96,7144 ms
+Count: 20000
+Elapsed: 45,0722 ms
+Count: 20000
+Elapsed: 103,9297 ms
+Count: 20000
+Elapsed: 48,0537 ms
+Count: 20000
+Elapsed: 58,4703 ms
+Count: 20000
+WorkloadWarmup   7: 6 op, 415450000.00 ns, 69.2417 ms/op
+Elapsed: 90,4354 ms
+Count: 20000
+Elapsed: 66,1386 ms
+Count: 20000
+Elapsed: 60,5591 ms
+Count: 20000
+Elapsed: 89,4319 ms
+Count: 20000
+Elapsed: 63,0419 ms
+Count: 20000
+Elapsed: 54,3675 ms
+Count: 20000
+WorkloadWarmup   8: 6 op, 424664400.00 ns, 70.7774 ms/op
+Elapsed: 60,5415 ms
+Count: 20000
+Elapsed: 33,8312 ms
+Count: 20000
+Elapsed: 90,7164 ms
+Count: 20000
+Elapsed: 55,8008 ms
+Count: 20000
+Elapsed: 124,7494 ms
+Count: 20000
+Elapsed: 75,0583 ms
+Count: 20000
+WorkloadWarmup   9: 6 op, 441359300.00 ns, 73.5599 ms/op
+Elapsed: 82,1667 ms
+Count: 20000
+Elapsed: 66,1372 ms
+Count: 20000
+Elapsed: 82,2787 ms
+Count: 20000
+Elapsed: 43,3537 ms
+Count: 20000
+Elapsed: 48,3291 ms
+Count: 20000
+Elapsed: 66,8865 ms
+Count: 20000
+WorkloadWarmup  10: 6 op, 389840100.00 ns, 64.9733 ms/op
+Elapsed: 41,2584 ms
+Count: 20000
+Elapsed: 37,1756 ms
+Count: 20000
+Elapsed: 84,2099 ms
+Count: 20000
+Elapsed: 77,8371 ms
+Count: 20000
+Elapsed: 44,3774 ms
+Count: 20000
+Elapsed: 40,7117 ms
+Count: 20000
+WorkloadWarmup  11: 6 op, 326325000.00 ns, 54.3875 ms/op
+Elapsed: 34,9921 ms
+Count: 20000
+Elapsed: 87,5651 ms
+Count: 20000
+Elapsed: 67,2769 ms
+Count: 20000
+Elapsed: 52,3457 ms
+Count: 20000
+Elapsed: 107,25 ms
+Count: 20000
+Elapsed: 69,5164 ms
+Count: 20000
+WorkloadWarmup  12: 6 op, 419630300.00 ns, 69.9384 ms/op
+Elapsed: 59,5022 ms
+Count: 20000
+Elapsed: 109,7863 ms
+Count: 20000
+Elapsed: 60,6727 ms
+Count: 20000
+Elapsed: 158,6489 ms
+Count: 20000
+Elapsed: 102,3697 ms
+Count: 20000
+Elapsed: 62,2685 ms
+Count: 20000
+WorkloadWarmup  13: 6 op, 553905900.00 ns, 92.3177 ms/op
+Elapsed: 49,2166 ms
+Count: 20000
+Elapsed: 63,4535 ms
+Count: 20000
+Elapsed: 102,495 ms
+Count: 20000
+Elapsed: 71,7603 ms
+Count: 20000
+Elapsed: 60,6037 ms
+Count: 20000
+Elapsed: 75,3831 ms
+Count: 20000
+WorkloadWarmup  14: 6 op, 423648800.00 ns, 70.6081 ms/op
+
+// BeforeActualRun
+Elapsed: 70,8691 ms
+Count: 20000
+Elapsed: 50,367 ms
+Count: 20000
+Elapsed: 73,0457 ms
+Count: 20000
+Elapsed: 91,9549 ms
+Count: 20000
+Elapsed: 79,9141 ms
+Count: 20000
+Elapsed: 88,3008 ms
+Count: 20000
+WorkloadActual   1: 6 op, 455073500.00 ns, 75.8456 ms/op
+Elapsed: 42,2197 ms
+Count: 20000
+Elapsed: 52,2645 ms
+Count: 20000
+Elapsed: 72,5337 ms
+Count: 20000
+Elapsed: 38,1665 ms
+Count: 20000
+Elapsed: 44,5468 ms
+Count: 20000
+Elapsed: 53,2947 ms
+Count: 20000
+WorkloadActual   2: 6 op, 303658900.00 ns, 50.6098 ms/op
+Elapsed: 33,3547 ms
+Count: 20000
+Elapsed: 77,2392 ms
+Count: 20000
+Elapsed: 74,1827 ms
+Count: 20000
+Elapsed: 34,6823 ms
+Count: 20000
+Elapsed: 74,3118 ms
+Count: 20000
+Elapsed: 78,6264 ms
+Count: 20000
+WorkloadActual   3: 6 op, 373027900.00 ns, 62.1713 ms/op
+Elapsed: 32,3042 ms
+Count: 20000
+Elapsed: 54,5445 ms
+Count: 20000
+Elapsed: 84,0838 ms
+Count: 20000
+Elapsed: 33,9219 ms
+Count: 20000
+Elapsed: 45,0951 ms
+Count: 20000
+Elapsed: 53,2973 ms
+Count: 20000
+WorkloadActual   4: 6 op, 303893700.00 ns, 50.6489 ms/op
+Elapsed: 77,1149 ms
+Count: 20000
+Elapsed: 53,0822 ms
+Count: 20000
+Elapsed: 143,7851 ms
+Count: 20000
+Elapsed: 50,9958 ms
+Count: 20000
+Elapsed: 77,1462 ms
+Count: 20000
+Elapsed: 49,4394 ms
+Count: 20000
+WorkloadActual   5: 6 op, 452190300.00 ns, 75.3650 ms/op
+Elapsed: 39,0215 ms
+Count: 20000
+Elapsed: 34,6847 ms
+Count: 20000
+Elapsed: 49,4619 ms
+Count: 20000
+Elapsed: 94,2885 ms
+Count: 20000
+Elapsed: 76,9076 ms
+Count: 20000
+Elapsed: 49,4419 ms
+Count: 20000
+WorkloadActual   6: 6 op, 344516600.00 ns, 57.4194 ms/op
+Elapsed: 70,2358 ms
+Count: 20000
+Elapsed: 59,566 ms
+Count: 20000
+Elapsed: 52,675 ms
+Count: 20000
+Elapsed: 80,8842 ms
+Count: 20000
+Elapsed: 78,2895 ms
+Count: 20000
+Elapsed: 83,529 ms
+Count: 20000
+WorkloadActual   7: 6 op, 425787400.00 ns, 70.9646 ms/op
+Elapsed: 32,9099 ms
+Count: 20000
+Elapsed: 108,2449 ms
+Count: 20000
+Elapsed: 51,4438 ms
+Count: 20000
+Elapsed: 76,4635 ms
+Count: 20000
+Elapsed: 80,3305 ms
+Count: 20000
+Elapsed: 32,181 ms
+Count: 20000
+WorkloadActual   8: 6 op, 382218700.00 ns, 63.7031 ms/op
+Elapsed: 80,3627 ms
+Count: 20000
+Elapsed: 77,5072 ms
+Count: 20000
+Elapsed: 41,6358 ms
+Count: 20000
+Elapsed: 34,0358 ms
+Count: 20000
+Elapsed: 76,633 ms
+Count: 20000
+Elapsed: 38,8795 ms
+Count: 20000
+WorkloadActual   9: 6 op, 349701400.00 ns, 58.2836 ms/op
+Elapsed: 35,9584 ms
+Count: 20000
+Elapsed: 46,7754 ms
+Count: 20000
+Elapsed: 48,0989 ms
+Count: 20000
+Elapsed: 46,896 ms
+Count: 20000
+Elapsed: 52,3384 ms
+Count: 20000
+Elapsed: 67,9442 ms
+Count: 20000
+WorkloadActual  10: 6 op, 298657700.00 ns, 49.7763 ms/op
+Elapsed: 31,8999 ms
+Count: 20000
+Elapsed: 73,6308 ms
+Count: 20000
+Elapsed: 84,5743 ms
+Count: 20000
+Elapsed: 55,1465 ms
+Count: 20000
+Elapsed: 43,8564 ms
+Count: 20000
+Elapsed: 64,5357 ms
+Count: 20000
+WorkloadActual  11: 6 op, 354311800.00 ns, 59.0520 ms/op
+Elapsed: 83,1208 ms
+Count: 20000
+Elapsed: 37,8992 ms
+Count: 20000
+Elapsed: 43,6478 ms
+Count: 20000
+Elapsed: 48,9014 ms
+Count: 20000
+Elapsed: 75,4264 ms
+Count: 20000
+Elapsed: 73,942 ms
+Count: 20000
+WorkloadActual  12: 6 op, 363580700.00 ns, 60.5968 ms/op
+Elapsed: 31,4978 ms
+Count: 20000
+Elapsed: 75,68 ms
+Count: 20000
+Elapsed: 39,6204 ms
+Count: 20000
+Elapsed: 35,3529 ms
+Count: 20000
+Elapsed: 43,6842 ms
+Count: 20000
+Elapsed: 41,4389 ms
+Count: 20000
+WorkloadActual  13: 6 op, 267982100.00 ns, 44.6637 ms/op
+Elapsed: 53,076 ms
+Count: 20000
+Elapsed: 82,9193 ms
+Count: 20000
+Elapsed: 39,4907 ms
+Count: 20000
+Elapsed: 75,3057 ms
+Count: 20000
+Elapsed: 40,1157 ms
+Count: 20000
+Elapsed: 33,1077 ms
+Count: 20000
+WorkloadActual  14: 6 op, 324647600.00 ns, 54.1079 ms/op
+Elapsed: 100,6677 ms
+Count: 20000
+Elapsed: 51,7033 ms
+Count: 20000
+Elapsed: 86,1524 ms
+Count: 20000
+Elapsed: 64,3581 ms
+Count: 20000
+Elapsed: 51,2878 ms
+Count: 20000
+Elapsed: 76,2895 ms
+Count: 20000
+WorkloadActual  15: 6 op, 431075900.00 ns, 71.8460 ms/op
+Elapsed: 32,418 ms
+Count: 20000
+Elapsed: 73,3688 ms
+Count: 20000
+Elapsed: 41,1943 ms
+Count: 20000
+Elapsed: 71,6474 ms
+Count: 20000
+Elapsed: 58,1552 ms
+Count: 20000
+Elapsed: 32,1922 ms
+Count: 20000
+WorkloadActual  16: 6 op, 309583800.00 ns, 51.5973 ms/op
+Elapsed: 79,6132 ms
+Count: 20000
+Elapsed: 31,2284 ms
+Count: 20000
+Elapsed: 72,7791 ms
+Count: 20000
+Elapsed: 31,7993 ms
+Count: 20000
+Elapsed: 79,9557 ms
+Count: 20000
+Elapsed: 41,3502 ms
+Count: 20000
+WorkloadActual  17: 6 op, 337344600.00 ns, 56.2241 ms/op
+Elapsed: 47,7593 ms
+Count: 20000
+Elapsed: 86,7956 ms
+Count: 20000
+Elapsed: 41,1433 ms
+Count: 20000
+Elapsed: 84,9609 ms
+Count: 20000
+Elapsed: 51,9306 ms
+Count: 20000
+Elapsed: 37,5481 ms
+Count: 20000
+WorkloadActual  18: 6 op, 350766900.00 ns, 58.4612 ms/op
+Elapsed: 48,6482 ms
+Count: 20000
+Elapsed: 56,925 ms
+Count: 20000
+Elapsed: 38,1979 ms
+Count: 20000
+Elapsed: 73,1304 ms
+Count: 20000
+Elapsed: 66,0342 ms
+Count: 20000
+Elapsed: 54,3459 ms
+Count: 20000
+WorkloadActual  19: 6 op, 337893200.00 ns, 56.3155 ms/op
+Elapsed: 73,5263 ms
+Count: 20000
+Elapsed: 36,6784 ms
+Count: 20000
+Elapsed: 40,5945 ms
+Count: 20000
+Elapsed: 34,5119 ms
+Count: 20000
+Elapsed: 80,2114 ms
+Count: 20000
+Elapsed: 46,0458 ms
+Count: 20000
+WorkloadActual  20: 6 op, 312209000.00 ns, 52.0348 ms/op
+Elapsed: 62,4152 ms
+Count: 20000
+Elapsed: 41,3587 ms
+Count: 20000
+Elapsed: 40,1571 ms
+Count: 20000
+Elapsed: 36,6617 ms
+Count: 20000
+Elapsed: 43,0824 ms
+Count: 20000
+Elapsed: 48,2055 ms
+Count: 20000
+WorkloadActual  21: 6 op, 272552500.00 ns, 45.4254 ms/op
+Elapsed: 43,62 ms
+Count: 20000
+Elapsed: 54,7952 ms
+Count: 20000
+Elapsed: 86,3823 ms
+Count: 20000
+Elapsed: 48,248 ms
+Count: 20000
+Elapsed: 51,3003 ms
+Count: 20000
+Elapsed: 95,0332 ms
+Count: 20000
+WorkloadActual  22: 6 op, 380017500.00 ns, 63.3362 ms/op
+Elapsed: 68,5871 ms
+Count: 20000
+Elapsed: 64,1429 ms
+Count: 20000
+Elapsed: 53,6764 ms
+Count: 20000
+Elapsed: 31,8632 ms
+Count: 20000
+Elapsed: 76,1294 ms
+Count: 20000
+Elapsed: 77,3688 ms
+Count: 20000
+WorkloadActual  23: 6 op, 372379000.00 ns, 62.0632 ms/op
+Elapsed: 42,9835 ms
+Count: 20000
+Elapsed: 52,7357 ms
+Count: 20000
+Elapsed: 41,7869 ms
+Count: 20000
+Elapsed: 49,2155 ms
+Count: 20000
+Elapsed: 55,1687 ms
+Count: 20000
+Elapsed: 35,4501 ms
+Count: 20000
+WorkloadActual  24: 6 op, 277994200.00 ns, 46.3324 ms/op
+Elapsed: 36,2458 ms
+Count: 20000
+Elapsed: 74,6811 ms
+Count: 20000
+Elapsed: 38,9787 ms
+Count: 20000
+Elapsed: 79,4972 ms
+Count: 20000
+Elapsed: 40,7116 ms
+Count: 20000
+Elapsed: 34,3911 ms
+Count: 20000
+WorkloadActual  25: 6 op, 305134500.00 ns, 50.8558 ms/op
+Elapsed: 33,0031 ms
+Count: 20000
+Elapsed: 89,9588 ms
+Count: 20000
+Elapsed: 63,8722 ms
+Count: 20000
+Elapsed: 75,5106 ms
+Count: 20000
+Elapsed: 79,4594 ms
+Count: 20000
+Elapsed: 32,8849 ms
+Count: 20000
+WorkloadActual  26: 6 op, 375332400.00 ns, 62.5554 ms/op
+Elapsed: 74,683 ms
+Count: 20000
+Elapsed: 44,9854 ms
+Count: 20000
+Elapsed: 48,502 ms
+Count: 20000
+Elapsed: 72,9119 ms
+Count: 20000
+Elapsed: 34,6831 ms
+Count: 20000
+Elapsed: 37,2339 ms
+Count: 20000
+WorkloadActual  27: 6 op, 313612000.00 ns, 52.2687 ms/op
+Elapsed: 32,013 ms
+Count: 20000
+Elapsed: 76,9106 ms
+Count: 20000
+Elapsed: 40,7225 ms
+Count: 20000
+Elapsed: 37,7166 ms
+Count: 20000
+Elapsed: 43,9537 ms
+Count: 20000
+Elapsed: 64,4472 ms
+Count: 20000
+WorkloadActual  28: 6 op, 296399300.00 ns, 49.3999 ms/op
+Elapsed: 42,5141 ms
+Count: 20000
+Elapsed: 53,4278 ms
+Count: 20000
+Elapsed: 44,4079 ms
+Count: 20000
+Elapsed: 47,8987 ms
+Count: 20000
+Elapsed: 58,8332 ms
+Count: 20000
+Elapsed: 36,3311 ms
+Count: 20000
+WorkloadActual  29: 6 op, 284062700.00 ns, 47.3438 ms/op
+Elapsed: 43,1474 ms
+Count: 20000
+Elapsed: 33,634 ms
+Count: 20000
+Elapsed: 77,1505 ms
+Count: 20000
+Elapsed: 31,7588 ms
+Count: 20000
+Elapsed: 76,4854 ms
+Count: 20000
+Elapsed: 73,5884 ms
+Count: 20000
+WorkloadActual  30: 6 op, 336401100.00 ns, 56.0669 ms/op
+Elapsed: 31,7748 ms
+Count: 20000
+Elapsed: 33,7739 ms
+Count: 20000
+Elapsed: 77,5191 ms
+Count: 20000
+Elapsed: 32,8022 ms
+Count: 20000
+Elapsed: 39,0663 ms
+Count: 20000
+Elapsed: 45,2307 ms
+Count: 20000
+WorkloadActual  31: 6 op, 260872500.00 ns, 43.4787 ms/op
+Elapsed: 53,059 ms
+Count: 20000
+Elapsed: 87,5626 ms
+Count: 20000
+Elapsed: 36,9822 ms
+Count: 20000
+Elapsed: 32,1068 ms
+Count: 20000
+Elapsed: 80,136 ms
+Count: 20000
+Elapsed: 50,9554 ms
+Count: 20000
+WorkloadActual  32: 6 op, 341483500.00 ns, 56.9139 ms/op
+Elapsed: 34,5931 ms
+Count: 20000
+Elapsed: 35,3022 ms
+Count: 20000
+Elapsed: 42,0859 ms
+Count: 20000
+Elapsed: 35,8516 ms
+Count: 20000
+Elapsed: 44,5214 ms
+Count: 20000
+Elapsed: 44,812 ms
+Count: 20000
+WorkloadActual  33: 6 op, 237820400.00 ns, 39.6367 ms/op
+Elapsed: 46,4203 ms
+Count: 20000
+Elapsed: 56,9681 ms
+Count: 20000
+Elapsed: 43,9584 ms
+Count: 20000
+Elapsed: 48,4415 ms
+Count: 20000
+Elapsed: 51,006 ms
+Count: 20000
+Elapsed: 73,084 ms
+Count: 20000
+WorkloadActual  34: 6 op, 320498900.00 ns, 53.4165 ms/op
+Elapsed: 83,1816 ms
+Count: 20000
+Elapsed: 83,0726 ms
+Count: 20000
+Elapsed: 76,225 ms
+Count: 20000
+Elapsed: 78,884 ms
+Count: 20000
+Elapsed: 50,2762 ms
+Count: 20000
+Elapsed: 31,9848 ms
+Count: 20000
+WorkloadActual  35: 6 op, 404240100.00 ns, 67.3734 ms/op
+Elapsed: 73,566 ms
+Count: 20000
+Elapsed: 86,6309 ms
+Count: 20000
+Elapsed: 84,6536 ms
+Count: 20000
+Elapsed: 52,6573 ms
+Count: 20000
+Elapsed: 79,0328 ms
+Count: 20000
+Elapsed: 30,4938 ms
+Count: 20000
+WorkloadActual  36: 6 op, 407635500.00 ns, 67.9393 ms/op
+Elapsed: 74,3329 ms
+Count: 20000
+Elapsed: 73,0513 ms
+Count: 20000
+Elapsed: 38,516 ms
+Count: 20000
+Elapsed: 79,2856 ms
+Count: 20000
+Elapsed: 33,8167 ms
+Count: 20000
+Elapsed: 76,4688 ms
+Count: 20000
+WorkloadActual  37: 6 op, 376075600.00 ns, 62.6793 ms/op
+Elapsed: 73,7678 ms
+Count: 20000
+Elapsed: 51,8684 ms
+Count: 20000
+Elapsed: 37,2449 ms
+Count: 20000
+Elapsed: 72,3928 ms
+Count: 20000
+Elapsed: 36,7588 ms
+Count: 20000
+Elapsed: 42,0501 ms
+Count: 20000
+WorkloadActual  38: 6 op, 314773900.00 ns, 52.4623 ms/op
+Elapsed: 51,2726 ms
+Count: 20000
+Elapsed: 54,6542 ms
+Count: 20000
+Elapsed: 39,9532 ms
+Count: 20000
+Elapsed: 33,8935 ms
+Count: 20000
+Elapsed: 45,0529 ms
+Count: 20000
+Elapsed: 51,9512 ms
+Count: 20000
+WorkloadActual  39: 6 op, 277430300.00 ns, 46.2384 ms/op
+Elapsed: 63,1738 ms
+Count: 20000
+Elapsed: 37,8114 ms
+Count: 20000
+Elapsed: 44,1657 ms
+Count: 20000
+Elapsed: 55,5207 ms
+Count: 20000
+Elapsed: 71,8758 ms
+Count: 20000
+Elapsed: 67,662 ms
+Count: 20000
+WorkloadActual  40: 6 op, 340822800.00 ns, 56.8038 ms/op
+Elapsed: 57,6233 ms
+Count: 20000
+Elapsed: 34,0931 ms
+Count: 20000
+Elapsed: 38,7516 ms
+Count: 20000
+Elapsed: 31,8754 ms
+Count: 20000
+Elapsed: 38,0225 ms
+Count: 20000
+Elapsed: 75,5703 ms
+Count: 20000
+WorkloadActual  41: 6 op, 276601400.00 ns, 46.1002 ms/op
+Elapsed: 37,7429 ms
+Count: 20000
+Elapsed: 31,3787 ms
+Count: 20000
+Elapsed: 74,8459 ms
+Count: 20000
+Elapsed: 76,753 ms
+Count: 20000
+Elapsed: 71,5104 ms
+Count: 20000
+Elapsed: 68,0261 ms
+Count: 20000
+WorkloadActual  42: 6 op, 360856500.00 ns, 60.1427 ms/op
+Elapsed: 74,6154 ms
+Count: 20000
+Elapsed: 61,7071 ms
+Count: 20000
+Elapsed: 68,5307 ms
+Count: 20000
+Elapsed: 32,8605 ms
+Count: 20000
+Elapsed: 79,4966 ms
+Count: 20000
+Elapsed: 48,3016 ms
+Count: 20000
+WorkloadActual  43: 6 op, 366136600.00 ns, 61.0228 ms/op
+Elapsed: 80,6431 ms
+Count: 20000
+Elapsed: 44,0973 ms
+Count: 20000
+Elapsed: 52,5181 ms
+Count: 20000
+Elapsed: 31,0727 ms
+Count: 20000
+Elapsed: 72,7806 ms
+Count: 20000
+Elapsed: 49,8819 ms
+Count: 20000
+WorkloadActual  44: 6 op, 331605500.00 ns, 55.2676 ms/op
+Elapsed: 75,9651 ms
+Count: 20000
+Elapsed: 80,8074 ms
+Count: 20000
+Elapsed: 49,9548 ms
+Count: 20000
+Elapsed: 75,4476 ms
+Count: 20000
+Elapsed: 34,4546 ms
+Count: 20000
+Elapsed: 52,5406 ms
+Count: 20000
+WorkloadActual  45: 6 op, 369818500.00 ns, 61.6364 ms/op
+Elapsed: 98,4833 ms
+Count: 20000
+Elapsed: 35,3989 ms
+Count: 20000
+Elapsed: 87,1073 ms
+Count: 20000
+Elapsed: 55,6475 ms
+Count: 20000
+Elapsed: 82,7044 ms
+Count: 20000
+Elapsed: 30,8568 ms
+Count: 20000
+WorkloadActual  46: 6 op, 390833200.00 ns, 65.1389 ms/op
+Elapsed: 76,5484 ms
+Count: 20000
+Elapsed: 36,382 ms
+Count: 20000
+Elapsed: 40,0159 ms
+Count: 20000
+Elapsed: 51,3379 ms
+Count: 20000
+Elapsed: 90,34 ms
+Count: 20000
+Elapsed: 31,2052 ms
+Count: 20000
+WorkloadActual  47: 6 op, 326429300.00 ns, 54.4049 ms/op
+Elapsed: 79,113 ms
+Count: 20000
+Elapsed: 31,367 ms
+Count: 20000
+Elapsed: 72,0844 ms
+Count: 20000
+Elapsed: 34,6418 ms
+Count: 20000
+Elapsed: 39,2735 ms
+Count: 20000
+Elapsed: 33,9157 ms
+Count: 20000
+WorkloadActual  48: 6 op, 291041900.00 ns, 48.5070 ms/op
+Elapsed: 80,2168 ms
+Count: 20000
+Elapsed: 31,0693 ms
+Count: 20000
+Elapsed: 71,4227 ms
+Count: 20000
+Elapsed: 50,6927 ms
+Count: 20000
+Elapsed: 35,4182 ms
+Count: 20000
+Elapsed: 33,4137 ms
+Count: 20000
+WorkloadActual  49: 6 op, 302857400.00 ns, 50.4762 ms/op
+Elapsed: 33,1816 ms
+Count: 20000
+Elapsed: 34,9899 ms
+Count: 20000
+Elapsed: 92,5483 ms
+Count: 20000
+Elapsed: 60,9322 ms
+Count: 20000
+Elapsed: 32,1186 ms
+Count: 20000
+Elapsed: 76,791 ms
+Count: 20000
+WorkloadActual  50: 6 op, 331205700.00 ns, 55.2009 ms/op
+Elapsed: 31,2534 ms
+Count: 20000
+Elapsed: 76,4693 ms
+Count: 20000
+Elapsed: 40,2889 ms
+Count: 20000
+Elapsed: 71,6281 ms
+Count: 20000
+Elapsed: 78,6564 ms
+Count: 20000
+Elapsed: 31,3507 ms
+Count: 20000
+WorkloadActual  51: 6 op, 330304900.00 ns, 55.0508 ms/op
+Elapsed: 70,8957 ms
+Count: 20000
+Elapsed: 33,6429 ms
+Count: 20000
+Elapsed: 37,8721 ms
+Count: 20000
+Elapsed: 72,9479 ms
+Count: 20000
+Elapsed: 62,5991 ms
+Count: 20000
+Elapsed: 45,7954 ms
+Count: 20000
+WorkloadActual  52: 6 op, 324390700.00 ns, 54.0651 ms/op
+Elapsed: 73,2875 ms
+Count: 20000
+Elapsed: 51,5628 ms
+Count: 20000
+Elapsed: 76,4542 ms
+Count: 20000
+Elapsed: 34,3817 ms
+Count: 20000
+Elapsed: 31,4299 ms
+Count: 20000
+Elapsed: 86,3528 ms
+Count: 20000
+WorkloadActual  53: 6 op, 354071700.00 ns, 59.0119 ms/op
+Elapsed: 52,926 ms
+Count: 20000
+Elapsed: 61,4526 ms
+Count: 20000
+Elapsed: 59,553 ms
+Count: 20000
+Elapsed: 33,5415 ms
+Count: 20000
+Elapsed: 82,2867 ms
+Count: 20000
+Elapsed: 32,3468 ms
+Count: 20000
+WorkloadActual  54: 6 op, 322766100.00 ns, 53.7944 ms/op
+Elapsed: 74,2681 ms
+Count: 20000
+Elapsed: 37,291 ms
+Count: 20000
+Elapsed: 38,6883 ms
+Count: 20000
+Elapsed: 33,2409 ms
+Count: 20000
+Elapsed: 81,1005 ms
+Count: 20000
+Elapsed: 86,344 ms
+Count: 20000
+WorkloadActual  55: 6 op, 351574200.00 ns, 58.5957 ms/op
+Elapsed: 50,904 ms
+Count: 20000
+Elapsed: 33,0741 ms
+Count: 20000
+Elapsed: 36,7361 ms
+Count: 20000
+Elapsed: 71,9694 ms
+Count: 20000
+Elapsed: 84,2219 ms
+Count: 20000
+Elapsed: 39,7527 ms
+Count: 20000
+WorkloadActual  56: 6 op, 317306200.00 ns, 52.8844 ms/op
+Elapsed: 30,7936 ms
+Count: 20000
+Elapsed: 90,6125 ms
+Count: 20000
+Elapsed: 51,8145 ms
+Count: 20000
+Elapsed: 90,6197 ms
+Count: 20000
+Elapsed: 46,4031 ms
+Count: 20000
+Elapsed: 53,613 ms
+Count: 20000
+WorkloadActual  57: 6 op, 364458900.00 ns, 60.7431 ms/op
+Elapsed: 31,405 ms
+Count: 20000
+Elapsed: 74,4153 ms
+Count: 20000
+Elapsed: 74,7499 ms
+Count: 20000
+Elapsed: 51,3353 ms
+Count: 20000
+Elapsed: 76,0053 ms
+Count: 20000
+Elapsed: 31,9461 ms
+Count: 20000
+WorkloadActual  58: 6 op, 340467100.00 ns, 56.7445 ms/op
+Elapsed: 59,0646 ms
+Count: 20000
+Elapsed: 32,3409 ms
+Count: 20000
+Elapsed: 38,8074 ms
+Count: 20000
+Elapsed: 32,3652 ms
+Count: 20000
+Elapsed: 74,764 ms
+Count: 20000
+Elapsed: 30,8998 ms
+Count: 20000
+WorkloadActual  59: 6 op, 268859800.00 ns, 44.8100 ms/op
+Elapsed: 72,957 ms
+Count: 20000
+Elapsed: 78,9565 ms
+Count: 20000
+Elapsed: 52,7868 ms
+Count: 20000
+Elapsed: 95,3233 ms
+Count: 20000
+Elapsed: 51,578 ms
+Count: 20000
+Elapsed: 78,3799 ms
+Count: 20000
+WorkloadActual  60: 6 op, 430618300.00 ns, 71.7697 ms/op
+Elapsed: 30,9078 ms
+Count: 20000
+Elapsed: 74,4404 ms
+Count: 20000
+Elapsed: 50,573 ms
+Count: 20000
+Elapsed: 77,4021 ms
+Count: 20000
+Elapsed: 30,9196 ms
+Count: 20000
+Elapsed: 75,2665 ms
+Count: 20000
+WorkloadActual  61: 6 op, 340125300.00 ns, 56.6876 ms/op
+Elapsed: 40,0993 ms
+Count: 20000
+Elapsed: 47,9496 ms
+Count: 20000
+Elapsed: 51,7698 ms
+Count: 20000
+Elapsed: 73,865 ms
+Count: 20000
+Elapsed: 31,5844 ms
+Count: 20000
+Elapsed: 80,7258 ms
+Count: 20000
+WorkloadActual  62: 6 op, 326614900.00 ns, 54.4358 ms/op
+Elapsed: 32,8706 ms
+Count: 20000
+Elapsed: 34,9336 ms
+Count: 20000
+Elapsed: 40,8299 ms
+Count: 20000
+Elapsed: 34,3444 ms
+Count: 20000
+Elapsed: 72,6264 ms
+Count: 20000
+Elapsed: 67,868 ms
+Count: 20000
+WorkloadActual  63: 6 op, 284099500.00 ns, 47.3499 ms/op
+Elapsed: 53,7178 ms
+Count: 20000
+Elapsed: 33,7185 ms
+Count: 20000
+Elapsed: 81,9292 ms
+Count: 20000
+Elapsed: 51,9457 ms
+Count: 20000
+Elapsed: 74,5901 ms
+Count: 20000
+Elapsed: 36,2448 ms
+Count: 20000
+WorkloadActual  64: 6 op, 332744400.00 ns, 55.4574 ms/op
+Elapsed: 34,5137 ms
+Count: 20000
+Elapsed: 33,2201 ms
+Count: 20000
+Elapsed: 71,2367 ms
+Count: 20000
+Elapsed: 85,5953 ms
+Count: 20000
+Elapsed: 46,7881 ms
+Count: 20000
+Elapsed: 58,3014 ms
+Count: 20000
+WorkloadActual  65: 6 op, 330281100.00 ns, 55.0468 ms/op
+Elapsed: 44,9555 ms
+Count: 20000
+Elapsed: 40,6 ms
+Count: 20000
+Elapsed: 44,1193 ms
+Count: 20000
+Elapsed: 85,5476 ms
+Count: 20000
+Elapsed: 70,9597 ms
+Count: 20000
+Elapsed: 53,0285 ms
+Count: 20000
+WorkloadActual  66: 6 op, 339823500.00 ns, 56.6373 ms/op
+Elapsed: 75,829 ms
+Count: 20000
+Elapsed: 74,9181 ms
+Count: 20000
+Elapsed: 39,1389 ms
+Count: 20000
+Elapsed: 91,7831 ms
+Count: 20000
+Elapsed: 50,7898 ms
+Count: 20000
+Elapsed: 33,2245 ms
+Count: 20000
+WorkloadActual  67: 6 op, 366291500.00 ns, 61.0486 ms/op
+Elapsed: 32,9443 ms
+Count: 20000
+Elapsed: 32,2874 ms
+Count: 20000
+Elapsed: 72,8675 ms
+Count: 20000
+Elapsed: 63,6756 ms
+Count: 20000
+Elapsed: 46,0216 ms
+Count: 20000
+Elapsed: 53,2223 ms
+Count: 20000
+WorkloadActual  68: 6 op, 301646500.00 ns, 50.2744 ms/op
+Elapsed: 56,4536 ms
+Count: 20000
+Elapsed: 63,6912 ms
+Count: 20000
+Elapsed: 57,4699 ms
+Count: 20000
+Elapsed: 46,0008 ms
+Count: 20000
+Elapsed: 50,9046 ms
+Count: 20000
+Elapsed: 32,0551 ms
+Count: 20000
+WorkloadActual  69: 6 op, 307232700.00 ns, 51.2054 ms/op
+Elapsed: 71,1662 ms
+Count: 20000
+Elapsed: 31,7968 ms
+Count: 20000
+Elapsed: 75,7312 ms
+Count: 20000
+Elapsed: 74,5648 ms
+Count: 20000
+Elapsed: 71,2209 ms
+Count: 20000
+Elapsed: 64,7026 ms
+Count: 20000
+WorkloadActual  70: 6 op, 389782700.00 ns, 64.9638 ms/op
+Elapsed: 50,3015 ms
+Count: 20000
+Elapsed: 68,3784 ms
+Count: 20000
+Elapsed: 48,5903 ms
+Count: 20000
+Elapsed: 50,4756 ms
+Count: 20000
+Elapsed: 78,2804 ms
+Count: 20000
+Elapsed: 73,2357 ms
+Count: 20000
+WorkloadActual  71: 6 op, 369908100.00 ns, 61.6514 ms/op
+Elapsed: 66,3866 ms
+Count: 20000
+Elapsed: 36,4885 ms
+Count: 20000
+Elapsed: 39,0793 ms
+Count: 20000
+Elapsed: 32,129 ms
+Count: 20000
+Elapsed: 71,3281 ms
+Count: 20000
+Elapsed: 70,915 ms
+Count: 20000
+WorkloadActual  72: 6 op, 316963800.00 ns, 52.8273 ms/op
+Elapsed: 31,3924 ms
+Count: 20000
+Elapsed: 71,7057 ms
+Count: 20000
+Elapsed: 36,8887 ms
+Count: 20000
+Elapsed: 81,1316 ms
+Count: 20000
+Elapsed: 71,1811 ms
+Count: 20000
+Elapsed: 34,4607 ms
+Count: 20000
+WorkloadActual  73: 6 op, 327376300.00 ns, 54.5627 ms/op
+Elapsed: 31,3717 ms
+Count: 20000
+Elapsed: 90,3153 ms
+Count: 20000
+Elapsed: 39,3098 ms
+Count: 20000
+Elapsed: 34,5963 ms
+Count: 20000
+Elapsed: 35,4528 ms
+Count: 20000
+Elapsed: 40,8561 ms
+Count: 20000
+WorkloadActual  74: 6 op, 272519900.00 ns, 45.4200 ms/op
+Elapsed: 31,8634 ms
+Count: 20000
+Elapsed: 51,9709 ms
+Count: 20000
+Elapsed: 36,6754 ms
+Count: 20000
+Elapsed: 33,1616 ms
+Count: 20000
+Elapsed: 35,7023 ms
+Count: 20000
+Elapsed: 36,9727 ms
+Count: 20000
+WorkloadActual  75: 6 op, 226984400.00 ns, 37.8307 ms/op
+Elapsed: 46,5714 ms
+Count: 20000
+Elapsed: 61,7801 ms
+Count: 20000
+Elapsed: 59,7875 ms
+Count: 20000
+Elapsed: 41,4651 ms
+Count: 20000
+Elapsed: 38,4554 ms
+Count: 20000
+Elapsed: 44,6613 ms
+Count: 20000
+WorkloadActual  76: 6 op, 293350900.00 ns, 48.8918 ms/op
+Elapsed: 58,6058 ms
+Count: 20000
+Elapsed: 31,7412 ms
+Count: 20000
+Elapsed: 76,9092 ms
+Count: 20000
+Elapsed: 73,8626 ms
+Count: 20000
+Elapsed: 31,1302 ms
+Count: 20000
+Elapsed: 71,6161 ms
+Count: 20000
+WorkloadActual  77: 6 op, 344505700.00 ns, 57.4176 ms/op
+Elapsed: 30,558 ms
+Count: 20000
+Elapsed: 32,0527 ms
+Count: 20000
+Elapsed: 81,7909 ms
+Count: 20000
+Elapsed: 31,9148 ms
+Count: 20000
+Elapsed: 86,6353 ms
+Count: 20000
+Elapsed: 46,5258 ms
+Count: 20000
+WorkloadActual  78: 6 op, 310097200.00 ns, 51.6829 ms/op
+Elapsed: 50,8238 ms
+Count: 20000
+Elapsed: 31,7769 ms
+Count: 20000
+Elapsed: 72,0472 ms
+Count: 20000
+Elapsed: 80,5116 ms
+Count: 20000
+Elapsed: 73,375 ms
+Count: 20000
+Elapsed: 32,0572 ms
+Count: 20000
+WorkloadActual  79: 6 op, 341208000.00 ns, 56.8680 ms/op
+Elapsed: 71,9967 ms
+Count: 20000
+Elapsed: 81,715 ms
+Count: 20000
+Elapsed: 57,5605 ms
+Count: 20000
+Elapsed: 43,9845 ms
+Count: 20000
+Elapsed: 57,5781 ms
+Count: 20000
+Elapsed: 40,2177 ms
+Count: 20000
+WorkloadActual  80: 6 op, 353666900.00 ns, 58.9445 ms/op
+Elapsed: 33,2905 ms
+Count: 20000
+Elapsed: 32,2659 ms
+Count: 20000
+Elapsed: 70,694 ms
+Count: 20000
+Elapsed: 42,9735 ms
+Count: 20000
+Elapsed: 54,9727 ms
+Count: 20000
+Elapsed: 95,6546 ms
+Count: 20000
+WorkloadActual  81: 6 op, 330479000.00 ns, 55.0798 ms/op
+Elapsed: 45,1283 ms
+Count: 20000
+Elapsed: 45,6621 ms
+Count: 20000
+Elapsed: 59,0313 ms
+Count: 20000
+Elapsed: 33,3178 ms
+Count: 20000
+Elapsed: 73,6757 ms
+Count: 20000
+Elapsed: 65,2281 ms
+Count: 20000
+WorkloadActual  82: 6 op, 322661200.00 ns, 53.7769 ms/op
+Elapsed: 31,4541 ms
+Count: 20000
+Elapsed: 73,4424 ms
+Count: 20000
+Elapsed: 60,6786 ms
+Count: 20000
+Elapsed: 46,1547 ms
+Count: 20000
+Elapsed: 48,8784 ms
+Count: 20000
+Elapsed: 72,2019 ms
+Count: 20000
+WorkloadActual  83: 6 op, 333427300.00 ns, 55.5712 ms/op
+Elapsed: 69,4277 ms
+Count: 20000
+Elapsed: 50,6105 ms
+Count: 20000
+Elapsed: 39,0302 ms
+Count: 20000
+Elapsed: 31,8213 ms
+Count: 20000
+Elapsed: 71,5555 ms
+Count: 20000
+Elapsed: 34,8042 ms
+Count: 20000
+WorkloadActual  84: 6 op, 297897900.00 ns, 49.6497 ms/op
+Elapsed: 31,8647 ms
+Count: 20000
+Elapsed: 73,7805 ms
+Count: 20000
+Elapsed: 38,7389 ms
+Count: 20000
+Elapsed: 89,2185 ms
+Count: 20000
+Elapsed: 48,9431 ms
+Count: 20000
+Elapsed: 72,2006 ms
+Count: 20000
+WorkloadActual  85: 6 op, 355421900.00 ns, 59.2370 ms/op
+Elapsed: 69,9204 ms
+Count: 20000
+Elapsed: 87,6076 ms
+Count: 20000
+Elapsed: 38,6447 ms
+Count: 20000
+Elapsed: 71,7712 ms
+Count: 20000
+Elapsed: 89,5138 ms
+Count: 20000
+Elapsed: 36,1798 ms
+Count: 20000
+WorkloadActual  86: 6 op, 394245500.00 ns, 65.7076 ms/op
+Elapsed: 35,3271 ms
+Count: 20000
+Elapsed: 31,9811 ms
+Count: 20000
+Elapsed: 73,78 ms
+Count: 20000
+Elapsed: 37,0913 ms
+Count: 20000
+Elapsed: 31,4105 ms
+Count: 20000
+Elapsed: 71,0846 ms
+Count: 20000
+WorkloadActual  87: 6 op, 281303000.00 ns, 46.8838 ms/op
+Elapsed: 32,1052 ms
+Count: 20000
+Elapsed: 51,0054 ms
+Count: 20000
+Elapsed: 39,3361 ms
+Count: 20000
+Elapsed: 43,329 ms
+Count: 20000
+Elapsed: 58,6209 ms
+Count: 20000
+Elapsed: 44,7269 ms
+Count: 20000
+WorkloadActual  88: 6 op, 269779200.00 ns, 44.9632 ms/op
+Elapsed: 52,9241 ms
+Count: 20000
+Elapsed: 34,2828 ms
+Count: 20000
+Elapsed: 39,0123 ms
+Count: 20000
+Elapsed: 79,1231 ms
+Count: 20000
+Elapsed: 32,399 ms
+Count: 20000
+Elapsed: 71,6796 ms
+Count: 20000
+WorkloadActual  89: 6 op, 310067800.00 ns, 51.6780 ms/op
+Elapsed: 65,3225 ms
+Count: 20000
+Elapsed: 54,4242 ms
+Count: 20000
+Elapsed: 76,3163 ms
+Count: 20000
+Elapsed: 50,3162 ms
+Count: 20000
+Elapsed: 83,5054 ms
+Count: 20000
+Elapsed: 30,8397 ms
+Count: 20000
+WorkloadActual  90: 6 op, 361372600.00 ns, 60.2288 ms/op
+Elapsed: 66,2869 ms
+Count: 20000
+Elapsed: 52,4578 ms
+Count: 20000
+Elapsed: 38,291 ms
+Count: 20000
+Elapsed: 32,3423 ms
+Count: 20000
+Elapsed: 71,6503 ms
+Count: 20000
+Elapsed: 89,2768 ms
+Count: 20000
+WorkloadActual  91: 6 op, 350953600.00 ns, 58.4923 ms/op
+Elapsed: 34,1664 ms
+Count: 20000
+Elapsed: 74,6658 ms
+Count: 20000
+Elapsed: 38,8581 ms
+Count: 20000
+Elapsed: 46,1996 ms
+Count: 20000
+Elapsed: 57,5333 ms
+Count: 20000
+Elapsed: 32,8014 ms
+Count: 20000
+WorkloadActual  92: 6 op, 284896900.00 ns, 47.4828 ms/op
+Elapsed: 73,8649 ms
+Count: 20000
+Elapsed: 42,3771 ms
+Count: 20000
+Elapsed: 43,5971 ms
+Count: 20000
+Elapsed: 55,3923 ms
+Count: 20000
+Elapsed: 34,6313 ms
+Count: 20000
+Elapsed: 32,0849 ms
+Count: 20000
+WorkloadActual  93: 6 op, 282554500.00 ns, 47.0924 ms/op
+Elapsed: 31,9291 ms
+Count: 20000
+Elapsed: 71,9162 ms
+Count: 20000
+Elapsed: 38,5382 ms
+Count: 20000
+Elapsed: 37,722 ms
+Count: 20000
+Elapsed: 41,2823 ms
+Count: 20000
+Elapsed: 50,6473 ms
+Count: 20000
+WorkloadActual  94: 6 op, 272670700.00 ns, 45.4451 ms/op
+Elapsed: 31,2616 ms
+Count: 20000
+Elapsed: 73,4446 ms
+Count: 20000
+Elapsed: 73,7743 ms
+Count: 20000
+Elapsed: 81,3788 ms
+Count: 20000
+Elapsed: 52,6687 ms
+Count: 20000
+Elapsed: 76,8623 ms
+Count: 20000
+WorkloadActual  95: 6 op, 390008200.00 ns, 65.0014 ms/op
+Elapsed: 32,4531 ms
+Count: 20000
+Elapsed: 69,129 ms
+Count: 20000
+Elapsed: 36,4402 ms
+Count: 20000
+Elapsed: 111,1033 ms
+Count: 20000
+Elapsed: 51,3287 ms
+Count: 20000
+Elapsed: 84,9453 ms
+Count: 20000
+WorkloadActual  96: 6 op, 386024400.00 ns, 64.3374 ms/op
+Elapsed: 30,9238 ms
+Count: 20000
+Elapsed: 71,361 ms
+Count: 20000
+Elapsed: 37,1794 ms
+Count: 20000
+Elapsed: 42,701 ms
+Count: 20000
+Elapsed: 55,2789 ms
+Count: 20000
+Elapsed: 35,2884 ms
+Count: 20000
+WorkloadActual  97: 6 op, 273364400.00 ns, 45.5607 ms/op
+Elapsed: 32,3726 ms
+Count: 20000
+Elapsed: 71,7528 ms
+Count: 20000
+Elapsed: 80,2589 ms
+Count: 20000
+Elapsed: 74,1097 ms
+Count: 20000
+Elapsed: 31,2253 ms
+Count: 20000
+Elapsed: 71,2395 ms
+Count: 20000
+WorkloadActual  98: 6 op, 361576800.00 ns, 60.2628 ms/op
+Elapsed: 53,4628 ms
+Count: 20000
+Elapsed: 72,5445 ms
+Count: 20000
+Elapsed: 50,8644 ms
+Count: 20000
+Elapsed: 76,2999 ms
+Count: 20000
+Elapsed: 55,688 ms
+Count: 20000
+Elapsed: 42,3442 ms
+Count: 20000
+WorkloadActual  99: 6 op, 351810500.00 ns, 58.6351 ms/op
+Elapsed: 50,6961 ms
+Count: 20000
+Elapsed: 31,323 ms
+Count: 20000
+Elapsed: 68,9591 ms
+Count: 20000
+Elapsed: 57,9892 ms
+Count: 20000
+Elapsed: 36,2213 ms
+Count: 20000
+Elapsed: 32,9708 ms
+Count: 20000
+WorkloadActual  100: 6 op, 278782900.00 ns, 46.4638 ms/op
+
+// AfterActualRun
+Elapsed: 72,8726 ms
+Count: 20000
+Elapsed: 78,28 ms
+Count: 20000
+Elapsed: 35,9634 ms
+Count: 20000
+Elapsed: 71,8812 ms
+Count: 20000
+Elapsed: 31,3089 ms
+Count: 20000
+Elapsed: 71,2391 ms
+Count: 20000
+WorkloadResult   1: 6 op, 303658900.00 ns, 50.6098 ms/op
+WorkloadResult   2: 6 op, 373027900.00 ns, 62.1713 ms/op
+WorkloadResult   3: 6 op, 303893700.00 ns, 50.6489 ms/op
+WorkloadResult   4: 6 op, 344516600.00 ns, 57.4194 ms/op
+WorkloadResult   5: 6 op, 425787400.00 ns, 70.9646 ms/op
+WorkloadResult   6: 6 op, 382218700.00 ns, 63.7031 ms/op
+WorkloadResult   7: 6 op, 349701400.00 ns, 58.2836 ms/op
+WorkloadResult   8: 6 op, 298657700.00 ns, 49.7763 ms/op
+WorkloadResult   9: 6 op, 354311800.00 ns, 59.0520 ms/op
+WorkloadResult  10: 6 op, 363580700.00 ns, 60.5968 ms/op
+WorkloadResult  11: 6 op, 267982100.00 ns, 44.6637 ms/op
+WorkloadResult  12: 6 op, 324647600.00 ns, 54.1079 ms/op
+WorkloadResult  13: 6 op, 431075900.00 ns, 71.8460 ms/op
+WorkloadResult  14: 6 op, 309583800.00 ns, 51.5973 ms/op
+WorkloadResult  15: 6 op, 337344600.00 ns, 56.2241 ms/op
+WorkloadResult  16: 6 op, 350766900.00 ns, 58.4612 ms/op
+WorkloadResult  17: 6 op, 337893200.00 ns, 56.3155 ms/op
+WorkloadResult  18: 6 op, 312209000.00 ns, 52.0348 ms/op
+WorkloadResult  19: 6 op, 272552500.00 ns, 45.4254 ms/op
+WorkloadResult  20: 6 op, 380017500.00 ns, 63.3362 ms/op
+WorkloadResult  21: 6 op, 372379000.00 ns, 62.0632 ms/op
+WorkloadResult  22: 6 op, 277994200.00 ns, 46.3324 ms/op
+WorkloadResult  23: 6 op, 305134500.00 ns, 50.8558 ms/op
+WorkloadResult  24: 6 op, 375332400.00 ns, 62.5554 ms/op
+WorkloadResult  25: 6 op, 313612000.00 ns, 52.2687 ms/op
+WorkloadResult  26: 6 op, 296399300.00 ns, 49.3999 ms/op
+WorkloadResult  27: 6 op, 284062700.00 ns, 47.3438 ms/op
+WorkloadResult  28: 6 op, 336401100.00 ns, 56.0669 ms/op
+WorkloadResult  29: 6 op, 260872500.00 ns, 43.4787 ms/op
+WorkloadResult  30: 6 op, 341483500.00 ns, 56.9139 ms/op
+WorkloadResult  31: 6 op, 237820400.00 ns, 39.6367 ms/op
+WorkloadResult  32: 6 op, 320498900.00 ns, 53.4165 ms/op
+WorkloadResult  33: 6 op, 404240100.00 ns, 67.3734 ms/op
+WorkloadResult  34: 6 op, 407635500.00 ns, 67.9393 ms/op
+WorkloadResult  35: 6 op, 376075600.00 ns, 62.6793 ms/op
+WorkloadResult  36: 6 op, 314773900.00 ns, 52.4623 ms/op
+WorkloadResult  37: 6 op, 277430300.00 ns, 46.2384 ms/op
+WorkloadResult  38: 6 op, 340822800.00 ns, 56.8038 ms/op
+WorkloadResult  39: 6 op, 276601400.00 ns, 46.1002 ms/op
+WorkloadResult  40: 6 op, 360856500.00 ns, 60.1427 ms/op
+WorkloadResult  41: 6 op, 366136600.00 ns, 61.0228 ms/op
+WorkloadResult  42: 6 op, 331605500.00 ns, 55.2676 ms/op
+WorkloadResult  43: 6 op, 369818500.00 ns, 61.6364 ms/op
+WorkloadResult  44: 6 op, 390833200.00 ns, 65.1389 ms/op
+WorkloadResult  45: 6 op, 326429300.00 ns, 54.4049 ms/op
+WorkloadResult  46: 6 op, 291041900.00 ns, 48.5070 ms/op
+WorkloadResult  47: 6 op, 302857400.00 ns, 50.4762 ms/op
+WorkloadResult  48: 6 op, 331205700.00 ns, 55.2009 ms/op
+WorkloadResult  49: 6 op, 330304900.00 ns, 55.0508 ms/op
+WorkloadResult  50: 6 op, 324390700.00 ns, 54.0651 ms/op
+WorkloadResult  51: 6 op, 354071700.00 ns, 59.0119 ms/op
+WorkloadResult  52: 6 op, 322766100.00 ns, 53.7944 ms/op
+WorkloadResult  53: 6 op, 351574200.00 ns, 58.5957 ms/op
+WorkloadResult  54: 6 op, 317306200.00 ns, 52.8844 ms/op
+WorkloadResult  55: 6 op, 364458900.00 ns, 60.7431 ms/op
+WorkloadResult  56: 6 op, 340467100.00 ns, 56.7445 ms/op
+WorkloadResult  57: 6 op, 268859800.00 ns, 44.8100 ms/op
+WorkloadResult  58: 6 op, 430618300.00 ns, 71.7697 ms/op
+WorkloadResult  59: 6 op, 340125300.00 ns, 56.6876 ms/op
+WorkloadResult  60: 6 op, 326614900.00 ns, 54.4358 ms/op
+WorkloadResult  61: 6 op, 284099500.00 ns, 47.3499 ms/op
+WorkloadResult  62: 6 op, 332744400.00 ns, 55.4574 ms/op
+WorkloadResult  63: 6 op, 330281100.00 ns, 55.0468 ms/op
+WorkloadResult  64: 6 op, 339823500.00 ns, 56.6373 ms/op
+WorkloadResult  65: 6 op, 366291500.00 ns, 61.0486 ms/op
+WorkloadResult  66: 6 op, 301646500.00 ns, 50.2744 ms/op
+WorkloadResult  67: 6 op, 307232700.00 ns, 51.2054 ms/op
+WorkloadResult  68: 6 op, 389782700.00 ns, 64.9638 ms/op
+WorkloadResult  69: 6 op, 369908100.00 ns, 61.6514 ms/op
+WorkloadResult  70: 6 op, 316963800.00 ns, 52.8273 ms/op
+WorkloadResult  71: 6 op, 327376300.00 ns, 54.5627 ms/op
+WorkloadResult  72: 6 op, 272519900.00 ns, 45.4200 ms/op
+WorkloadResult  73: 6 op, 226984400.00 ns, 37.8307 ms/op
+WorkloadResult  74: 6 op, 293350900.00 ns, 48.8918 ms/op
+WorkloadResult  75: 6 op, 344505700.00 ns, 57.4176 ms/op
+WorkloadResult  76: 6 op, 310097200.00 ns, 51.6829 ms/op
+WorkloadResult  77: 6 op, 341208000.00 ns, 56.8680 ms/op
+WorkloadResult  78: 6 op, 353666900.00 ns, 58.9445 ms/op
+WorkloadResult  79: 6 op, 330479000.00 ns, 55.0798 ms/op
+WorkloadResult  80: 6 op, 322661200.00 ns, 53.7769 ms/op
+WorkloadResult  81: 6 op, 333427300.00 ns, 55.5712 ms/op
+WorkloadResult  82: 6 op, 297897900.00 ns, 49.6497 ms/op
+WorkloadResult  83: 6 op, 355421900.00 ns, 59.2370 ms/op
+WorkloadResult  84: 6 op, 394245500.00 ns, 65.7076 ms/op
+WorkloadResult  85: 6 op, 281303000.00 ns, 46.8838 ms/op
+WorkloadResult  86: 6 op, 269779200.00 ns, 44.9632 ms/op
+WorkloadResult  87: 6 op, 310067800.00 ns, 51.6780 ms/op
+WorkloadResult  88: 6 op, 361372600.00 ns, 60.2288 ms/op
+WorkloadResult  89: 6 op, 350953600.00 ns, 58.4923 ms/op
+WorkloadResult  90: 6 op, 284896900.00 ns, 47.4828 ms/op
+WorkloadResult  91: 6 op, 282554500.00 ns, 47.0924 ms/op
+WorkloadResult  92: 6 op, 272670700.00 ns, 45.4451 ms/op
+WorkloadResult  93: 6 op, 390008200.00 ns, 65.0014 ms/op
+WorkloadResult  94: 6 op, 386024400.00 ns, 64.3374 ms/op
+WorkloadResult  95: 6 op, 273364400.00 ns, 45.5607 ms/op
+WorkloadResult  96: 6 op, 361576800.00 ns, 60.2628 ms/op
+WorkloadResult  97: 6 op, 351810500.00 ns, 58.6351 ms/op
+WorkloadResult  98: 6 op, 278782900.00 ns, 46.4638 ms/op
+// GC:  5 4 1 56214528 6
+// Threading:  0 0 6
+
+// AfterAll
+// Benchmark Process 24996 has exited with code 0.
+
+Mean = 55.073 ms, StdErr = 0.709 ms (1.29%), N = 98, StdDev = 7.015 ms
+Min = 37.831 ms, Q1 = 50.325 ms, Median = 55.140 ms, Q3 = 59.916 ms, Max = 71.846 ms
+IQR = 9.591 ms, LowerFence = 35.938 ms, UpperFence = 74.303 ms
+ConfidenceInterval = [52.668 ms; 57.478 ms] (CI 99.9%), Margin = 2.405 ms (4.37% of Mean)
+Skewness = 0.1, Kurtosis = 2.68, MValue = 2.32
+
+// ** Remained 0 (0,0%) benchmark(s) to run. Estimated finish 2025-07-24 21:40 (0h 0m from now) **
+Successfully reverted power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  BenchmarkDotNet.Artifacts\results\EfCoreRawSqlBenchmark-report.csv
+  BenchmarkDotNet.Artifacts\results\EfCoreRawSqlBenchmark-report-github.md
+  BenchmarkDotNet.Artifacts\results\EfCoreRawSqlBenchmark-report.html
+
+// * Detailed results *
+EfCoreRawSqlBenchmark.BenchmarkRawSelect: DefaultJob
+Runtime = .NET 8.0.18 (8.0.1825.31117), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 55.073 ms, StdErr = 0.709 ms (1.29%), N = 98, StdDev = 7.015 ms
+Min = 37.831 ms, Q1 = 50.325 ms, Median = 55.140 ms, Q3 = 59.916 ms, Max = 71.846 ms
+IQR = 9.591 ms, LowerFence = 35.938 ms, UpperFence = 74.303 ms
+ConfidenceInterval = [52.668 ms; 57.478 ms] (CI 99.9%), Margin = 2.405 ms (4.37% of Mean)
+Skewness = 0.1, Kurtosis = 2.68, MValue = 2.32
+-------------------- Histogram --------------------
+[36.737 ms ; 40.731 ms) | @@
+[40.731 ms ; 44.588 ms) | @
+[44.588 ms ; 48.891 ms) | @@@@@@@@@@@@@@@@@
+[48.891 ms ; 53.601 ms) | @@@@@@@@@@@@@@@@@@@
+[53.601 ms ; 57.595 ms) | @@@@@@@@@@@@@@@@@@@@@@@@@
+[57.595 ms ; 62.225 ms) | @@@@@@@@@@@@@@@@@@@@
+[62.225 ms ; 66.129 ms) | @@@@@@@@@
+[66.129 ms ; 67.895 ms) | @
+[67.895 ms ; 71.890 ms) | @@@@
+---------------------------------------------------
+
+// * Summary *
+
+BenchmarkDotNet v0.13.8, Windows 11 (10.0.22631.5335)
+12th Gen Intel Core i7-12650H, 1 CPU, 16 logical and 10 physical cores
+.NET SDK 10.0.100-preview.6.25358.103
+  [Host]     : .NET 8.0.18 (8.0.1825.31117), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.18 (8.0.1825.31117), X64 RyuJIT AVX2
+
+
+| Method             | Mean     | Error    | StdDev   | Gen0     | Gen1     | Gen2     | Allocated |
+|------------------- |---------:|---------:|---------:|---------:|---------:|---------:|----------:|
+| BenchmarkRawSelect | 55.07 ms | 2.405 ms | 7.015 ms | 833.3333 | 666.6667 | 166.6667 |   8.94 MB |
+
+// * Hints *
+Outliers
+  EfCoreRawSqlBenchmark.BenchmarkRawSelect: Default -> 2 outliers were removed (75.37 ms, 75.85 ms)
+
+// * Legends *
+  Mean      : Arithmetic mean of all measurements
+  Error     : Half of 99.9% confidence interval
+  StdDev    : Standard deviation of all measurements
+  Gen0      : GC Generation 0 collects per 1000 operations
+  Gen1      : GC Generation 1 collects per 1000 operations
+  Gen2      : GC Generation 2 collects per 1000 operations
+  Allocated : Allocated memory per single operation (managed only, inclusive, 1KB = 1024B)
+  1 ms      : 1 Millisecond (0.001 sec)
+
+// * Diagnostic Output - MemoryDiagnoser *
+
+
+// ***** BenchmarkRunner: End *****
+Run time: 00:00:43 (43.07 sec), executed benchmarks: 1
+
+Global total time: 00:00:48 (48.64 sec), executed benchmarks: 1
+// * Artifacts cleanup *
+Artifacts cleanup is finished
