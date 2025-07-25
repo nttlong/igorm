@@ -10,16 +10,16 @@ public class HrDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySql(
-            "server=localhost;user=root;password=123456;database=dotenet_test_001;",
-            new MySqlServerVersion(new Version(8, 0, 34))
-        );
+        // optionsBuilder.UseMySql(
+        //     "server=localhost;user=root;password=123456;database=dotenet_test_001;",
+        //     new MySqlServerVersion(new Version(8, 0, 34))
+        // );
         // optionsBuilder.UseSqlServer(
         // "Server=localhost;Database=dotenet_test_001;User Id=sa;Password=123456;Encrypt=False"
         // );
-        // optionsBuilder.UseNpgsql(
-        //     "Host=localhost;Database=dotenet_test_001;Username=postgres;Password=123456"
-        // );
+        optionsBuilder.UseNpgsql(
+            "Host=localhost;Database=dotenet_test_001;Username=postgres;Password=123456"
+        );
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

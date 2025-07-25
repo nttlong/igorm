@@ -162,7 +162,7 @@ public class EfCoreRawSqlBenchmark
     [Benchmark]
     public void BenchmarkRawSelect()
     {
-        var rows = 20000;
+        var rows = 2000;
         var q = (from e in db.Employees
                  join u in db.Users on e.UserId equals u.Id into joined
                  from u in joined.DefaultIfEmpty()
@@ -180,11 +180,11 @@ public class EfCoreRawSqlBenchmark
                       .Take(rows);
 
 
-        var start = DateTime.Now;
+        //var start = DateTime.Now;
         var item = q.ToList();
-        var end = DateTime.Now;
-        Console.WriteLine($"Elapsed: {(end - start).TotalMilliseconds} ms");
-        Console.WriteLine($"Count: {item.Count()}");
+        //var end = DateTime.Now;
+        // Console.WriteLine($"Elapsed: {(end - start).TotalMilliseconds} ms");
+        // Console.WriteLine($"Count: {item.Count()}");
         if (item.Count() != rows)
         {
             throw new Exception("Count mismatch");

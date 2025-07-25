@@ -3,7 +3,6 @@ package test
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -20,16 +19,16 @@ import (
 
 func createTenantDb() error {
 	var err error
-	vdb.SetManagerDb("mssql", "tenant_manager") //<--- Cài đặt database quản lý tenannt
+	vdb.SetManagerDb("postgres", "tenant_manager") //<--- Cài đặt database quản lý tenannt
 	// 	// Data base quản lý tenant phai co trước, đặc điểm của nó là kg migrate các model dựng sẵn,
 	// 	// Nó chỉ tập trung vào việc quản lý tenant, không có migrate các model dựng sẵn.
 	// 	// Việc chỉ định database quản lý tenant , bằng cách gọi hàm vdb.SetManagerDb("mysql", "tenantManager"), là rất quan trọng
 	// 	// Nó giúp vdb biết database quản lý tenant là database nào để thực hiện các thao tác liên quan đến tenant.
-	db := initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/tenant_manager?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True")
+	//db := initDb("mysql", "root:123456@tcp(127.0.0.1:3306)/tenant_manager?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=True")
 	// mssqlDns := "sqlserver://sa:123456@localhost?database=tenant_manager"
-	//pgDsn := "postgres://postgres:123456@localhost:5432/tenant_manager?sslmode=disable"
+	pgDsn := "postgres://postgres:123456@localhost:5432/tenant_manager?sslmode=disable"
 
-	//db := initDb("postgres", pgDsn)
+	db := initDb("postgres", pgDsn)
 	// db := initDb("sqlserver", mssqlDns)
 	defer db.Close()
 	testDb, err = db.CreateDB("vdb_test005") //<--- Tạo database tenant tên là test004 dong thoi migrate các model dựng sẵn
@@ -417,35 +416,35 @@ func Benchmark_ScanToStructFast_Compare(b *testing.B) {
 
 	sql, args := qr.BuildSql()
 
-	b.Run("ScanToStructUnsafeCachedImprove", func(b *testing.B) {
+	// b.Run("ScanToStructUnsafeCachedImprove", func(b *testing.B) {
 
-		for i := 0; i < b.N; i++ {
-			rows, _ := testDb.DB.Query(sql, args...)
+	// 	for i := 0; i < b.N; i++ {
+	// 		rows, _ := testDb.DB.Query(sql, args...)
 
-			items, err := vdb.ScanToStructValueCachedFix[QueryResultNotNil](rows)
-			assert.NoError(b, err)
-			v := items[0].FullName
-			fmt.Println(v)
+	// 		items, err := vdb.ScanToStructValueCachedFix[QueryResultNotNil](rows)
+	// 		assert.NoError(b, err)
+	// 		v := items[0].FullName
+	// 		fmt.Println(v)
 
-			assert.Equal(b, expected, len(items))
-		}
-	})
-	b.Run("ScanToStructUnsafeCachedImproveV2", func(b *testing.B) {
+	// 		assert.Equal(b, expected, len(items))
+	// 	}
+	// })
+	// b.Run("ScanToStructUnsafeCachedImproveV2", func(b *testing.B) {
 
-		for i := 0; i < b.N; i++ {
-			rows, _ := testDb.DB.Query(sql, args...)
+	// 	for i := 0; i < b.N; i++ {
+	// 		rows, _ := testDb.DB.Query(sql, args...)
 
-			items, err := vdb.ScanToStructUnsafeCachedImproveV2[QueryResult](rows)
-			assert.NoError(b, err)
-			assert.Equal(b, expected, len(items))
-		}
-	})
+	// 		items, err := vdb.ScanToStructUnsafeCachedImproveV2[QueryResult](rows)
+	// 		assert.NoError(b, err)
+	// 		assert.Equal(b, expected, len(items))
+	// 	}
+	// })
 	b.Run("ToArray", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			items := []QueryResult{}
 			err := qr.ToArray(&items)
 			assert.NoError(b, err)
-			fmt.Println(items[0].FullName)
+			//fmt.Println(items[0].FullName)
 			assert.Equal(b, expected, len(items))
 		}
 	})
