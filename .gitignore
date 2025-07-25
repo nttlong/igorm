@@ -11,4 +11,5 @@ DISCARD
 KEYREGISTRY
 .mem
 vexample/cache.db
-chess\config.yaml
+chess/config.yaml
+vapi/internal/service/tmp/badger

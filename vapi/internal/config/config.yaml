@@ -1,0 +1,24 @@
+cacheType: badger
+
+redis:
+  nodes: "127.0.0.1:6379"
+  password: "yourpass"
+  prefixKey: "vapi:"
+  timeout: 5s
+  db: 0
+
+memcached:
+  nodes: "127.0.0.1:11211"
+
+badger:
+  path: "./tmp/badger"
+
+inmemory:
+  defaultTTL: 5m
+  cleanupInterval: 10m
+
+driverType: mysql
+
+database:
+  driver: "mysql"
+  dsn: "root:123456@tcp(localhost:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local&timeout=10s"

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\code\\go\\igorm\\vdotnet\\VDotnetOrmTest\\VDotnetOrmTest.csproj": {}
+    "D:\\code\\go\\news\\igorm\\vdotnet\\VDotnetOrmTest\\VDotnetOrmTest.csproj": {}
   },
   "projects": {
-    "D:\\code\\go\\igorm\\vdotnet\\VDotnetOrmTest\\VDotnetOrmTest.csproj": {
+    "D:\\code\\go\\news\\igorm\\vdotnet\\VDotnetOrmTest\\VDotnetOrmTest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\code\\go\\igorm\\vdotnet\\VDotnetOrmTest\\VDotnetOrmTest.csproj",
+        "projectUniqueName": "D:\\code\\go\\news\\igorm\\vdotnet\\VDotnetOrmTest\\VDotnetOrmTest.csproj",
         "projectName": "VDotnetOrmTest",
-        "projectPath": "D:\\code\\go\\igorm\\vdotnet\\VDotnetOrmTest\\VDotnetOrmTest.csproj",
+        "projectPath": "D:\\code\\go\\news\\igorm\\vdotnet\\VDotnetOrmTest\\VDotnetOrmTest.csproj",
         "packagesPath": "C:\\Users\\MSI CYBORG\\.nuget\\packages\\",
-        "outputPath": "D:\\code\\go\\igorm\\vdotnet\\VDotnetOrmTest\\obj\\",
+        "outputPath": "D:\\code\\go\\news\\igorm\\vdotnet\\VDotnetOrmTest\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\MSI CYBORG\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -1,6 +1,6 @@
 module vcache
 
-go 1.24.3
+go 1.24.5
 
 require (
 	github.com/bradfitz/gomemcache v0.0.0-20250403215159-8d39553ac7cf
