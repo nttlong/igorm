@@ -1,123 +1,151 @@
 package vdi_test
 
 import (
+	"reflect"
 	"testing"
-
-	vdi "vdi"
+	"unsafe"
+	"vdi"
 
 	"github.com/stretchr/testify/assert"
 )
 
-type Logger struct {
-	ID string
+type ConfigService struct {
+	path string
 }
 
-func BenchmarkTestScoped_ReuseWithinScope(b *testing.B) {
-	root := vdi.NewRootContainer()
-	root.RegisterScoped(func() *Logger {
-		return &Logger{ID: "scoped"}
+func NewConfigService(path string) *ConfigService {
+	return &ConfigService{path: path}
+}
+
+type AppContainer struct {
+	Config vdi.Singleton[AppContainer, *ConfigService]
+}
+
+func TestAppContainer(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		app, err := vdi.RegisterContainer(func(svc *AppContainer) error {
+			svc.Config.Init = func(owner *AppContainer) *ConfigService {
+				return NewConfigService("config.json")
+			}
+			return nil
+
+		})
+		a := app.Get()
+		f1 := a.Config.Get()
+		f2 := a.Config.Get()
+		assert.Same(t, f1, f2)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, app)
+	}
+
+}
+func BenchmarkTestAppContainer(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		app, err := vdi.RegisterContainer(func(svc *AppContainer) error {
+			svc.Config.Init = func(owner *AppContainer) *ConfigService {
+				return NewConfigService("config.json")
+			}
+			return nil
+
+		})
+		a := app.Get()
+		f1 := a.Config.Get()
+		f2 := a.Config.Get()
+		assert.Same(b, f1, f2)
+
+		assert.NoError(b, err)
+		assert.NotEmpty(b, app)
+	}
+
+}
+
+// A: Reuse singleton trong cùng container
+func BenchmarkTestAppContainer_ReuseSingleton(b *testing.B) {
+	type ConfigService struct {
+		Path string
+	}
+	type AppContainer struct {
+		Config vdi.Singleton[AppContainer, *ConfigService]
+	}
+	app, err := vdi.RegisterContainer(func(svc *AppContainer) error {
+		svc.Config.Init = func(owner *AppContainer) *ConfigService {
+			return &ConfigService{Path: "config.json"}
+		}
+		return nil
 	})
-	scope := root.CreateScope()
-	t := vdi.TypeOf[*Logger]()
+	assert.NoError(b, err)
+	container := app.Get()
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, _ = scope.ResolveByType(t)
+		cfg := container.Config.Get()
+		_ = cfg
 	}
 }
 
-func BenchmarkTestTransient_AlwaysNew(b *testing.B) {
-	root := vdi.NewRootContainer()
-	root.RegisterTransient(func() *Logger {
-		return &Logger{ID: "transient"}
+// B: Transient — khởi tạo mới mỗi lần gọi
+func BenchmarkTestTransient(b *testing.B) {
+	type TransientService struct {
+		ID int
+	}
+	factory := func() *TransientService {
+		return &TransientService{ID: 123}
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = factory()
+	}
+}
+
+// C: Nested singleton (ServiceA → ServiceB)
+func BenchmarkTestNestedSingleton(b *testing.B) {
+	type ServiceB struct {
+		Value string
+	}
+	type ServiceA struct {
+		B *ServiceB
+	}
+	type AppContainer struct {
+		B    vdi.Singleton[AppContainer, *ServiceB]
+		A    vdi.Singleton[AppContainer, *ServiceA]
+		Name string
+	}
+	app, err := vdi.RegisterContainer(func(svc *AppContainer) error {
+		svc.B.Init = func(owner *AppContainer) *ServiceB {
+			return &ServiceB{Value: "Hello"}
+		}
+		svc.A.Init = func(owner *AppContainer) *ServiceA {
+			return &ServiceA{B: owner.B.Get()}
+		}
+		return nil
 	})
-	scope := root.CreateScope()
-	t := vdi.TypeOf[*Logger]()
+	o1 := app.Get().A.Owner
+	o2 := app.Get().B.Owner
+	o3 := app.Get()
+	o3.Name = "test"
+
+	va := reflect.ValueOf(o1)
+	vb := reflect.ValueOf(o2)
+
+	// Lấy pointer bên trong nếu là pointer
+	if va.Kind() == reflect.Ptr {
+		va = va.Elem()
+	}
+	if vb.Kind() == reflect.Ptr {
+		vb = vb.Elem()
+	}
+	ptrA := unsafe.Pointer(va.UnsafeAddr())
+	ptrB := unsafe.Pointer(vb.UnsafeAddr())
+	print(ptrA == ptrB)
+
+	assert.NoError(b, err)
+
+	c := app.Get()
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, _ = scope.ResolveByType(t)
+		a := c.A.Get()
+		_ = a.B.Value
 	}
-}
-
-func TestSingleton_SameEverywhere(t *testing.T) {
-	root := vdi.NewRootContainer()
-	root.RegisterSingleton(func() *Logger {
-		return &Logger{ID: "singleton"}
-	})
-
-	scope1 := root.CreateScope()
-	scope2 := root.CreateScope()
-
-	l1, _ := scope1.ResolveByType(vdi.TypeOf[*Logger]())
-	l2, _ := scope2.ResolveByType(vdi.TypeOf[*Logger]())
-	l3, _ := root.ResolveByType(vdi.TypeOf[*Logger]())
-
-	assert.Same(t, l1, l2)
-	assert.Same(t, l1, l3)
-}
-func BenchmarkTestSingleton_SameEverywhere(t *testing.B) {
-	root := vdi.NewRootContainer()
-	root.RegisterSingleton(func() *Logger {
-		return &Logger{ID: "singleton"}
-	})
-	for i := 0; i < t.N; i++ {
-
-		scope1 := root.CreateScope()
-		scope2 := root.CreateScope()
-
-		l1, _ := scope1.ResolveByType(vdi.TypeOf[*Logger]())
-		l2, _ := scope2.ResolveByType(vdi.TypeOf[*Logger]())
-		l3, _ := root.ResolveByType(vdi.TypeOf[*Logger]())
-
-		assert.Same(t, l1, l2)
-		assert.Same(t, l1, l3)
-	}
-}
-func TestScoped_UniquePerScope(t *testing.T) {
-	root := vdi.NewRootContainer()
-	root.RegisterScoped(func() *Logger {
-		return &Logger{ID: "scoped"}
-	})
-
-	scope1 := root.CreateScope()
-	scope2 := root.CreateScope()
-
-	l1, _ := scope1.ResolveByType(vdi.TypeOf[*Logger]())
-	l2, _ := scope1.ResolveByType(vdi.TypeOf[*Logger]()) // same as l1
-	l3, _ := scope2.ResolveByType(vdi.TypeOf[*Logger]()) // different
-
-	assert.Same(t, l1, l2)
-	assert.NotSame(t, l1, l3)
-}
-func BenchmarkTestScoped_UniquePerScope(t *testing.B) {
-	root := vdi.NewRootContainer()
-	root.RegisterScoped(func() *Logger {
-		return &Logger{ID: "scoped"}
-	})
-	for i := 0; i < t.N; i++ {
-		scope1 := root.CreateScope()
-		scope2 := root.CreateScope()
-
-		l1, _ := scope1.ResolveByType(vdi.TypeOf[*Logger]())
-		l2, _ := scope1.ResolveByType(vdi.TypeOf[*Logger]()) // same as l1
-		l3, _ := scope2.ResolveByType(vdi.TypeOf[*Logger]()) // different
-
-		assert.Same(t, l1, l2)
-		assert.NotSame(t, l1, l3)
-	}
-}
-
-func TestTransient_AlwaysNew(t *testing.T) {
-	root := vdi.NewRootContainer()
-	root.RegisterTransient(func() *Logger {
-		return &Logger{ID: "transient"}
-	})
-
-	scope := root.CreateScope()
-
-	l1, _ := scope.ResolveByType(vdi.TypeOf[*Logger]())
-	l2, _ := scope.ResolveByType(vdi.TypeOf[*Logger]())
-
-	assert.NotSame(t, l1, l2)
 }

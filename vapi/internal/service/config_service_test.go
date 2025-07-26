@@ -13,3 +13,7 @@ func TestConfigService(t *testing.T) {
 	assert.Equal(t, "./tmp/badger", cfg.config.Badger.Path)
 
 }
+func TestCacheService_DI(t *testing.T) {
+	// root := vdi.NewRootContainer()
+
+}
