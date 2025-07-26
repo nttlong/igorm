@@ -2,7 +2,7 @@
 package vdi
 
 type Transient[TOwner any, T any] struct {
-	Value T
+	Value *T
 	Owner interface{}
 	Init  func(owner *TOwner) T
 }

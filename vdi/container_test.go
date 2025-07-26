@@ -1,6 +1,9 @@
 package vdi_test
 
 import (
+	"crypto/rand"
+	"fmt"
+	"math/big"
 	"reflect"
 	"testing"
 	"unsafe"
@@ -85,18 +88,6 @@ func BenchmarkTestAppContainer_ReuseSingleton(b *testing.B) {
 }
 
 // B: Transient — khởi tạo mới mỗi lần gọi
-func BenchmarkTestTransient(b *testing.B) {
-	type TransientService struct {
-		ID int
-	}
-	factory := func() *TransientService {
-		return &TransientService{ID: 123}
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_ = factory()
-	}
-}
 
 // C: Nested singleton (ServiceA → ServiceB)
 func BenchmarkTestNestedSingleton(b *testing.B) {
@@ -106,9 +97,14 @@ func BenchmarkTestNestedSingleton(b *testing.B) {
 	type ServiceA struct {
 		B *ServiceB
 	}
+	type ServiceC struct {
+		B *ServiceB
+	}
 	type AppContainer struct {
-		B    vdi.Singleton[AppContainer, *ServiceB]
-		A    vdi.Singleton[AppContainer, *ServiceA]
+		B vdi.Singleton[AppContainer, *ServiceB]
+		A vdi.Singleton[AppContainer, *ServiceA]
+		C vdi.Transient[AppContainer, *ServiceC]
+
 		Name string
 	}
 	app, err := vdi.RegisterContainer(func(svc *AppContainer) error {
@@ -122,6 +118,9 @@ func BenchmarkTestNestedSingleton(b *testing.B) {
 	})
 	o1 := app.Get().A.Owner
 	o2 := app.Get().B.Owner
+	o4 := app.Get().C.Owner
+	fmt.Println(o4)
+
 	o3 := app.Get()
 	o3.Name = "test"
 
@@ -135,8 +134,10 @@ func BenchmarkTestNestedSingleton(b *testing.B) {
 	if vb.Kind() == reflect.Ptr {
 		vb = vb.Elem()
 	}
+
 	ptrA := unsafe.Pointer(va.UnsafeAddr())
 	ptrB := unsafe.Pointer(vb.UnsafeAddr())
+
 	print(ptrA == ptrB)
 
 	assert.NoError(b, err)
@@ -147,5 +148,281 @@ func BenchmarkTestNestedSingleton(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		a := c.A.Get()
 		_ = a.B.Value
+	}
+}
+func TestTransition(t *testing.T) {
+	type ServiceB struct {
+		Value string
+	}
+	type ServiceA struct {
+		B *ServiceB
+	}
+	type ServiceC struct {
+		B *ServiceB
+	}
+	type AppContainer struct {
+		B vdi.Transient[AppContainer, *ServiceB]
+		A vdi.Transient[AppContainer, *ServiceA]
+
+		Name string
+	}
+	app, err := vdi.RegisterContainer(func(svc *AppContainer) error {
+		svc.B.Init = func(owner *AppContainer) *ServiceB {
+			return &ServiceB{Value: "Hello"}
+		}
+		svc.A.Init = func(owner *AppContainer) *ServiceA {
+			return &ServiceA{B: owner.B.Get()}
+		}
+		return nil
+	})
+	assert.NoError(t, err)
+	c := app.Get()
+	a := c.A.Get()
+	b := c.B.Get()
+	assert.Equal(t, "Hello", b.Value)
+	assert.Equal(t, "Hello", a.B.Value)
+	c.Name = "test"
+	assert.Equal(t, "test", c.Name)
+}
+func BenchmarkTestTransientA(b *testing.B) {
+	type Logger struct {
+		Owner interface{}
+		Value int
+	}
+
+	type AppContainer struct {
+		Log vdi.Transient[AppContainer, *Logger]
+	}
+
+	app, _ := vdi.RegisterContainer(func(c *AppContainer) error {
+		c.Log.Owner = c
+		c.Log.Init = func(owner *AppContainer) *Logger {
+			return &Logger{Value: 123}
+		}
+		return nil
+	})
+
+	c := app.Get()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		log := c.Log.Get()
+		_ = log.Value
+	}
+}
+
+func BenchmarkTestTransientB(b *testing.B) {
+	type Logger struct {
+		Value int
+	}
+
+	type AppContainer struct {
+		Log vdi.Transient[AppContainer, *Logger]
+	}
+
+	app, _ := vdi.RegisterContainer(func(c *AppContainer) error {
+		c.Log.Init = func(owner *AppContainer) *Logger {
+			return &Logger{Value: 456}
+		}
+		return nil
+	})
+
+	c := app.Get()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		log := c.Log.Get()
+		_ = log.Value
+	}
+}
+func BenchmarkTestTransientC(b *testing.B) {
+	type Logger struct {
+		ID int
+	}
+
+	type Service struct {
+		Log *Logger
+	}
+
+	type AppContainer struct {
+		Log     vdi.Transient[AppContainer, *Logger]
+		Service vdi.Transient[AppContainer, *Service]
+	}
+
+	app, _ := vdi.RegisterContainer(func(c *AppContainer) error {
+		c.Log.Init = func(owner *AppContainer) *Logger {
+			return &Logger{ID: 1}
+		}
+		c.Service.Init = func(owner *AppContainer) *Service {
+			return &Service{
+				Log: owner.Log.Get(),
+			}
+		}
+		return nil
+	})
+
+	c := app.Get()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		svc := c.Service.Get()
+		_ = svc.Log.ID
+	}
+}
+func BenchmarkTestTransientD(b *testing.B) {
+	type Config struct {
+		Name string
+	}
+
+	type Logger struct {
+		Config *Config
+	}
+
+	type Service struct {
+		Log *Logger
+	}
+
+	type AppContainer struct {
+		Config  vdi.Transient[AppContainer, *Config]
+		Log     vdi.Transient[AppContainer, *Logger]
+		Service vdi.Transient[AppContainer, *Service]
+	}
+
+	app, _ := vdi.RegisterContainer(func(c *AppContainer) error {
+		c.Config.Init = func(owner *AppContainer) *Config {
+			return &Config{Name: "default"}
+		}
+		c.Log.Init = func(owner *AppContainer) *Logger {
+			return &Logger{Config: owner.Config.Get()}
+		}
+		c.Service.Init = func(owner *AppContainer) *Service {
+			return &Service{Log: owner.Log.Get()}
+		}
+		return nil
+	})
+
+	c := app.Get()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		svc := c.Service.Get()
+		_ = svc.Log.Config.Name
+	}
+}
+func BenchmarkTestTransientE(b *testing.B) {
+	type Config struct {
+		Value string
+	}
+	type Logger struct {
+		Config *Config
+	}
+	type Repository struct {
+		Logger *Logger
+	}
+	type Service struct {
+		Repo *Repository
+	}
+	type Handler struct {
+		Service *Service
+	}
+
+	type AppContainer struct {
+		Config     vdi.Transient[AppContainer, *Config]
+		Logger     vdi.Transient[AppContainer, *Logger]
+		Repository vdi.Transient[AppContainer, *Repository]
+		Service    vdi.Transient[AppContainer, *Service]
+		Handler    vdi.Transient[AppContainer, *Handler]
+	}
+
+	app, _ := vdi.RegisterContainer(func(c *AppContainer) error {
+		c.Config.Init = func(owner *AppContainer) *Config {
+			return &Config{Value: "deep"}
+		}
+		c.Logger.Init = func(owner *AppContainer) *Logger {
+			return &Logger{Config: owner.Config.Get()}
+		}
+		c.Repository.Init = func(owner *AppContainer) *Repository {
+			return &Repository{Logger: owner.Logger.Get()}
+		}
+		c.Service.Init = func(owner *AppContainer) *Service {
+			return &Service{Repo: owner.Repository.Get()}
+		}
+		c.Handler.Init = func(owner *AppContainer) *Handler {
+			return &Handler{Service: owner.Service.Get()}
+		}
+		return nil
+	})
+
+	c := app.Get()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		h := c.Handler.Get()
+		_ = h.Service.Repo.Logger.Config.Value
+	}
+}
+func BenchmarkMixedInjection(b *testing.B) {
+	type Config struct {
+		Name string
+	}
+
+	type Logger struct {
+		Config *Config
+	}
+
+	type DbContext struct {
+		ID big.Int
+	}
+
+	type Repository struct {
+		Db  *DbContext
+		Log *Logger
+	}
+
+	type Service struct {
+		Repo *Repository
+	}
+
+	type AppContainer struct {
+		Config  vdi.Singleton[AppContainer, *Config]
+		Logger  vdi.Singleton[AppContainer, *Logger]
+		Context vdi.Scoped[AppContainer, *DbContext]
+		Repo    vdi.Transient[AppContainer, *Repository]
+		Svc     vdi.Transient[AppContainer, *Service]
+	}
+
+	root, _ := vdi.RegisterContainer(func(c *AppContainer) error {
+		c.Config.Init = func(owner *AppContainer) *Config {
+			return &Config{Name: "app"}
+		}
+		c.Logger.Init = func(owner *AppContainer) *Logger {
+			return &Logger{Config: owner.Config.Get()}
+		}
+		c.Context.Init = func(owner *AppContainer) *DbContext {
+			val, _ := rand.Prime(rand.Reader, 128)
+			return &DbContext{ID: *val}
+		}
+		c.Repo.Init = func(owner *AppContainer) *Repository {
+			return &Repository{
+				Db:  owner.Context.Get(),
+				Log: owner.Logger.Get(),
+			}
+		}
+		c.Svc.Init = func(owner *AppContainer) *Service {
+			return &Service{
+				Repo: owner.Repo.Get(),
+			}
+		}
+		return nil
+	})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		// Mỗi vòng lặp tạo 1 container mới => mô phỏng scope mới
+		c := root.Get()
+
+		svc := c.Svc.Get()
+		_ = svc.Repo.Db.ID
+		_ = svc.Repo.Log.Config.Name
 	}
 }
