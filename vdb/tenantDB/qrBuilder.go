@@ -1,6 +1,7 @@
 package tenantDB
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 )
@@ -225,6 +226,18 @@ type onBuildSQLFirstItem func(typ reflect.Type, db *TenantDB, filter string) (st
 var OnBuildSQLFirstItem onBuildSQLFirstItem
 
 func (db *TenantDB) First(entity interface{}, filter string, args ...interface{}) error {
+	typ := reflect.TypeOf(entity)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	sql, err := OnBuildSQLFirstItem(typ, db, filter)
+	if err != nil {
+		return err
+	}
+	return db.ExecToItem(entity, sql, args...)
+
+}
+func (db *TenantDB) FirstWithContext(context context.Context, entity interface{}, filter string, args ...interface{}) error {
 	typ := reflect.TypeOf(entity)
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()

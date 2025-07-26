@@ -1,6 +1,7 @@
 package tenantDB
 
 import (
+	"context"
 	"database/sql"
 
 	"fmt"
@@ -14,6 +15,19 @@ type onGetMapIndex func(typ reflect.Type) map[string][]int
 
 var OnGetMapIndex onGetMapIndex
 
+func (db *TenantDB) ExecToItemWithContext(context context.Context, result interface{}, query string, args ...interface{}) error {
+	if result == nil {
+		return fmt.Errorf("result must not be nil")
+	}
+	typ := reflect.TypeOf(result)
+	if typ.Kind() != reflect.Ptr {
+		return fmt.Errorf("result must be a pointer to struct")
+	}
+	typ = typ.Elem()
+	mapIndex := OnGetMapIndex(typ)
+
+	return execToItemOptimized(context, db, result, &mapIndex, query, args...)
+}
 func (db *TenantDB) ExecToItem(result interface{}, query string, args ...interface{}) error {
 	if result == nil {
 		return fmt.Errorf("result must not be nil")
@@ -25,7 +39,7 @@ func (db *TenantDB) ExecToItem(result interface{}, query string, args ...interfa
 	typ = typ.Elem()
 	mapIndex := OnGetMapIndex(typ)
 
-	return execToItemOptimized(db, result, &mapIndex, query, args...)
+	return execToItemOptimized(context.Background(), db, result, &mapIndex, query, args...)
 }
 func (db *TenantDB) ExecToArray(result interface{}, query string, args ...interface{}) error {
 	if result == nil {
@@ -269,7 +283,7 @@ type execToItemOptimizedErrorNotFound func() error
 
 var ExecToItemOptimizedErrorNotFound execToItemOptimizedErrorNotFound
 
-func execToItemOptimized(db *TenantDB, result interface{}, mapIndex *map[string][]int, query string, args ...interface{}) error {
+func execToItemOptimized(context context.Context, db *TenantDB, result interface{}, mapIndex *map[string][]int, query string, args ...interface{}) error {
 	ptrVal := reflect.ValueOf(result)
 	if ptrVal.Kind() != reflect.Ptr {
 		return fmt.Errorf("result must be a pointer to slice")
@@ -285,7 +299,7 @@ func execToItemOptimized(db *TenantDB, result interface{}, mapIndex *map[string]
 	if err != nil {
 		return err
 	}
-	rows, err := stm.Query(args...)
+	rows, err := stm.QueryContext(context, args...)
 	if err != nil {
 		return err
 	}

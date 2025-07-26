@@ -1,4 +1,4 @@
-package service
+package config
 
 import (
 	"fmt"
@@ -29,6 +29,11 @@ type InMemory struct {
 	DefaultTTL      time.Duration `mapstructure:"defaultTTL"`
 	CleanupInterval time.Duration `mapstructure:"cleanupInterval"`
 }
+type Database struct {
+	Dsn     string `mapstructure:"dsn"`
+	Driver  string `mapstructure:"driver"`
+	Manager string `mapstructure:"manager"`
+}
 
 type AppConfig struct {
 	CacheType string    `mapstructure:"cacheType"` // redis | memcached | badger | inmemory
@@ -36,6 +41,7 @@ type AppConfig struct {
 	Memcached Memcached `mapstructure:"memcached"`
 	Badger    Badger    `mapstructure:"badger"`
 	InMemory  InMemory  `mapstructure:"inmemory"`
+	Database  Database  `mapstructure:"database"`
 
 	// Future: Add database config here
 }

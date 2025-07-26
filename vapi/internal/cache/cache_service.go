@@ -1,19 +1,12 @@
-package service
+package cache
 
 import (
 	"fmt"
+	"vapi/internal/config"
 	"vcache"
 )
 
-type CacheService interface {
-	Get() vcache.Cache
-}
-
-type cacheServiceImpl struct {
-	cache vcache.Cache
-}
-
-func NewCacheService(cfg *ConfigService) (CacheService, error) {
+func NewCacheService(cfg *config.ConfigService) (vcache.Cache, error) {
 	c := (*cfg).Get()
 
 	switch c.CacheType {
@@ -23,30 +16,26 @@ func NewCacheService(cfg *ConfigService) (CacheService, error) {
 			redis.Nodes, redis.Password, redis.PrefixKey,
 			redis.DB, redis.Timeout,
 		)
-		return &cacheServiceImpl{cache: cache}, nil
+		return cache, nil
 
 	case "memcached":
-		return &cacheServiceImpl{cache: vcache.NewMemcachedCache(c.Memcached.Nodes, c.Memcached.PrefixKey)}, nil
+		return vcache.NewMemcachedCache(c.Memcached.Nodes, c.Memcached.PrefixKey), nil
 
 	case "badger":
 		cache, err := vcache.NewBadgerCache(c.Badger.Path, c.Badger.PrefixKey)
 		if err != nil {
 			return nil, err
 		}
-		return &cacheServiceImpl{cache: cache}, nil
+		return cache, nil
 
 	case "inmemory":
 		cache := vcache.NewInMemoryCache(
 			c.InMemory.DefaultTTL,
 			c.InMemory.CleanupInterval,
 		)
-		return &cacheServiceImpl{cache: cache}, nil
+		return cache, nil
 
 	default:
 		return nil, fmt.Errorf("unsupported cache type: %s", c.CacheType)
 	}
-}
-
-func (s *cacheServiceImpl) Get() vcache.Cache {
-	return s.cache
 }

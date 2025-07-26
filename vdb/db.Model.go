@@ -1,6 +1,7 @@
 package vdb
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"reflect"
@@ -12,6 +13,7 @@ import (
 )
 
 type dbModel struct {
+	context     context.Context
 	db          *TenantDB
 	tableName   string
 	cols        *[]migrate.ColumnDef
@@ -91,6 +93,10 @@ func (db *TenantDB) Model(model interface{}) *dbModel {
 		mapCols:   &modelInfo.mapCols,
 	}
 
+}
+func (m *dbModel) Context(context context.Context) *dbModel {
+	m.context = context
+	return m
 }
 func (m *dbModel) Where(expr string, args ...interface{}) *dbModel {
 	m.where = expr
@@ -312,11 +318,21 @@ func (m *dbModel) updateFieldAndValue(field string, value interface{}) (sql.Resu
 
 		args := fn.args
 		args = append(args, m.whereArgs...)
-		r, err := m.db.Exec(sql, args...)
-		if err != nil {
-			return nil, "", err
+		if m.context != nil {
+			ctx, cancel := context.WithTimeout(m.context, 5*time.Second)
+			defer cancel()
+			r, err := m.db.ExecContext(ctx, sql, args...)
+			if err != nil {
+				return nil, "", err
+			}
+			return r, sql, nil
+		} else {
+			r, err := m.db.Exec(sql, args...)
+			if err != nil {
+				return nil, "", err
+			}
+			return r, sql, nil
 		}
-		return r, sql, nil
 
 	}
 	sql, err := m.BuildSql()
@@ -326,8 +342,15 @@ func (m *dbModel) updateFieldAndValue(field string, value interface{}) (sql.Resu
 
 	args := []interface{}{value}
 	args = append(args, m.whereArgs...)
-	r, err := m.db.Exec(sql, args...)
-	return r, sql, err
+	if m.context != nil {
+		ctx, cancel := context.WithTimeout(m.context, 5*time.Second)
+		defer cancel()
+		r, err := m.db.ExecContext(ctx, sql, args...)
+		return r, sql, err
+	} else {
+		r, err := m.db.Exec(sql, args...)
+		return r, sql, err
+	}
 
 }
 func (m *dbModel) parseUPdateError(result sql.Result, sql string, err error) UpdateResult {

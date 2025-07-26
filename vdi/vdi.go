@@ -167,7 +167,7 @@ func (u *unvsdiUtils) getCurrentPackage() string {
 	return u.currentPackage
 }
 func (u *unvsdiUtils) isInjector(field reflect.StructField) bool {
-	fmt.Println(field.Type.PkgPath())
+
 	if field.Type.PkgPath() != u.getCurrentPackage() {
 		return false
 	}

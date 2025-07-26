@@ -38,11 +38,12 @@ type initCreateDBNoCache struct {
 	once sync.Once
 	dsn  string
 	err  error
+	db   *TenantDB
 }
 
 var cacheCreateDB = sync.Map{}
 
-func (db *TenantDB) createDBNoCache(dbName string) (string, error) {
+func (db *TenantDB) createDBNoCache(dbName string) (string, *TenantDB, error) {
 	key := fmt.Sprintf("%s:%s", dbName, db.GetDbType())
 	actual, _ := cacheCreateDB.LoadOrStore(key, &initCreateDBNoCache{})
 	init := actual.(*initCreateDBNoCache)
@@ -50,24 +51,41 @@ func (db *TenantDB) createDBNoCache(dbName string) (string, error) {
 
 		dialect := dialectFactory.create(db.GetDriverName())
 		dsn, err := dialect.NewDataBase(db.DB, db.dsn, dbName)
+		if err != nil {
+			init.err = err
+			return
+		}
 		init.dsn = dsn
-		init.err = err
+		ret, err := Open(db.GetDriverName(), dsn)
+		if err != nil {
+			init.err = err
+			return
+		}
+		init.db = ret
+
 	})
-	return init.dsn, init.err
+	return init.dsn, init.db, init.err
 
 }
-func (db *TenantDB) CreateDB(dbName string) (*TenantDB, error) {
-	dialect := dialectFactory.create(db.GetDriverName())
-	dsn, err := dialect.NewDataBase(db.DB, db.dsn, dbName)
-	if err != nil {
-		return nil, err
-	}
-	ret, err := Open(db.GetDriverName(), dsn)
-	if err != nil {
-		return nil, err
-	}
 
-	return ret, nil
+func (db *TenantDB) CreateDB(dbName string) (*TenantDB, error) {
+	_, tenantDb, err := db.createDBNoCache(dbName)
+	if err != nil {
+		return nil, err
+	}
+	return tenantDb, nil
+
+	// dialect := dialectFactory.create(db.GetDriverName())
+	// dsn, err := dialect.NewDataBase(db.DB, db.dsn, dbName)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// ret, err := Open(db.GetDriverName(), dsn)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return ret, nil
 }
 
 //	type Model struct {
