@@ -4,7 +4,6 @@ import (
 	"context"
 	"vapi/internal/cache"
 	"vapi/internal/config"
-	ctxSvc "vapi/internal/context_service"
 	"vapi/internal/dbcontext"
 	"vapi/internal/security"
 	"vapi/internal/tenant"
@@ -14,70 +13,102 @@ import (
 )
 
 type AppContainer struct {
-	vdi.Container[AppContainer]
-	Config         vdi.Singleton[AppContainer, *config.ConfigService]
-	Cache          vdi.Singleton[AppContainer, vcache.Cache]
-	DbContext      vdi.Singleton[AppContainer, *dbcontext.DbContext]
-	Tenant         vdi.Singleton[AppContainer, *tenant.TenantService]
-	Context        vdi.Transient[AppContainer, *ctxSvc.ContextService]
-	Security       vdi.Transient[AppContainer, *security.SecurityPolicyService]
-	resovleContext func() context.Context
-}
+	*vdi.Container[AppContainer]
+	Config    vdi.Singleton[AppContainer, *config.ConfigService]
+	Cache     vdi.Singleton[AppContainer, vcache.Cache]
+	Db        vdi.Singleton[AppContainer, *vdb.TenantDB]
+	CtxSvc    vdi.Transient[AppContainer, context.Context]
+	DbService vdi.Singleton[AppContainer, *dbcontext.DbContext]
+	TenantDb  vdi.Singleton[AppContainer, *tenant.TenantService]
 
-func (c *AppContainer) ResovleContext(fn func() context.Context) error {
-	c.resovleContext = fn
-	return nil
+	Security      vdi.Singleton[AppContainer, *security.SecurityPolicyService]
+	GetContext    func() context.Context
+	GetDb         func() *vdb.TenantDB
+	GetTenantName func() string
 }
 
 // Hàm khởi tạo và đăng ký tất cả dịch vụ
-func NewAppContainer() (*AppContainer, error) {
-	app, err := vdi.RegisterContainer(func(c *AppContainer) error {
-		c.Config.Init = func(owner *AppContainer) *config.ConfigService {
-			cfg, err := config.NewConfigService("./../config/config.yaml")
+func GetAppContainer(
+	configPath string,
+
+) *AppContainer {
+	c := (&AppContainer{}).New(func(svc *AppContainer) error {
+		var err error
+		svc.DbService.Init = func(owner *AppContainer) *dbcontext.DbContext {
+			ret := &dbcontext.DbContext{}
+			driver := svc.Config.Get().Get().Database.Driver
+			dsn := svc.Config.Get().Get().Database.Dsn
+			manager := svc.Config.Get().Get().Database.Manager
+			vdb.SetManagerDb(driver, manager)
+			db, err := vdb.Open(driver, dsn)
 			if err != nil {
-				panic(err)
-			}
-			return cfg
-		}
-		c.Cache.Init = func(owner *AppContainer) vcache.Cache {
-			cache, err := cache.NewCacheService(c.Config.Get())
-			if err != nil {
+				svc.Error = err
 				return nil
 			}
-			return cache
+			ret.DB = db
+			return ret
 		}
-		c.DbContext.Init = func(owner *AppContainer) *dbcontext.DbContext {
-			db, err := dbcontext.NewDbContext(c.Config.Get())
+		svc.TenantDb.Init = func(owner *AppContainer) *tenant.TenantService {
+			ret := &tenant.TenantService{}
+			ret.Db = svc.Db.Get()
+
+			return ret
+		}
+		svc.Db.Init = func(owner *AppContainer) *vdb.TenantDB {
+			driver := svc.Config.Get().Get().Database.Driver
+			dsn := svc.Config.Get().Get().Database.Dsn
+			manager := svc.Config.Get().Get().Database.Manager
+			vdb.SetManagerDb(driver, manager)
+			db, err := vdb.Open(driver, dsn)
+			if err != nil {
+				svc.Error = err
+				return nil
+			}
+
+			return db
+		}
+		svc.Config.Init = func(owner *AppContainer) *config.ConfigService {
+			ret := &config.ConfigService{}
+			ret.New(configPath)
+			return ret
+
+		}
+
+		svc.Cache.Init = func(owner *AppContainer) vcache.Cache {
+
+			ret, err := cache.NewCacheService(svc.Config.Get())
+			if err != nil {
+
+				panic(err)
+			}
+			return ret
+		}
+		svc.Security.Init = func(owner *AppContainer) *security.SecurityPolicyService {
+			if svc.GetContext == nil {
+				panic("GetContext is not set")
+			}
+
+			ret := &security.SecurityPolicyService{}
+			ret.Cache = svc.Cache.Get()
+			ret.GetDb = svc.GetDb
+			ret.GetCtx = svc.GetContext
+			return ret
+		}
+		svc.GetDb = func() *vdb.TenantDB {
+			if svc.GetTenantName == nil {
+				panic("GetTenantName is not set")
+			}
+
+			tenantName := svc.GetTenantName()
+			ret, err := svc.TenantDb.Get().Tenant(tenantName)
 			if err != nil {
 				panic(err)
 			}
-			return db
-		}
-		c.Tenant.Init = func(owner *AppContainer) *tenant.TenantService {
-			config := c.Config.Get()
-
-			return tenant.NewTenantService(c.DbContext.Get().DB, config.Get().Database.Manager)
-		}
-		c.Context.Init = func(owner *AppContainer) *ctxSvc.ContextService {
-			ret := ctxSvc.NewContextService(owner.resovleContext())
-
 			return ret
-		}
-		c.Security.Init = func(owner *AppContainer) *security.SecurityPolicyService {
-			ret := security.NewSecurityPolicyService(
 
-				func() context.Context {
-					return c.Context.Get().Ctx
-				}(),
-				c.Cache.Get(),
-				func() *vdb.TenantDB {
-					return c.DbContext.Get().DB
-				}(),
-			)
-
-			return ret
 		}
-		return nil
+		return err
 	})
-	return app.Get(), err
+
+	return c
 }
