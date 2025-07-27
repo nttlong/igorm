@@ -142,3 +142,21 @@ func BenchmarkTestCheckPassword(b *testing.B) {
 
 	}
 }
+func BenchmarkTestLogin(b *testing.B) {
+	c := GetAppContainer("../config/config.yaml")
+	assert.NoError(b, c.Error)
+	assert.IsType(b, &AppContainer{}, c)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		c.GetContext = func() context.Context {
+			return b.Context()
+		}
+		c.GetTenantName = func() string {
+			return "tenant1"
+		}
+		r, err := c.AccountSvc.Get().Login("testuser", "testpassword")
+		assert.NoError(b, err)
+		assert.NotNil(b, r)
+
+	}
+}

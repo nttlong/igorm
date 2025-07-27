@@ -57,21 +57,22 @@ func (e *ErrAccountLocked) Error() string {
 	return "account locked"
 }
 
-func (s *AccountService) Login(tenantID, username, password string) (*LoginResult, error) {
+func (s *AccountService) Login(username, password string) (*LoginResult, error) {
 	ctx := s.GetCtx()
-
+	tenantID := s.GetDb().GetDBName()
 	// 1. Tìm account
 	account := &models.Account{}
-	err := s.GetDb().FirstWithContext(ctx, account, "tenant_id = ? AND username = ?", tenantID, username)
+	err := s.GetDb().FirstWithContext(ctx, account, "username = ?", username)
 	if err != nil {
-		if errors.As(err, &vdb.ErrRecordNotFound{}) {
+		var nfErr *vdb.ErrRecordNotFound
+		if errors.As(err, &nfErr) {
 			return nil, &ErrInvalidCredentials{Err: err}
 		}
 		return nil, err
 	}
 
 	// 2. Kiểm tra có bị khóa không
-	lockKey := fmt.Sprintf("lock:%s:%s", tenantID, username)
+	lockKey := fmt.Sprintf("lock:%s:%s", s.GetDb().GetDBName(), username)
 
 	if locked, _ := s.Cache.GetBool(ctx, lockKey); locked {
 		return nil, &ErrAccountLocked{Err: err}
@@ -108,7 +109,7 @@ func (s *AccountService) Login(tenantID, username, password string) (*LoginResul
 	if err != nil {
 		return nil, err
 	}
-	token, err := s.JwtSvc.GenerateToken(account.ID, tenantID, policy.JwtSecret, time.Minute*time.Duration(policy.JwtExpireMinutes))
+	token, err := s.JwtSvc.GenerateToken(account.UserID, tenantID, policy.JwtSecret, time.Minute*time.Duration(policy.JwtExpireMinutes))
 	if err != nil {
 		return nil, err
 	}

@@ -12,11 +12,11 @@ func NewJWTService() *DefaultJWTService {
 	return &DefaultJWTService{}
 }
 
-func (s *DefaultJWTService) GenerateToken(accountID int, tenantID string, secret string, expiry time.Duration) (string, error) {
+func (s *DefaultJWTService) GenerateToken(userId string, tenantID string, secret string, expiry time.Duration) (string, error) {
 	now := time.Now()
 	claims := TokenClaims{
-		AccountID: accountID,
-		TenantID:  tenantID,
+		UserId:   userId,
+		TenantID: tenantID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(expiry)),

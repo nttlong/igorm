@@ -7,12 +7,12 @@ import (
 )
 
 type TokenClaims struct {
-	AccountID int    `json:"account_id"`
-	TenantID  string `json:"tenant_id"`
+	UserId   string `json:"user_id"`
+	TenantID string `json:"tenant_id"`
 	jwt.RegisteredClaims
 }
 
 type JWTService interface {
-	GenerateToken(accountID int, tenantID string, secret string, expiry time.Duration) (string, error)
+	GenerateToken(userId string, tenantID string, secret string, expiry time.Duration) (string, error)
 	VerifyToken(tokenString string, secret string) (*TokenClaims, error)
 }
