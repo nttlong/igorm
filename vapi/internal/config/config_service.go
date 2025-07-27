@@ -50,6 +50,23 @@ type ConfigService struct {
 	config *AppConfig
 }
 
+func (cs *ConfigService) New(configFilePath string) error {
+	v := viper.New()
+	v.SetConfigFile(configFilePath)
+	v.SetConfigType("yaml")
+
+	if err := v.ReadInConfig(); err != nil {
+		return fmt.Errorf("failed to read config: %w", err)
+	}
+
+	var c AppConfig
+	if err := v.Unmarshal(&c); err != nil {
+		return fmt.Errorf("failed to unmarshal config: %w", err)
+	}
+	cs.config = &c
+
+	return nil
+}
 func NewConfigService(configFilePath string) (*ConfigService, error) {
 	v := viper.New()
 	v.SetConfigFile(configFilePath)

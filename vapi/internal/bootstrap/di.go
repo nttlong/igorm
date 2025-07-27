@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"context"
 	"vapi/internal/cache"
 	"vapi/internal/config"
 	ctxSvc "vapi/internal/context_service"
@@ -8,16 +9,24 @@ import (
 	"vapi/internal/security"
 	"vapi/internal/tenant"
 	"vcache"
+	"vdb"
 	"vdi"
 )
 
 type AppContainer struct {
-	Config    vdi.Singleton[AppContainer, *config.ConfigService]
-	Cache     vdi.Singleton[AppContainer, vcache.Cache]
-	DbContext vdi.Singleton[AppContainer, *dbcontext.DbContext]
-	Tenant    vdi.Singleton[AppContainer, *tenant.TenantService]
-	Context   vdi.Transient[AppContainer, *ctxSvc.ContextService]
-	Security  vdi.Transient[AppContainer, *security.SecurityPolicyService]
+	vdi.Container[AppContainer]
+	Config         vdi.Singleton[AppContainer, *config.ConfigService]
+	Cache          vdi.Singleton[AppContainer, vcache.Cache]
+	DbContext      vdi.Singleton[AppContainer, *dbcontext.DbContext]
+	Tenant         vdi.Singleton[AppContainer, *tenant.TenantService]
+	Context        vdi.Transient[AppContainer, *ctxSvc.ContextService]
+	Security       vdi.Transient[AppContainer, *security.SecurityPolicyService]
+	resovleContext func() context.Context
+}
+
+func (c *AppContainer) ResovleContext(fn func() context.Context) error {
+	c.resovleContext = fn
+	return nil
 }
 
 // Hàm khởi tạo và đăng ký tất cả dịch vụ
@@ -50,11 +59,22 @@ func NewAppContainer() (*AppContainer, error) {
 			return tenant.NewTenantService(c.DbContext.Get().DB, config.Get().Database.Manager)
 		}
 		c.Context.Init = func(owner *AppContainer) *ctxSvc.ContextService {
-			return ctxSvc.NewContextService()
+			ret := ctxSvc.NewContextService(owner.resovleContext())
+
+			return ret
 		}
 		c.Security.Init = func(owner *AppContainer) *security.SecurityPolicyService {
-			ret := security.NewSecurityPolicyService(c.Cache.Get(), c.DbContext.Get().DB)
-			ret.CtxSvc = c.Context.Get()
+			ret := security.NewSecurityPolicyService(
+
+				func() context.Context {
+					return c.Context.Get().Ctx
+				}(),
+				c.Cache.Get(),
+				func() *vdb.TenantDB {
+					return c.DbContext.Get().DB
+				}(),
+			)
+
 			return ret
 		}
 		return nil

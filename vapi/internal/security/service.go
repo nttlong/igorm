@@ -1,51 +1,55 @@
 package security
 
 import (
-	ctxSvc "vapi/internal/context_service"
+	"context"
 	"vapi/internal/security/models"
 	"vcache"
 	"vdb"
 )
 
 type SecurityPolicyService struct {
-	Cache  vcache.Cache
-	DB     *vdb.TenantDB
-	CtxSvc *ctxSvc.ContextService
+	Cache vcache.Cache
+	Db    *vdb.TenantDB
+	Ctx   context.Context
 }
 
-const cachePrefix = "security:policy:"
-
-func NewSecurityPolicyService(cache vcache.Cache, db *vdb.TenantDB) *SecurityPolicyService {
+func NewSecurityPolicyService(
+	ctx context.Context,
+	cache vcache.Cache,
+	db *vdb.TenantDB,
+) *SecurityPolicyService {
 	return &SecurityPolicyService{
 		Cache: cache,
-		DB:    db,
+		Ctx:   ctx,
+		Db:    db,
 	}
+
 }
 
 func (s *SecurityPolicyService) GetPolicy(tenantID string) (*models.SecurityPolicy, error) {
 	// Check cache
 	data := &models.SecurityPolicy{}
 
-	if s.Cache.Get(s.CtxSvc.GetContext(), tenantID, data) {
+	if s.Cache.Get(s.Ctx, tenantID, data) {
 		return data, nil
 	}
 
 	// Query DB
 
-	err := s.DB.First(&data, "tenant_id = ?", tenantID)
+	err := s.Db.First(&data, "tenant_id = ?", tenantID)
 	if err != nil {
 		return nil, err
 	}
 
 	// Cache lại
-	s.Cache.Set(s.CtxSvc.GetContext(), tenantID, data, 0)
+	s.Cache.Set(s.Ctx, tenantID, data, 0)
 	return data, nil
 }
 
 func (s *SecurityPolicyService) SetJwtSecret(tenantID, newSecret string) error {
 	// Cập nhật trong DB
-	err := s.DB.Model(&models.SecurityPolicy{}).
-		Context(s.CtxSvc.GetContext()).
+	err := s.Db.Model(&models.SecurityPolicy{}).
+		Context(s.Ctx).
 		Where("tenant_id = ?", tenantID).
 		Update("jwt_secret", newSecret).Error
 	if err != nil {
@@ -53,22 +57,28 @@ func (s *SecurityPolicyService) SetJwtSecret(tenantID, newSecret string) error {
 	}
 
 	// Xoá cache để lần sau load lại
-	s.Cache.Delete(s.CtxSvc.GetContext(), tenantID)
+	s.Cache.Delete(s.Ctx, tenantID)
 	return nil
 }
 
 func (s *SecurityPolicyService) CreateOrUpdate(policy *models.SecurityPolicy) error {
-	// Nếu đã tồn tại thì cập nhật
+	ctx := s.Ctx
 	existing := &models.SecurityPolicy{}
-	err := s.DB.FirstWithContext(s.CtxSvc.GetContext(), existing, "tenant_id = ?", policy.TenantID)
-	if err == nil {
-		policy.ID = existing.ID
-		rs := s.DB.Update(&policy)
-		if rs.Error != nil {
-			return rs.Error
+
+	err := s.Db.FirstWithContext(ctx, existing, "tenant_id = ?", policy.TenantID)
+	if err != nil {
+		if _, ok := err.(*vdb.ErrRecordNotFound); ok {
+			// Không tồn tại -> tạo mới
+			return s.Db.Insert(policy)
 		}
-		return nil
+		// Lỗi khác
+		return err
 	}
-	// Không tồn tại thì tạo mới
-	return s.DB.Insert(policy)
+
+	// Đã tồn tại -> cập nhật
+	policy.ID = existing.ID
+	if rs := s.Db.Update(policy); rs.Error != nil {
+		return rs.Error
+	}
+	return nil
 }

@@ -7,12 +7,16 @@ import (
 )
 
 type Singleton[TOwner any, T any] struct {
-	Value T
+	value T
 	Owner interface{}
 	Init  func(owner *TOwner) T
 	once  sync.Once
 }
 
+func (s *Singleton[TOwner, T]) Set(value T) {
+	s.value = value
+
+}
 func (s *Singleton[TOwner, T]) Get() T {
 	if s.Owner == nil {
 		panic("Singleton[TOwner, T] requires an owner")
@@ -20,7 +24,7 @@ func (s *Singleton[TOwner, T]) Get() T {
 	s.once.Do(func() {
 		typ := reflect.TypeOf(s.Owner)
 		if typ.Kind() == reflect.Ptr {
-			s.Value = s.Init(s.Owner.(*TOwner))
+			s.value = s.Init(s.Owner.(*TOwner))
 		} else {
 			owner := s.Owner.(TOwner)
 			if s.Init == nil {
@@ -28,9 +32,9 @@ func (s *Singleton[TOwner, T]) Get() T {
 				valType := reflect.TypeFor[T]()
 				panic(fmt.Errorf("Singleton[%s, %s] requires an Init function", ownerType.String(), valType.String()))
 			}
-			s.Value = s.Init(&owner)
+			s.value = s.Init(&owner)
 		}
 
 	})
-	return s.Value
+	return s.value
 }

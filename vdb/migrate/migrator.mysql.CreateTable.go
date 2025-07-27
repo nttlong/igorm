@@ -3,7 +3,6 @@ package migrate
 import (
 	"fmt"
 	"reflect"
-	"strconv"
 	"strings"
 )
 
@@ -61,12 +60,13 @@ func (m *migratorMySql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 		}
 
 		if col.Default != "" {
-			_, err := strconv.Atoi(col.Default)
-			if err == nil {
+			if typeUtils.isFloatNumber(col.Default) {
 				colDef += fmt.Sprintf(" DEFAULT %s", col.Default)
-				continue
-			}
-			if val, ok := defaultValueByFromDbTag[col.Default]; ok {
+
+			} else if typeUtils.isNumber(col.Default) {
+				colDef += fmt.Sprintf(" DEFAULT %s", col.Default)
+
+			} else if val, ok := defaultValueByFromDbTag[col.Default]; ok {
 				colDef += fmt.Sprintf(" DEFAULT %s", val)
 			} else {
 				panic(fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s", col.Default, reflect.TypeOf(m).Elem()))

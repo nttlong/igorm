@@ -52,7 +52,13 @@ func (m *migratorMySql) GetSqlAddColumn(typ reflect.Type) (string, error) {
 			}
 
 			if col.Default != "" {
-				if val, ok := defaultValueByFromDbTag[col.Default]; ok {
+				if typeUtils.isFloatNumber(col.Default) {
+					colDef += fmt.Sprintf(" DEFAULT %s", col.Default)
+
+				} else if typeUtils.isNumber(col.Default) {
+					colDef += fmt.Sprintf(" DEFAULT %s", col.Default)
+
+				} else if val, ok := defaultValueByFromDbTag[col.Default]; ok {
 					colDef += fmt.Sprintf(" DEFAULT %s", val)
 				} else {
 					panic(fmt.Errorf("unsupported default value from %s, check GetGetDefaultValueByFromDbTag()", col.Default))

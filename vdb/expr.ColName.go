@@ -76,8 +76,9 @@ func (e *exprReceiver) ColName(context *exprCompileContext, expr sqlparser.ColNa
 		*/
 		if alias, ok := context.alias[tableName]; ok {
 			tableName = alias
+			aliasFieldName = fieldName
 			fieldName = utils.ToSnakeCase(fieldName)
-			aliasFieldName = utils.SnakeToPascal(fieldName)
+
 		}
 		return context.dialect.Quote(tableName, fieldName) + " AS " + context.dialect.Quote(aliasFieldName), nil
 

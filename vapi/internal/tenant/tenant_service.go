@@ -9,6 +9,12 @@ type TenantService struct {
 	manager string
 }
 
+func (svc *TenantService) New(db *vdb.TenantDB, manager string) error {
+	svc.db = db
+	svc.manager = manager
+	vdb.SetManagerDb(db.GetDriverName(), manager)
+	return nil
+}
 func NewTenantService(db *vdb.TenantDB, manager string) *TenantService {
 	svc := &TenantService{
 		db:      db,
@@ -20,6 +26,7 @@ func NewTenantService(db *vdb.TenantDB, manager string) *TenantService {
 }
 func (svc *TenantService) Tenant(tenantName string) (*vdb.TenantDB, error) {
 	tenant, err := svc.db.CreateDB(tenantName)
+
 	if err != nil {
 		return nil, err
 	}

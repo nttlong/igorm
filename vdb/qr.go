@@ -418,7 +418,7 @@ func buildBasicSqlFirstItemNoCache(typ reflect.Type, db *tenantDB.TenantDB, filt
 
 	fieldsSelect := make([]string, len(columns))
 	for i, col := range columns {
-		fieldsSelect[i] = col.Field.Name
+		fieldsSelect[i] = repoType.tableName + "." + col.Field.Name + " AS " + col.Field.Name
 	}
 	compiler.context.purpose = build_purpose_select
 	err = compiler.buildSelectField(strings.Join(fieldsSelect, ", "))

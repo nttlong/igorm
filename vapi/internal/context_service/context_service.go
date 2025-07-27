@@ -3,20 +3,14 @@ package contextservice
 import "context"
 
 type ContextService struct {
-	onGetContext func() context.Context
+	Ctx context.Context
 }
 
-func NewContextService() *ContextService {
-	return &ContextService{}
-}
-func (s *ContextService) OnGetContext(onGetContext func() context.Context) {
-	s.onGetContext = onGetContext
-}
 func (s *ContextService) GetContext() context.Context {
-	if s.onGetContext == nil {
-		return context.Background()
+	return s.Ctx
+}
+func NewContextService(context context.Context) *ContextService {
+	return &ContextService{
+		Ctx: context,
 	}
-
-	return s.onGetContext()
-
 }
