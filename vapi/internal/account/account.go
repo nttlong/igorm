@@ -28,7 +28,8 @@ func (s *AccountService) CreateOrUpdate(account *models.Account) error {
 	existing := &models.Account{}
 	err := s.GetDb().FirstWithContext(ctx, existing, "username = ?", account.Username)
 	if err != nil {
-		if errors.As(err, &vdb.ErrRecordNotFound{}) {
+		var nfErr *vdb.ErrRecordNotFound
+		if errors.As(err, &nfErr) {
 			return s.GetDb().Insert(account)
 		}
 		return err

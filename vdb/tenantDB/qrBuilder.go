@@ -228,7 +228,7 @@ var OnBuildSQLFirstItem onBuildSQLFirstItem
 func (db *TenantDB) First(entity interface{}, args ...interface{}) error {
 	if len(args) == 0 {
 		return db.firstWithNoFilter(entity)
-	} else if len(args) > 2 {
+	} else if len(args) >= 2 {
 		if filter, ok := args[0].(string); ok {
 			return db.firstWithFilter(entity, filter, args[1:]...)
 		} else {
@@ -272,7 +272,7 @@ var OnBuildSQLFirstItemNoFilter onBuildSQLFirstItemNoFilter
 func (db *TenantDB) FirstWithContext(context context.Context, entity interface{}, args ...interface{}) error {
 	if len(args) == 0 {
 		return db.FirstWithContextNoFilter(context, entity)
-	} else if len(args) > 2 {
+	} else if len(args) >= 2 {
 		if filter, ok := args[0].(string); ok {
 			return db.FirstWithContextAndFilter(context, entity, filter, args[1:]...)
 		} else {
