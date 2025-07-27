@@ -47,15 +47,14 @@ func (m *migratorMssql) GetSqlAddColumn(typ reflect.Type) (string, error) {
 			}
 
 			if col.Default != "" {
-				defaultVal := ""
-				if val, ok := defaultValueByFromDbTag[col.Default]; ok {
-					defaultVal = val
-				} else {
-					err = fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s ", col.Default, reflect.TypeOf(m).Elem())
+				df, err := typeUtils.GetDefaultValue(col.Default, defaultValueByFromDbTag)
+				if err != nil {
+					err = fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s ", col.Default, "vdb/migrate/migrator.mssql.AddColumn.go")
 					panic(err)
 				}
+				colDef += " DEFAULT " + df
 
-				colDef += fmt.Sprintf(" DEFAULT %s", defaultVal)
+				colDef += fmt.Sprintf(" DEFAULT %s", colDef)
 			}
 
 			scripts = append(scripts, fmt.Sprintf("ALTER TABLE %s ADD %s", m.Quote(entityItem.tableName), colDef))

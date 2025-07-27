@@ -94,6 +94,9 @@ func (db *TenantDB) CreateDB(dbName string) (*TenantDB, error) {
 
 var ModelRegistry = migrate.ModelRegistry
 
+func RegisterModel(models ...interface{}) {
+	ModelRegistry.Add(models...)
+}
 func NewMigrator(db *tenantDB.TenantDB) (migrate.IMigrator, error) {
 	return migrate.NewMigrator(db)
 }

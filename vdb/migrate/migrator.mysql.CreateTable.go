@@ -60,17 +60,13 @@ func (m *migratorMySql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 		}
 
 		if col.Default != "" {
-			if typeUtils.isFloatNumber(col.Default) {
-				colDef += fmt.Sprintf(" DEFAULT %s", col.Default)
-
-			} else if typeUtils.isNumber(col.Default) {
-				colDef += fmt.Sprintf(" DEFAULT %s", col.Default)
-
-			} else if val, ok := defaultValueByFromDbTag[col.Default]; ok {
-				colDef += fmt.Sprintf(" DEFAULT %s", val)
-			} else {
-				panic(fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s", col.Default, reflect.TypeOf(m).Elem()))
+			defaultVal, err := typeUtils.GetDefaultValue(col.Default, defaultValueByFromDbTag)
+			if err != nil {
+				err = fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s ", col.Default, "vdb/migrate/migrator.mysql.CreateTable.go")
+				panic(err)
 			}
+			colDef += fmt.Sprintf(" DEFAULT %s", defaultVal)
+
 		}
 
 		strCols = append(strCols, colDef)

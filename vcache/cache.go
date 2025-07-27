@@ -40,7 +40,10 @@ type Cache interface {
 	Set(ctx context.Context, key string, value interface{}, ttl time.Duration) // Đặt giá trị vào cache với TTL
 	// Đặt giá trị vào cache với TTL
 	Delete(ctx context.Context, key string) // Xóa một key khỏi cache
-	Close() error                           // Đóng kết nối/giải phóng tài nguyên của cache
+	Close() error
+	GetBool(ctx context.Context, key string) (bool, bool)
+	// Đóng kết nối/giải phóng tài nguyên của cache
+	// Expire(ctx context.Context, key string, ttl time.Duration) // Đặt thời gian hết hạn cho một key)
 }
 
 // === Triển khai InMemoryCache sử dụng github.com/patrickmn/go-cache ===

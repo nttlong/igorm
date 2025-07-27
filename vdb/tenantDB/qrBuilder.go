@@ -225,7 +225,34 @@ type onBuildSQLFirstItem func(typ reflect.Type, db *TenantDB, filter string) (st
 
 var OnBuildSQLFirstItem onBuildSQLFirstItem
 
-func (db *TenantDB) First(entity interface{}, filter string, args ...interface{}) error {
+func (db *TenantDB) First(entity interface{}, args ...interface{}) error {
+	if len(args) == 0 {
+		return db.firstWithNoFilter(entity)
+	} else if len(args) > 2 {
+		if filter, ok := args[0].(string); ok {
+			return db.firstWithFilter(entity, filter, args[1:]...)
+		} else {
+			return fmt.Errorf("first with filter: filter must be string")
+		}
+
+	} else {
+		return fmt.Errorf("first with filter: filter must be string")
+	}
+}
+func (db *TenantDB) firstWithNoFilter(entity interface{}) error {
+	typ := reflect.TypeOf(entity)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	sql, _, _, err := OnBuildSQLFirstItemNoFilter(typ, db)
+
+	if err != nil {
+		return err
+	}
+	return db.ExecToItem(entity, sql)
+
+}
+func (db *TenantDB) firstWithFilter(entity interface{}, filter string, args ...interface{}) error {
 	typ := reflect.TypeOf(entity)
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
@@ -237,7 +264,44 @@ func (db *TenantDB) First(entity interface{}, filter string, args ...interface{}
 	return db.ExecToItem(entity, sql, args...)
 
 }
-func (db *TenantDB) FirstWithContext(context context.Context, entity interface{}, filter string, args ...interface{}) error {
+
+type onBuildSQLFirstItemNoFilter func(typ reflect.Type, db *TenantDB) (string, string, [][]int, error)
+
+var OnBuildSQLFirstItemNoFilter onBuildSQLFirstItemNoFilter
+
+func (db *TenantDB) FirstWithContext(context context.Context, entity interface{}, args ...interface{}) error {
+	if len(args) == 0 {
+		return db.FirstWithContextNoFilter(context, entity)
+	} else if len(args) > 2 {
+		if filter, ok := args[0].(string); ok {
+			return db.FirstWithContextAndFilter(context, entity, filter, args[1:]...)
+		} else {
+			return fmt.Errorf("first with context and filter: filter must be string")
+		}
+
+	} else {
+		return fmt.Errorf("first with context and filter: filter must be string")
+	}
+}
+func (db *TenantDB) FirstWithContextNoFilter(context context.Context, entity interface{}) error {
+	typ := reflect.TypeOf(entity)
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	sql, _, _, err := OnBuildSQLFirstItemNoFilter(typ, db)
+
+	val := reflect.ValueOf(entity)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+
+	if err != nil {
+		return err
+	}
+	return db.ExecToItemWithContext(context, entity, sql)
+
+}
+func (db *TenantDB) FirstWithContextAndFilter(context context.Context, entity interface{}, filter string, args ...interface{}) error {
 	typ := reflect.TypeOf(entity)
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
@@ -246,7 +310,7 @@ func (db *TenantDB) FirstWithContext(context context.Context, entity interface{}
 	if err != nil {
 		return err
 	}
-	return db.ExecToItem(entity, sql, args...)
+	return db.ExecToItemWithContext(context, entity, sql, args...)
 
 }
 
@@ -274,7 +338,8 @@ func (we *whereExpr) Or(expr string, args ...interface{}) *whereExpr {
 	return we
 }
 func (we *whereExpr) First(entity interface{}) error {
-	return we.db.First(entity, we.expr, we.args...)
+
+	return we.db.firstWithFilter(entity, we.expr, we.args...)
 }
 
 type onCreateEntity = func(db *TenantDB, entity interface{}) error

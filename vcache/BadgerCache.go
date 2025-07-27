@@ -52,6 +52,11 @@ func NewBadgerCache(dbPath string, prefixKey string) (Cache, error) {
 	log.Printf("BadgerCache đã mở tại: %s\n", dbPath)
 	return &BadgerCache{db: db, prefixKey: prefixKey}, nil
 }
+func (c *BadgerCache) GetBool(ctx context.Context, key string) (bool, bool) {
+	var val bool
+	found := c.Get(ctx, key, &val)
+	return val, found
+}
 
 // Get implements Cache.Get for BadgerCache
 func (c *BadgerCache) Get(ctx context.Context, key string, dest interface{}) bool {

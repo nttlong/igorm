@@ -36,10 +36,10 @@ In this case, the function GetGetDefaultValueByFromDbTag() will return a map con
 */
 func (m *migratorMySql) GetGetDefaultValueByFromDbTag() map[string]string {
 	return map[string]string{
-		"now":   "CURRENT_TIMESTAMP", // tương đương GETDATE() trong MySQL
-		"true":  "TRUE",
-		"false": "FALSE",
-		"uuid":  "UUID()", // nếu MySQL version >= 8.0.13
+		"now()":  "CURRENT_TIMESTAMP", // tương đương GETDATE() trong MySQL
+		"true":   "TRUE",
+		"false":  "FALSE",
+		"uuid()": "UUID()", // nếu MySQL version >= 8.0.13
 	}
 }
 

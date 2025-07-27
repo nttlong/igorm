@@ -59,6 +59,62 @@ func NewRedisCache(
 	}
 
 }
+func (r *RedisCache) GetBool(ctx context.Context, key string) (bool, bool) {
+	redisCtx, cancel := context.WithTimeout(ctx, r.timeOut)
+	defer cancel()
+	realKey := fmt.Sprintf("%s:%s", r.prefixKey, key)
+	hRealKey := sha256.Sum256([]byte(realKey))
+	hashedKey := hex.EncodeToString(hRealKey[:])
+	var val []byte
+	if r.isCluster {
+		client, ok := r.client.(*redis.ClusterClient)
+		if !ok {
+			return false, false
+		}
+		_val, err := client.Get(redisCtx, hashedKey).Bytes()
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				// Lỗi timeout: Redis phản hồi quá chậm
+				return false, false
+			} else if err == redis.Nil {
+				// Key không tồn tại trong Redis, cần lấy từ Database và lưu lại vào cache
+				return false, false
+			} else {
+				return false, false
+			}
+		}
+		val = _val
+	} else {
+		client, ok := r.client.(*redis.Client)
+		if !ok {
+			return false, false
+		}
+		_val, err := client.Get(redisCtx, hashedKey).Bytes()
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				// Lỗi timeout: Redis phản hồi quá chậm
+				return false, false
+			} else if err == redis.Nil {
+				// Key không tồn tại trong Redis, cần lấy từ Database và lưu lại vào cache
+				return false, false
+			} else {
+				return false, false
+			}
+		}
+		val = _val
+	}
+
+	// Lấy giá trị từ Redis
+
+	// Deserialize JSON []byte vào dest
+	var boolVal bool
+	err := bytesDecodeObject(val, &boolVal)
+	if err != nil {
+		fmt.Printf("Lỗi khi deserialize dữ liệu từ JSON cho key '%s': %v\n", key, err)
+		return false, false
+	}
+	return boolVal, true
+}
 
 // Set đặt giá trị vào cache với TTL.
 func (r *RedisCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) {

@@ -454,6 +454,30 @@ func buildBasicSqlFirstItem(typ reflect.Type, db *tenantDB.TenantDB, filter stri
 	return initBuild.val, initBuild.err
 }
 
+type initBuildBasicSqlFirstItemNoFilter struct {
+	once          sync.Once
+	sqlSelect     string
+	filter        string
+	err           error
+	keyFieldIndex [][]int
+}
+
+var cacheBuildBasicSqlFirstItemNoFilter sync.Map
+
+func buildBasicSqlFirstItemNoFilter(typ reflect.Type, db *tenantDB.TenantDB) (string, string, [][]int, error) {
+	key := db.GetDriverName() + "://" + db.GetDBName() + "/" + typ.String()
+	actual, _ := cacheBuildBasicSqlFirstItemNoFilter.LoadOrStore(key, &initBuildBasicSqlFirstItemNoFilter{})
+	initBuild := actual.(*initBuildBasicSqlFirstItemNoFilter)
+	initBuild.once.Do(func() {
+		sql, filter, keyFieldIndex, err := buildBasicSqlFirstItemNoFilterNoCache(typ, db)
+		initBuild.sqlSelect = sql
+		initBuild.filter = filter
+		initBuild.err = err
+		initBuild.keyFieldIndex = keyFieldIndex
+	})
+	return initBuild.sqlSelect, initBuild.filter, initBuild.keyFieldIndex, initBuild.err
+}
+
 type ErrRecordNotFound struct {
 	Err error
 }
@@ -535,7 +559,9 @@ func init() {
 	}
 	tenantDB.OnBuildSQL = buildBasicSql
 	tenantDB.OnBuildSQLFirstItem = buildBasicSqlFirstItem
+	tenantDB.OnBuildSQLFirstItemNoFilter = buildBasicSqlFirstItemNoFilter
 	tenantDB.OnGetMapIndex = onTenantDbNeedGetMapIndex
+
 	tenantDB.ExecToItemOptimizedErrorNotFound = func() error {
 		return &ErrRecordNotFound{
 			Err: fmt.Errorf("item not found"),

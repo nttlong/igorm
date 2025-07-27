@@ -28,6 +28,13 @@ func NewInMemoryCache(
 		client: gocache.New(defaultExpiration, cleanupInterval),
 	} // no check error here, so just return nil
 }
+func (c *InMemoryCache) GetBool(ctx context.Context, key string) (bool, bool) {
+	val, f := c.client.Get(c.prefixKey + ":" + key)
+	if !f {
+		return false, false
+	}
+	return val.(bool), true
+}
 
 // Get implements Cache.Get for InMemoryCache
 func (c *InMemoryCache) Get(ctx context.Context, key string, dest interface{}) bool {

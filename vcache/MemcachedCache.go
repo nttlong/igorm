@@ -26,6 +26,30 @@ var (
 	once     sync.Once
 )
 
+func (m *MemcachedCache) GetBool(ctx context.Context, key string) (bool, bool) {
+	hashedKey := getHashedKey(key)
+	item, err := m.client.Get(hashedKey)
+	if err != nil {
+		if err == memcache.ErrCacheMiss {
+			return false, false // Key không tồn tại
+		}
+		// Xử lý các lỗi khác nếu cần (ví dụ: log lỗi)
+		fmt.Printf("Lỗi khi lấy dữ liệu từ Memcached: %v\n", err)
+		return false, false
+	}
+	// Trả về []byte trực tiếp. Người gọi phải tự giải mã.
+	// desrialize thành kiểu dữ liệu mong muốn.
+
+	bff := item.Value
+	var value bool
+	err = bytesDecodeObject(bff, &value)
+	if err != nil {
+		fmt.Printf("Lỗi khi giải mã dữ liệu từ Memcached: %v\n", err)
+		return false, false
+	}
+	return value, true
+}
+
 func NewMemcachedCache(strServers string, prefixKey string) Cache {
 	once.Do(func() {
 		servers := strings.Split(strServers, ",")

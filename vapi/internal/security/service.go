@@ -69,3 +69,13 @@ func (s *SecurityPolicyService) CreateOrUpdate(policy *models.SecurityPolicy) er
 	}
 	return nil
 }
+func (s *SecurityPolicyService) Get() (*models.SecurityPolicy, error) {
+	ctx := s.GetCtx()
+
+	policy := &models.SecurityPolicy{}
+	err := s.GetDb().FirstWithContext(ctx, policy)
+	if err != nil {
+		return nil, err
+	}
+	return policy, nil
+}

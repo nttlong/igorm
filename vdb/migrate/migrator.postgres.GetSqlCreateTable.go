@@ -80,10 +80,12 @@ func (m *migratorPostgres) GetSqlCreateTable(typ reflect.Type) (string, error) {
 		}
 
 		if col.Default != "" {
-			defaultVal, ok := defaultValueByFromDbTag[col.Default]
-			if !ok {
-				panic(fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s", col.Default, reflect.TypeOf(m).Elem()))
+			defaultVal, err := typeUtils.GetDefaultValue(col.Default, defaultValueByFromDbTag)
+			if err != nil {
+				err = fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s ", col.Default, "vdb/migrate/migrator.postgres.GetSqlCreateTable.go")
+				panic(err)
 			}
+
 			colDef += fmt.Sprintf(" DEFAULT %s", defaultVal)
 		}
 

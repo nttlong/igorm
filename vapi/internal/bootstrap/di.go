@@ -2,9 +2,13 @@ package bootstrap
 
 import (
 	"context"
+	ps "vapi/internal/PasswordService"
+	ss "vapi/internal/SharedSecret"
+	"vapi/internal/account"
 	"vapi/internal/cache"
 	"vapi/internal/config"
 	"vapi/internal/dbcontext"
+	jwtservice "vapi/internal/jwt_service"
 	"vapi/internal/security"
 	"vapi/internal/tenant"
 	"vcache"
@@ -14,12 +18,17 @@ import (
 
 type AppContainer struct {
 	*vdi.Container[AppContainer]
-	Config    vdi.Singleton[AppContainer, *config.ConfigService]
-	Cache     vdi.Singleton[AppContainer, vcache.Cache]
-	Db        vdi.Singleton[AppContainer, *vdb.TenantDB]
-	CtxSvc    vdi.Transient[AppContainer, context.Context]
-	DbService vdi.Singleton[AppContainer, *dbcontext.DbContext]
-	TenantDb  vdi.Singleton[AppContainer, *tenant.TenantService]
+	Config       vdi.Singleton[AppContainer, *config.ConfigService]
+	Cache        vdi.Singleton[AppContainer, vcache.Cache]
+	Db           vdi.Singleton[AppContainer, *vdb.TenantDB]
+	CtxSvc       vdi.Transient[AppContainer, context.Context]
+	DbService    vdi.Singleton[AppContainer, *dbcontext.DbContext]
+	TenantDb     vdi.Singleton[AppContainer, *tenant.TenantService]
+	SharedSecret vdi.Singleton[AppContainer, ss.SharedSecretService]
+	Jwtservices  vdi.Singleton[AppContainer, jwtservice.JWTService]
+	PwdSvc       vdi.Singleton[AppContainer, *ps.BcryptPasswordService]
+
+	AccountSvc vdi.Singleton[AppContainer, *account.AccountService]
 
 	Security      vdi.Singleton[AppContainer, *security.SecurityPolicyService]
 	GetContext    func() context.Context
@@ -107,6 +116,32 @@ func GetAppContainer(
 			return ret
 
 		}
+		svc.SharedSecret.Init = func(owner *AppContainer) ss.SharedSecretService {
+			ret := ss.NewSharedSecretService()
+
+			return ret
+		}
+		svc.PwdSvc.Init = func(owner *AppContainer) *ps.BcryptPasswordService {
+			ret := ps.NewBcryptPasswordService(0)
+			return ret
+		}
+		svc.Jwtservices.Init = func(owner *AppContainer) jwtservice.JWTService {
+			ret := jwtservice.NewJWTService()
+			return ret
+		}
+
+		svc.AccountSvc.Init = func(owner *AppContainer) *account.AccountService {
+			ret := &account.AccountService{}
+			ret.Cache = svc.Cache.Get()
+			ret.GetDb = svc.GetDb
+			ret.GetCtx = svc.GetContext
+			ret.PasswordHasher = svc.PwdSvc.Get()
+			ret.PolicySvc = svc.Security.Get()
+			ret.JwtSvc = svc.Jwtservices.Get()
+
+			return ret
+		}
+
 		return err
 	})
 
