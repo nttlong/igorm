@@ -24,7 +24,7 @@ type Account struct {
 
 type AccountProfile struct {
 	vdb.Model[AccountProfile]
-	ID        int `db:"pk;auto"`
+	ID        int `db:"pk"`
 	AccountID int
 	FullName  string     `db:"size:255"`
 	Gender    string     `db:"size:10;default:'unknown'"` // male, female, other
@@ -34,7 +34,7 @@ type AccountProfile struct {
 }
 type AccountSetting struct {
 	vdb.Model[AccountSetting]
-	ID           int `db:"pk;auto"`
+	ID           int `db:"pk"`
 	AccountID    int
 	Language     string `db:"size:10;default:'en'"`         // ví dụ: vi, en, ja
 	Timezone     string `db:"size:100;default:'UTC'"`       // tên múi giờ IANA
@@ -47,6 +47,6 @@ type AccountSetting struct {
 func init() {
 
 	vdb.ModelRegistry.Add(&Account{}, &AccountProfile{}, &AccountSetting{})
-	(&AccountProfile{}).AddForeignKey("AccountID", &Account{}, "ID", nil)
-	(&AccountSetting{}).AddForeignKey("AccountID", &Account{}, "ID", nil)
+	(&AccountProfile{}).AddForeignKey("ID", &Account{}, "ID", nil)
+	(&AccountSetting{}).AddForeignKey("ID", &Account{}, "ID", nil)
 }

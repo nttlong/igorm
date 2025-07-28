@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "b9B+FAG3N3k=",
+  "dgSpecHash": "+K94ASyzn2U=",
   "success": true,
   "projectFilePath": "D:\\code\\go\\news\\igorm\\vdotnet\\VDotnetOrmTest\\VDotnetOrmTest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\MSI CYBORG\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\MSI CYBORG\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
+    "C:\\Users\\MSI CYBORG\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\MSI CYBORG\\.nuget\\packages\\benchmarkdotnet\\0.13.8\\benchmarkdotnet.0.13.8.nupkg.sha512",
     "C:\\Users\\MSI CYBORG\\.nuget\\packages\\benchmarkdotnet.annotations\\0.13.8\\benchmarkdotnet.annotations.0.13.8.nupkg.sha512",
     "C:\\Users\\MSI CYBORG\\.nuget\\packages\\commandlineparser\\2.9.1\\commandlineparser.2.9.1.nupkg.sha512",

@@ -6,6 +6,9 @@ public class Program
     {
         //BenchmarkRunner.Run<EfCoreInsertBenchmark>();
         //BenchmarkRunner.Run<EfCoreInsertTransactionBenchmark>();
-        BenchmarkRunner.Run<EfCoreRawSqlBenchmark>();
+        //BenchmarkRunner.Run<EfCoreRawSqlBenchmark>();
+        BenchmarkRunner.Run<AccountServiceBenchmark>();
+        //dotnet run -c Release
+
     }
 }

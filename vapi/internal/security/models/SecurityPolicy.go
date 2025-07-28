@@ -13,8 +13,8 @@ type SecurityPolicy struct {
 	LockoutMinutes   int        `db:"default:15"`
 	JwtSecret        string     `db:"size:255"`
 	JwtExpireMinutes int        `db:"default:60"`
-	CreatedAt        time.Time  `db:"default:now"`
-	UpdatedAt        *time.Time `db:"default:now"`
+	CreatedAt        time.Time  `db:"default:now()"`
+	UpdatedAt        *time.Time `db:"default:now()"`
 }
 
 func init() {

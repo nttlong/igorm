@@ -27,8 +27,7 @@ public class EfCoreInsertBenchmark
     public void Setup()
     {
         db = new HrDbContext();
-        db.Database.EnsureDeleted();
-        db.Database.EnsureCreated();
+        
     }
 
     [Benchmark]

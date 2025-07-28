@@ -15,7 +15,7 @@ type BcryptPasswordService struct {
 
 func NewBcryptPasswordService(cost int) *BcryptPasswordService {
 	if cost <= 0 {
-		cost = bcrypt.DefaultCost
+		cost = 12
 	}
 	return &BcryptPasswordService{cost: cost}
 }
