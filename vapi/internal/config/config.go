@@ -4,6 +4,14 @@ import (
 	"time"
 )
 
+type LogConfig struct {
+	FileName   string `mapstructure:"fileName"`
+	MaxSize    int    `mapstructure:"maxSize"`
+	MaxAge     int    `mapstructure:"maxAge"`
+	MaxBackups int    `mapstructure:"maxBackups"`
+	Compress   bool   `mapstructure:"compress"`
+	AlsoStdout bool   `mapstructure:"alsoStdout"`
+}
 type Config struct {
 	CacheType  string          `mapstructure:"cacheType"`
 	DriverType string          `mapstructure:"driverType"`
@@ -12,6 +20,8 @@ type Config struct {
 	Badger     BadgerConfig    `mapstructure:"badger"`
 	InMemory   InMemoryConfig  `mapstructure:"inmemory"`
 	Database   DatabaseConfig  `mapstructure:"database"`
+	Host       string          `mapstructure:"host"`
+	Port       int             `mapstructure:"port"`
 }
 
 type RedisConfig struct {

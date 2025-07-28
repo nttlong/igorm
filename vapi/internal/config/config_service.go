@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/spf13/viper"
@@ -42,6 +43,9 @@ type AppConfig struct {
 	Badger    Badger    `mapstructure:"badger"`
 	InMemory  InMemory  `mapstructure:"inmemory"`
 	Database  Database  `mapstructure:"database"`
+	Host      string    `mapstructure:"host"`
+	Port      int       `mapstructure:"port"`
+	Log       LogConfig `mapstructure:"log"`
 
 	// Future: Add database config here
 }
@@ -56,7 +60,12 @@ func (cs *ConfigService) New(configFilePath string) error {
 	v.SetConfigType("yaml")
 
 	if err := v.ReadInConfig(); err != nil {
-		return fmt.Errorf("failed to read config: %w", err)
+		absPath, err := filepath.Abs(configFilePath)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Absolute path:", absPath)
+		return fmt.Errorf("failed to read config: %w, file path: %s", err, absPath)
 	}
 
 	var c AppConfig

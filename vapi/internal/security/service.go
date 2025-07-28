@@ -2,7 +2,12 @@ package security
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
+	"errors"
+	"time"
 	"vapi/internal/security/models"
+
 	"vcache"
 	"vdb"
 )
@@ -69,13 +74,62 @@ func (s *SecurityPolicyService) CreateOrUpdate(policy *models.SecurityPolicy) er
 	}
 	return nil
 }
+func (s *SecurityPolicyService) GenerateJWTSecret(length int) (string, error) {
+	if length <= 0 {
+		length = 32
+	}
+	bytes := make([]byte, length)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", err
+	}
+	// Encode base64 để lưu vào file / cấu hình
+	return base64.RawURLEncoding.EncodeToString(bytes), nil
+}
+func (s *SecurityPolicyService) CreateDefault() (*models.SecurityPolicy, error) {
+	tenant := s.GetDb().GetDBName()
+	jwtSecret, err := s.GenerateJWTSecret(0)
+	if err != nil {
+		return nil, err
+	}
+	ret := &models.SecurityPolicy{
+		TenantID:         tenant,
+		MaxLoginFailures: 5,
+		LockoutMinutes:   15,
+		JwtSecret:        jwtSecret,
+		JwtExpireMinutes: 60,
+		CreatedAt:        time.Now().UTC(),
+	}
+	err = s.CreateOrUpdate(ret)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
+
+}
 func (s *SecurityPolicyService) Get() (*models.SecurityPolicy, error) {
+	ret := &models.SecurityPolicy{}
+	cacheKey := s.GetDb().GetDBName() + "//policy"
+	if s.Cache.Get(s.GetCtx(), cacheKey, ret) {
+		return ret, nil
+	}
+
 	ctx := s.GetCtx()
 
 	policy := &models.SecurityPolicy{}
 	err := s.GetDb().FirstWithContext(ctx, policy)
 	if err != nil {
+		var nfErr *vdb.ErrRecordNotFound
+		if errors.As(err, &nfErr) {
+			policy, err = s.CreateDefault()
+			if err != nil {
+				return nil, err
+			}
+			s.Cache.Set(ctx, cacheKey, policy, 0)
+			return policy, nil
+		}
 		return nil, err
 	}
+	s.Cache.Set(ctx, cacheKey, policy, 0)
 	return policy, nil
 }

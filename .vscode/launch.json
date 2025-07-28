@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/unvs/cmd/api"
+            "program": "${workspaceFolder}/vapi/cmd"
         }
     ]
 }

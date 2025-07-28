@@ -5,15 +5,19 @@ import (
 	ps "vapi/internal/PasswordService"
 	ss "vapi/internal/SharedSecret"
 	"vapi/internal/account"
+	"vapi/internal/app"
 	"vapi/internal/cache"
 	"vapi/internal/config"
 	"vapi/internal/dbcontext"
 	jwtservice "vapi/internal/jwt_service"
+	vLogger "vapi/internal/logger"
 	"vapi/internal/security"
 	"vapi/internal/tenant"
 	"vcache"
 	"vdb"
 	"vdi"
+
+	"github.com/labstack/echo/v4"
 )
 
 type AppContainer struct {
@@ -34,6 +38,9 @@ type AppContainer struct {
 	GetContext    func() context.Context
 	GetDb         func() *vdb.TenantDB
 	GetTenantName func() string
+	App           vdi.Singleton[AppContainer, *app.AppService[AppContainer]]
+	Logger        vdi.Singleton[AppContainer, *vLogger.LoggerService]
+	Error         error
 }
 
 // Hàm khởi tạo và đăng ký tất cả dịch vụ
@@ -101,6 +108,7 @@ func GetAppContainer(
 			ret.Cache = svc.Cache.Get()
 			ret.GetDb = svc.GetDb
 			ret.GetCtx = svc.GetContext
+
 			return ret
 		}
 		svc.GetDb = func() *vdb.TenantDB {
@@ -138,6 +146,44 @@ func GetAppContainer(
 			ret.PasswordHasher = svc.PwdSvc.Get()
 			ret.PolicySvc = svc.Security.Get()
 			ret.JwtSvc = svc.Jwtservices.Get()
+
+			return ret
+		}
+		svc.Logger.Init = func(owner *AppContainer) *vLogger.LoggerService {
+			log := owner.Config.Get().Get().Log
+			ret := vLogger.NewLoggerService(&vLogger.LoggerConfig{
+				FileName:   log.FileName,
+				MaxSize:    log.MaxSize,
+				MaxAge:     log.MaxAge,
+				MaxBackups: log.MaxBackups,
+				Compress:   log.Compress,
+				AlsoStdout: log.AlsoStdout,
+			})
+
+			return ret
+		}
+
+		svc.App.Init = func(owner *AppContainer) *app.AppService[AppContainer] {
+			host := svc.Config.Get().Get().Host
+			port := svc.Config.Get().Get().Port
+			ret := &app.AppService[AppContainer]{
+				Host:      host,
+				Port:      port,
+				Container: owner,
+			}
+			ret.Setup(func(owner *app.AppService[AppContainer], c echo.Context) error {
+				tenantName := "tenant1"
+				owner.Container.GetContext = func() context.Context {
+					return c.Request().Context()
+				}
+				owner.Container.GetTenantName = func() string {
+
+					return tenantName
+				}
+				return nil
+
+			})
+			owner.Logger.Get().Apply(ret.App)
 
 			return ret
 		}

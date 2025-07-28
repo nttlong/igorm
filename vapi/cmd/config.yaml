@@ -28,4 +28,17 @@ database:
 
 host: 0.0.0.0
 port: 8012
-log: ./logs/server.log
+#FileName   string `mapstructure:"fileName"`
+#MaxSize    int    `mapstructure:"maxSize"`
+#MaxAge     int    `mapstructure:"maxAge"`
+#MaxBackups int    `mapstructure:"maxBackups"`
+#Compress   bool   `mapstructure:"compress"`
+#AlsoStdout bool   `mapstructure:"alsoStdout"`
+log:
+  path: ./logs/server.log
+  maxSize: 2 #2MB
+  maxAge: 7 #7 days
+  maxBackups: 30
+  compress: true
+  alsoStdout: true
+  

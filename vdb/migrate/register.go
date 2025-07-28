@@ -77,9 +77,10 @@ func (reg *modelRegister) RegisterType(typ reflect.Type) {
 		panic(err)
 	}
 	entity := Entity{
-		entityType: typ,
-		tableName:  tableName,
-		cols:       cols,
+		entityType:  typ,
+		tableName:   tableName,
+		DbTableName: tableName,
+		cols:        cols,
 	}
 
 	entity.primaryConstraints = utilsInstance.GetPrimaryKey(&entity)

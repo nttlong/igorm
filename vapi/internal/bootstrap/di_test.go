@@ -57,7 +57,7 @@ func BenchmarkTestDIGetPolicy(b *testing.B) {
 
 }
 func BenchmarkCreateAccount(b *testing.B) {
-	c := GetAppContainer("../config/config.yaml")
+	c := GetAppContainer("../../cmd/config.yaml")
 	assert.NoError(b, c.Error)
 	assert.IsType(b, &AppContainer{}, c)
 	b.ResetTimer()
@@ -88,7 +88,7 @@ func BenchmarkCreateAccount(b *testing.B) {
 
 }
 func BenchmarkTestCheckPassword(b *testing.B) {
-	c := GetAppContainer("../config/config.yaml")
+	c := GetAppContainer("../../cmd/config.yaml")
 	assert.NoError(b, c.Error)
 	assert.IsType(b, &AppContainer{}, c)
 	b.ResetTimer()
@@ -117,7 +117,7 @@ func BenchmarkTestCheckPassword(b *testing.B) {
 	}
 }
 func BenchmarkTestLogin(b *testing.B) {
-	c := GetAppContainer("../config/config.yaml")
+	c := GetAppContainer("../../cmd/config.yaml")
 	assert.NoError(b, c.Error)
 	assert.IsType(b, &AppContainer{}, c)
 	b.ResetTimer()
@@ -126,8 +126,17 @@ func BenchmarkTestLogin(b *testing.B) {
 			return b.Context()
 		}
 		c.GetTenantName = func() string {
-			return "tenant1"
+			tenantName := "tenant1"
+
+			return tenantName
 		}
+		// c.GetDb = func() *vdb.TenantDB {
+		// 	ret, err := c.Db.Get().CreateDB("tenant1")
+
+		// 	assert.NoError(b, err)
+		// 	return ret
+		// }
+
 		r, err := c.AccountSvc.Get().Login("testuser", "testpassword")
 		assert.NoError(b, err)
 		assert.NotNil(b, r)

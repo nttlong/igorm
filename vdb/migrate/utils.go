@@ -1,6 +1,7 @@
 package migrate
 
 import (
+	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -36,6 +37,7 @@ type Entity struct {
 	indexConstraints         map[string][]ColumnDef
 	buildUniqueConstraints   map[string][]ColumnDef
 	cacheGetAutoValueColumns sync.Map
+	DbTableName              string
 }
 type initGetAutoValueColumns struct {
 	once sync.Once
@@ -115,6 +117,7 @@ func (e *Entity) getBuildUniqueConstraints() map[string][]ColumnDef {
 		e.buildUniqueConstraints = map[string][]ColumnDef{}
 		for _, constraint := range e.getUniqueConstraints() {
 			tableName := e.tableName
+			
 			cols := []string{}
 			for _, col := range constraint {
 				cols = append(cols, col.Name)
@@ -400,7 +403,12 @@ func (u *utils) ParseStruct(t reflect.Type, parentIndexOfField []int) ([]ColumnD
 
 	var cols []ColumnDef
 	for i := 0; i < t.NumField(); i++ {
+
 		f := t.Field(i)
+		if f.Type.Kind() == reflect.Func {
+			fmt.Println(f.Name)
+			continue
+		}
 
 		if f.Anonymous {
 			if f.Type == reflect.TypeOf(Entity{}) {

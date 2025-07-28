@@ -107,7 +107,9 @@ func (s *AccountService) Login(username, password string) (*LoginResult, error) 
 	// 7. Tạo JWT
 	policy, err := s.PolicySvc.Get()
 	if err != nil {
+
 		return nil, err
+
 	}
 	token, err := s.JwtSvc.GenerateToken(account.UserID, tenantID, policy.JwtSecret, time.Minute*time.Duration(policy.JwtExpireMinutes))
 	if err != nil {
