@@ -40,6 +40,7 @@ type AppContainer struct {
 	GetTenantName func() string
 	App           vdi.Singleton[AppContainer, *app.AppService[AppContainer]]
 	Logger        vdi.Singleton[AppContainer, *vLogger.LoggerService]
+	Ctx           vdi.Transient[AppContainer, context.Context]
 	Error         error
 }
 
@@ -171,11 +172,12 @@ func GetAppContainer(
 				Port:      port,
 				Container: owner,
 			}
+			owner.GetContext = func() context.Context {
+				return context.Background()
+			}
 			ret.Setup(func(owner *app.AppService[AppContainer], c echo.Context) error {
 				tenantName := "tenant1"
-				owner.Container.GetContext = func() context.Context {
-					return c.Request().Context()
-				}
+
 				owner.Container.GetTenantName = func() string {
 
 					return tenantName

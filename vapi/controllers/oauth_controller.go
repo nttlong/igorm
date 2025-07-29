@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-
 	"vapi/internal/utils"
 
 	"github.com/labstack/echo/v4"
@@ -50,18 +49,16 @@ func OAuthToken(c echo.Context) error {
 	}
 
 	// 🔒 Thực hiện xác thực người dùng tại đây
-	ret, err := conatiner.AccountSvc.Get().Login("testuser", "testpassword")
+	_, err := conatiner.AccountSvc.Get().Login("testuser", "testpassword")
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "invalid credentials"})
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": err.Error()})
 	}
-	if req.Username == "admin" && req.Password == "123456" {
-		return c.JSON(http.StatusOK, OAuthTokenResponse{
-			AccessToken:  ret.Token,
-			TokenType:    "bearer",
-			ExpiresIn:    3600,
-			RefreshToken: "fake-refresh-token",
-		})
-	}
+	conatiner.GetContext()
+	return c.JSON(http.StatusOK, OAuthTokenResponse{
+		AccessToken:  conatiner.GetDb().GetDBName() + "-access-token",
+		TokenType:    "bearer",
+		ExpiresIn:    3600,
+		RefreshToken: "fake-refresh-token",
+	})
 
-	return c.JSON(http.StatusUnauthorized, map[string]string{"error": "invalid credentials"})
 }

@@ -51,10 +51,10 @@ type ErrAccountLocked struct {
 }
 
 func (e *ErrInvalidCredentials) Error() string {
-	return "invalid credentials"
+	return "invalid credentials" + e.Err.Error()
 }
 func (e *ErrAccountLocked) Error() string {
-	return "account locked"
+	return "account locked" + e.Err.Error()
 }
 
 func (s *AccountService) Login(username, password string) (*LoginResult, error) {

@@ -82,8 +82,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace vdb => ../vdb
+replace vdb => ../packages/vdb
 
-replace vdi => ../vdi
+replace vdi => ../packages/vdi
 
-replace vcache => ../vcache
+replace vcache => ../packages/vcache
