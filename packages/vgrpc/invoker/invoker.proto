@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package invoker;
+option go_package = "./invoker"; // 👈 Sửa thành đường dẫn tương đối
+
+
+import "google/protobuf/struct.proto";
+
+service Invoker {
+  rpc Invoke (InvokeRequest) returns (InvokeReply);
+}
+
+message InvokeRequest {
+  string packagePath = 1;
+  string functionName = 2;
+  google.protobuf.Struct params = 3;
+}
+
+message InvokeReply {
+  google.protobuf.Struct result = 1;
+}

@@ -17,6 +17,48 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/vcontainers/echo_container/cmd"
+        },
+        {
+            "name": "Gin container",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/vcontainers/gin_container/cmd"
+        },
+        {
+            "name": "Fiber container",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/vcontainers/fiber_container/cmd"
+        },
+        {
+            "name": "Chi container",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/vcontainers/chi_container/cmd"
+        },
+        {
+            "name": "Http container",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/vcontainers/http_container/cmd"
+        },
+        {
+            "name": "ebiten container",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/vcontainers/ebiten_container/cmd"
+        },
+        {
+            "name": "grpc container",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/packages/vgrpc/cmd"
         }
     ]
 }

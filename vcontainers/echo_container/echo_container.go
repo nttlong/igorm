@@ -27,20 +27,6 @@ func NewEchoContainer(configFilePath string) *EchoContainer {
 		}
 		return nil
 	})
-	// ret := EchoContainer{
-	// 	Core: core,
-	// }
-
-	// ret.New(func(owner *EchoContainer) error {
-	// 	//nothing for setting up echo container
-
-	// 	owner.Echo.Init = func(owner *EchoContainer) *echo.Echo {
-
-	// 		ret := echo.New()
-	// 		return ret
-	// 	}
-	// 	return nil
-	// })
 
 	return ret
 }

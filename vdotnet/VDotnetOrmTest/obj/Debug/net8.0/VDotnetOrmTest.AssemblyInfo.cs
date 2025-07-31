@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VDotnetOrmTest")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1d4964db75606da986fd66c8036bbf79d8d7300f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f93f419b5058734ccf225ce420747ec0d8989fa0")]
 [assembly: System.Reflection.AssemblyProductAttribute("VDotnetOrmTest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VDotnetOrmTest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

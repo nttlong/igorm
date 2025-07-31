@@ -11,6 +11,7 @@ type CoreContainer struct {
 	*vdi.Container[CoreContainer]
 	Config vdi.Singleton[CoreContainer, config_service.ConfigService]
 	Cache  vdi.Singleton[CoreContainer, vcache.Cache]
+	
 }
 
 /*
