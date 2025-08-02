@@ -59,6 +59,13 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/packages/vgrpc/cmd"
+        },
+        {
+            "name": "vswagger",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/packages/vapi/cmd"
         }
     ]
 }

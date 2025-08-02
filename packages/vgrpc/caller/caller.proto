@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+option go_package = "./caller";
+
+package rpcservice;
+
+// Message để đóng gói một slice của các Any
+message AnyList {
+    repeated google.protobuf.Any values = 1;
+}
+
+// Yêu cầu để gọi hàm
+message InvokeRequest {
+    string method_path = 1;
+    bytes input_json = 2;
+}
+
+// Phản hồi từ hàm
+message InvokeResponse {
+    bytes result = 1;
+    string error_message = 2;
+}
+
+// Định nghĩa service
+service Invoker {
+    rpc Invoke(InvokeRequest) returns (InvokeResponse);
+}

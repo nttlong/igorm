@@ -10,3 +10,4 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 protoc --go_out=. --go-grpc_out=. invoker.proto
 #protoc   --go_out=.   --go-grpc_out=. --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative  invoker.proto
 #protoc --go_out=. --go-grpc_out=.  invoker/invoker.proto
+#protoc --go_out=. --go-grpc_out=.  caller/caller.proto

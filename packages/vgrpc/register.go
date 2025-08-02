@@ -136,7 +136,7 @@ func AddSingletonService[T any](init func() (*T, error)) error {
 	return item.err
 
 }
-func Call2(methoPath string, input []interface{}) ([]interface{}, error) {
+func Call(methoPath string, input []interface{}) ([]interface{}, error) {
 	typemap := regInfoSingletonData[strings.ToLower(methoPath)]
 	inputVals := make([]reflect.Value, len(input)+1)
 	inputVals[0] = typemap.ins
@@ -153,7 +153,7 @@ func Call2(methoPath string, input []interface{}) ([]interface{}, error) {
 	return retIns, nil
 
 }
-func Call(methoPath string, input []interface{}) ([]interface{}, error) {
+func Call2(methoPath string, input []interface{}) ([]interface{}, error) {
 	items := strings.Split(methoPath, ".")
 	typePath := strings.ToLower(strings.Join(items[0:len(items)-1], "."))
 	funcName := strings.ToLower(items[len(items)-1])

@@ -15,7 +15,13 @@ message InvokeRequest {
   string functionName = 2;
   google.protobuf.Struct params = 3;
 }
-
+message AnyList {
+    repeated google.protobuf.Any values = 1;
+}
 message InvokeReply {
   google.protobuf.Struct result = 1;
 }
+/*
+$env:PATH += ";D:\protoc-31.1-win64\bin"
+protoc --go_out=. --go-grpc_out=.  caller/caller.proto
+*/
