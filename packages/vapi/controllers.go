@@ -37,11 +37,6 @@ func AddHandler[T any](initHanlder func() (*T, error)) error {
 	apiPath = strings.ToLower(apiPath)
 	apiPath = strings.ReplaceAll(apiPath, ".", "/")
 
-	// t, err := initHanlder()
-	// if err != nil {
-	// 	return err
-
-	// }
 	mapUrlPath := swaggerData.BasePath + "/" + apiPath
 	for i := 0; i < typePrt.NumMethod(); i++ {
 		method := typePrt.Method(i)

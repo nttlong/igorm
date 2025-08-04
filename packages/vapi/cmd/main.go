@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"mime/multipart"
 	"net/http"
 	"time"
 	"vapi"
@@ -11,20 +12,41 @@ import (
 )
 
 type TestController struct {
-	HttpContext vapi.HttpContext
 }
 
 type Data struct {
-	Code string
-	Name string
+	Code string `json:"code"`
+	Name string `json:"name"`
 }
 
-func (c *TestController) Hello_Get() interface{} {
-	return "Hello"
+// func (c *TestController) Hello() string {
+// 	return "Hello"
+// }
+
+// func (c *TestController) Update(data Data, ctx vapi.HttpContext) Data {
+// 	return data
+// }
+
+type FileDownload struct {
+	AccessKey string `api:"url:{accessKey},description:file name,required:true"`
+	FileName  string `api:"url:{fileName}.mp4,description:file name,required:true"`
 }
-func (c *TestController) Test_Post(data Data, User vapi.UserClaims) Data {
-	return data
+type FileUpload struct {
+	File *multipart.FileHeader
+	Data Data
 }
+
+func (c *TestController) Update(data Data, ctx vapi.HttpContext) {
+
+}
+
+// func (c *TestController) File(data FileUpload, ctx vapi.HttpContext) {
+
+// }
+
+// func (c *TestController) File(data FileDownload, ctx vapi.HttpContext) {
+
+// }
 
 type OAuth2PasswordImpl struct{}
 
@@ -112,89 +134,27 @@ func (o *OAuth2PasswordImpl) OnValidateToken(token string) vapi.TokenValidationR
 
 }
 func main() {
-	vapi.AddHandler(func() (*TestController, error) {
+	// vapi.AddHandler(func() (*TestController, error) {
+	// 	return &TestController{}, nil
+	// })
+	vapi.AddController(func() (*TestController, error) {
 		return &TestController{}, nil
 	})
 	server := vapi.NewHtttpServer(
 		8080,
 		"0.0.0.0",
 	)
-	server.OnValidateToken(func(token string) vapi.TokenValidationResponse {
-
-		return vapi.TokenValidationResponse{
-			IsValid: true,
-		}
-
-	})
-	server.OnGetAccessToken(func(w http.ResponseWriter, r *http.Request) {
-		// Chỉ chấp nhận phương thức POST
-		if r.Method != http.MethodPost {
-			http.Error(w, "Chỉ chấp nhận phương thức POST", http.StatusMethodNotAllowed)
-			return
-		}
-
-		// Phân tích form data từ request
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, "Không thể phân tích form data", http.StatusBadRequest)
-			return
-		}
-
-		// Lấy username và password từ form
-		username := r.FormValue("username")
-		password := r.FormValue("password")
-
-		// 1. Giả lập quá trình xác thực
-		// Trong thực tế, bạn sẽ truy vấn database hoặc một hệ thống xác thực khác.
-		if username == "admin" && password == "password" {
-			// 2. Nếu xác thực thành công, tạo một token (JWT)
-			userID := "user-123"
-			userRoles := []string{"admin", "member"}
-
-			claims := vapi.UserClaims{
-				UserID:   userID,
-				Username: username,
-				Roles:    userRoles,
-				RegisteredClaims: jwt.RegisteredClaims{
-					ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
-					IssuedAt:  jwt.NewNumericDate(time.Now()),
-					Issuer:    "my-auth-service",
-					Subject:   userID,
-				},
-			}
-
-			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-			tokenString, err := token.SignedString(secretKey)
-			if err != nil {
-				http.Error(w, "Lỗi khi tạo token", http.StatusInternalServerError)
-				return
-			}
-
-			// 3. Giả lập một Refresh Token
-			refreshTokenString := fmt.Sprintf("fake_refresh_token_%d", time.Now().Unix())
-
-			// 4. Trả về cấu trúc AccessTokenResponse cho client
-			response := vapi.AccessTokenResponse{
-				AccessToken:  tokenString,
-				TokenType:    "Bearer",
-				ExpiresIn:    3600, // 1 giờ
-				RefreshToken: refreshTokenString,
-			}
-
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(response)
-
-		} else {
-			// 5. Nếu xác thực thất bại, trả về lỗi Unauthorized.
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(w).Encode(map[string]string{"error": "invalid_credentials"})
-		}
-	})
+	server.Middleware(vapi.Cors)
 	server.Swagger()
-	server.Cors()
-	server.Auth()
+	server.Middleware(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+		next(w, r)
+	})
+	server.Middleware(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+		next(w, r)
+
+	})
+	//server.Cors()
+	//server.Auth()
 
 	server.Start()
 }

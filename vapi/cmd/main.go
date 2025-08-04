@@ -48,7 +48,7 @@ func main() {
 	/*
 	 _echo luc nahy chinh la *echo.Echo
 	*/
-
+	_echo.POST("/download/code/:code", controllers.Test)
 	_echo.POST("/oauth/token", controllers.OAuthToken)
 	_echo.GET("/swagger/*", echoSwagger.WrapHandler)
 	err := appService.Run() // chay web server

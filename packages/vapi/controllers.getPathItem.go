@@ -132,19 +132,7 @@ func getPathItem(methodName string, method reflect.Method, receiverType reflect.
 	// 9. Trả về giá trị struct, không phải con trỏ.
 	return *ret, paramInfo
 }
-func isAuthRequire(receiverType reflect.Type) []int {
-	for i := 0; i < receiverType.NumField(); i++ {
-		fieldType := receiverType.Field(i).Type
-		if fieldType == reflect.TypeOf(UserClaims{}) {
-			return receiverType.Field(i).Index
 
-		} else if receiverType.Field(i).Anonymous {
-			return isAuthRequire(fieldType)
-		}
-
-	}
-	return nil
-}
 func getHttpContextFieldIndex(receiverType reflect.Type) []int {
 	for i := 0; i < receiverType.NumField(); i++ {
 		fieldType := receiverType.Field(i).Type
