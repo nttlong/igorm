@@ -46,40 +46,6 @@ func NewHtttpServer(port int, host string) *HtttpServer {
 	}
 
 }
-func (s *HtttpServer) Start() error {
-	// Bắt đầu từ mux là handler cuối cùng
-	final := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		s.mux.ServeHTTP(w, r)
-	})
-
-	// Gắn từng middleware vào chain
-	for i := len(s.mws) - 1; i >= 0; i-- {
-		mw := s.mws[i]
-		next := final
-		final = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			mw(w, r, next.ServeHTTP)
-		})
-	}
-
-	s.handler = final
-
-	addr := fmt.Sprintf("%s:%d", s.Host, s.Port)
-	fmt.Println("Server listening at", addr)
-	return http.ListenAndServe(addr, s.handler)
-}
-func (s *HtttpServer) Start1() error {
-
-	var h func(w http.ResponseWriter, r *http.Request)
-	h = func(w http.ResponseWriter, r *http.Request) {
-		s.Progress.fn(w, r, s.Progress.nextFn)
-	}
-	s.handler = http.HandlerFunc(h)
-	err := http.ListenAndServe(fmt.Sprintf("%s:%d", s.Host, s.Port), s.handler)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 
 // Start khởi động server và áp dụng middleware
 

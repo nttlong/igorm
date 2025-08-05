@@ -32,21 +32,35 @@ type FileDownload struct {
 	FileName  string `api:"url:{fileName}.mp4,description:file name,required:true"`
 }
 type FileUpload struct {
-	File *multipart.FileHeader
-	Data Data
+	Tenant string `api:"url:{tenant},description:tenant name`
+	File   *multipart.FileHeader
+	Data   Data
 }
 
-func (c *TestController) Update(data Data, ctx vapi.HttpContext) {
+func (c *TestController) Update(data Data, ctx vapi.HttpContext, user vapi.UserClaims) {
 
 }
 
-// func (c *TestController) File(data FileUpload, ctx vapi.HttpContext) {
+func (c *TestController) Upload(data FileUpload, ctx vapi.HttpContext, user vapi.UserClaims) {
 
-// }
+}
 
-// func (c *TestController) File(data FileDownload, ctx vapi.HttpContext) {
+func (c *TestController) File(data FileDownload, ctx vapi.HttpContext, user vapi.UserClaims) {
 
-// }
+}
+
+type TenanantIfno struct {
+	Name string `json:"name"`
+	Code string `json:"code"`
+}
+type UpdateTenant struct {
+	Tenant string `api:"url:{tenant},description:tenant name:"tenant"`
+	Info   TenanantIfno
+}
+
+func (c *TestController) UpdateTenant(data UpdateTenant, ctx vapi.HttpContext, user vapi.UserClaims) {
+
+}
 
 type OAuth2PasswordImpl struct{}
 
@@ -147,6 +161,7 @@ func main() {
 	server.Middleware(vapi.Cors)
 	server.Swagger()
 	server.Middleware(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+
 		next(w, r)
 	})
 	server.Middleware(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {

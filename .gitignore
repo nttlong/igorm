@@ -15,3 +15,4 @@ chess/config.yaml
 vapi/internal/service/tmp/badger
 vapi/internal/cache/tmp/badger
 **/tmp/badger/
+/data

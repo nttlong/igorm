@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -55,6 +56,10 @@ type methodInfo struct {
 	/*
 		is a first type of method.In
 	*/
+	ReceiverTypeOfInstance reflect.Type
+	/*
+		is a second type of method.In
+	*/
 	ReceiverType reflect.Type
 
 	/*
@@ -63,6 +68,7 @@ type methodInfo struct {
 	*/
 	PathOfMethod          string
 	Url                   string
+	MasterUrl             string
 	HandlerUrl            string
 	IndexOfHttpContextArg int
 	IndexfUserClaimsArg   int
@@ -80,6 +86,7 @@ type utils struct {
 	mapGoTypeToSwaggerType map[reflect.Type]string
 	rootPackage            string
 	handler                []*methodInfo
+	mapUrlMethodInfo       map[string]*methodInfo
 }
 
 func (u *utils) GetType(typ reflect.Type) string {
@@ -98,11 +105,12 @@ func (u *utils) GetType(typ reflect.Type) string {
 // It uses regex to match patterns like Handle_<MethodName>_<HttpMethod> or <Tag>_Handle_<MethodName>_<HttpMethod>.
 func (u *utils) ParseMethodName(method reflect.Method) (*methodInfo, error) {
 	info := methodInfo{
-		IndexOfHttpContextArg: -1,
-		IndexfUserClaimsArg:   -1,
-		Method:                method,
-		ReceiverType:          method.Type.In(0), // The first parameter is the receiver type
-		Parameters:            []interface{}{},
+		IndexOfHttpContextArg:  -1,
+		IndexfUserClaimsArg:    -1,
+		Method:                 method,
+		ReceiverType:           method.Type.In(0), // The first parameter is the receiver type
+		Parameters:             []interface{}{},
+		ReceiverTypeOfInstance: method.Type.In(0).Elem(),
 	}
 
 	info.Tag = info.ReceiverType.Elem().String()
@@ -134,12 +142,25 @@ func (u *utils) ParseMethodName(method reflect.Method) (*methodInfo, error) {
 
 	if info.IndexDataArg > -1 {
 		regexpUrl := path + "/" + strings.ToLower(method.Name)
-		urlsInfos := u.GetUrlParamInfo(method.Type.In(info.IndexDataArg), []int{})
+		info.MasterUrl = "/" + regexpUrl + "/"
+		urlsInfos, defaultMethod := u.GetUrlParamInfo(method.Type.In(info.IndexDataArg), []int{})
 		info.Url = "/" + path + "/" + urlMethod
-
+		//info.Url = "/" + path + "/" + urlMethod
+		info.HandlerUrl = "/" + path
 		for _, urlsInfo := range urlsInfos {
+			if urlsInfo.url == "" && urlsInfo.form == "" {
+				info.HttpMethod = defaultMethod
+				info.RequestMimeType = "application/json"
+				info.Parameters = append(info.Parameters, formParamInfo{
+					Name:       urlsInfo.name,
+					Type:       urlsInfo.fieldType,
+					FieldIndex: urlsInfo.fieldIndex,
+				})
+
+				continue
+			}
 			if urlsInfo.form != "" {
-				info.HttpMethod = "POST"
+				info.HttpMethod = defaultMethod
 				info.RequestMimeType = "multipart/form-data"
 				info.Parameters = append(info.Parameters, formParamInfo{
 					Name:       urlsInfo.form,
@@ -151,8 +172,7 @@ func (u *utils) ParseMethodName(method reflect.Method) (*methodInfo, error) {
 			}
 			if urlsInfo.url != "" {
 				info.HttpMethod = "GET"
-				info.Url = "/" + path
-				info.HandlerUrl = "/" + path
+
 				argsName := strings.Split(urlsInfo.url, "{")[1]
 				argsName = strings.Split(argsName, "}")[0]
 
@@ -173,14 +193,14 @@ func (u *utils) ParseMethodName(method reflect.Method) (*methodInfo, error) {
 
 				info.Parameters = append(info.Parameters, urlParamInfo{
 					Name:       argsName,
-					Type:       u.GetType(method.Type.In(info.IndexDataArg)),
+					Type:       "string",
 					FieldIndex: urlsInfo.fieldIndex,
 				})
 				continue
 			}
-			info.HttpMethod = "POST"
 
 		}
+		info.HttpMethod = defaultMethod
 		fmt.Println(`^/` + regexpUrl + `$`)
 		info.regexpUrl = regexp.MustCompile(`^/` + regexpUrl + `$`)
 
@@ -208,6 +228,7 @@ func (u *utils) ParseMethodName(method reflect.Method) (*methodInfo, error) {
 		info.ResponseMimeType = mime.TypeByExtension(".json")
 
 		info.Url = "/" + path + "/" + strings.ToLower(method.Name)
+		info.MasterUrl = info.Url
 		info.regexpUrl = regexp.MustCompile(`^/` + path + "/" + strings.ToLower(method.Name) + `/?$`)
 		info.HandlerUrl = "/" + path
 		info.Priority = 4
@@ -260,13 +281,13 @@ type itemGetUrlParamInfo struct {
 	fieldType  string
 }
 
-func (u *utils) GetUrlParamInfo(typ reflect.Type, fieldIndex []int) []itemGetUrlParamInfo {
+func (u *utils) GetUrlParamInfo(typ reflect.Type, fieldIndex []int) ([]itemGetUrlParamInfo, string) {
 	ret := []itemGetUrlParamInfo{}
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
 	}
 	itemType := ""
-
+	defaultMethod := "GET"
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		fielType := field.Type
@@ -275,7 +296,9 @@ func (u *utils) GetUrlParamInfo(typ reflect.Type, fieldIndex []int) []itemGetUrl
 		}
 
 		if field.Anonymous {
-			ret = append(ret, u.GetUrlParamInfo(field.Type, field.Index)...)
+			subRet, httpMethod := u.GetUrlParamInfo(field.Type, field.Index)
+			defaultMethod = httpMethod
+			ret = append(ret, subRet...)
 		} else if fielType == reflect.TypeOf(multipart.FileHeader{}) {
 			if itemType == "" {
 				itemType = "form"
@@ -290,9 +313,7 @@ func (u *utils) GetUrlParamInfo(typ reflect.Type, fieldIndex []int) []itemGetUrl
 			tagInfo := u.GetApiTag(field, fieldIndex)
 			if tagInfo != nil {
 				if tagInfo.url != "" {
-					if itemType == "" {
-						itemType = "form"
-					}
+
 					ret = append(ret, itemGetUrlParamInfo{
 						url:        tagInfo.url,
 						fieldIndex: tagInfo.fieldIndex,
@@ -301,36 +322,61 @@ func (u *utils) GetUrlParamInfo(typ reflect.Type, fieldIndex []int) []itemGetUrl
 				}
 
 			} else {
-				ret = append(ret, itemGetUrlParamInfo{
-					name:       field.Name,
-					fieldIndex: append(fieldIndex, field.Index...),
-				})
+				fieldType := field.Type
+				if fieldType.Kind() == reflect.Ptr {
+					fieldType = fieldType.Elem()
+				}
+				if fieldType == reflect.TypeOf(uuid.UUID{}) || fieldType == reflect.TypeOf(time.Time{}) {
+
+					ret = append(ret, itemGetUrlParamInfo{
+						name:       field.Name,
+						fieldIndex: append(fieldIndex, field.Index...),
+						fieldType:  "string",
+					})
+				} else if fieldType.Kind() == reflect.Struct {
+					defaultMethod = "POST"
+					ret = append(ret, itemGetUrlParamInfo{
+						name:       field.Name,
+						fieldIndex: append(fieldIndex, field.Index...),
+						fieldType:  "object",
+					})
+				} else {
+					ret = append(ret, itemGetUrlParamInfo{
+						name:       field.Name,
+						fieldIndex: append(fieldIndex, field.Index...),
+						fieldType:  "string",
+					})
+				}
 			}
 
 		}
 	}
-	for i := range ret {
+	if itemType == "" && defaultMethod == "POST" {
+		return ret, "POST"
+	} else {
+		for i := range ret {
 
-		if itemType == "url" {
-			if ret[i].url == "" {
-				ret[i].url = ret[i].name
+			if itemType == "url" {
+				if ret[i].url == "" {
+					ret[i].url = ret[i].name
+				}
+
+				continue
 			}
+			if itemType == "form" {
+				if ret[i].form == "" {
+					ret[i].form = ret[i].name
 
-			continue
-		}
-		if itemType == "form" {
-			if ret[i].form == "" {
-				ret[i].form = ret[i].name
+				}
+				if ret[i].fieldType == "" {
+					ret[i].fieldType = "form"
 
+				}
+				continue
 			}
-			if ret[i].fieldType == "" {
-				ret[i].fieldType = "form"
-
-			}
-			continue
 		}
 	}
-	return ret
+	return ret, defaultMethod
 
 }
 

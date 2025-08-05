@@ -1,7 +1,6 @@
 package vapi
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 )
@@ -13,9 +12,11 @@ func AddController[T any](initHanlder func() (*T, error)) error {
 		return err
 	}
 
-	typ := reflect.TypeFor[T]()
-	fmt.Println(typ.String())
+	// typ := reflect.TypeFor[T]()
+
 	typePrt := reflect.TypeFor[*T]()
+
+	utilsInstance.AddInitHandler(reflect.TypeFor[T](), initHanlder)
 	lst, err := utilsInstance.ParseMethods(typePrt)
 	if err != nil {
 		return err

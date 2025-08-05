@@ -2,7 +2,6 @@ package vapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"reflect"
 	"regexp"
@@ -31,7 +30,7 @@ func (server *HtttpServer) Swagger() {
 	})
 
 	for k := range mapHandler {
-		fmt.Println(k)
+		// fmt.Println(k)
 		mux.HandleFunc(k, func(w http.ResponseWriter, r *http.Request) {
 
 			method, ok := mapHandler[k]
