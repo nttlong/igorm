@@ -5,99 +5,10 @@ import (
 	"fmt"
 	"mime/multipart"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func (apiMethod *apiMethodInfo) ExtractFieldIndex(typ reflect.Type, index []int) []int {
-	if typ.Kind() == reflect.Ptr {
-		typ = typ.Elem()
-	}
-
-	for i := 0; i < typ.NumField(); i++ {
-		field := typ.Field(i)
-		if field.Anonymous {
-			index = apiMethod.ExtractFieldIndex(field.Type, index)
-			if index != nil {
-				return index
-			}
-		}
-		if strings.Contains(apiMethod.tags.Url, "{"+field.Name+"}") {
-			index = append(index, field.Index...)
-			apiMethod.regExpUri = strings.ReplaceAll(apiMethod.regExpUri, "{"+field.Name+"}", "(.*)")
-			return index
-		}
-	}
-	return nil
-
-}
-
-func (apiMethod *apiMethodInfo) GetRoute() string {
-	apiMethod.indexOfFieldInUrl = [][]int{}
-	apiMethod.routeHandler = apiMethod.tags.Url
-	if strings.Contains(apiMethod.tags.Url, "{") {
-		apiMethod.routeHandler = strings.Split(apiMethod.tags.Url, "{")[0]
-		apiMethod.regExpUri = api.EscapeRegExp(apiMethod.tags.Url)
-
-		if apiMethod.typeOfContextInfo == nil {
-			apiMethod.typeOfContextInfo = apiMethod.method.Type.In(apiMethod.indexOfContextInfo)
-		}
-		contextType := apiMethod.typeOfContextInfo
-		if contextType.Kind() == reflect.Ptr {
-			contextType = contextType.Elem()
-		}
-		for i := 0; i < contextType.NumField(); i++ {
-			field := contextType.Field(i)
-			if field.Anonymous {
-				fieldIndex := apiMethod.ExtractFieldIndex(field.Type, field.Index)
-				if fieldIndex != nil {
-					apiMethod.indexOfFieldInUrl = append(apiMethod.indexOfFieldInUrl, field.Index)
-				}
-				continue
-			}
-			if strings.Contains(apiMethod.tags.Url, "{"+field.Name+"}") {
-				apiMethod.indexOfFieldInUrl = append(apiMethod.indexOfFieldInUrl, field.Index)
-				apiMethod.regExpUri = strings.ReplaceAll(apiMethod.regExpUri, "{"+field.Name+"}", "(.*)")
-			}
-
-		}
-
-	}
-	if apiMethod.tags.Method == "" {
-		apiMethod.tags.Method = "post"
-		apiMethod.requestContentType = "application/json"
-	}
-	apiMethod.httpMethod = strings.ToUpper(apiMethod.tags.Method)
-	apiMethod.hasUploadFile = apiMethod.HasUploadFile()
-	if apiMethod.hasUploadFile {
-		apiMethod.requestContentType = "multipart/form-data"
-	}
-	return apiMethod.regExpUri
-}
-func (apiMethod *apiMethodInfo) HasUploadFile() bool {
-	ret := false
-	for i := 0; i < apiMethod.method.Type.NumIn(); i++ {
-		inputType := apiMethod.method.Type.In(i)
-		if inputType.Kind() == reflect.Ptr {
-			inputType = inputType.Elem()
-		}
-		print(inputType.String())
-		check, checkIndex := api.CheckHasInputFile(inputType)
-		if check {
-			apiMethod.indexOfArgHasFileUpload = append(apiMethod.indexOfArgHasFileUpload, i)
-			apiMethod.fieldIndexOfFileUpload = append(apiMethod.fieldIndexOfFileUpload, checkIndex)
-
-		}
-
-		ret = ret || check
-
-	}
-
-	return ret
-
-}
 
 type Inject[T any] struct {
 	Val T

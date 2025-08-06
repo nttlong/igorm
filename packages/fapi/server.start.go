@@ -7,7 +7,7 @@ import (
 
 func (s *HtttpServer) Start() error {
 	// Đăng ký các handler vào mux
-
+	s.loadController()
 	// handler cuối cùng gọi mux
 	final := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.mux.ServeHTTP(w, r)
@@ -24,7 +24,7 @@ func (s *HtttpServer) Start() error {
 
 	s.handler = final
 
-	addr := fmt.Sprintf("%s:%d", s.Host, s.Port)
+	addr := fmt.Sprintf("%s:%d", s.Bind, s.Port)
 	fmt.Println("Server listening at", addr)
 	return http.ListenAndServe(addr, s.handler)
 }

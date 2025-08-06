@@ -66,6 +66,13 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/packages/vapi/cmd"
+        },
+        {
+            "name": "example1",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/packages/fapi/example/example1"
         }
     ]
 }

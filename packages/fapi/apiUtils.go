@@ -206,6 +206,30 @@ func (api *apiUtils) CheckHasInputFile(typ reflect.Type) (bool, [][]int) {
 
 }
 
+var cacheExtractAllApiMethodInfo map[reflect.Type][]apiMethodInfo
+
+func (api *apiUtils) ExtractAllApiMethodInfo(typ reflect.Type) []apiMethodInfo {
+	if cacheExtractAllApiMethodInfo == nil {
+		cacheExtractAllApiMethodInfo = make(map[reflect.Type][]apiMethodInfo)
+	}
+	if cacheExtractAllApiMethodInfo[typ] != nil {
+		return cacheExtractAllApiMethodInfo[typ]
+	}
+
+	ret := []apiMethodInfo{}
+	for i := 0; i < typ.NumMethod(); i++ {
+		method := typ.Method(i)
+		apiMethodInfo := api.InspectMethod(method)
+
+		if apiMethodInfo != nil {
+			apiMethodInfo.GetRoute()
+			ret = append(ret, *apiMethodInfo)
+		}
+	}
+	cacheExtractAllApiMethodInfo[typ] = ret
+	return ret
+}
+
 var api = &apiUtils{
 	regexSepecialChars: "^/\\.*$",
 }
