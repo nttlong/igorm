@@ -15,6 +15,7 @@ func main() {
 	server := fapi.NewHtttpServer("/api", 8080, "localhost")
 	server.Swagger()
 	server.Middleware(fapi.Cors)
+	server.Middleware(fapi.Zip)
 	err := server.Start()
 	if err != nil {
 		panic(err)

@@ -17,9 +17,9 @@ type MediaContext struct {
 	FileID       string `param:"FileID"`
 }
 
-// func (m *Media) Content(ctx *MediaContext) ([]byte, error) {
-// 	panic("implement me")
-// }
+func (m *Media) Content(ctx *MediaContext) ([]byte, error) {
+	panic("implement me")
+}
 
 type UploadResult struct {
 	FileID string `json:"file_id"`
