@@ -43,6 +43,13 @@ func (u *User) Delete(ctx Context, data struct {
 }) {
 	panic("implement me")
 }
+func (u *User) Avatar(ctx Context, data struct {
+	_      int `route:"method:get"`
+	UserId string
+}) {
+	panic("implement me")
+}
+
 func getMethodByName[T any](name string) *reflect.Method {
 	t := reflect.TypeFor[*T]()
 	for i := 0; i < t.NumMethod(); i++ {
@@ -89,4 +96,10 @@ func TestInspectMethodSave(t *testing.T) {
 	ret := inspector.InspectorMethod(*mt)
 	fmt.Println(ret)
 	assert.Equal(t, "Save", mt.Name)
+}
+func TestInspectMethodAvatar(t *testing.T) {
+	mt := getMethodByName[User]("Avatar")
+	ret := inspector.InspectorMethod(*mt)
+	fmt.Println(ret)
+	assert.Equal(t, "Avatar", mt.Name)
 }

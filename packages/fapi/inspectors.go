@@ -107,7 +107,7 @@ func (m *inspectorMethod) Route() inspectorRoute {
 			requestContentType: "application/json",
 		}
 	} else {
-		uri := ""
+		uri := strings.ToLower(m.Method.Name)
 		method := "POST"
 		requestContentType := "application/json"
 		tags := strings.Split(tag, ";")
