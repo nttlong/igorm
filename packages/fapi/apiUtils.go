@@ -61,6 +61,7 @@ func (api *apiUtils) CheckTypeIsContextType(typ reflect.Type) (bool, string) {
 		if field.Type == reflect.TypeOf(Context{}) {
 			return true, field.Tag.Get("route")
 		} else if field.Anonymous {
+
 			if ok, tags := api.CheckTypeIsContextType(field.Type); ok {
 				if tags != "" {
 					return ok, tags
@@ -158,14 +159,17 @@ func (api *apiUtils) IsTypeUploadFile(t reflect.Type) bool {
 
 /*
 Check typ hash upload file and return list of fieldIndex has is fileUpload
+This method also return normal field (normal field is a field which typ is not multipart.FileHeader )
 */
 func (api *apiUtils) CheckHasInputFile(typ reflect.Type) (bool, [][]int) {
 	ret := false
 	retIndex := [][]int{}
+
 	if typ.Kind() == reflect.Slice {
 		typ = typ.Elem()
 
 		check, checkIndex := api.CheckHasInputFile(typ)
+
 		if check {
 			retIndex = append(retIndex, checkIndex...)
 		}
@@ -191,6 +195,7 @@ func (api *apiUtils) CheckHasInputFile(typ reflect.Type) (bool, [][]int) {
 			field := typ.Field(i)
 
 			check, checIndex := api.CheckHasInputFile(field.Type)
+
 			if check {
 				retIndex = append(retIndex, field.Index)
 				for x := range checIndex {

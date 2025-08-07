@@ -129,8 +129,14 @@ Exampe:
 	fieldIndexOfFileUpload=[([1],[3],[4,1])<-- path to fields of struct ],[// direct in arg]]
 */
 func (apiMethod *apiMethodInfo) HasUploadFile() bool {
+	if apiMethod.indexOfArg == nil {
+		apiMethod.indexOfArg = []int{}
+	}
+	if apiMethod.fieldIndex == nil {
+		apiMethod.fieldIndex = [][][]int{}
+	}
 	ret := false
-	for i := 0; i < apiMethod.method.Type.NumIn(); i++ {
+	for i := 1; i < apiMethod.method.Type.NumIn(); i++ {
 		inputType := apiMethod.method.Type.In(i)
 		if inputType.Kind() == reflect.Ptr {
 			inputType = inputType.Elem()
@@ -143,10 +149,42 @@ func (apiMethod *apiMethodInfo) HasUploadFile() bool {
 
 		}
 
+		fieldIndex := apiMethod.GetNormalFieldIndex(inputType)
+		if len(fieldIndex) == 0 {
+			continue
+		}
+		apiMethod.fieldIndex = append(apiMethod.fieldIndex, fieldIndex)
+		apiMethod.indexOfArg = append(apiMethod.indexOfArg, i)
+
 		ret = ret || check
 
 	}
 
 	return ret
 
+}
+func (apiMethod *apiMethodInfo) GetNormalFieldIndex(inputType reflect.Type) [][]int {
+	ret := [][]int{}
+	if inputType.Kind() == reflect.Ptr {
+		inputType = inputType.Elem()
+	}
+	for i := 0; i < inputType.NumField(); i++ {
+		field := inputType.Field(i)
+		ft := field.Type
+		if ft.Kind() == reflect.Ptr {
+			ft = ft.Elem()
+		}
+		if field.Anonymous && ft == reflect.TypeOf(Context{}) {
+
+			continue
+
+		}
+		if ok, _ := api.CheckTypeIsContextType(field.Type); !ok {
+			if ok, _ := api.CheckHasInputFile(field.Type); !ok {
+				ret = append(ret, field.Index)
+			}
+		}
+	}
+
+	return ret
 }

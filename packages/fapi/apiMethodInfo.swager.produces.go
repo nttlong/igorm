@@ -34,6 +34,10 @@ func (m *apiMethodInfo) GetResponseContentType() string {
 	}
 }
 func (m *apiMethodInfo) GetRequestContentType() string {
+	if m.requestContentType=="multipart/form-data"{
+		m.requestContentType = "application/x-www-form-urlencoded"
+		return m.requestContentType
+	}
 	if m.requestContentType != "" {
 		return m.requestContentType
 	} else if m.hasUploadFile {

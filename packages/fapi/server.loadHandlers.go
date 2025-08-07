@@ -13,6 +13,11 @@ func (s *HtttpServer) loadController() {
 		s.mux.HandleFunc(s.BaseUrl+h.routePath, func(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(s.BaseUrl + h.routePath)
 			fmt.Println(r.RequestURI)
+			for x, y := range r.Form {
+				fmt.Println(x)
+				fmt.Println(y)
+			}
+
 		})
 	}
 

@@ -79,6 +79,8 @@ type apiMethodInfo struct {
 			fieldIndexOfFileUpload -->[({1,0}),(<Direct in args>)]
 	*/
 	fieldIndexOfFileUpload [][][]int
+	indexOfArg             []int
+	fieldIndex             [][][]int
 	ResponseContentType    string
 }
 

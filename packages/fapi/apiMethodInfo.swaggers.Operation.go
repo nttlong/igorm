@@ -47,14 +47,14 @@ func (h *apiMethodInfo) CreateSwaggersParameter() []swaggers.Parameter {
 			ret = append(ret, swaggers.Parameter{
 				Type: "file",
 				Name: fmt.Sprintf("File%d", x),
-				In:   "formBody",
+				In:   "formData",
 			})
 		} else {
 			if len(h.fieldIndexOfFileUpload[i]) == 0 {
 				ret = append(ret, swaggers.Parameter{
 					Type: "file",
 					Name: fmt.Sprintf("File%d", x),
-					In:   "formBody",
+					In:   "formData",
 				})
 			}
 			for _, y := range h.fieldIndexOfFileUpload[i] {
@@ -72,6 +72,15 @@ func (h *apiMethodInfo) CreateSwaggersParameter() []swaggers.Parameter {
 						In:   "formBody",
 					})
 				}
+			}
+			for _, y := range h.fieldIndex[i] {
+				field := containerOfArg.FieldByIndex(y)
+
+				ret = append(ret, swaggers.Parameter{
+					Type: "string",
+					Name: field.Name,
+					In:   "formData",
+				})
 			}
 		}
 
