@@ -138,7 +138,11 @@ func (inspector *inspectors) Create(method reflect.Method) (*inspectInfo, error)
 
 		if strings.Contains(ret.Route.Uri, "{") { //<-- 	if uri look like {placeHolder1}/../{placeHolder n}
 			ret.Route.UseRegex = true
-			ret.Route.UriHandler = strings.Split(ret.Route.Uri, "{")[0] + "/"
+			ret.Route.UriHandler = strings.Split(ret.Route.Uri, "{")[0]
+			if !strings.HasSuffix(ret.Route.UriHandler, "/") {
+				ret.Route.UriHandler += "/"
+			}
+
 			uriItems := strings.Split(ret.Route.Uri, "{")
 			for _, item := range uriItems {
 				if strings.Contains(item, "}") {
@@ -165,12 +169,19 @@ func (inspector *inspectors) Create(method reflect.Method) (*inspectInfo, error)
 		  check if Uri has "@" and start by '/'
 		  Note start by '/' that mean uri was handled form root
 		*/
-		if strings.Contains(ret.Route.Uri, "@") && ret.Route.Uri[0] != '/' {
+		if ret.Route.Uri[0] == '/' {
+			ret.Route.Uri = ret.Route.Uri[1:]
+			ret.Route.RegexUri = strings.TrimPrefix(ret.Route.RegexUri, "\\/")
+			ret.Route.UriHandler = ret.Route.UriHandler[1:]
+			ret.Route.ISAbsUri = true
+
+		} else if strings.Contains(ret.Route.Uri, "@") {
 			ret.Route.Uri = strings.ReplaceAll(ret.Route.Uri, "@", ToKebabCase(prefixUri))
 		} else {
 			ret.Route.Uri = prefixUri + "/" + ret.Route.Uri
-			ret.Route.RegexUri = prefixUri + "/" + ret.Route.RegexUri
+			ret.Route.RegexUri = EscapeSpecialCharsForRegex(prefixUri+"/") + ret.Route.RegexUri
 			ret.Route.UriHandler = prefixUri + "/" + ret.Route.UriHandler
+			ret.Route.UriHandler = strings.TrimSuffix(ret.Route.UriHandler, "//") + "/"
 		}
 	}
 	// end of step 2

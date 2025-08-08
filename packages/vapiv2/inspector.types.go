@@ -92,6 +92,7 @@ type routeInfo struct {
 		and RegexUri performs detailed matching and extraction of path variables.
 	*/
 	UseRegex bool
+	ISAbsUri bool
 
 	/*
 		By default, RegexUri is derived from the original Uri by escaping all special regex characters.
