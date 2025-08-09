@@ -1,10 +1,10 @@
-package fapi
+package vapi
 
 import (
 	"embed"
 	"encoding/json"
-	"fapi/swaggers"
 	"sync"
+	"vapi/swaggers"
 )
 
 // Response định nghĩa cấu trúc của một response HTTP
@@ -36,7 +36,19 @@ var swaggerData *swaggers.Swagger
 
 func init() {
 	swaggerData, _ = loadSwaggerInfo()
-
+	//
+	oauth2AuthCodePKCE := map[string]interface{}{
+		"type":             "oauth2",
+		"flow":             "accessCode",
+		"authorizationUrl": "/oauth/authorize",
+		"tokenUrl":         "/oauth/token",
+		"scopes": map[string]interface{}{
+			"read":  "Read access",
+			"write": "Write access",
+		},
+		"description": "OAuth2 Authorization Code Flow with PKCE support",
+	}
+	swaggerData.SecurityDefinitions["OAuth2AuthCodePKCE"] = oauth2AuthCodePKCE
 }
 
 // createMockSwaggerJSON là một hàm helper để tạo file swagger.json cho ví dụ này.
@@ -50,13 +62,21 @@ func CreateMockSwaggerJSON(basrUrl string) []byte {
 	// 		Responses:  map[string]Response{},
 	// 	},
 	// }
-	swaggerData.BasePath = basrUrl
-	LoadHandlerInfo(swaggerData)
-	ret, err := json.Marshal(swaggerData)
+	key := "CreateMockSwaggerJSON/" + basrUrl
+	ret, _ := OnceCall(key, func() (*[]byte, error) {
 
-	if err != nil {
-		panic(err)
-	}
+		swaggerData.BasePath = basrUrl
+		LoadHandlerInfo(swaggerData)
+		for k, v := range SwaggerUtils.Oauth2 {
+			swaggerData.SecurityDefinitions[k] = v
+		}
+		ret, err := json.Marshal(swaggerData)
 
-	return ret
+		if err != nil {
+			return nil, err
+		}
+
+		return &ret, nil
+	})
+	return *ret
 }
