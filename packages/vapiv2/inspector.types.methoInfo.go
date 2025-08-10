@@ -5,6 +5,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"reflect"
+	"regexp"
 	"strings"
 )
 
@@ -21,8 +22,9 @@ type handlerInfo struct {
 	RouteTags             []string
 	Uri                   string
 	RegexUri              string
+	RegexUriFind          regexp.Regexp
 	UriHandler            string
-	IsRegexhadler         bool
+	IsRegexHandler        bool
 	UriParams             []uriParam
 	IndexOfInjectors      []int
 	FormUploadFile        []int
@@ -106,12 +108,11 @@ func (h *helperType) GetAuthClaims(typ reflect.Type) []int {
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		fieldType := field.Type
+
 		if h.skipTypeWhenGetAuthClaims(fieldType) {
 			continue
 		}
 
-		fmt.Println(field.Name)
-		fmt.Println(fieldType.String())
 		ret := h.GetAuthClaims(fieldType)
 		if ret != nil {
 			return append(field.Index, ret...)
@@ -163,7 +164,14 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 			continue
 
 		} else if typ.Kind() == reflect.Struct {
-			indexOfRequestBody = i
+
+			authFind := h.GetAuthClaims(typ)
+			if authFind != nil && IndexOfAuthClaimsArg == -1 {
+				IndexOfAuthClaimsArg = i
+				IndexOfAuthClaims = authFind
+			} else {
+				indexOfRequestBody = i
+			}
 
 		}
 	}
@@ -210,10 +218,32 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 		}
 
 		if strings.Contains(ret.Uri, "@") {
-			ret.Uri = strings.Replace(ret.Uri, "@", h.ToKebabCase(method.Name), 1)
+			if ret.Uri != "" && ret.Uri[0] == '/' {
+				ret.Uri = strings.Replace(ret.Uri, "@", h.ToKebabCase(method.Name), 1)
+			} else {
+				typ := method.Type.In(0)
+				if typ.Kind() == reflect.Ptr {
+					typ = typ.Elem()
+				}
+				fullName := typ.String()
+				items := strings.Split(fullName, ".")
+
+				for i := range items {
+					items[i] = h.ToKebabCase(items[i])
+				}
+
+				ret.Uri = strings.Replace(ret.Uri, "@", strings.Join(items, "/"), 1)
+
+			}
 		} else {
 			if ret.Uri == "" {
-				ret.Uri = h.ToKebabCase(method.Name)
+				receiverTypeStr := ret.ReceiverTypeElem.String()
+				items := strings.Split(receiverTypeStr, ".")
+				for i := range items {
+					items[i] = h.ToKebabCase(items[i])
+				}
+				items = append(items, h.ToKebabCase(method.Name))
+				ret.Uri = strings.Join(items, "/")
 			} else {
 				ret.Uri = ret.Uri + "/" + h.ToKebabCase(method.Name)
 			}
@@ -223,8 +253,8 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 		ret.UriParams = h.ExtractUriParams(ret.Uri)
 		if len(ret.UriParams) > 0 {
 			ret.RegexUri = h.TemplateToRegex(ret.Uri)
-			ret.UriHandler = strings.Split(ret.Uri, "{")[0] + "/"
-			ret.IsRegexhadler = true
+			ret.UriHandler = strings.Split(ret.Uri, "{")[0]
+			ret.IsRegexHandler = true
 
 		} else {
 			ret.RegexUri = h.EscapeSpecialCharsForRegex(ret.Uri)

@@ -4,23 +4,25 @@ import (
 	"vapi"
 	"vapi/example"
 	_ "vapi/example/example1/controllers"
+	"vapi/mw"
 )
 
 type TestController struct {
 }
 
 func main() {
-	vapi.Controller("", "", func() (*example.Media, error) {
+	vapi.Controller(func() (*example.Media, error) {
 		return &example.Media{}, nil
 	})
-	server := vapi.NewHtttpServer("/api", 8080, "localhost")
+	server := vapi.NewHtttpServer("/api/v1", 8080, "localhost")
 	vapi.SwaggerUtils.OAuth2Password(
 		"/api/oauth/token",
 		"",
 	)
 	server.Swagger()
-	server.Middleware(vapi.Cors)
-	server.Middleware(vapi.Zip)
+	server.Middleware(mw.LogAccessTokenClaims)
+	server.Middleware(mw.Cors)
+	server.Middleware(mw.Zip)
 	err := server.Start()
 	if err != nil {
 		panic(err)

@@ -27,7 +27,7 @@ func InspectMethod[T any]() ([]handlerInfo, error) {
 
 }
 
-func Controller[T any](groupTags string, route string, init func() (*T, error)) error {
+func Controller[T any](init func() (*T, error)) error {
 	list, err := InspectMethod[T]()
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func Controller[T any](groupTags string, route string, init func() (*T, error)) 
 		wHandler := webHandler{
 			apiInfo:   x,
 			initFunc:  reflect.ValueOf(init),
-			routePath: route + "/" + x.UriHandler,
+			routePath: "/" + x.UriHandler,
 			method:    x.HttpMethod,
 		}
 		wHandler.routePath = strings.ReplaceAll(wHandler.routePath, "//", "/")

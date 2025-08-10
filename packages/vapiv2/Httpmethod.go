@@ -9,6 +9,7 @@ type Handler struct {
 	Res http.ResponseWriter
 	Req *http.Request
 }
+
 type initInspectHttpMethodFromType struct {
 	val  string
 	once sync.Once

@@ -131,7 +131,7 @@ func createSwaggerParameters(web webHandler) []swaggers.Parameter {
 			is no longer necessary*/
 
 	}
-	if web.apiInfo.IndexOfRequestBody != -1 {
+	if web.apiInfo.IndexOfRequestBody > 0 {
 		typ := web.apiInfo.TypeOfRequestBodyElem
 		data := reflect.New(typ).Elem().Interface()
 		desc, _ := json.MarshalIndent(data, " ", "  ")
@@ -174,7 +174,7 @@ func createSwaggerOperation(web webHandler) *swaggers.Operation {
 		Security:   []map[string][]string{},
 	}
 	ret.Parameters = createSwaggerParameters(web)
-	if len(web.apiInfo.IndexOfAuthClaims) > 0 {
+	if web.apiInfo.IndexOfAuthClaimsArg > 0 {
 
 		ret.Security = append(ret.Security, map[string][]string{})
 		ret.Security[0]["OAuth2Password"] = []string{}

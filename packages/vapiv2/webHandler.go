@@ -28,6 +28,9 @@ func (web *webHandlerRunnerType) Exec(handler webHandler, w http.ResponseWriter,
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return nil
 	}
+	if r.Method == "GET" {
+		return web.ExecGet(handler, w, r)
+	}
 	contentType := r.Header.Get("Content-Type")
 	if strings.HasPrefix(contentType, "application/x-www-form-urlencoded") {
 		if err := r.ParseForm(); err != nil {

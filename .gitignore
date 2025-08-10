@@ -16,3 +16,4 @@ vapi/internal/service/tmp/badger
 vapi/internal/cache/tmp/badger
 **/tmp/badger/
 /data
+/packages/vapiv2/example/example1/uploads

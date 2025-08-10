@@ -39,23 +39,13 @@ func (web *webHandlerRunnerType) ExecJson(handler webHandler, w http.ResponseWri
 		handler.apiInfo.ReceiverTypeElem = handler.apiInfo.ReceiverTypeElem.Elem()
 	}
 
-	context := reflect.New(handler.apiInfo.TypeOfArgsElem)
-
-	context.Elem().FieldByName("Req").Set(reflect.ValueOf(r))
-	context.Elem().FieldByName("Res").Set(reflect.ValueOf(w))
-
-	args[handler.apiInfo.IndexOfArg] = context
-	for i := 1; i < handler.apiInfo.Method.Type.NumIn(); i++ {
-		if handler.apiInfo.Method.Type.In(i).Kind() != reflect.Ptr {
-			if args[i].Kind() == reflect.Ptr {
-				args[i] = args[i].Elem()
-
-			}
-		}
-
+	context, err := web.CreateHttpContext(handler, w, r)
+	if err != nil {
+		return err
 	}
 
-	retArgs := handler.apiInfo.Method.Func.Call(args)
+	args[handler.apiInfo.IndexOfArg] = context
+	retArgs := web.MethodCall(handler, args)
 	if len(retArgs) > 0 {
 		if err, ok := retArgs[len(retArgs)-1].Interface().(error); ok {
 			return err
@@ -73,7 +63,7 @@ func (web *webHandlerRunnerType) ExecJson(handler webHandler, w http.ResponseWri
 		} else {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(retArgs[0].Elem().Interface())
+			json.NewEncoder(w).Encode(retArgs[0].Interface())
 		}
 		// Ví dụ: trả về dạng JSON
 
