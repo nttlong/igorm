@@ -12,8 +12,9 @@ var mapRoutes map[string]webHandler = map[string]webHandler{}
 func (s *HtttpServer) loadController() {
 
 	for i := range handlerList {
+		handlerList[i].Index = i
 		if handlerList[i].apiInfo.UriHandler[0] != '/' {
-			url := s.BaseUrl + handlerList[i].apiInfo.UriHandler
+			url := s.BaseUrl + "/" + handlerList[i].apiInfo.UriHandler
 			handlerList[i].routePath = url
 			handlerList[i].routePath = strings.ReplaceAll(handlerList[i].routePath, "//", "/")
 			handlerList[i].routePath = strings.TrimSuffix(handlerList[i].routePath, "/")
@@ -36,26 +37,15 @@ func (s *HtttpServer) loadController() {
 
 	for _, h := range handlerList {
 		mapRoutes[h.routePath] = h
-		/*
-			mux.HandleFunc("/a/b/c", func(w http.ResponseWriter, r *http.Request) {...}
-			mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-				khi goi request ve luc nao no cung avo day ma kg vao mux.HandleFunc("/a/b/c"
-			}
-
-
-		*/
+		fmt.Println(h.routePath)
 		s.mux.HandleFunc(h.routePath, func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println(h.routePath)
-			fmt.Println(r.RequestURI)
-			// r.ParseMultipartForm(20 * 1024 * 1024)
-			// if r.MultipartForm.File != nil {
-			// 	for f := range r.MultipartForm.File {
-			// 		fmt.Println(f)
-			// 		fmt.Println(r.MultipartForm.File[f])
+			err := webHandlerRunner.Exec(h, w, r)
+			if err != nil {
+				fmt.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 
-			// 	}
-
-			// }
+				return
+			}
 
 		})
 	}

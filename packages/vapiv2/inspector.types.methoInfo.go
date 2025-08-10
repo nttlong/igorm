@@ -3,16 +3,18 @@ package vapi
 import (
 	"fmt"
 	"mime/multipart"
+	"net/http"
 	"reflect"
 	"strings"
 )
 
 type handlerInfo struct {
-	IndexOfArg            int
-	TypeOfArgs            reflect.Type
-	TypeOfArgsElem        reflect.Type
-	FieldIndex            []int
-	ReceiverIndex         int
+	IndexOfArg     int
+	TypeOfArgs     reflect.Type
+	TypeOfArgsElem reflect.Type
+	FieldIndex     []int
+	ReceiverIndex  int
+
 	ReceiverType          reflect.Type
 	ReceiverTypeElem      reflect.Type
 	Method                reflect.Method
@@ -30,6 +32,9 @@ type handlerInfo struct {
 	IndexOfAuthClaimsArg  int
 	IndexOfAuthClaims     []int
 	HttpMethod            string
+}
+type execInfo struct {
+	FormFields map[string]reflect.StructField
 }
 
 func (h *helperType) FindHandlerFieldIndexFormType(typ reflect.Type) ([]int, error) {
@@ -71,6 +76,23 @@ func (h *helperType) findHandlerFieldIndexFormType(typ reflect.Type) ([]int, err
 	}
 	return nil, nil
 }
+func (h *helperType) skipTypeWhenGetAuthClaims(fieldType reflect.Type) bool {
+	key := fieldType.String() + "/helperType/skipTyoeWhenGetAuthClaims"
+	ret, _ := OnceCall(key, func() (*bool, error) {
+		ret := false
+		if fieldType.Kind() == reflect.Ptr {
+			fieldType = fieldType.Elem()
+		}
+		if fieldType.Kind() == reflect.Interface {
+			ret = true
+		}
+		if fieldType == reflect.TypeOf(http.Request{}) {
+			ret = true
+		}
+		return &ret, nil
+	})
+	return *ret
+}
 func (h *helperType) GetAuthClaims(typ reflect.Type) []int {
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
@@ -84,6 +106,12 @@ func (h *helperType) GetAuthClaims(typ reflect.Type) []int {
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		fieldType := field.Type
+		if h.skipTypeWhenGetAuthClaims(fieldType) {
+			continue
+		}
+
+		fmt.Println(field.Name)
+		fmt.Println(fieldType.String())
 		ret := h.GetAuthClaims(fieldType)
 		if ret != nil {
 			return append(field.Index, ret...)
@@ -107,12 +135,7 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 		if typ.Kind() != reflect.Struct {
 			continue
 		}
-		if IndexOfAuthClaimsArg == -1 {
-			if ret := h.GetAuthClaims(typ); ret != nil {
-				IndexOfAuthClaimsArg = i
-				IndexOfAuthClaims = ret
-			}
-		}
+
 		if typ == reflect.TypeOf(Handler{}) {
 			if ret == nil {
 				ret = &handlerInfo{
@@ -147,6 +170,24 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 	if ret == nil {
 		return nil, nil
 	}
+	for i := 0; i < method.Type.NumIn(); i++ {
+		if IndexOfAuthClaimsArg == -1 &&
+			!contains(indexOfInjectors, i) &&
+			i != indexOfRequestBody {
+			typ := method.Type.In(i)
+			if typ.Kind() == reflect.Ptr {
+				typ = typ.Elem()
+			}
+			if typ.Kind() != reflect.Struct {
+				continue
+			}
+			if ret := h.GetAuthClaims(typ); ret != nil {
+				IndexOfAuthClaimsArg = i
+				IndexOfAuthClaims = ret
+			}
+		}
+	}
+
 	ret.ReceiverIndex = receiverIndex
 	ret.ReceiverType = method.Type.In(receiverIndex)
 	ret.ReceiverTypeElem = ret.ReceiverType
@@ -171,7 +212,12 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 		if strings.Contains(ret.Uri, "@") {
 			ret.Uri = strings.Replace(ret.Uri, "@", h.ToKebabCase(method.Name), 1)
 		} else {
-			ret.Uri = ret.Uri + "/" + h.ToKebabCase(method.Name)
+			if ret.Uri == "" {
+				ret.Uri = h.ToKebabCase(method.Name)
+			} else {
+				ret.Uri = ret.Uri + "/" + h.ToKebabCase(method.Name)
+			}
+
 		}
 
 		ret.UriParams = h.ExtractUriParams(ret.Uri)
@@ -192,7 +238,12 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 		ret.IndexOfRequestBody = indexOfRequestBody
 		ret.TypeOfRequestBody = method.Type.In(indexOfRequestBody)
 		ret.TypeOfRequestBodyElem = ret.TypeOfRequestBody
+		if ret.TypeOfRequestBody.Kind() == reflect.Ptr {
+			ret.TypeOfRequestBodyElem = ret.TypeOfRequestBody.Elem()
+		}
+
 		ret.FormUploadFile = h.FindFormUploadInType(ret.TypeOfRequestBodyElem)
+
 	}
 	if IndexOfAuthClaimsArg != -1 {
 		ret.IndexOfAuthClaimsArg = IndexOfAuthClaimsArg
@@ -320,6 +371,15 @@ func (h *helperType) IsInjector(typ reflect.Type) bool {
 
 }
 func (h *helperType) FindFormUploadInType(typ reflect.Type) []int {
+	fileType := reflect.TypeOf((*multipart.File)(nil)).Elem()
+	if typ.Kind() == reflect.Interface && typ.Implements(fileType) {
+		return []int{}
+	}
+	if !h.IsDetectableType(typ,
+		reflect.TypeOf(multipart.FileHeader{}),
+		reflect.TypeOf([]multipart.FileHeader{})) {
+		return nil
+	}
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
 	}
@@ -334,11 +394,16 @@ func (h *helperType) FindFormUploadInType(typ reflect.Type) []int {
 	if typ == reflect.TypeOf(multipart.FileHeader{}) {
 		return []int{}
 	}
-	for i := 0; i < typ.NumField(); i++ {
-		field := typ.Field(i)
-		ret := h.FindFormUploadInType(field.Type)
-		if ret != nil {
-			return append(field.Index, ret...)
+	if typ.Kind() == reflect.Slice {
+		return append([]int{0}, h.FindFormUploadInType(typ.Elem())...)
+	}
+	if typ.Kind() == reflect.Struct {
+		for i := 0; i < typ.NumField(); i++ {
+			field := typ.Field(i)
+			ret := h.FindFormUploadInType(field.Type)
+			if ret != nil {
+				return append(field.Index, ret...)
+			}
 		}
 	}
 	return nil
@@ -399,6 +464,7 @@ func (h *helperType) ExtractUriParams(uri string) []uriParam {
 
 type helperType struct {
 	SpecialCharForRegex string
+	IgnoreDetectTypes   map[reflect.Type]bool
 }
 
 // splitUriSegments splits the URI string by '/', ignoring empty segments.

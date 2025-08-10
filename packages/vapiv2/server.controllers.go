@@ -9,26 +9,6 @@ func (s *HtttpServer) AddController(controllers ...interface{}) {
 
 }
 
-// var cacheController map[reflect.Type]handlerInfo
-
-// type handlerInfoSwagger struct {
-// 	SwaggerRoute string
-// 	routePath    string
-// 	apiInfo      handlerInfo
-// 	initFunc     reflect.Value
-// 	groupTags    string
-// }
-
-// var handlerInfoSwaggers []handlerInfoSwagger = []handlerInfoSwagger{}
-type webHandler struct {
-	routePath string
-	apiInfo   handlerInfo
-	initFunc  reflect.Value
-	method    string
-}
-
-var handlerList []webHandler = []webHandler{}
-
 func InspectMethod[T any]() ([]handlerInfo, error) {
 	ret := []handlerInfo{}
 	typ := reflect.TypeFor[*T]()
@@ -53,9 +33,7 @@ func Controller[T any](groupTags string, route string, init func() (*T, error)) 
 		return err
 	}
 	for _, x := range list {
-		if x.UriHandler[len(x.UriHandler)-1] == '$' {
-			panic("loi")
-		}
+
 		wHandler := webHandler{
 			apiInfo:   x,
 			initFunc:  reflect.ValueOf(init),

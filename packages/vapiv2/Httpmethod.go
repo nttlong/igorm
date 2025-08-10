@@ -1,10 +1,13 @@
 package vapi
 
 import (
+	"net/http"
 	"sync"
 )
 
 type Handler struct {
+	Res http.ResponseWriter
+	Req *http.Request
 }
 type initInspectHttpMethodFromType struct {
 	val  string

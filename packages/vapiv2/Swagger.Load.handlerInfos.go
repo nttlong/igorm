@@ -18,8 +18,8 @@ func contains(slice []int, value int) bool {
 }
 func createSwaggerConsumes(web webHandler) []string {
 	ret := []string{}
-	if web.apiInfo.FormUploadFile != nil {
-		ret = append(ret, "multipart/form-data")
+	if len(web.apiInfo.FormUploadFile) > 0 {
+		ret = append(ret, "application/x-www-form-urlencoded")
 	} else {
 		ret = append(ret, "application/json")
 	}
@@ -38,6 +38,7 @@ func createSwaggerProduces(web webHandler) []string {
 	return ret
 }
 func createSwaggerParameters(web webHandler) []swaggers.Parameter {
+
 	ret := []swaggers.Parameter{}
 	if len(web.apiInfo.UriParams) > 0 {
 		for _, param := range web.apiInfo.UriParams {
@@ -61,7 +62,10 @@ func createSwaggerParameters(web webHandler) []swaggers.Parameter {
 			}
 		}
 	}
-	if web.apiInfo.FormUploadFile != nil {
+	if len(web.apiInfo.FormUploadFile) > 0 {
+		/*
+		 all post data are in form post
+		*/
 		for _, index := range web.apiInfo.FormUploadFile {
 			field := web.apiInfo.TypeOfRequestBodyElem.Field(index)
 			tpy := field.Type
@@ -121,8 +125,32 @@ func createSwaggerParameters(web webHandler) []swaggers.Parameter {
 
 			}
 		}
+		return ret /*
+			At this step, the system has already confirmed that all information sent from the client to the server
+			is transmitted via Form data. Therefore, the next step of generating Swagger parameters for the request body
+			is no longer necessary*/
 
 	}
+	if web.apiInfo.IndexOfRequestBody != -1 {
+		typ := web.apiInfo.TypeOfRequestBodyElem
+		data := reflect.New(typ).Elem().Interface()
+		desc, _ := json.MarshalIndent(data, " ", "  ")
+		swaggerType := "body"
+		if web.apiInfo.FormUploadFile != nil {
+			swaggerType = "formData"
+		}
+		isNotRequire := web.apiInfo.TypeOfRequestBody.Kind() == reflect.Ptr
+
+		ret = append(ret, swaggers.Parameter{
+
+			Name:        "body",
+			In:          "body",
+			Required:    !isNotRequire,
+			Type:        swaggerType,
+			Description: string(desc),
+		})
+	}
+
 	return ret
 }
 func createSwaggerOperation(web webHandler) *swaggers.Operation {
@@ -145,11 +173,17 @@ func createSwaggerOperation(web webHandler) *swaggers.Operation {
 		Parameters: []swaggers.Parameter{},
 		Security:   []map[string][]string{},
 	}
+	ret.Parameters = createSwaggerParameters(web)
 	if len(web.apiInfo.IndexOfAuthClaims) > 0 {
-		ret.Parameters = createSwaggerParameters(web)
+
 		ret.Security = append(ret.Security, map[string][]string{})
 		ret.Security[0]["OAuth2Password"] = []string{}
 	}
+	if web.apiInfo.Uri[0] == '/' {
+		ret.IgnoreBasePath = true
+
+	}
+
 	return ret
 }
 
@@ -157,6 +191,7 @@ func LoadHandlerInfo(s *swaggers.Swagger) {
 
 	// panic("unimplemented, at file packages/fapi/Swagger.Load.handlerInfos.go")
 	for _, handler := range handlerList {
+
 		op := createSwaggerOperation(handler)
 		op.Tags = append(op.Tags, handler.apiInfo.ReceiverTypeElem.String())
 		pathItem := swaggers.PathItem{}

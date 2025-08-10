@@ -3,6 +3,7 @@ package main
 import (
 	"vapi"
 	"vapi/example"
+	_ "vapi/example/example1/controllers"
 )
 
 type TestController struct {
@@ -14,7 +15,7 @@ func main() {
 	})
 	server := vapi.NewHtttpServer("/api", 8080, "localhost")
 	vapi.SwaggerUtils.OAuth2Password(
-		"api/oauth/token",
+		"/api/oauth/token",
 		"",
 	)
 	server.Swagger()
