@@ -8,8 +8,9 @@ export let options = {
 
 export default function () {
     //let url = 'http://localhost:8080/api/v1/example/media/file';// 'http://localhost:8080/api/oauth/token';
-    let url = "http://localhost:8080/api/v1/example/media/Bang%20tong%20hop%20phi%20boi%20thuong%2007%202025%20-%20CNCT_Tr%C3%ACnh.pdf"
+    // let url = "http://localhost:8080//api/v1/example/media/tes-004.pdf"
     //let url = "http://localhost:8080/api/v1/example/media/test.mp4.mp4"
+    let url = "http://127.0.0.1:8081/download/tes-004.pdf"
     let payload = 'grant_type=password&username=admin&password=123456';
 
     let params = {

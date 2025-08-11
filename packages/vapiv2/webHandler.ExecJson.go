@@ -11,7 +11,7 @@ func (web *webHandlerRunnerType) ExecJson(handler webHandler, w http.ResponseWri
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return err
 	}
-	ReceiverValue, err := web.ResolveReceiverValue(handler)
+	ReceiverValue, err := web.ResolveReceiverValue(handler, r)
 	if err != nil {
 		return err
 	}
@@ -19,7 +19,7 @@ func (web *webHandlerRunnerType) ExecJson(handler webHandler, w http.ResponseWri
 	var bodyData reflect.Value
 
 	// Duyệt tất cả key/value trong form
-	if handler.apiInfo.IndexOfRequestBody > -1 {
+	if handler.apiInfo.IndexOfRequestBody > 0 {
 		bodyData = reflect.New(handler.apiInfo.TypeOfRequestBodyElem)
 
 		if err := json.NewDecoder(r.Body).Decode(bodyData.Interface()); err != nil {
@@ -30,7 +30,7 @@ func (web *webHandlerRunnerType) ExecJson(handler webHandler, w http.ResponseWri
 	}
 	args := make([]reflect.Value, handler.apiInfo.Method.Type.NumIn())
 	args[0] = ReceiverValue
-	if handler.apiInfo.IndexOfRequestBody > -1 {
+	if handler.apiInfo.IndexOfRequestBody > 0 {
 		args[handler.apiInfo.IndexOfRequestBody] = bodyData
 
 	}

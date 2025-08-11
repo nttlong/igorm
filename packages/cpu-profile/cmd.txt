@@ -1,0 +1,2 @@
+go tool pprof -alloc_space pprof.example1.exe.alloc_objects.alloc_space.inuse_objects.inuse_space.001.pb.gz
+go tool pprof -inuse_space pprof.example1.exe.alloc_objects.alloc_space.inuse_objects.inuse_space.001.pb.gz

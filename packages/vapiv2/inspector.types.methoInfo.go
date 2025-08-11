@@ -10,6 +10,7 @@ import (
 )
 
 type handlerInfo struct {
+	BaseUrl        string
 	IndexOfArg     int
 	TypeOfArgs     reflect.Type
 	TypeOfArgsElem reflect.Type
@@ -227,6 +228,7 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 				}
 				fullName := typ.String()
 				items := strings.Split(fullName, ".")
+				items = append(items, h.ToKebabCase(method.Name))
 
 				for i := range items {
 					items[i] = h.ToKebabCase(items[i])

@@ -15,3 +15,8 @@ type Contract struct {
 	Type      string `db:"size:50"` // probation, permanent, seasonal...
 	Note      string `db:"size:255"`
 }
+
+func init() {
+	vdb.ModelRegistry.Add(&Contract{})
+
+}

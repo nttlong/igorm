@@ -101,7 +101,7 @@ func TestTagsA(t *testing.T) {
 	assert.NoError(t, err)
 	argType := mt.Type.In(mtInfo.IndexOfArg)
 	tags := inspector.helper.ExtractTags(argType, mtInfo.FieldIndex)
-
+	
 	assert.Equal(t, []string{"", "uri:{Tenant}/*"}, tags)
 	uri := inspector.helper.ExtractUriFromTags(tags)
 	assert.Equal(t, "/file", uri)

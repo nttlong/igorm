@@ -9,7 +9,7 @@ import (
 func (web *webHandlerRunnerType) ExecGet(handler webHandler, w http.ResponseWriter, r *http.Request) error {
 	args := make([]reflect.Value, handler.apiInfo.Method.Type.NumIn())
 	var err error
-	args[0], err = web.ResolveReceiverValue(handler)
+	args[0], err = web.ResolveReceiverValue(handler, r)
 	if err != nil {
 		return err
 	}

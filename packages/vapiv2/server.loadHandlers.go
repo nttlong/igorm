@@ -13,6 +13,8 @@ var mapRoutes map[string]webHandler = map[string]webHandler{}
 func (s *HtttpServer) loadController() error {
 
 	for i := range handlerList {
+		handlerList[i].apiInfo.BaseUrl = s.BaseUrl
+
 		handlerList[i].Index = i
 
 		if handlerList[i].apiInfo.UriHandler == "" || handlerList[i].apiInfo.UriHandler[0] != '/' {

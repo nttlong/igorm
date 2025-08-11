@@ -10,7 +10,7 @@ import (
 
 func (web *webHandlerRunnerType) ExecFormPost(handler webHandler, w http.ResponseWriter, r *http.Request) error {
 
-	ReceiverValue, err := web.ResolveReceiverValue(handler)
+	ReceiverValue, err := web.ResolveReceiverValue(handler, r)
 	if err != nil {
 		return err
 	}

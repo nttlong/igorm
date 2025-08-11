@@ -6,8 +6,9 @@ import (
 )
 
 type Handler struct {
-	Res http.ResponseWriter
-	Req *http.Request
+	Res     http.ResponseWriter
+	Req     *http.Request
+	BaseUrl string
 }
 
 type initInspectHttpMethodFromType struct {

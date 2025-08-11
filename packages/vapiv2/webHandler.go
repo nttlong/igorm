@@ -48,7 +48,7 @@ func (web *webHandlerRunnerType) Exec(handler webHandler, w http.ResponseWriter,
 		return web.ExecFormPost(handler, w, r)
 	}
 
-	if strings.HasPrefix(contentType, "application/json") {
+	if strings.HasPrefix(contentType, "application/json") || contentType == "" {
 		return web.ExecJson(handler, w, r)
 	}
 	return nil
