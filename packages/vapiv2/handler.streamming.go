@@ -11,6 +11,26 @@ import (
 	"strings"
 )
 
+/*
+StreamingFile serves a file over HTTP with support for byte-range requests.
+
+It performs the following:
+- Opens the requested file and retrieves its size and MIME type.
+- Sets appropriate HTTP headers:
+  - Content-Type: the file's MIME type.
+  - Cache-Control: allows caching by clients for 24 hours.
+  - Accept-Ranges: indicates support for partial content requests.
+
+- Checks if the client sent a "Range" header to request a partial file.
+  - If no Range header is present, it streams the entire file with status 200 OK.
+  - If a valid Range header is present, it parses the range and streams only
+    the requested byte range with status 206 Partial Content.
+  - Reads the file in 32KB chunks and writes them to the response,
+    flushing the output buffer after each chunk to enable streaming.
+  - Handles errors and properly closes the file.
+
+This function enables efficient serving of large files and supports resumable downloads.
+*/
 func (ctx *Handler) StreamingFile(fileName string) error {
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -177,4 +197,85 @@ func parseRange(rangeHeader string, fileSize int64) (int64, int64, error) {
 	}
 
 	return start, end, nil
+}
+
+/*
+DownloadFile streams the specified file to the HTTP client as a downloadable attachment.
+
+Parameters:
+- w: http.ResponseWriter to write the HTTP response to the client.
+- fileName: the path to the file on disk to be downloaded.
+
+Behavior:
+- Opens the specified file and returns an error if it cannot be opened.
+- Determines the Content-Type based on the file extension.
+- Sets headers to prompt the client to download the file with the original filename.
+- Sets Content-Length header according to the file size.
+- Reads the file in chunks (32KB) and writes to the response.
+- Flushes the response buffer if supported to enable streaming.
+- Automatically closes the file after finishing or upon error.
+
+Returns:
+- error: non-nil if any error occurs during file opening, reading, or writing.
+*/
+func (ctx *Handler) DownloadFile(fileName string) error {
+	// Open the file for reading
+	file, err := os.Open(fileName)
+	if err != nil {
+		http.Error(ctx.Res, "File not found", http.StatusNotFound)
+		return err
+	}
+	defer file.Close()
+
+	// Get file information to obtain size
+	stat, err := file.Stat()
+	if err != nil {
+		http.Error(ctx.Res, "Cannot read file info", http.StatusInternalServerError)
+		return err
+	}
+	fileSize := stat.Size()
+
+	// Determine Content-Type based on file extension
+	ext := strings.ToLower(filepath.Ext(fileName))
+	contentType := mime.TypeByExtension(ext)
+	if contentType == "" {
+		// Fallback: read first 512 bytes to detect content type
+		buf := make([]byte, 512)
+		n, _ := file.Read(buf)
+		contentType = http.DetectContentType(buf[:n])
+		_, _ = file.Seek(0, io.SeekStart) // Reset offset after reading
+	}
+
+	// Set response headers for download
+	ctx.Res.Header().Set("Content-Type", contentType)
+	ctx.Res.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%q", filepath.Base(fileName)))
+	ctx.Res.Header().Set("Content-Length", fmt.Sprintf("%d", fileSize))
+	ctx.Res.Header().Set("Cache-Control", "no-cache")
+
+	// Try to get Flusher interface to flush response buffer
+	flusher, canFlush := ctx.Res.(http.Flusher)
+
+	// Buffer size for streaming
+	buf := make([]byte, 32*1024) // 32KB buffer
+
+	for {
+		n, err := file.Read(buf)
+		if n > 0 {
+			_, writeErr := ctx.Res.Write(buf[:n])
+			if writeErr != nil {
+				return writeErr
+			}
+			if canFlush {
+				flusher.Flush()
+			}
+		}
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return err
+		}
+	}
+
+	return nil
 }
