@@ -1,6 +1,7 @@
 package vapi
 
 import (
+	"fmt"
 	"reflect"
 	"regexp"
 	"strings"
@@ -47,4 +48,22 @@ func GetMethodByName[T any](name string) *reflect.Method {
 		return nil, nil
 	})
 	return ret
+}
+func GetUriOfHandler[T any](server *HtttpServer, methodName string) (string, error) {
+	mt := GetMethodByName[T](methodName)
+	if mt == nil {
+		return "", fmt.Errorf("%s of %T was not found", methodName, *new(T))
+	}
+	mtInfo, err := inspector.helper.GetHandlerInfo(*mt)
+	if err != nil {
+		return "", fmt.Errorf("%s of %T cause  error %s", methodName, *new(T), err.Error())
+	}
+	if mtInfo == nil {
+		return "", fmt.Errorf("%s of %T is not HttpMethod", methodName, *new(T))
+	}
+	if mtInfo.Uri != "" && mtInfo.Uri[0] == '/' {
+		return mtInfo.Uri, nil
+	}
+	return server.BaseUrl + "/" + mtInfo.Uri, nil
+
 }

@@ -18,4 +18,5 @@ type Parameter struct {
 	*/
 	In       string `json:"in"`
 	Required bool   `json:"required"`
+	Example  string `json:"example"`
 }

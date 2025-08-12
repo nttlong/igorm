@@ -15,7 +15,7 @@ type webHandler struct {
 	Index     int
 }
 
-var handlerList []webHandler = []webHandler{}
+
 
 type webHandlerRunnerType struct {
 }

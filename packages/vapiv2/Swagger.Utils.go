@@ -29,6 +29,9 @@ var SwaggerUtils = &SwaggerUtilsType{
 	Oauth2: map[string]interface{}{},
 }
 
+/*
+Create Swagger OAuth2Password
+*/
 func (s *SwaggerUtilsType) OAuth2Password(tokenUrl string, description string) map[string]interface{} {
 	if description == "" {
 		description = "\"OAuth2 Password Flow - Enter email/username and password in the popup to get token.\""

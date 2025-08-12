@@ -26,16 +26,33 @@ func main() {
 	vapi.Controller(func() (*example.Media, error) {
 		return &example.Media{}, nil
 	})
+	vapi.Controller(func() (*example.Auth, error) {
+		return &example.Auth{}, nil
+	})
+
 	server := vapi.NewHtttpServer("/api/v1", 8080, "localhost")
-	vapi.SwaggerUtils.OAuth2Password(
-		"/api/oauth/token",
-		"",
-	)
-	server.Swagger()
+	uri, err := vapi.GetUriOfHandler[example.Auth](server, "Oauth")
+	if err != nil {
+		panic(err)
+	}
+	log.Println(uri)
+
+	swagger := vapi.CreateSwagger(server, "/swagger3")
+	swagger.Info(vapi.SwaggerInfo{
+		Title:       "Swagger Example API",
+		Description: "This is a sample server Petstore server.",
+		Version:     "1.0.0",
+	})
+	// swagger.OAuth2AuthCodePKCE("/oauth/token", "/getToken", map[string]string{
+	// 	"read":  "Read access",
+	// 	"write": "Write access",
+	// })
+	swagger.OAuth2Password(uri)
+	swagger.Build()
 	server.Middleware(mw.LogAccessTokenClaims)
 	server.Middleware(mw.Cors)
 	//server.Middleware(mw.Zip)
-	err := server.Start()
+	err = server.Start()
 	if err != nil {
 		panic(err)
 	}

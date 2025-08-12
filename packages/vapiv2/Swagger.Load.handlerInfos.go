@@ -106,11 +106,12 @@ func createSwaggerParameters(web webHandler) []swaggers.Parameter {
 
 					ret = append(ret, swaggers.Parameter{
 
-						Name:        field.Name,
-						In:          "formData",
-						Required:    isRequire,
-						Type:        "object",
-						Description: string(desc),
+						Name:     field.Name,
+						In:       "formData",
+						Required: isRequire,
+						Type:     "object",
+						//Description: string(desc),
+						Example: string(desc),
 					})
 
 				} else {
@@ -143,11 +144,12 @@ func createSwaggerParameters(web webHandler) []swaggers.Parameter {
 
 		ret = append(ret, swaggers.Parameter{
 
-			Name:        "body",
-			In:          "body",
-			Required:    !isNotRequire,
-			Type:        swaggerType,
-			Description: string(desc),
+			Name:     "body",
+			In:       "body",
+			Required: !isNotRequire,
+			Type:     swaggerType,
+			//Description: string(desc),
+			Example: string(desc),
 		})
 	}
 
