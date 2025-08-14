@@ -38,6 +38,7 @@ Luu y:"example/media/list-of-file" chua phai la Url cuoi cung de handler tai htt
 func (m *Media) ListOfFiles(ctx *vapi.Handler, // <-- nhung method nao cua
 // Media co mot tham so kieu vapi.Handler hoac *vapi.Handler, thi duoc xem nhu la 1 handler
 // Nhu vay la o day ta da co 1 api liet ke danh sach cac file
+
 ) ([]string, error) {
 	folder := "./uploads"
 	files, err := os.ReadDir(folder)

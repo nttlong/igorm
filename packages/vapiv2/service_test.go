@@ -22,6 +22,11 @@ type FileService struct {
 	Db        Transient[DbContext, FileService]
 }
 
+func TestIsInjector(t *testing.T) {
+	assert.True(t, serviceUtils.IsInjector(reflect.TypeOf(FileService{})))
+	assert.False(t, serviceUtils.IsInjector(reflect.TypeOf(FileUstils{})))
+}
+
 func TestInjectorSingleton(t *testing.T) {
 	RegisterService(func(svc *FileService) error {
 

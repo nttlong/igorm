@@ -26,9 +26,9 @@ func main() {
 	vapi.Controller(func() (*example.Media, error) {
 		return &example.Media{}, nil
 	})
-	vapi.Controller(func() (*example.Auth, error) {
-		return &example.Auth{}, nil
-	})
+	// vapi.Controller(func() (*example.Auth, error) {
+	// 	return &example.Auth{}, nil
+	// })
 
 	server := vapi.NewHtttpServer("/api/v1", 8080, "localhost")
 	uri, err := vapi.GetUriOfHandler[example.Auth](server, "Oauth")

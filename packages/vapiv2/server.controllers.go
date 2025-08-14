@@ -14,6 +14,7 @@ func InspectMethod[T any]() ([]handlerInfo, error) {
 	typ := reflect.TypeFor[*T]()
 	for i := 0; i < typ.NumMethod(); i++ {
 		method := typ.Method(i)
+
 		info, err := inspector.helper.GetHandlerInfo(method)
 		if err != nil {
 			return nil, err

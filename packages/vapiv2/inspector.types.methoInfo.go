@@ -28,6 +28,7 @@ type handlerInfo struct {
 	IsRegexHandler        bool
 	UriParams             []uriParam
 	IndexOfInjectors      []int
+	HasInjector           bool
 	FormUploadFile        []int
 	IndexOfRequestBody    int
 	TypeOfRequestBody     reflect.Type
@@ -53,16 +54,31 @@ func (h *helperType) FindHandlerFieldIndexFormType(typ reflect.Type) ([]int, err
 
 }
 func (h *helperType) findHandlerFieldIndexFormType(typ reflect.Type) ([]int, error) {
+	return h.findHandlerFieldIndexFormTypeInternal(typ, make(map[reflect.Type]struct{}))
+}
+
+func (h *helperType) findHandlerFieldIndexFormTypeInternal(typ reflect.Type, visited map[reflect.Type]struct{}) ([]int, error) {
+
+	if serviceUtils.IsInjector(typ) {
+		return nil, nil
+	}
+
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
 	}
-	if typ.PkgPath() == reflect.TypeOf(Inject[string]{}).PkgPath() {
-
-		if strings.Contains(typ.Name(), "Inject[") {
-			return nil, nil
-
-		}
+	if typ == reflect.TypeOf(Handler{}) {
+		return []int{}, nil
 	}
+	if typ.Kind() != reflect.Struct {
+		return nil, nil
+	}
+
+	// Tránh vòng lặp vô hạn
+	if _, ok := visited[typ]; ok {
+		return nil, nil
+	}
+	visited[typ] = struct{}{}
+
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		fieldType := field.Type
@@ -77,7 +93,7 @@ func (h *helperType) findHandlerFieldIndexFormType(typ reflect.Type) ([]int, err
 			return []int{i}, nil
 		}
 
-		fieldIndex, err := h.findHandlerFieldIndexFormType(fieldType)
+		fieldIndex, err := h.findHandlerFieldIndexFormTypeInternal(fieldType, visited)
 		if err != nil {
 			return nil, err
 		}
@@ -87,6 +103,7 @@ func (h *helperType) findHandlerFieldIndexFormType(typ reflect.Type) ([]int, err
 	}
 	return nil, nil
 }
+
 func (h *helperType) skipTypeWhenGetAuthClaims(fieldType reflect.Type) bool {
 	key := fieldType.String() + "/helperType/skipTyoeWhenGetAuthClaims"
 	ret, _ := OnceCall(key, func() (*bool, error) {
@@ -105,15 +122,27 @@ func (h *helperType) skipTypeWhenGetAuthClaims(fieldType reflect.Type) bool {
 	return *ret
 }
 func (h *helperType) GetAuthClaims(typ reflect.Type) []int {
+	return h.getAuthClaimsInternal(typ, make(map[reflect.Type]struct{}))
+}
+
+func (h *helperType) getAuthClaimsInternal(typ reflect.Type, visited map[reflect.Type]struct{}) []int {
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
 	}
 	if typ.Kind() != reflect.Struct {
 		return nil
 	}
+
+	// Tránh vòng lặp vô hạn
+	if _, ok := visited[typ]; ok {
+		return nil
+	}
+	visited[typ] = struct{}{}
+
 	if typ == reflect.TypeOf(AuthClaims{}) {
 		return []int{}
 	}
+
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		fieldType := field.Type
@@ -122,22 +151,43 @@ func (h *helperType) GetAuthClaims(typ reflect.Type) []int {
 			continue
 		}
 
-		ret := h.GetAuthClaims(fieldType)
+		ret := h.getAuthClaimsInternal(fieldType, visited)
 		if ret != nil {
 			return append(field.Index, ret...)
 		}
 	}
 	return nil
 }
-func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error) {
-	receiverIndex := 0
-	var ret *handlerInfo
-	indexOfRequestBody := -1
-	indexOfInjectors := []int{}
-	IndexOfAuthClaimsArg := -1
-	var IndexOfAuthClaims []int
 
-	for i := 0; i < method.Type.NumIn(); i++ {
+//	func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error) {
+//		ret := &handlerInfo{
+//			Method:               method,
+//			TypeOfArgs:           method.Type.In(0),
+//			TypeOfArgsElem:       method.Type.In(0),
+//			ReceiverType:         method.Type.In(1),
+//			ReceiverTypeElem:     method.Type.In(1),
+//			IndexOfArg:           -1,
+//			IndexOfInjectors:     []int{},
+//			IndexOfRequestBody:   -1,
+//			IndexOfAuthClaimsArg: -1,
+//			HttpMethod:           "POST",
+//		}
+//	}
+func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error) {
+
+	ret := &handlerInfo{
+		IndexOfRequestBody: -1,
+	}
+
+	// indexOfRequestBody := -1
+	// indexOfInjectors := []int{}
+	// IndexOfAuthClaimsArg := -1
+	// var IndexOfAuthClaims []int
+	/*
+	 find  all args is injector
+	*/
+	ret.IndexOfInjectors = []int{}
+	for i := 1; i < method.Type.NumIn(); i++ {
 		typ := method.Type.In(i)
 		if typ.Kind() == reflect.Ptr {
 			typ = typ.Elem()
@@ -145,70 +195,51 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 		if typ.Kind() != reflect.Struct {
 			continue
 		}
-
-		if typ == reflect.TypeOf(Handler{}) {
-			if ret == nil {
-				ret = &handlerInfo{
-					IndexOfArg: i,
-					FieldIndex: []int{},
-				}
-				continue
-			}
-
+		if serviceUtils.IsInjector(typ) {
+			ret.IndexOfInjectors = append(ret.IndexOfInjectors, i)
+			ret.HasInjector = true
+			break
 		}
-		fieldIndex, err := h.FindHandlerFieldIndexFormType(typ)
-		if err != nil {
-			return nil, err
-		}
-		if fieldIndex != nil {
-			if ret == nil {
-				ret = &handlerInfo{
-					IndexOfArg: i,
-					FieldIndex: fieldIndex,
-				}
+	}
+	/*
+		find an arg handler
+	*/
+	isHandlerMethod := false
+	for i := 1; i < method.Type.NumIn(); i++ {
+		if !contains(ret.IndexOfInjectors, i) {
+			fieldIndex, err := h.FindHandlerFieldIndexFormType(method.Func.Type().In(i))
+			if err != nil {
+				return nil, err
 			}
-		}
-		if i > 0 {
-			if h.IsInjector(typ) {
-				indexOfInjectors = append(indexOfInjectors, i)
-				continue
-			}
+			if fieldIndex != nil {
+				ret.IndexOfArg = i
+				ret.FieldIndex = fieldIndex
+				isHandlerMethod = true
+				break
 
-		} else if typ.Kind() == reflect.Struct {
-
-			authFind := h.GetAuthClaims(typ)
-			if authFind != nil && IndexOfAuthClaimsArg == -1 {
-				IndexOfAuthClaimsArg = i
-				IndexOfAuthClaims = authFind
-			} else {
-				indexOfRequestBody = i
 			}
 
 		}
 	}
-	if ret == nil {
+	if !isHandlerMethod {
 		return nil, nil
 	}
+	ret.IndexOfAuthClaimsArg = -1
+	ret.IndexOfAuthClaims = nil
+
 	for i := 0; i < method.Type.NumIn(); i++ {
-		if IndexOfAuthClaimsArg == -1 &&
-			!contains(indexOfInjectors, i) &&
-			i != indexOfRequestBody {
-			typ := method.Type.In(i)
-			if typ.Kind() == reflect.Ptr {
-				typ = typ.Elem()
-			}
-			if typ.Kind() != reflect.Struct {
-				continue
-			}
-			if ret := h.GetAuthClaims(typ); ret != nil {
-				IndexOfAuthClaimsArg = i
-				IndexOfAuthClaims = ret
-			}
+		if contains(ret.IndexOfAuthClaims, i) {
+			continue
+		}
+		if indexOfAuthClaimsField := h.GetAuthClaims(method.Type.In(i)); indexOfAuthClaimsField != nil {
+			ret.IndexOfAuthClaimsArg = i
+			ret.IndexOfAuthClaims = indexOfAuthClaimsField
+			break
 		}
 	}
 
-	ret.ReceiverIndex = receiverIndex
-	ret.ReceiverType = method.Type.In(receiverIndex)
+	ret.ReceiverIndex = 0
+	ret.ReceiverType = method.Type.In(0)
 	ret.ReceiverTypeElem = ret.ReceiverType
 	if ret.ReceiverType.Kind() == reflect.Ptr {
 		ret.ReceiverTypeElem = ret.ReceiverType.Elem()
@@ -273,24 +304,35 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 			ret.UriHandler = ret.Uri + "/"
 		}
 	}
+	if ret.IndexOfRequestBody == -1 {
+		for i := 1; i < method.Type.NumIn(); i++ {
+			if !contains(ret.IndexOfInjectors, i) && i != ret.IndexOfArg && i != ret.IndexOfAuthClaimsArg {
+				typ := method.Type.In(i)
+				ret.TypeOfRequestBody = typ
+				if typ.Kind() == reflect.Ptr {
+					typ = typ.Elem()
+				}
+				if typ.Kind() != reflect.Struct {
+					continue
+				}
 
-	ret.IndexOfInjectors = indexOfInjectors
-
-	if indexOfRequestBody != -1 && indexOfRequestBody != ret.IndexOfArg {
-		ret.IndexOfRequestBody = indexOfRequestBody
-		ret.TypeOfRequestBody = method.Type.In(indexOfRequestBody)
-		ret.TypeOfRequestBodyElem = ret.TypeOfRequestBody
-		if ret.TypeOfRequestBody.Kind() == reflect.Ptr {
-			ret.TypeOfRequestBodyElem = ret.TypeOfRequestBody.Elem()
+				ret.TypeOfRequestBodyElem = typ
+				ret.IndexOfRequestBody = i
+				break
+			}
 		}
+	}
+	if ret.IndexOfRequestBody != -1 {
+
+		// ret.TypeOfRequestBodyElem = ret.TypeOfRequestBody
+		// if ret.TypeOfRequestBody.Kind() == reflect.Ptr {
+		// 	ret.TypeOfRequestBodyElem = ret.TypeOfRequestBody.Elem()
+		// }
 
 		ret.FormUploadFile = h.FindFormUploadInType(ret.TypeOfRequestBodyElem)
 
 	}
-	if IndexOfAuthClaimsArg != -1 {
-		ret.IndexOfAuthClaimsArg = IndexOfAuthClaimsArg
-		ret.IndexOfAuthClaims = IndexOfAuthClaims
-	}
+
 	for i := range ret.UriParams {
 		if field, ok := ret.TypeOfArgsElem.FieldByNameFunc(func(s string) bool {
 			return strings.EqualFold(s, ret.UriParams[i].Name)
@@ -300,23 +342,21 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 		}
 
 	}
-	for i := 1; i < method.Type.NumIn(); i++ {
-		if i != ret.IndexOfArg && i != IndexOfAuthClaimsArg && !contains(ret.IndexOfInjectors, i) {
-			typ := method.Type.In(i)
-			ret.TypeOfRequestBody = typ
-			ret.TypeOfRequestBodyElem = typ
-			if ret.TypeOfRequestBodyElem.Kind() == reflect.Ptr {
-				ret.TypeOfRequestBodyElem = typ.Elem()
+	// if ret.IndexOfRequestBody != -1 {
+	// 	ret.FormUploadFile = h.FindFormUploadInType(ret.TypeOfRequestBodyElem)
+	// }
+	// for i := 1; i < method.Type.NumIn(); i++ {
+	// 	if i != ret.IndexOfArg && i != IndexOfAuthClaimsArg && !contains(ret.IndexOfInjectors, i) {
+	// 		typ := method.Type.In(i)
+	// 		ret.TypeOfRequestBody = typ
+	// 		ret.TypeOfRequestBodyElem = typ
+	// 		if ret.TypeOfRequestBodyElem.Kind() == reflect.Ptr {
+	// 			ret.TypeOfRequestBodyElem = typ.Elem()
 
-			}
-			if ret.TypeOfRequestBodyElem.Kind() == reflect.Struct {
+	// 		}
 
-				ret.IndexOfRequestBody = i
-				ret.FormUploadFile = h.FindFormUploadInType(ret.TypeOfRequestBodyElem)
-
-			}
-		}
-	}
+	// 	}
+	// }
 	return ret, nil
 }
 func (h *helperType) ExtractTags(typ reflect.Type, fieldIndex []int) []string {
@@ -409,22 +449,8 @@ func (h *helperType) IsInjector(typ reflect.Type) bool {
 	key := typ.String() + "/helperType/IsInjector"
 
 	ret, _ := OnceCall(key, func() (*bool, error) {
-		typ := typ
-		if typ.Kind() == reflect.Ptr {
-			typ = typ.Elem()
-		}
-		if typ.Kind() != reflect.Struct {
-			return nil, nil
-		}
-		if typ.PkgPath() == reflect.TypeOf(Inject[string]{}).PkgPath() {
-			if strings.Contains(typ.Name(), "Inject[") {
-				ret := true
-				return &ret, nil
-			}
+		ret := serviceUtils.IsInjector(typ)
 
-		}
-
-		ret := false
 		return &ret, nil
 	})
 
@@ -454,53 +480,44 @@ func (h *helperType) IsFieldFileUpload(field reflect.StructField) bool {
 
 }
 func (h *helperType) FindFormUploadInType(typ reflect.Type) []int {
+	return h.findFormUploadInTypeInternal(typ, nil, make(map[reflect.Type]struct{}))
+}
+
+func (h *helperType) findFormUploadInTypeInternal(typ reflect.Type, parentIndex []int, visited map[reflect.Type]struct{}) []int {
 	ret := []int{}
 
-	// fileType := reflect.TypeOf((*multipart.File)(nil)).Elem()
-	// if typ.Kind() == reflect.Interface && typ.Implements(fileType) {
-	// 	return []int{}
-	// }
-	// if !h.IsDetectableType(typ,
-	// 	reflect.TypeOf(multipart.FileHeader{}),
-	// 	reflect.TypeOf([]multipart.FileHeader{})) {
-	// 	return nil
-	// }
-	// if typ.Kind() == reflect.Ptr {
-	// 	typ = typ.Elem()
-	// }
+	if typ.Kind() == reflect.Ptr {
+		typ = typ.Elem()
+	}
+	if typ.Kind() != reflect.Struct {
+		return ret
+	}
 
-	// if typ.Kind() != reflect.Struct && typ.Kind() != reflect.Slice {
+	// Tránh vòng lặp vô hạn
+	if _, ok := visited[typ]; ok {
+		return ret
+	}
+	visited[typ] = struct{}{}
 
-	// 	return nil
-	// }
-	// if typ == reflect.TypeOf([]multipart.FileHeader{}) {
-	// 	return []int{}
-	// }
-	// if typ == reflect.TypeOf(multipart.FileHeader{}) {
-	// 	return []int{}
-	// }
-	// if typ.Kind() == reflect.Slice {
-	// 	// return append([]int{0}, h.FindFormUploadInType(typ.Elem())...)
-	// 	return nil
-	// }
-	if typ.Kind() == reflect.Struct {
-		for i := 0; i < typ.NumField(); i++ {
-			field := typ.Field(i)
-			if h.IsFieldFileUpload(field) {
-				ret = append(ret, field.Index...)
-			}
-			// fmt.Println(field.Name)
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		fieldType := field.Type
+		indexPath := append(parentIndex, field.Index...)
 
-			// retSub := h.FindFormUploadInType(field.Type)
-			// if retSub != nil {
-			// 	// return append(field.Index, ret...)
-			// 	ret = append(ret, field.Index...)
-			// 	// ret=append(ret,retSub...)
-			// }
+		if h.IsFieldFileUpload(field) {
+			ret = append(ret, indexPath...)
+			continue
+		}
+
+		if fieldType.Kind() == reflect.Ptr {
+			fieldType = fieldType.Elem()
+		}
+		if fieldType.Kind() == reflect.Struct {
+			ret = append(ret, h.findFormUploadInTypeInternal(fieldType, indexPath, visited)...)
 		}
 	}
-	return ret
 
+	return ret
 }
 
 type uriParam struct {

@@ -6,8 +6,8 @@ import (
 	vapiFileUtils "vapi/fileUtils"
 )
 
-type FileUtilsInjector struct {
-	vapi.Inject[vapiFileUtils.FileUtils]
+type FileUtilsService struct {
+	FileUtil vapi.Singleton[vapiFileUtils.FileUtils, FileUtilsService]
 }
 
 func (m *Media) Upload2(ctx *struct {
@@ -15,6 +15,6 @@ func (m *Media) Upload2(ctx *struct {
 	Tenant       string
 }, data struct {
 	File multipart.FileHeader
-}, fileUtils vapi.Inject[vapiFileUtils.FileUtils]) (UploadResult, error) {
+}, fileUtils *FileUtilsService) (UploadResult, error) {
 	return UploadResult{}, nil
 }
