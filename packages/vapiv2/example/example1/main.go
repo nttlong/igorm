@@ -37,16 +37,13 @@ func main() {
 	}
 	log.Println(uri)
 
-	swagger := vapi.CreateSwagger(server, "/swagger3")
+	swagger := vapi.CreateSwagger(server, "/swagger")
 	swagger.Info(vapi.SwaggerInfo{
 		Title:       "Swagger Example API",
 		Description: "This is a sample server Petstore server.",
 		Version:     "1.0.0",
 	})
-	// swagger.OAuth2AuthCodePKCE("/oauth/token", "/getToken", map[string]string{
-	// 	"read":  "Read access",
-	// 	"write": "Write access",
-	// })
+
 	swagger.OAuth2Password(uri)
 	swagger.Build()
 	server.Middleware(mw.LogAccessTokenClaims)

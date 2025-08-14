@@ -1,0 +1,68 @@
+package errors
+
+import (
+	"fmt"
+	"reflect"
+)
+
+type UriParamParseError struct {
+	ParamName    string
+	TypeOfStruct reflect.Type
+}
+
+func NewUriParamParseError(paramName string, typeOfStruct reflect.Type) error {
+	return &UriParamParseError{
+		ParamName:    paramName,
+		TypeOfStruct: typeOfStruct,
+	}
+}
+func (e *UriParamParseError) Error() string {
+	return fmt.Sprintf("%s was not found in %s", e.ParamName, e.TypeOfStruct.String())
+}
+
+type UriParamConvertError struct {
+	ParamName        string
+	ValueSetType     reflect.Type
+	fielValueSetType reflect.Type
+}
+
+func NewUriParamConvertError(paramName string, valueSetType reflect.Type, fielValueSetType reflect.Type) error {
+	return &UriParamConvertError{
+		ParamName:        paramName,
+		ValueSetType:     valueSetType,
+		fielValueSetType: fielValueSetType,
+	}
+}
+func (e *UriParamConvertError) Error() string {
+	return fmt.Sprintf("error converting from %s to %s", e.ValueSetType.String(), e.fielValueSetType.String())
+}
+
+type BadRequestError struct {
+	Message string
+}
+
+func NewBadRequestError(message string) error {
+	return &BadRequestError{
+		Message: message,
+	}
+}
+
+func (e *BadRequestError) Error() string {
+	return e.Message
+
+}
+
+type ParamMissMatchError struct {
+	Message string
+}
+
+func NewParamMissMatchError(message string) error {
+	return &ParamMissMatchError{
+		Message: message,
+	}
+}
+
+func (e *ParamMissMatchError) Error() string {
+	return e.Message
+
+}

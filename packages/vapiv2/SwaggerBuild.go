@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	swaggers3 "vapi/swagger3"
-
-	httpSwagger "github.com/swaggo/http-swagger"
+	//httpSwagger "github.com/swaggo/http-swagger"
 )
 
 //go:embed swagger3/index.html
@@ -124,6 +123,6 @@ func (sb *SwaggerBuild) Build() error {
 	// 2. Phục vụ giao diện Swagger UI trên đường dẫn /swagger/
 	// Thư viện httpSwagger.WrapHandler tự động tạo giao diện HTML.
 	// Đường dẫn thứ hai "./swagger.json" là vị trí của file JSON mà UI sẽ hiển thị.
-	mux.Handle("/swagger/", httpSwagger.WrapHandler)
+	//mux.Handle("/swagger/", httpSwagger.WrapHandler)
 	return nil
 }

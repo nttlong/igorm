@@ -56,7 +56,13 @@ func (h *helperType) findHandlerFieldIndexFormType(typ reflect.Type) ([]int, err
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
 	}
+	if typ.PkgPath() == reflect.TypeOf(Inject[string]{}).PkgPath() {
 
+		if strings.Contains(typ.Name(), "Inject[") {
+			return nil, nil
+
+		}
+	}
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		fieldType := field.Type
@@ -66,9 +72,11 @@ func (h *helperType) findHandlerFieldIndexFormType(typ reflect.Type) ([]int, err
 		if fieldType.Kind() != reflect.Struct {
 			continue
 		}
+
 		if fieldType == reflect.TypeOf(Handler{}) {
 			return []int{i}, nil
 		}
+
 		fieldIndex, err := h.findHandlerFieldIndexFormType(fieldType)
 		if err != nil {
 			return nil, err
@@ -160,9 +168,11 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 				}
 			}
 		}
-		if h.IsInjector(typ) {
-			indexOfInjectors = append(indexOfInjectors, i)
-			continue
+		if i > 0 {
+			if h.IsInjector(typ) {
+				indexOfInjectors = append(indexOfInjectors, i)
+				continue
+			}
 
 		} else if typ.Kind() == reflect.Struct {
 
@@ -290,7 +300,23 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error)
 		}
 
 	}
+	for i := 1; i < method.Type.NumIn(); i++ {
+		if i != ret.IndexOfArg && i != IndexOfAuthClaimsArg && !contains(ret.IndexOfInjectors, i) {
+			typ := method.Type.In(i)
+			ret.TypeOfRequestBody = typ
+			ret.TypeOfRequestBodyElem = typ
+			if ret.TypeOfRequestBodyElem.Kind() == reflect.Ptr {
+				ret.TypeOfRequestBodyElem = typ.Elem()
 
+			}
+			if ret.TypeOfRequestBodyElem.Kind() == reflect.Struct {
+
+				ret.IndexOfRequestBody = i
+				ret.FormUploadFile = h.FindFormUploadInType(ret.TypeOfRequestBodyElem)
+
+			}
+		}
+	}
 	return ret, nil
 }
 func (h *helperType) ExtractTags(typ reflect.Type, fieldIndex []int) []string {
@@ -387,6 +413,9 @@ func (h *helperType) IsInjector(typ reflect.Type) bool {
 		if typ.Kind() == reflect.Ptr {
 			typ = typ.Elem()
 		}
+		if typ.Kind() != reflect.Struct {
+			return nil, nil
+		}
 		if typ.PkgPath() == reflect.TypeOf(Inject[string]{}).PkgPath() {
 			if strings.Contains(typ.Name(), "Inject[") {
 				ret := true
@@ -402,43 +431,75 @@ func (h *helperType) IsInjector(typ reflect.Type) bool {
 	return *ret
 
 }
-func (h *helperType) FindFormUploadInType(typ reflect.Type) []int {
-	fileType := reflect.TypeOf((*multipart.File)(nil)).Elem()
-	if typ.Kind() == reflect.Interface && typ.Implements(fileType) {
-		return []int{}
+func (h *helperType) IsFieldFileUpload(field reflect.StructField) bool {
+	fmt.Println(field.Name)
+	fieldType := field.Type
+	if fieldType.Kind() == reflect.Ptr {
+		fieldType = fieldType.Elem()
 	}
-	if !h.IsDetectableType(typ,
-		reflect.TypeOf(multipart.FileHeader{}),
-		reflect.TypeOf([]multipart.FileHeader{})) {
-		return nil
+	if fieldType.Kind() == reflect.Slice {
+		fieldType = fieldType.Elem()
 	}
-	if typ.Kind() == reflect.Ptr {
-		typ = typ.Elem()
+	if fieldType.Kind() == reflect.Ptr {
+		fieldType = fieldType.Elem()
 	}
+	if reflect.TypeOf(multipart.FileHeader{}) == fieldType {
+		return true
+	}
+	checkType := reflect.TypeOf((*multipart.File)(nil)).Elem()
+	if field.Type.Kind() == reflect.Interface && field.Type.Implements(checkType) {
+		return true
+	}
+	return false
 
-	if typ.Kind() != reflect.Struct && typ.Kind() != reflect.Slice {
-		fmt.Println(typ.String())
-		return nil
-	}
-	if typ == reflect.TypeOf([]multipart.FileHeader{}) {
-		return []int{}
-	}
-	if typ == reflect.TypeOf(multipart.FileHeader{}) {
-		return []int{}
-	}
-	if typ.Kind() == reflect.Slice {
-		return append([]int{0}, h.FindFormUploadInType(typ.Elem())...)
-	}
+}
+func (h *helperType) FindFormUploadInType(typ reflect.Type) []int {
+	ret := []int{}
+
+	// fileType := reflect.TypeOf((*multipart.File)(nil)).Elem()
+	// if typ.Kind() == reflect.Interface && typ.Implements(fileType) {
+	// 	return []int{}
+	// }
+	// if !h.IsDetectableType(typ,
+	// 	reflect.TypeOf(multipart.FileHeader{}),
+	// 	reflect.TypeOf([]multipart.FileHeader{})) {
+	// 	return nil
+	// }
+	// if typ.Kind() == reflect.Ptr {
+	// 	typ = typ.Elem()
+	// }
+
+	// if typ.Kind() != reflect.Struct && typ.Kind() != reflect.Slice {
+
+	// 	return nil
+	// }
+	// if typ == reflect.TypeOf([]multipart.FileHeader{}) {
+	// 	return []int{}
+	// }
+	// if typ == reflect.TypeOf(multipart.FileHeader{}) {
+	// 	return []int{}
+	// }
+	// if typ.Kind() == reflect.Slice {
+	// 	// return append([]int{0}, h.FindFormUploadInType(typ.Elem())...)
+	// 	return nil
+	// }
 	if typ.Kind() == reflect.Struct {
 		for i := 0; i < typ.NumField(); i++ {
 			field := typ.Field(i)
-			ret := h.FindFormUploadInType(field.Type)
-			if ret != nil {
-				return append(field.Index, ret...)
+			if h.IsFieldFileUpload(field) {
+				ret = append(ret, field.Index...)
 			}
+			// fmt.Println(field.Name)
+
+			// retSub := h.FindFormUploadInType(field.Type)
+			// if retSub != nil {
+			// 	// return append(field.Index, ret...)
+			// 	ret = append(ret, field.Index...)
+			// 	// ret=append(ret,retSub...)
+			// }
 		}
 	}
-	return nil
+	return ret
 
 }
 

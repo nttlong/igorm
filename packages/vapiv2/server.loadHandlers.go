@@ -1,11 +1,13 @@
 package vapi
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"regexp"
 	"sort"
 	"strings"
+	vapiErr "vapi/errors"
 )
 
 var mapRoutes map[string]webHandler = map[string]webHandler{}
@@ -61,6 +63,19 @@ func (s *HtttpServer) loadController() error {
 		s.mux.HandleFunc(h.routePath, func(w http.ResponseWriter, r *http.Request) {
 			err := webHandlerRunner.Exec(h, w, r)
 			if err != nil {
+				var badReqErr *vapiErr.BadRequestError
+				if errors.As(err, &badReqErr) {
+
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+				var paramMisMatchErr *vapiErr.ParamMissMatchError
+				if errors.As(err, &paramMisMatchErr) {
+
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}

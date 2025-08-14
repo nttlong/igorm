@@ -43,10 +43,38 @@ func (sb *SwaggerBuild) swagger3GetPaths() *SwaggerBuild {
 }
 
 func (sb *SwaggerBuild) createOperation(handler webHandler) *swaggers3.Operation {
+	var content map[string]swaggers3.MediaType
+	// errType := reflect.TypeOf((*error)(nil)).Elem()
+	content = map[string]swaggers3.MediaType{
+		"text/plain": {
+			Schema: &swaggers3.Schema{
+				Type: "string",
+			},
+		},
+	}
+	if handler.method == "POST" {
+		content = map[string]swaggers3.MediaType{
+			"application/json": {
+				Schema: &swaggers3.Schema{
+					Type: "object",
+				},
+			},
+		}
+	}
+
 	ret := &swaggers3.Operation{
 		Tags:       []string{handler.apiInfo.ReceiverTypeElem.String()},
 		Parameters: sb.createParamtersFromUriParams(handler),
-		Responses:  map[string]swaggers3.Response{},
+		Responses: map[string]swaggers3.Response{
+			"200": {
+				Description: "OK",
+				Content:     content,
+			},
+			"206": {
+				Description: "Partial Content",
+				Content:     content,
+			},
+		},
 	}
 	if len(handler.apiInfo.FormUploadFile) > 0 {
 		/*
@@ -68,6 +96,7 @@ func (sb *SwaggerBuild) createOperation(handler webHandler) *swaggers3.Operation
 			            }
 			          }
 		*/
+
 		ret.RequestBody = sb.createRequestBodyForUploadFile(handler)
 		return ret
 
@@ -84,26 +113,34 @@ func (sb *SwaggerBuild) createRequestBodyForUploadFile(handler webHandler) *swag
 
 		for _, index := range handler.apiInfo.FormUploadFile {
 			field := handler.apiInfo.TypeOfRequestBodyElem.Field(index)
-			tpy := field.Type
-			if tpy.Kind() == reflect.Ptr {
-				tpy = tpy.Elem()
+			typ := field.Type
+			arrayNullable := false
+			if typ.Kind() == reflect.Ptr {
+				typ = typ.Elem()
+				arrayNullable = true
+
 			}
 
-			if tpy.Kind() == reflect.Slice {
+			if typ.Kind() == reflect.Slice {
 				// multiple files
+
 				props[field.Name] = &swaggers3.Schema{
-					Type: "array",
+
+					Type:     "array",
+					Nullable: arrayNullable,
 					Items: &swaggers3.Schema{
-						Type:   "string",
-						Format: "binary",
+						Type:     "string",
+						Format:   "binary",
+						Nullable: typ.Kind() == reflect.Ptr,
 					},
 					Description: "select multiple files",
 				}
 			} else {
 				// single file
 				props[field.Name] = &swaggers3.Schema{
-					Type:   "string",
-					Format: "binary",
+					Type:     "string",
+					Format:   "binary",
+					Nullable: arrayNullable,
 				}
 			}
 		}
@@ -124,11 +161,12 @@ func (sb *SwaggerBuild) createRequestBodyForUploadFile(handler webHandler) *swag
 					if eleType.Kind() == reflect.Struct {
 						strType = "object"
 					}
-
+					example := reflect.New(eleType).Interface()
 					props[field.Name] = &swaggers3.Schema{
 						Type: "array",
 						Items: &swaggers3.Schema{
-							Type: strType,
+							Type:    strType,
+							Example: example,
 						},
 					}
 					continue
@@ -136,8 +174,10 @@ func (sb *SwaggerBuild) createRequestBodyForUploadFile(handler webHandler) *swag
 				if fieldType.Kind() == reflect.Struct {
 					strType = "object"
 				}
+				example := reflect.New(fieldType).Interface()
 				props[field.Name] = &swaggers3.Schema{
-					Type: strType,
+					Type:    strType,
+					Example: example,
 				}
 
 			}
@@ -147,6 +187,7 @@ func (sb *SwaggerBuild) createRequestBodyForUploadFile(handler webHandler) *swag
 			Required: true,
 			Content: map[string]swaggers3.MediaType{
 				"multipart/form-data": {
+
 					Schema: &swaggers3.Schema{
 						Type:       "object",
 						Properties: props,

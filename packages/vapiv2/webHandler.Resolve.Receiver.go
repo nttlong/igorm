@@ -26,7 +26,7 @@ func (web *webHandlerRunnerType) ResolveReceiverValue(handler webHandler, r *htt
 				if parentBaseurlFieldType.Kind() == reflect.Ptr {
 					parentBaseurlFieldType = parentBaseurlFieldType.Elem()
 				}
-				if parentBaseurlFieldType == reflect.TypeOf(Service{}) {
+				if parentBaseurlFieldType == reflect.TypeOf(ContetxService{}) {
 					instanceValue := &result[0]
 					_, _, _, baseURL := getBaseURL(r)
 					instanceValue.Elem().FieldByIndex(baseUrlField.Index).SetString(baseURL)

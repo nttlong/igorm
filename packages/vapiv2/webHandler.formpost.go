@@ -2,10 +2,12 @@ package vapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"reflect"
 	"strings"
+	vapiErr "vapi/errors"
 )
 
 func (web *webHandlerRunnerType) ExecFormPost(handler webHandler, w http.ResponseWriter, r *http.Request) error {
@@ -19,38 +21,6 @@ func (web *webHandlerRunnerType) ExecFormPost(handler webHandler, w http.Respons
 	// Duyệt tất cả key/value trong form
 	if handler.apiInfo.IndexOfRequestBody > -1 {
 		bodyData = reflect.New(handler.apiInfo.TypeOfRequestBodyElem)
-
-		for key, values := range r.Form {
-			field, ok := handler.apiInfo.TypeOfRequestBodyElem.FieldByNameFunc(func(s string) bool {
-				return strings.EqualFold(s, key)
-			})
-
-			if !ok {
-				continue
-			}
-			fieldType := field.Type
-			if fieldType.Kind() == reflect.Ptr {
-				fieldType = fieldType.Elem()
-			}
-			if fieldType.Kind() == reflect.Slice {
-				bodyData.Elem().FieldByIndex(field.Index).Set(reflect.ValueOf(values))
-			} else if fieldType.Kind() == reflect.Struct {
-				if len(values) == 0 {
-					continue
-				}
-
-				fieldValue := reflect.New(fieldType)
-
-				err := json.Unmarshal([]byte(values[0]), fieldValue.Elem().Addr().Interface())
-				if err != nil {
-					return err
-				}
-				bodyData.Elem().FieldByIndex(field.Index).Set(fieldValue.Elem())
-
-			} else {
-				bodyData.Elem().FieldByIndex(field.Index).Set(reflect.ValueOf(values[0]))
-			}
-		}
 		if len(handler.apiInfo.FormUploadFile) > 0 {
 			for _, index := range handler.apiInfo.FormUploadFile {
 				field := handler.apiInfo.TypeOfRequestBodyElem.Field(index)
@@ -58,16 +28,18 @@ func (web *webHandlerRunnerType) ExecFormPost(handler webHandler, w http.Respons
 				if fieldType.Kind() == reflect.Ptr {
 					fieldType = fieldType.Elem()
 				}
-
-				var fileValues []*multipart.FileHeader
-				for fileName, fhs := range r.MultipartForm.File {
-					if strings.EqualFold(fileName, field.Name) {
-						fileValues = fhs
-						break
+				// r.FormFile("Files") //<-- r *http.Request
+				fileValues, ok := r.MultipartForm.File[field.Name]
+				if !ok {
+					if field.Type == reflect.TypeOf(multipart.FileHeader{}) {
+						msgError := fmt.Sprintf("%s was not found,%s is required", field.Name, field.Name)
+						return vapiErr.NewParamMissMatchError(msgError)
 
 					}
 
 				}
+				delete(r.MultipartForm.File, field.Name)
+
 				if len(fileValues) == 0 {
 					continue
 				}
@@ -104,7 +76,23 @@ func (web *webHandlerRunnerType) ExecFormPost(handler webHandler, w http.Respons
 					}
 
 				} else if fieldType == reflect.TypeOf(multipart.FileHeader{}) {
-					bodyData.Field(index).Set(reflect.ValueOf(*fileValues[0]))
+					field := handler.apiInfo.TypeOfRequestBodyElem.Field(index)
+					fieldSet := bodyData.Elem().FieldByIndex(field.Index)
+
+					if len(fileValues) == 0 {
+						if fieldSet.Kind() == reflect.Ptr {
+							fieldSet.Set(reflect.Zero(fieldSet.Type()))
+						} else {
+							fieldSet.Set(reflect.Zero(fieldSet.Type()))
+						}
+						continue
+
+					}
+					valueSet := reflect.ValueOf(*fileValues[0])
+					if fieldSet.IsValid() && fieldSet.CanConvert(valueSet.Type()) {
+						fieldSet.Set(valueSet)
+					}
+
 				} else if fieldType == reflect.TypeOf(&multipart.FileHeader{}).Elem() {
 					bodyData.Field(index).Set(reflect.ValueOf(fileValues[0]))
 				} else if fieldType == reflect.TypeOf((*multipart.File)(nil)).Elem() {
@@ -116,6 +104,59 @@ func (web *webHandlerRunnerType) ExecFormPost(handler webHandler, w http.Respons
 
 				}
 
+			}
+		}
+
+		for key, values := range r.Form {
+			fmt.Println(key)
+			field, ok := handler.apiInfo.TypeOfRequestBodyElem.FieldByNameFunc(func(s string) bool {
+				return strings.EqualFold(s, key)
+			})
+
+			if !ok {
+				continue
+			}
+			fieldType := field.Type
+			if fieldType.Kind() == reflect.Ptr {
+				fieldType = fieldType.Elem()
+			}
+			if fieldType.Kind() == reflect.Slice {
+				fieldSetValue := bodyData.Elem().FieldByIndex(field.Index)
+				valueSet := reflect.ValueOf(values)
+				if fieldSetValue.CanConvert(valueSet.Type()) {
+					fieldSetValue.Set(valueSet)
+					// continue
+				}
+
+				// bodyData.Elem().FieldByIndex(field.Index).Set(reflect.ValueOf(values))
+			} else if fieldType.Kind() == reflect.Struct {
+				if len(values) == 0 {
+					continue
+				}
+
+				fieldValue := reflect.New(fieldType)
+
+				err := json.Unmarshal([]byte(values[0]), fieldValue.Elem().Addr().Interface())
+				if err != nil {
+					return err
+				}
+				fieldSetValue := bodyData.Elem().FieldByIndex(field.Index)
+				valueSet := fieldValue.Elem()
+				if fieldSetValue.CanConvert(valueSet.Type()) {
+					fieldSetValue.Set(valueSet)
+					// continue
+				}
+
+			} else {
+				fieldSetValue := bodyData.Elem().FieldByIndex(field.Index)
+				valueSet := reflect.ValueOf(values[0])
+
+				if fieldSetValue.CanConvert(valueSet.Type()) {
+					fieldSetValue.Set(valueSet)
+					// continue
+				}
+
+				// bodyData.Elem().FieldByIndex(field.Index).Set(reflect.ValueOf(values[0]))
 			}
 		}
 
@@ -145,8 +186,18 @@ func (web *webHandlerRunnerType) ExecFormPost(handler webHandler, w http.Respons
 		args[handler.apiInfo.IndexOfAuthClaimsArg] = authValue
 
 	}
+	injectorArgs, err := web.LoadInjector(handler)
+	if err != nil {
+		return err
+	}
+	for i, injectIndex := range handler.apiInfo.IndexOfInjectors {
+		args[injectIndex] = injectorArgs[i]
+	}
 
-	retArgs := web.MethodCall(handler, args)
+	retArgs, err := web.MethodCall(handler, args)
+	if err != nil {
+		return err
+	}
 	if len(retArgs) > 0 {
 		if err, ok := retArgs[len(retArgs)-1].Interface().(error); ok {
 			return err

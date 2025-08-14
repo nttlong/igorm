@@ -45,7 +45,10 @@ func (web *webHandlerRunnerType) ExecJson(handler webHandler, w http.ResponseWri
 	}
 
 	args[handler.apiInfo.IndexOfArg] = context
-	retArgs := web.MethodCall(handler, args)
+	retArgs, err := web.MethodCall(handler, args)
+	if err != nil {
+		return err
+	}
 	if len(retArgs) > 0 {
 		if err, ok := retArgs[len(retArgs)-1].Interface().(error); ok {
 			return err

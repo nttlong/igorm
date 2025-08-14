@@ -22,13 +22,6 @@ type containerInfo[T any] struct {
 
 func (r *containerInfo[T]) Get() T {
 	ret := r.Instance.(T)
-	// val := r.contianerVal
-	// if val.Kind() == reflect.Ptr {
-	// 	val = val.Elem()
-	// }
-
-	// v := val.Interface()
-	// ret1 := v.(T)
 
 	return ret
 }

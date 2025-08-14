@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-type Service struct {
+type ContetxService struct {
 	BaseUrl string
 }
 
