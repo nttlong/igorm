@@ -6,16 +6,16 @@ import (
 	"sync"
 )
 
-type Singleton[T any, TService any] struct {
-	Owner *TService
-	once  sync.Once
-	ins   *T
-	err   error
+type Singleton[T any] struct {
+	// Owner *TService
+	once sync.Once
+	ins  *T
+	err  error
 
 	init func() (*T, error)
 }
 
-func (s *Singleton[T, TService]) GetInstance() *T {
+func (s *Singleton[T]) GetInstance() *T {
 
 	s.once.Do(func() {
 		if s.init == nil {
@@ -29,6 +29,6 @@ func (s *Singleton[T, TService]) GetInstance() *T {
 	})
 	return s.ins
 }
-func (s *Singleton[T, TService]) Init(fn func() (*T, error)) {
+func (s *Singleton[T]) Init(fn func() (*T, error)) {
 	s.init = fn
 }

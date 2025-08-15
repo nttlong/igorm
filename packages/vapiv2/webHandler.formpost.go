@@ -186,7 +186,7 @@ func (web *webHandlerRunnerType) ExecFormPost(handler webHandler, w http.Respons
 		args[handler.apiInfo.IndexOfAuthClaimsArg] = authValue
 
 	}
-	injectorArgs, err := web.LoadInjector(handler)
+	injectorArgs, err := web.LoadInjector(handler, r, w)
 	if err != nil {
 		return err
 	}

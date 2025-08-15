@@ -75,6 +75,11 @@ func (s *HtttpServer) loadController() error {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
+				var serviceInitError *vapiErr.ServiceInitError
+				if errors.As(err, &serviceInitError) {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
 
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return

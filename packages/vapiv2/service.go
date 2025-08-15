@@ -3,8 +3,21 @@ package vapi
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"sync"
 )
+
+type serviceUtilsType struct {
+	pkgPath                string
+	checkSingletonTypeName string
+	checkScopeTypeName     string
+}
+
+var serviceUtils = &serviceUtilsType{
+	pkgPath:                reflect.TypeOf(serviceUtilsType{}).PkgPath(),
+	checkSingletonTypeName: strings.Split(reflect.TypeOf(Singleton[any]{}).String(), "[")[0] + "[",
+	checkScopeTypeName:     strings.Split(reflect.TypeOf(Scoped[any]{}).String(), "[")[0] + "[",
+}
 
 type serviceInfo struct {
 	reciverType reflect.Type
@@ -41,7 +54,7 @@ func Service[T any]() (*T, error) {
 
 }
 func creatService[T any]() (*T, error) {
-	typ := reflect.TypeFor[T]()
+	typ := reflect.TypeFor[*T]()
 	if typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
 	}
@@ -52,7 +65,7 @@ func creatService[T any]() (*T, error) {
 
 			if serviceUtils.IsFieldSingleton(field) {
 				serviceUtils.CreateSingeton(&receiverValue, field)
-			} else if serviceUtils.IsFieldTransient(field) {
+			} else if serviceUtils.IsFieldScoped(field) {
 				serviceUtils.CreateSingeton(&receiverValue, field)
 				fmt.Println(field.Name)
 			}

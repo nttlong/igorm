@@ -18,8 +18,8 @@ func (fx *FileUstils) SaveFile() {
 }
 
 type FileService struct {
-	FileUtils Singleton[FileUstils, FileService]
-	Db        Transient[DbContext, FileService]
+	FileUtils Singleton[FileUstils]
+	Db        Scoped[DbContext]
 }
 
 func TestIsInjector(t *testing.T) {
@@ -34,7 +34,7 @@ func TestInjectorSingleton(t *testing.T) {
 			fmt.Println(svc)
 			return &FileUstils{}, nil
 		})
-		svc.Db.Init(func() (*DbContext, error) {
+		svc.Db.Init(func(ctx *ServiceContext) (*DbContext, error) {
 			fmt.Println(svc)
 			return &DbContext{}, nil
 		})
@@ -60,7 +60,7 @@ func BenchmarkInjectorSingleton(t *testing.B) {
 				fmt.Println("init FileUstils")
 				return &FileUstils{}, nil
 			})
-			svc.Db.Init(func() (*DbContext, error) {
+			svc.Db.Init(func(ctx *ServiceContext) (*DbContext, error) {
 				fmt.Println("init db")
 				return &DbContext{}, nil
 
@@ -82,7 +82,10 @@ func BenchmarkInjectorSingleton(t *testing.B) {
 
 }
 func TestIsSingletonType(t *testing.T) {
-	assert.True(t, serviceUtils.IsSingletonType(reflect.TypeOf(Singleton[any, any]{})))
+	assert.True(t, serviceUtils.IsSingletonType(reflect.TypeOf(Singleton[any]{})))
 	assert.False(t, serviceUtils.IsSingletonType(reflect.TypeOf(FileService{})))
+
+}
+func TestScoped(t *testing.T) {
 
 }

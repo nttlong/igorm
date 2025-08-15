@@ -66,3 +66,18 @@ func (e *ParamMissMatchError) Error() string {
 	return e.Message
 
 }
+
+type ServiceInitError struct {
+	Message string
+}
+
+func NewServiceInitError(message string) error {
+	return &ServiceInitError{
+		Message: message,
+	}
+}
+
+func (e *ServiceInitError) Error() string {
+	return e.Message
+
+}
