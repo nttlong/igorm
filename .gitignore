@@ -20,3 +20,5 @@ vapi/internal/cache/tmp/badger
 /packages/vpai_cmp/uploads
 /packages/vapiv2/example/pure/uploads
 /packages/wx/example/example1/uploads
+/packages/wx/example/example1/uploads
+.mp4
