@@ -1,0 +1,26 @@
+package htttpserver
+
+import (
+	"net/http"
+	"reflect"
+	"wx/services"
+)
+
+func (web *webHandlerRunnerType) LoadInjector(handler WebHandler, req *http.Request, res http.ResponseWriter) ([]reflect.Value, error) {
+	if len(handler.ApiInfo.IndexOfInjectors) == 0 {
+		return nil, nil
+	}
+	ret := make([]reflect.Value, len(handler.ApiInfo.IndexOfInjectors))
+	for i, injector := range handler.ApiInfo.IndexOfInjectors {
+		injectorType := handler.ApiInfo.Method.Type.In(injector)
+
+		valOfInjector, err := services.ServiceUtils.NewService(injectorType, req, res)
+		if err != nil {
+			return nil, err
+		}
+		ret[i] = *valOfInjector
+
+	}
+	return ret, nil
+
+}

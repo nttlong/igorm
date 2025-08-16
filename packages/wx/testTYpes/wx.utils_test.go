@@ -1,0 +1,61 @@
+package testtypes
+
+import (
+	"testing"
+	"wx"
+
+	helpers "wx/handlers"
+	_ "wx/services"
+	services "wx/services"
+
+	"github.com/stretchr/testify/assert"
+)
+
+type TestUtils struct {
+}
+
+type TesInjected struct {
+	Utils *wx.Singleton[TestUtils]
+}
+type Test001Struct struct {
+}
+
+func (tx *Test001Struct) NoneHandlerMethod() {
+
+}
+func (tx *Test001Struct) HandlerMethod(h wx.Handler, fx *TesInjected) {
+
+}
+func TestGetMethod(t *testing.T) {
+	fx := wx.GetMethod[Test001Struct]("HandlerMethod")
+	assert.NotEmpty(t, fx)
+	fx = wx.GetMethod[Test001Struct]("HandlerMethod2")
+	assert.Empty(t, fx)
+}
+func TestGetMethodInfo(t *testing.T) {
+	fx := wx.GetMethod[Test001Struct]("HandlerMethod")
+	assert.NotEmpty(t, fx)
+	helpers.Helper.FindHandlerFieldIndexFormType((*fx).Type.In(1))
+
+	info, err := helpers.Helper.GetHandlerInfo(*fx)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, info)
+
+}
+func TestIsInjector(t *testing.T) {
+	fx := wx.GetMethod[Test001Struct]("HandlerMethod")
+	assert.NotEmpty(t, fx)
+	check := services.ServiceUtils.IsInjector((*fx).Type.In(2))
+	assert.True(t, check)
+
+}
+
+func BenchmarkTestGetMethodInfo(t *testing.B) {
+	fx := wx.GetMethod[Test001Struct]("HandlerMethod")
+	for i := 0; i < t.N; i++ {
+
+		info, err := helpers.Helper.GetHandlerInfo(*fx)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, info)
+	}
+}

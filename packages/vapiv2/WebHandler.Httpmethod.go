@@ -11,9 +11,9 @@ type Handler struct {
 	BaseUrl string
 }
 
-type initInspectHttpMethodFromType struct {
+type initInspectHttpMethodFromType1 struct {
 	val  string
 	once sync.Once
 }
 
-var cacheInspectHttpMethodFromType sync.Map
+var cacheInspectHttpMethodFromType1 sync.Map

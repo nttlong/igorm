@@ -159,30 +159,12 @@ func (h *helperType) getAuthClaimsInternal(typ reflect.Type, visited map[reflect
 	return nil
 }
 
-//	func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error) {
-//		ret := &handlerInfo{
-//			Method:               method,
-//			TypeOfArgs:           method.Type.In(0),
-//			TypeOfArgsElem:       method.Type.In(0),
-//			ReceiverType:         method.Type.In(1),
-//			ReceiverTypeElem:     method.Type.In(1),
-//			IndexOfArg:           -1,
-//			IndexOfInjectors:     []int{},
-//			IndexOfRequestBody:   -1,
-//			IndexOfAuthClaimsArg: -1,
-//			HttpMethod:           "POST",
-//		}
-//	}
 func (h *helperType) GetHandlerInfo(method reflect.Method) (*handlerInfo, error) {
 
 	ret := &handlerInfo{
 		IndexOfRequestBody: -1,
 	}
 
-	// indexOfRequestBody := -1
-	// indexOfInjectors := []int{}
-	// IndexOfAuthClaimsArg := -1
-	// var IndexOfAuthClaims []int
 	/*
 	 find  all args is injector
 	*/

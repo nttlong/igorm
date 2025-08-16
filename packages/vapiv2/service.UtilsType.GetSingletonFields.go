@@ -45,6 +45,7 @@ func (svc *serviceUtilsType) getSingletonFieldsInternal(typ reflect.Type, visite
 
 		} else {
 			fieldType := field.Type
+			
 
 			subRet := svc.getSingletonFieldsInternal(fieldType, visitedType)
 			if len(subRet) > 0 {

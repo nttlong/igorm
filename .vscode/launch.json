@@ -68,6 +68,14 @@
             "program": "${workspaceFolder}/packages/vapi/cmd"
         },
         {
+            //packages\vpai_cmp\main.go
+            "name": "wx-api-test",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/packages/wx/example/example1"
+        },
+        {
             "name": "example1",
             "type": "go",
             "request": "launch",

@@ -1,0 +1,76 @@
+package htttpserver
+
+import (
+	"encoding/json"
+	"net/http"
+	"reflect"
+)
+
+func (web *webHandlerRunnerType) ExecJson(handler WebHandler, w http.ResponseWriter, r *http.Request) error {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return err
+	}
+	ReceiverValue, err := web.ResolveReceiverValue(handler, r)
+	if err != nil {
+		return err
+	}
+
+	var bodyData reflect.Value
+
+	// Duyệt tất cả key/value trong form
+	if handler.ApiInfo.IndexOfRequestBody > 0 {
+		bodyData = reflect.New(handler.ApiInfo.TypeOfRequestBodyElem)
+
+		if err := json.NewDecoder(r.Body).Decode(bodyData.Interface()); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return err
+		}
+
+	}
+	args := make([]reflect.Value, handler.ApiInfo.Method.Type.NumIn())
+	args[0] = ReceiverValue
+	if handler.ApiInfo.IndexOfRequestBody > 0 {
+		args[handler.ApiInfo.IndexOfRequestBody] = bodyData
+
+	}
+
+	if handler.ApiInfo.ReceiverTypeElem.Kind() == reflect.Ptr {
+		handler.ApiInfo.ReceiverTypeElem = handler.ApiInfo.ReceiverTypeElem.Elem()
+	}
+
+	context, err := web.CreateHttpContext(handler, w, r)
+	if err != nil {
+		return err
+	}
+
+	args[handler.ApiInfo.IndexOfArg] = context
+	retArgs, err := web.MethodCall(handler, args)
+	if err != nil {
+		return err
+	}
+	if len(retArgs) > 0 {
+		if err, ok := retArgs[len(retArgs)-1].Interface().(error); ok {
+			return err
+		}
+		if len(retArgs) > 2 {
+			retIntefaces := []interface{}{}
+			for i := 0; i < len(retArgs)-1; i++ {
+				retIntefaces = append(retIntefaces, retArgs[i].Interface())
+			}
+
+			retArgs = retArgs[0 : len(retArgs)-2]
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(retIntefaces)
+		} else {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(retArgs[0].Interface())
+		}
+		// Ví dụ: trả về dạng JSON
+
+	}
+
+	return nil
+}
