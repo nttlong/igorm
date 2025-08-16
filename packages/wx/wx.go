@@ -61,7 +61,16 @@ func (sb *SwaggerBuild) Info(info SwaggerInfo) *SwaggerBuild {
 
 	return sb
 }
+
+/*
+Create swagger build
+
+@BaseUri: url of swagger docs
+*/
 func CreateSwagger(server *httpServer.HtttpServer, BaseUri string) SwaggerBuild {
+	if BaseUri[0] != '/' {
+		BaseUri = "/" + BaseUri
+	}
 	return SwaggerBuild{
 		httpServer.CreateSwagger(server, BaseUri),
 	}

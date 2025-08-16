@@ -18,6 +18,7 @@ Examples of errors in this package:
 package errors
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 )
@@ -97,4 +98,23 @@ func NewServiceInitError(message string) error {
 func (e *ServiceInitError) Error() string {
 	return e.Message
 
+}
+
+type RequireError struct {
+	Fields  []string `json:"fields"`
+	Message string   `json:"message"`
+}
+
+func (err *RequireError) Error() string {
+	bff, ex := json.Marshal(err)
+	if ex != nil {
+		return err.Message
+	}
+	return string(bff)
+}
+func NewRequireError(fields []string, message string) error {
+	return &RequireError{
+		Fields:  fields,
+		Message: message,
+	}
 }

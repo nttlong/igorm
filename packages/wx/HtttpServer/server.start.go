@@ -5,7 +5,10 @@ import (
 	"net/http"
 )
 
+var baseUrlOfServer string
+
 func (s *HtttpServer) Start() error {
+	baseUrlOfServer = s.BaseUrl
 	// Đăng ký các handler vào mux
 	s.loadController()
 	// handler cuối cùng gọi mux

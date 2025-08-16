@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"reflect"
+	"regexp"
 	"strings"
 	"wx/services"
 )
@@ -150,11 +151,6 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	}
 	if ret.IndexOfRequestBody != -1 {
 
-		// ret.TypeOfRequestBodyElem = ret.TypeOfRequestBody
-		// if ret.TypeOfRequestBody.Kind() == reflect.Ptr {
-		// 	ret.TypeOfRequestBodyElem = ret.TypeOfRequestBody.Elem()
-		// }
-
 		ret.FormUploadFile = h.FindFormUploadInType(ret.TypeOfRequestBodyElem)
 
 	}
@@ -168,6 +164,57 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 		}
 
 	}
+	if ret.Uri != "" && ret.Uri[0] == '/' {
+		ret.IsAbsUri = true
+	}
+
+	// Thay thế tất cả "/handlers/" thành "/"
+	ret.UriHandler = h.trimHandlers(ret.UriHandler)
+	ret.Uri = h.trimHandlers(ret.Uri)
+	ret.RegexUri = h.trimHandlersRegex(ret.RegexUri)
+	if !ret.IsRegexHandler {
+		ret.Uri = strings.TrimSuffix(ret.Uri, "/")
+		ret.UriHandler = strings.TrimSuffix(ret.UriHandler, "/")
+	}
 
 	return ret, nil
+}
+func (h *helperType) trimHandlers(s string) string {
+	// isAbs := false
+	// if s != "" && s[0] == '/' {
+	// 	isAbs = true
+	// }
+	re := regexp.MustCompile(`/handlers/`)
+	s = re.ReplaceAllString("/"+s, "/")
+	// s = strings.ReplaceAll(s, "//", "/")
+	// if isAbs {
+	// 	if s == "" {
+	// 		s = "/"
+	// 	} else {
+	// 		s = "/" + s
+	// 	}
+	// }
+	// if s[len(s)-1] != '/' {
+	// 	s = s + "/"
+	// }
+	return s
+
+}
+func (h *helperType) trimHandlersRegex(s string) string {
+	// isAbs := false
+	// if s != "" && s[0] == '/' {
+	// 	isAbs = true
+	// }
+	re := regexp.MustCompile(`\\/handlers\\/`)
+	s = re.ReplaceAllString("\\/"+s, "\\/")
+	// s = strings.ReplaceAll(s, "//", "\\/")
+	// if isAbs {
+	// 	if s == "" {
+	// 		s = "\\/"
+	// 	} else {
+	// 		s = "\\/" + s
+	// 	}
+	// }
+	return s
+
 }

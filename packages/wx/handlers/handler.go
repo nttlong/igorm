@@ -17,7 +17,7 @@ type uriParam struct {
 	FieldIndex []int
 }
 type HandlerInfo struct {
-	BaseUrl        string
+	//BaseUrl        string
 	IndexOfArg     int
 	TypeOfArgs     reflect.Type
 	TypeOfArgsElem reflect.Type
@@ -29,6 +29,7 @@ type HandlerInfo struct {
 	Method                reflect.Method
 	RouteTags             []string
 	Uri                   string
+	IsAbsUri              bool
 	RegexUri              string
 	RegexUriFind          regexp.Regexp
 	UriHandler            string

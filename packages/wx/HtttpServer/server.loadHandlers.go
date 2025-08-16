@@ -16,7 +16,7 @@ var mapRoutes map[string]WebHandler = map[string]WebHandler{}
 func (s *HtttpServer) loadController() error {
 
 	for i := range HandlerList {
-		HandlerList[i].ApiInfo.BaseUrl = s.BaseUrl
+		// HandlerList[i].ApiInfo.BaseUrl = s.BaseUrl
 
 		HandlerList[i].Index = i
 
@@ -52,6 +52,11 @@ func (s *HtttpServer) loadController() error {
 			}
 			HandlerList[i].ApiInfo.RegexUriFind = *reg
 
+		} else {
+			if !HandlerList[i].ApiInfo.IsAbsUri {
+				HandlerList[i].RoutePath = s.BaseUrl + HandlerList[i].ApiInfo.UriHandler
+			}
+
 		}
 	}
 	sort.Slice(HandlerList, func(i, j int) bool {
@@ -79,6 +84,11 @@ func (s *HtttpServer) loadController() error {
 				var serviceInitError *vapiErr.ServiceInitError
 				if errors.As(err, &serviceInitError) {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				var requireError *vapiErr.RequireError
+				if errors.As(err, &requireError) {
+					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
 

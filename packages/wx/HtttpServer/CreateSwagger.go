@@ -57,6 +57,12 @@ func (sb *SwaggerBuild) OAuth2AuthCodePKCE(AuthorizationUrl string, TokenUrl str
 	sb.swagger.OAuth2AuthCodePKCE(AuthorizationUrl, TokenUrl, Scopes)
 	return sb
 }
+
+/*
+Enable OAuth2 Password flow on Swagger docs.
+
+@param TokenUrl the URL to obtain the token
+*/
 func (sb *SwaggerBuild) OAuth2Password(TokenUrl string) *SwaggerBuild {
 	sb.swagger.OAuth2Password(TokenUrl)
 	return sb

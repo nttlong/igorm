@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 	vapiErr "wx/errors"
+	"wx/internal"
 )
 
 func (web *webHandlerRunnerType) ExecFormPost(handler WebHandler, w http.ResponseWriter, r *http.Request) error {
@@ -33,12 +34,11 @@ func (web *webHandlerRunnerType) ExecFormPost(handler WebHandler, w http.Respons
 				if !ok {
 					if field.Type == reflect.TypeOf(multipart.FileHeader{}) {
 						msgError := fmt.Sprintf("%s was not found,%s is required", field.Name, field.Name)
-						return vapiErr.NewParamMissMatchError(msgError)
+						return vapiErr.NewRequireError([]string{field.Name}, msgError)
 
 					}
 
 				}
-				delete(r.MultipartForm.File, field.Name)
 
 				if len(fileValues) == 0 {
 					continue
@@ -88,10 +88,30 @@ func (web *webHandlerRunnerType) ExecFormPost(handler WebHandler, w http.Respons
 						continue
 
 					}
-					valueSet := reflect.ValueOf(*fileValues[0])
-					if fieldSet.IsValid() && fieldSet.CanConvert(valueSet.Type()) {
-						fieldSet.Set(valueSet)
+
+					//bodyData.Field(index).Set(reflect.ValueOf(fv))
+					if fieldSet.Kind() == reflect.Ptr {
+						fieldSet.Set(reflect.ValueOf(fileValues[0]))
+					} else {
+						fieldSet.Set(reflect.ValueOf(*fileValues[0]))
+
 					}
+
+					// if fieldSet.IsValid() {
+					// 	valueSet := reflect.ValueOf(*fileValues[0])
+					// 	if fieldSet.CanConvert(valueSet.Type()) {
+					// 		fieldSet.Set(valueSet)
+					// 		continue
+					// 	} else {
+					// 		fieldSet.Set(reflect.Zero(fieldSet.Type()))
+					// 		fieldSet.Set(valueSet)
+					// 		continue
+					// 	}
+
+					// }
+					// testData := bodyData.Elem().Interface()
+					// fmt.Println(testData)
+					continue
 
 				} else if fieldType == reflect.TypeOf(&multipart.FileHeader{}).Elem() {
 					bodyData.Field(index).Set(reflect.ValueOf(fileValues[0]))
@@ -112,10 +132,13 @@ func (web *webHandlerRunnerType) ExecFormPost(handler WebHandler, w http.Respons
 			field, ok := handler.ApiInfo.TypeOfRequestBodyElem.FieldByNameFunc(func(s string) bool {
 				return strings.EqualFold(s, key)
 			})
-
 			if !ok {
 				continue
 			}
+			if internal.Contains(handler.ApiInfo.FormUploadFile, field.Index[0]) {
+				continue
+			}
+
 			fieldType := field.Type
 			if fieldType.Kind() == reflect.Ptr {
 				fieldType = fieldType.Elem()

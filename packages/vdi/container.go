@@ -144,10 +144,7 @@ func (c *Container[T]) New(resolver func(owner *T) error) *T {
 
 }
 func NewContainer[T any](resolver func(owner *T) error) *T {
-	// if c == nil {
-	// 	fmt.Printf("container is nil ,Container[%s]", reflect.TypeFor[T]().String())
-	// 	return nil
-	// }
+
 	c := &Container[T]{}
 	key := reflect.TypeFor[T]().String()
 	actual, _ := initRegisterContainerCache.LoadOrStore(key, &initRegisterContainer{})

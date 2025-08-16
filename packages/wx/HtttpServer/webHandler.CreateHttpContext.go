@@ -13,7 +13,7 @@ func (web *webHandlerRunnerType) CreateHttpContext(handler WebHandler, w http.Re
 
 	context.Elem().FieldByName("Req").Set(reflect.ValueOf(r))
 	context.Elem().FieldByName("Res").Set(reflect.ValueOf(w))
-	context.Elem().FieldByName("BaseUrl").Set(reflect.ValueOf(handler.ApiInfo.BaseUrl))
+	context.Elem().FieldByName("BaseUrl").Set(reflect.ValueOf(baseUrlOfServer))
 	if handler.ApiInfo.IsRegexHandler {
 		placeHolders := handler.ApiInfo.RegexUriFind.FindStringSubmatch(r.URL.Path)
 
