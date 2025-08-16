@@ -41,7 +41,7 @@ func (h *helperType) getAuthClaimsInternal(typ reflect.Type, visited map[reflect
 	}
 	visited[typ] = struct{}{}
 
-	if typ == reflect.TypeOf(AuthClaims{}) {
+	if typ.ConvertibleTo(reflect.TypeOf(UserClaims{})) {
 		return []int{}
 	}
 

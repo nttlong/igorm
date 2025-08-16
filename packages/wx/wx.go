@@ -11,12 +11,20 @@ import (
 	"wx/services"
 )
 
-type AuthClaims handler.AuthClaims
+type AuthClaims struct {
+	handler.AuthClaims
+}
+type UserClaims struct {
+	handler.UserClaims
+}
+
 type Handler struct {
 	handler.Handler
 }
 
-type ContetxService httpServer.ContetxService
+type ContetxService struct {
+	httpServer.ContetxService
+}
 
 var NewHtttpServer = httpServer.NewHtttpServer
 

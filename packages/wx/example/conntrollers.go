@@ -19,6 +19,7 @@ va tham chi tu dong sinh ra Swagger (neu bat Swagger) ma kg can phai Code Gen
 */
 type Media struct {
 	wx.ContetxService
+	User wx.UserClaims
 }
 
 /*
@@ -123,7 +124,7 @@ func (m *Media) Upload(ctx *AuthHandler, //<-- Van su dung cach 2 la gian tipe d
 		Info     struct {       // Ngoai file ra cung co the yeu cau them 1 so thong tin khac, vi d nhu struc duoi day
 			FolderId string `json:"folder_id"`
 			// Luu y: Khi muon Upload file cac file pahi de ngoai cung, kg duoc long trong struct
-			NoteFile multipart.File //<-- khai bao nhu vay la kg hop le
+			// NoteFile multipart.File //<-- khai bao nhu vay la kg hop le
 		}
 	}) ([]string, error) {
 	if data.Files == nil {
