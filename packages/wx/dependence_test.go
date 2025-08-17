@@ -26,11 +26,11 @@ type AppTest struct {
 }
 
 func (app *AppTest) New() error {
-	app.DependTest.Init(func(app *AppTest) DependTest {
-		return DependTest{}
+	app.DependTest.Init(func(app *AppTest) (*DependTest, error) {
+		return &DependTest{}, nil
 	})
-	app.Server.Init(func(app *AppTest) ServerMock {
-		return ServerMock{}
+	app.Server.Init(func(app *AppTest) (*ServerMock, error) {
+		return &ServerMock{}, nil
 	})
 	return nil
 

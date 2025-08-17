@@ -12,10 +12,23 @@ type UploadResult struct {
 }
 
 func (media *Media) Upload(ctx *wx.Handler, data struct {
-	File multipart.FileHeader
+	File *multipart.FileHeader
 }) (*UploadResult, error) {
 	// if data.File == nil {
 	// 	return nil, wx.Errors.RequireErr("file")
 	// }
+	// file, err := data.File.Open()
+	// if err != nil {
+	// 	return nil, err
+	// }
+	fileService := media.File
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	directoryService := media.Directories
+
+	fileService.SaveFile(data.File, &directoryService)
+
 	return &UploadResult{}, nil
 }

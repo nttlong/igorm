@@ -22,7 +22,7 @@ type Handler struct {
 	handler.Handler
 }
 
-type ContetxService struct {
+type ControllerContext struct {
 	httpServer.ContetxService
 }
 

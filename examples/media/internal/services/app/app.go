@@ -6,16 +6,16 @@ import (
 )
 
 type App struct {
-	Files  *wx.Depend[services.FileService, App]
-	Server *wx.Depend[services.Server, App]
+	Server wx.Depend[services.Server, App]
 }
 
 func (app *App) New() error {
-	app.Files.Init(func(app *App) services.FileService {
-		return services.FileService{}
-	})
-	app.Server.Init(func(app *App) services.Server {
-		return services.Server{}
+	// func(s*services.Server) Start(){
+
+	// }
+
+	app.Server.Init(func(app *App) (*services.Server, error) {
+		return &services.Server{}, nil
 	})
 	return nil
 }

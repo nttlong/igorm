@@ -18,7 +18,7 @@ Su dung thu vien vapi, mot thu vien ho tro 1 cach don gian nhat de tao cac API h
 va tham chi tu dong sinh ra Swagger (neu bat Swagger) ma kg can phai Code Gen
 */
 type Media struct {
-	wx.ContetxService
+	wx.ControllerContext
 	User wx.UserClaims
 }
 
