@@ -48,25 +48,29 @@ func (web *webHandlerRunnerType) ResolveReceiverValue(handler WebHandler, r *htt
 		for i := 0; i < handler.ApiInfo.ReceiverTypeElem.NumField(); i++ {
 			field := handler.ApiInfo.ReceiverTypeElem.Field(i)
 			fieldType := field.Type
-			newOfReiverType, _ := FindNewMethod(fieldType)
-			if newOfReiverType != nil {
-				method := *newOfReiverType
-				r, err := ResolveNewMethod(method)
-				if err != nil {
-					return nil, err
-				}
-				reciverType := result[0]
-				if reciverType.Kind() == reflect.Ptr {
-					reciverType = reciverType.Elem()
-				}
-				fieldSet := reciverType.Field(i)
-				valueSet := *r
+			//newOfReiverType, _ := FindNewMethod(fieldType)
+			// if newOfReiverType != nil {
+			// 	method := *newOfReiverType
+			// 	r, err := ResolveNewMethod(method)
+			// 	if err != nil {
+			// 		return nil, err
+			// 	}
+			// 	reciverType := result[0]
+			// 	if reciverType.Kind() == reflect.Ptr {
+			// 		reciverType = reciverType.Elem()
+			// 	}
+			// 	fieldSet := reciverType.Field(i)
+			// 	valueSet := *r
 
-				if fieldSet.IsValid() {
-					fieldSet.Set(valueSet.Elem())
-				}
+			// 	if fieldSet.IsValid() {
+			// 		if field.Type.Kind() == reflect.Ptr {
+			// 			fieldSet.Set(valueSet)
+			// 		} else {
+			// 			fieldSet.Set(valueSet.Elem())
+			// 		}
+			// 	}
 
-			}
+			// }
 			if IsTypeDepen(fieldType, map[reflect.Type]bool{}) {
 				if fieldType.Kind() == reflect.Ptr {
 					fieldType = fieldType.Elem()

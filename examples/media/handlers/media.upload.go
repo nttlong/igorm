@@ -28,7 +28,7 @@ func (media *Media) Upload(ctx *wx.Handler, data struct {
 
 	directoryService := media.Directories
 
-	fileService.SaveFile(data.File, &directoryService)
+	fileService.SaveFile(data.File, directoryService)
 
 	return &UploadResult{}, nil
 }

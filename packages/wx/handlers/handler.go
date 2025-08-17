@@ -14,6 +14,7 @@ type Handler struct {
 type uriParam struct {
 	Position   int
 	Name       string
+	IsSlug     bool
 	FieldIndex []int
 }
 type HandlerInfo struct {

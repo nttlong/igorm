@@ -38,9 +38,16 @@ func (h *helperType) ExtractUriParams(uri string) []uriParam {
 			// Check if segment contains a URI parameter enclosed in {}
 			name := h.ExtractNameInBraces(segment)
 			if name != "" {
+				isSlug := false
+
+				if name[0] == '*' {
+					name = name[1:]
+					isSlug = true
+				}
 				params = append(params, uriParam{
 					Position: i,
 					Name:     name,
+					IsSlug:   isSlug,
 				})
 			}
 		}

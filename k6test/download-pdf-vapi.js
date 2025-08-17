@@ -8,8 +8,8 @@ export let options = {
 
 export default function () {
 
-    let url = "http://localhost:8080//api/v1/example/media/file/tes-004.pdf"
-
+    //let url = "http://localhost:8080//api/v1/example/media/file/tes-004.pdf"
+    let url = "http://localhost:8081/api/media/files/cccc/xxxx/1/2/3/4/XXX.MP4"
     let res = http.get(url);
 
     check(res, {
@@ -19,3 +19,4 @@ export default function () {
 
 
 }
+// k6 run download-pdf-vapi.js

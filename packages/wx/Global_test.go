@@ -11,7 +11,7 @@ import (
 type TestConfig struct {
 }
 type TestStructWithGlobal struct {
-	Cfg TestConfig
+	Cfg *TestConfig
 }
 
 func (ts *TestStructWithGlobal) New(Cfg Global[TestConfig], Cfg2 Depend[TestConfig, TestStructWithGlobal]) error {
@@ -31,7 +31,7 @@ func (ts *TestStructWithGlobal) New(Cfg Global[TestConfig], Cfg2 Depend[TestConf
 	if err != nil {
 		return err
 	}
-	ts.Cfg = *cf
+	ts.Cfg = cf
 
 	return nil
 }

@@ -14,6 +14,7 @@ import (
 
 type FileService struct {
 	DirectorySvc *DirectoryService
+	UrlSvc       *UrlResolverService
 }
 
 func (fs *FileService) New() error {
@@ -102,8 +103,8 @@ func (fs *FileService) SaveFile(file *multipart.FileHeader, directoryService *Di
 
 	return destinationFilePath, nil
 }
-func (fs *FileService) ListAllFiles(directoryService *DirectoryService) ([]string, error) {
-	folderList, err := directoryService.ListAllDirectories()
+func (fs *FileService) ListAllFiles() ([]string, error) {
+	folderList, err := fs.DirectorySvc.ListAllDirectories()
 	if err != nil {
 		return nil, err
 	}
@@ -114,6 +115,10 @@ func (fs *FileService) ListAllFiles(directoryService *DirectoryService) ([]strin
 		if err != nil {
 			return nil, err
 		}
+		if len(files) == 0 {
+			continue
+		}
+
 		for _, file := range files {
 			fileList = append(fileList, filepath.Join(folder, file.Name()))
 		}
@@ -122,6 +127,10 @@ func (fs *FileService) ListAllFiles(directoryService *DirectoryService) ([]strin
 	// for i := 0; i < len(fileList); i++ {
 	// 	fileList[i]=strings.TrimPrefix(fileList[i], directoryService.DirUpload[2:len(directoryService.DirUpload)-1)]))
 	// }
+	for i := 0; i < len(fileList); i++ {
+		fileList[i] = strings.ReplaceAll(fileList[i], fs.DirectorySvc.DirUploadName+"\\", "")
+		fileList[i] = fs.UrlSvc.MakeAbsUrl("files/" + fileList[i])
+	}
 
 	return fileList, nil
 
@@ -194,4 +203,20 @@ func (ds *DirectoryService) ListAllDirectories() ([]string, error) {
 	}
 
 	return directories, nil
+}
+
+type UrlResolverService struct {
+	BaseUrl string
+}
+
+func (ur *UrlResolverService) New() error {
+	fmt.Println("UrlResolver.New")
+
+	return nil
+
+}
+func (ur *UrlResolverService) MakeAbsUrl(s string) string {
+	fx := ur.BaseUrl + "/" + strings.ReplaceAll(s, "\\", "/")
+	return fx
+
 }

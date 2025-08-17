@@ -51,6 +51,9 @@ func (s *HtttpServer) loadController() error {
 				return err
 			}
 			HandlerList[i].ApiInfo.RegexUriFind = *reg
+			if !HandlerList[i].ApiInfo.IsAbsUri {
+				HandlerList[i].RoutePath = s.BaseUrl + HandlerList[i].ApiInfo.UriHandler
+			}
 
 		} else {
 			if !HandlerList[i].ApiInfo.IsAbsUri {

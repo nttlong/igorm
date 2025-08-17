@@ -122,8 +122,14 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 
 		ret.UriParams = h.ExtractUriParams(ret.Uri)
 		if len(ret.UriParams) > 0 {
-			ret.RegexUri = h.TemplateToRegex(ret.Uri)
-			ret.UriHandler = strings.Split(ret.Uri, "{")[0]
+			if !strings.Contains(ret.Uri, "{*") {
+				ret.RegexUri = h.TemplateToRegex(ret.Uri)
+				ret.UriHandler = strings.Split(ret.Uri, "{")[0]
+			} else {
+				ret.RegexUri = h.convertUrlToRegex(ret.Uri)
+				ret.UriHandler = strings.Split(ret.Uri, "{")[0]
+			}
+
 			ret.IsRegexHandler = true
 
 		} else {
@@ -201,12 +207,19 @@ func (h *helperType) trimHandlers(s string) string {
 
 }
 func (h *helperType) trimHandlersRegex(s string) string {
-	// isAbs := false
-	// if s != "" && s[0] == '/' {
-	// 	isAbs = true
-	// }
-	re := regexp.MustCompile(`\\/handlers\\/`)
-	s = re.ReplaceAllString("\\/"+s, "\\/")
+	isAbs := false
+	if s != "" && s[0] == '/' {
+		isAbs = true
+	}
+	re := regexp.MustCompile(`\/\^handlers\/`)
+	s = re.ReplaceAllString("/"+s, "/")
+	re2 := regexp.MustCompile(`\/handlers\/`)
+	s = re2.ReplaceAllString("/"+s, "/")
+	if !isAbs {
+		for strings.HasPrefix(s, "/") {
+			s = strings.TrimPrefix(s, "/")
+		}
+	}
 	// s = strings.ReplaceAll(s, "//", "\\/")
 	// if isAbs {
 	// 	if s == "" {
