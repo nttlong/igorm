@@ -9,7 +9,7 @@ export let options = {
 export default function () {
 
     //let url = "http://localhost:8080//api/v1/example/media/file/tes-004.pdf"
-    let url = "http://localhost:8081/api/media/files/cccc/xxxx/1/2/3/4/XXX.MP4"
+    let url = "http://localhost:8081/api/media/files/2025/08/17/0009.png"
     let res = http.get(url);
 
     check(res, {

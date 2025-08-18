@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"strings"
 	"wx/internal"
 )
 
@@ -32,7 +33,7 @@ func (h *helperType) ExtractUriParams(uri string) []uriParam {
 	ret, _ := internal.OnceCall(key, func() (*[]uriParam, error) {
 
 		params := []uriParam{}
-		segments := h.SplitUriSegments(uri)
+		segments := h.SplitUriSegments(strings.Split(uri, "?")[0])
 
 		for i, segment := range segments {
 			// Check if segment contains a URI parameter enclosed in {}

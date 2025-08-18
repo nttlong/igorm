@@ -9,7 +9,7 @@ type Server struct {
 }
 
 func (s *Server) Start() error {
-	wx.Controller(func() (*handlers.Media, error) {
+	wx.LoadController(func() (*handlers.Media, error) {
 		return &handlers.Media{}, nil
 	})
 

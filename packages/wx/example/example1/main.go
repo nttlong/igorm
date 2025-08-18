@@ -23,7 +23,7 @@ func main() {
 		log.Println("pprof listening on :6060")
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
-	wx.Controller(func() (*example.Media, error) {
+	wx.LoadController(func() (*example.Media, error) {
 		return &example.Media{}, nil
 	})
 	// vapi.Controller(func() (*example.Auth, error) {

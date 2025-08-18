@@ -9,6 +9,8 @@ import (
 type helperType struct {
 	SpecialCharForRegex string
 	IgnoreDetectTypes   map[reflect.Type]bool
+	PrefixGenericDepen  string
+	ErrorType           reflect.Type
 }
 
 func (h *helperType) Iscontains(slice []int, value int) bool {
@@ -65,4 +67,5 @@ var Helper = &helperType{
 		reflect.TypeOf(http.Client{}):   true,
 		reflect.TypeOf(http.Server{}):   true,
 	},
+	ErrorType: reflect.TypeOf((*error)(nil)).Elem(),
 }

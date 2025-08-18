@@ -26,7 +26,7 @@ func InspectMethod[T any]() ([]handlers.HandlerInfo, error) {
 
 }
 
-func Controller[T any](init func() (*T, error)) error {
+func LoadController[T any](init func() (*T, error)) error {
 	list, err := InspectMethod[T]()
 	if err != nil {
 		return err

@@ -6,9 +6,16 @@ import (
 )
 
 func (media *Media) Files(ctx *struct {
-	wx.Handler `route:"uri:@/{Tenant}/{*FilePath};method:get"`
+	wx.Handler `route:"uri:@/{*FilePath};method:get"`
 	FilePath   string
-	Tenant     string
-}) {
-	fmt.Println(ctx.FilePath)
+}) error {
+	fullFIlePath, err := media.File.GetFilePath(ctx.FilePath)
+	if err != nil {
+		return err
+	}
+	//ctx.FilePath = fullFIlePath
+
+	fmt.Println(fullFIlePath)
+	return ctx.StreamingFile(fullFIlePath)
+	// return nil
 }

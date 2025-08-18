@@ -1,11 +1,11 @@
 package wx
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 	"sync"
 	httpServer "wx/HtttpServer"
+	"wx/handlers"
 )
 
 type Depend[TInstance any, TOwner any] struct {
@@ -22,16 +22,9 @@ func (d *Depend[TInstance, TOwner]) GetOwner() *TOwner {
 func (d *Depend[TInstance, TOwner]) Ins() (*TInstance, error) {
 	d.once.Do(func() {
 		if d.fnInit == nil {
-			t1 := reflect.TypeFor[TInstance]()
-			if t1.Kind() == reflect.Ptr {
-				t1 = t1.Elem()
-			}
-			t2 := reflect.TypeFor[TOwner]()
-			if t2.Kind() == reflect.Ptr {
-				t2 = t2.Elem()
-			}
-
-			d.err = fmt.Errorf("please call Init of %s when New of %s is called", t1.String(), t2.String())
+			ret, err := handlers.Helper.DependNew(reflect.TypeFor[TInstance]())
+			d.err = err
+			d.ins = (*ret).Interface().(*TInstance)
 			return
 		}
 		d.ins, d.err = d.fnInit(d.Owner.(*TOwner))
@@ -146,4 +139,16 @@ func init() {
 	httpServer.FindNewMethod = DepenResolvers.FindNewMethod
 	httpServer.ResolveNewMethod = DepenResolvers.RunNewMethod
 	httpServer.ResolveNewMethodWithReceiver = DepenResolvers.RunNewMethodWithReceiver
+	handlers.IsGenericDepen = func(typ reflect.Type) bool {
+		return isStructDepenType(typ)
+	}
+
+}
+func NewDepen[T any]() (*T, error) {
+	ret, err := handlers.Helper.DependNew(reflect.TypeFor[T]())
+	if err != nil {
+		return nil, err
+	}
+	return ret.Interface().(*T), nil
+
 }

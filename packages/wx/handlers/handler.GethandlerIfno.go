@@ -1,12 +1,89 @@
 package handlers
 
 import (
+	"fmt"
 	"reflect"
 	"regexp"
 	"strings"
+	"wx/internal"
 	"wx/services"
 )
 
+func (h *helperType) FindControllerName(reiverType reflect.Type) string {
+	if reiverType.Kind() == reflect.Ptr {
+		reiverType = reiverType.Elem()
+	}
+	if reiverType.Kind() != reflect.Struct {
+		return ""
+	}
+	key := reiverType.String() + "/FindControllerName"
+	ret, _ := internal.OnceCall(key, func() (*string, error) {
+
+		for i := 0; i < reiverType.NumField(); i++ {
+			field := reiverType.Field(i)
+			tags := field.Tag.Get("controller")
+			if tags != "" {
+				tags = h.ToKebabCase(tags)
+
+				return &tags, nil
+			}
+		}
+
+		items := strings.Split(reiverType.String(), ".")
+		ret := h.ToKebabCase(items[len(items)-1])
+		return &ret, nil
+		/* find first posistion of  "/controllers/" */
+
+	})
+	return *ret
+}
+func (h *helperType) calculateUrlWithQuery(ret *HandlerInfo) {
+	ret.QueryParams = []QueryParam{}
+
+	uri := strings.TrimSuffix(strings.Split(ret.Uri, "?")[0], "/")
+	ret.UriQuery = strings.Split(ret.Uri, "?")[1]
+	ret.Uri = uri
+
+	//ret.UriHandler = strings.TrimSuffix(strings.Split(uri, "?")[0], "/")
+	items := strings.Split(ret.UriQuery, "&")
+	for _, x := range items {
+		fieldName := strings.Split(x, "=")[1]
+		fieldName = strings.TrimPrefix(fieldName, "{")
+		fieldName = strings.TrimSuffix(fieldName, "}")
+		field, ok := ret.TypeOfArgsElem.FieldByNameFunc(func(s string) bool {
+			return strings.EqualFold(s, fieldName)
+		})
+		if !ok {
+			continue
+		}
+		ret.QueryParams = append(ret.QueryParams, QueryParam{
+			Name:       fieldName,
+			FieldIndex: field.Index,
+		})
+	}
+
+}
+func (h *helperType) calculateUrl(ret *HandlerInfo) {
+	if len(ret.UriParams) > 0 {
+		if !strings.Contains(ret.Uri, "{*") {
+			ret.RegexUri = h.TemplateToRegex(ret.Uri)
+			ret.UriHandler = strings.Split(ret.Uri, "{")[0]
+		} else {
+			ret.RegexUri = h.convertUrlToRegex(ret.Uri)
+			ret.UriHandler = strings.Split(ret.Uri, "{")[0]
+		}
+
+		ret.IsRegexHandler = true
+
+	} else {
+		ret.RegexUri = h.EscapeSpecialCharsForRegex(ret.Uri)
+		if ret.IsRegexHandler {
+			ret.UriHandler = ret.Uri + "/"
+		} else {
+			ret.UriHandler = ret.Uri
+		}
+	}
+}
 func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error) {
 
 	ret := &HandlerInfo{
@@ -58,7 +135,8 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 		if h.Iscontains(ret.IndexOfAuthClaims, i) {
 			continue
 		}
-		if indexOfAuthClaimsField := h.GetAuthClaims(method.Type.In(i)); indexOfAuthClaimsField != nil {
+		indexOfAuthClaimsField := h.GetAuthClaims(method.Type.In(i))
+		if indexOfAuthClaimsField != nil {
 			ret.IndexOfAuthClaimsArg = i
 			ret.IndexOfAuthClaims = indexOfAuthClaimsField
 			break
@@ -87,6 +165,7 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 		}
 
 		if strings.Contains(ret.Uri, "@") {
+			controllerName := h.FindControllerName(ret.ReceiverTypeElem)
 			if ret.Uri != "" && ret.Uri[0] == '/' {
 				ret.Uri = strings.Replace(ret.Uri, "@", h.ToKebabCase(method.Name), 1)
 			} else {
@@ -94,48 +173,44 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 				if typ.Kind() == reflect.Ptr {
 					typ = typ.Elem()
 				}
-				fullName := typ.String()
-				items := strings.Split(fullName, ".")
-				items = append(items, h.ToKebabCase(method.Name))
 
-				for i := range items {
-					items[i] = h.ToKebabCase(items[i])
-				}
-
-				ret.Uri = strings.Replace(ret.Uri, "@", strings.Join(items, "/"), 1)
+				ret.Uri = strings.Replace(ret.Uri, "@", controllerName+"/"+h.ToKebabCase(method.Name), 1)
 
 			}
 		} else {
+			controllerName := h.FindControllerName(ret.ReceiverTypeElem)
 			if ret.Uri == "" {
-				receiverTypeStr := ret.ReceiverTypeElem.String()
-				items := strings.Split(receiverTypeStr, ".")
-				for i := range items {
-					items[i] = h.ToKebabCase(items[i])
-				}
-				items = append(items, h.ToKebabCase(method.Name))
-				ret.Uri = strings.Join(items, "/")
+				ret.Uri = controllerName + "/" + h.ToKebabCase(method.Name)
 			} else {
-				ret.Uri = ret.Uri + "/" + h.ToKebabCase(method.Name)
+				if ret.Uri[0] == '/' {
+					ret.IsAbsUri = true
+					ret.Uri = ret.Uri[1:]
+				}
+				if strings.Contains(ret.Uri, "@") {
+					ret.Uri = strings.Replace(ret.Uri, "@", controllerName, 1)
+				} else {
+					ret.Uri = controllerName + "/" + ret.Uri
+				}
+				if ret.IsAbsUri {
+					ret.Uri = "/" + ret.Uri
+				}
+
 			}
 
 		}
 
 		ret.UriParams = h.ExtractUriParams(ret.Uri)
-		if len(ret.UriParams) > 0 {
-			if !strings.Contains(ret.Uri, "{*") {
-				ret.RegexUri = h.TemplateToRegex(ret.Uri)
-				ret.UriHandler = strings.Split(ret.Uri, "{")[0]
-			} else {
-				ret.RegexUri = h.convertUrlToRegex(ret.Uri)
-				ret.UriHandler = strings.Split(ret.Uri, "{")[0]
-			}
-
-			ret.IsRegexHandler = true
-
-		} else {
-			ret.RegexUri = h.EscapeSpecialCharsForRegex(ret.Uri)
-			ret.UriHandler = ret.Uri + "/"
+		if strings.Contains(ret.Uri, "?") {
+			ret.IsQueryUri = true
 		}
+		if ret.IsQueryUri {
+			h.calculateUrlWithQuery(ret)
+		}
+		h.calculateUrl(ret)
+		if ret.IsQueryUri {
+			ret.Uri = ret.Uri + "?" + ret.UriQuery
+		}
+
 	}
 	if ret.IndexOfRequestBody == -1 {
 		for i := 1; i < method.Type.NumIn(); i++ {
@@ -174,18 +249,18 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 		ret.IsAbsUri = true
 	}
 
-	// Thay thế tất cả "/handlers/" thành "/"
-	ret.UriHandler = h.trimHandlers(ret.UriHandler)
-	ret.Uri = h.trimHandlers(ret.Uri)
-	ret.RegexUri = h.trimHandlersRegex(ret.RegexUri)
-	if !ret.IsRegexHandler {
-		ret.Uri = strings.TrimSuffix(ret.Uri, "/")
-		ret.UriHandler = strings.TrimSuffix(ret.UriHandler, "/")
-	}
+	// // Thay thế tất cả "/handlers/" thành "/"
+	// ret.UriHandler = h.trimHandlers(ret.UriHandler)
+	// ret.Uri = h.trimHandlers(ret.Uri)
+	// ret.RegexUri = h.trimHandlersRegex(ret.RegexUri)
+	// if !ret.IsRegexHandler {
+	// 	ret.Uri = strings.TrimSuffix(ret.Uri, "/")
+	// 	ret.UriHandler = strings.TrimSuffix(ret.UriHandler, "/")
+	// }
 
 	return ret, nil
 }
-func (h *helperType) trimHandlers(s string) string {
+func (h *helperType) delete_trimHandlers(s string) string {
 	// isAbs := false
 	// if s != "" && s[0] == '/' {
 	// 	isAbs = true
@@ -206,7 +281,7 @@ func (h *helperType) trimHandlers(s string) string {
 	return s
 
 }
-func (h *helperType) trimHandlersRegex(s string) string {
+func (h *helperType) delete_trimHandlersRegex(s string) string {
 	isAbs := false
 	if s != "" && s[0] == '/' {
 		isAbs = true
@@ -229,5 +304,13 @@ func (h *helperType) trimHandlersRegex(s string) string {
 	// 	}
 	// }
 	return s
+
+}
+func (h *helperType) GetReceiverTypeFromMethod(method reflect.Method) (*reflect.Type, error) {
+	ret := method.Type.In(0)
+	if ret.Kind() == reflect.Ptr {
+		return &ret, nil
+	}
+	return nil, fmt.Errorf("receiver arg of %s is not a point of struct %s", method.Name, ret.String())
 
 }

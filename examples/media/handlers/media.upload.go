@@ -10,10 +10,12 @@ type UploadResult struct {
 	FileSize int64  `json:"file_size"`
 	FileType string `json:"file_type"`
 }
+type Helper struct {
+}
 
 func (media *Media) Upload(ctx *wx.Handler, data struct {
 	File *multipart.FileHeader
-}) (*UploadResult, error) {
+}, helper *wx.Depend[Helper, Media]) (*UploadResult, error) {
 	// if data.File == nil {
 	// 	return nil, wx.Errors.RequireErr("file")
 	// }
@@ -26,9 +28,7 @@ func (media *Media) Upload(ctx *wx.Handler, data struct {
 	// 	return nil, err
 	// }
 
-	directoryService := media.Directories
-
-	fileService.SaveFile(data.File, directoryService)
+	fileService.SaveFile(data.File)
 
 	return &UploadResult{}, nil
 }

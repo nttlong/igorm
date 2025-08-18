@@ -119,3 +119,6 @@ func init() {
 
 	}
 }
+
+var Helper = handler.Helper
+var HandlerList = httpServer.HandlerList

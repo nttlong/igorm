@@ -13,7 +13,7 @@ func TestGet(t *testing.T) {
 
 	handlers.Helper.FindHandlerFieldIndexFormType((*mt).Func.Type().In(1))
 	mtInfo, err := handlers.Helper.GetHandlerInfo(*mt)
-	wx.Controller(func() (*Media, error) {
+	wx.LoadController(func() (*Media, error) {
 		return &Media{}, nil
 	})
 	assert.NoError(t, err)

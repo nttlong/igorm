@@ -59,10 +59,18 @@ func (fs *FileService) findNextFileNumber(dirPath string) (int, error) {
 	// Số tiếp theo sẽ là số lớn nhất + 1
 	return maxNumber + 1, nil
 }
+func (fs *FileService) GetFilePath(filePath string) (string, error) {
+	ret := fs.DirectorySvc.DirUpload + "/" + filePath
+	asbFilepath, err := filepath.Abs(ret)
+	if err != nil {
+		return "", err
+	}
 
-func (fs *FileService) SaveFile(file *multipart.FileHeader, directoryService *DirectoryService) (string, error) {
+	return asbFilepath, nil
+}
+func (fs *FileService) SaveFile(file *multipart.FileHeader) (string, error) {
 	// 1. Tạo hoặc lấy đường dẫn thư mục
-	dirPath, err := directoryService.CreateDirectory()
+	dirPath, err := fs.DirectorySvc.CreateDirectory()
 	if err != nil {
 		return "", err
 	}
@@ -129,7 +137,7 @@ func (fs *FileService) ListAllFiles() ([]string, error) {
 	// }
 	for i := 0; i < len(fileList); i++ {
 		fileList[i] = strings.ReplaceAll(fileList[i], fs.DirectorySvc.DirUploadName+"\\", "")
-		fileList[i] = fs.UrlSvc.MakeAbsUrl("files/" + fileList[i])
+		fileList[i] = fs.UrlSvc.MakeAbsUrl("api/media/files/" + fileList[i])
 	}
 
 	return fileList, nil
@@ -169,8 +177,12 @@ func (ds *DirectoryService) CreateDirectory() (string, error) {
 	if err != nil {
 		log.Fatalf("Không thể tạo thư mục: %v", err)
 	}
+	fullFilePath, err := filepath.Abs(fullPath)
+	if err != nil {
+		return "", err
+	}
 
-	fmt.Printf("Đã tạo thư mục thành công: %s\n", fullPath)
+	fmt.Printf("Đã tạo thư mục thành công: %s\n", fullFilePath)
 
 	return fullPath, nil
 

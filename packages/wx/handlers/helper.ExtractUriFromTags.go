@@ -15,21 +15,24 @@ func (h *helperType) ExtractUriFromTags(tags []string) string {
 				continue
 			}
 			items := strings.Split(tag, ";")
+
 			for _, item := range items {
+				uriVal := ""
 				if strings.HasPrefix(item, "uri:") {
+					uriVal = item[4:]
 
-					val := item[4:]
-
-					if val != "" {
-						if strings.Contains(ret, "@") {
-							ret = strings.Replace(ret, "@", val, 1)
-						} else {
-							ret += "/" + val
-						}
+				} else if item != "" && !strings.Contains(item, ":") {
+					uriVal = item
+				}
+				if uriVal != "" {
+					if strings.Contains(ret, "@") {
+						ret = strings.Replace(ret, "@", uriVal, 1)
+					} else {
+						ret += "/" + uriVal
 					}
-
 				}
 			}
+
 		}
 		ret = strings.TrimPrefix(strings.TrimSuffix(ret, "/"), "/")
 		return &ret, nil
