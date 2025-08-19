@@ -1,7 +1,6 @@
 package htttpserver
 
 import (
-	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
@@ -23,7 +22,7 @@ var webHandlerRunner = &webHandlerRunnerType{}
 
 func (web *webHandlerRunnerType) Exec(handler WebHandler, w http.ResponseWriter, r *http.Request) error {
 
-	fmt.Printf("exec %s:\n %s\n", handler.RoutePath, r.RequestURI)
+	//fmt.Printf("exec %s:\n %s\n", handler.RoutePath, r.RequestURI)
 	if r.Method != handler.Method {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return nil

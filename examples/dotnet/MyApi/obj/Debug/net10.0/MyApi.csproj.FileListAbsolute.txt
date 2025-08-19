@@ -1,0 +1,9 @@
+D:\code\go\news2\igorm\examples\dotnet\MyApi\obj\Debug\net10.0\MyApi.csproj.AssemblyReference.cache
+D:\code\go\news2\igorm\examples\dotnet\MyApi\obj\Debug\net10.0\rpswa.dswa.cache.json
+D:\code\go\news2\igorm\examples\dotnet\MyApi\obj\Debug\net10.0\MyApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\code\go\news2\igorm\examples\dotnet\MyApi\obj\Debug\net10.0\MyApi.AssemblyInfoInputs.cache
+D:\code\go\news2\igorm\examples\dotnet\MyApi\obj\Debug\net10.0\MyApi.AssemblyInfo.cs
+D:\code\go\news2\igorm\examples\dotnet\MyApi\obj\Debug\net10.0\MyApi.csproj.CoreCompileInputs.cache
+D:\code\go\news2\igorm\examples\dotnet\MyApi\obj\Debug\net10.0\MyApi.MvcApplicationPartsAssemblyInfo.cs
+D:\code\go\news2\igorm\examples\dotnet\MyApi\obj\Debug\net10.0\MyApi.MvcApplicationPartsAssemblyInfo.cache
+D:\code\go\news2\igorm\examples\dotnet\MyApi\obj\Debug\net10.0\MyApi.sourcelink.json

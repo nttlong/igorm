@@ -13,7 +13,7 @@ func (s *Server) Start() error {
 		return &handlers.Media{}, nil
 	})
 
-	server := wx.NewHtttpServer("/api", 8081, "0.0.0.0")
+	server := wx.NewHtttpServer("/api", 8080, "0.0.0.0")
 	swagger := wx.CreateSwagger(server, "swagger")
 	swagger.OAuth2Password(server.BaseUrl + "oauth/token")
 	swagger.Info(wx.SwaggerInfo{
@@ -22,7 +22,7 @@ func (s *Server) Start() error {
 		Version:     "1.0.0",
 	})
 	swagger.Build()
-
+	//server.Middleware(mw.Zip)
 	err := server.Start()
 	if err != nil {
 		return err
