@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 	httpServer "wx/HtttpServer"
 	handler "wx/handlers"
 	"wx/internal"
@@ -76,7 +77,25 @@ func CreateSwagger(server *httpServer.HtttpServer, BaseUri string) SwaggerBuild 
 	}
 
 }
+
+type initGetMethodByName struct {
+	val *reflect.Method
+
+	once sync.Once
+}
+
+var cacheGetMethodByName sync.Map
+
 func GetMethodByName[T any](name string) *reflect.Method {
+	key := name + "@" + reflect.TypeFor[T]().String()
+	actual, _ := cacheGetMethodByName.LoadOrStore(key, &initGetMethodByName{})
+	init := actual.(*initGetMethodByName)
+	init.once.Do(func() {
+		init.val = getMethodByName[T](name)
+	})
+	return init.val
+}
+func getMethodByName[T any](name string) *reflect.Method {
 
 	t := reflect.TypeFor[*T]()
 	key := t.Elem().String() + "/GetMethodByName/" + name

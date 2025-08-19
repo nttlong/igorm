@@ -26,6 +26,15 @@ func InspectMethod[T any]() ([]handlers.HandlerInfo, error) {
 
 }
 
+func CreateWebHandler[T any](x handlers.HandlerInfo, init func() (*T, error)) httpServer.WebHandler {
+	wHandler := httpServer.WebHandler{
+		ApiInfo:   x,
+		InitFunc:  reflect.ValueOf(init),
+		RoutePath: "/" + x.UriHandler,
+		Method:    x.HttpMethod,
+	}
+	return wHandler
+}
 func LoadController[T any](init func() (*T, error)) error {
 	list, err := InspectMethod[T]()
 	if err != nil {
@@ -33,12 +42,7 @@ func LoadController[T any](init func() (*T, error)) error {
 	}
 	for _, x := range list {
 
-		wHandler := httpServer.WebHandler{
-			ApiInfo:   x,
-			InitFunc:  reflect.ValueOf(init),
-			RoutePath: "/" + x.UriHandler,
-			Method:    x.HttpMethod,
-		}
+		wHandler := CreateWebHandler(x, init)
 		wHandler.RoutePath = strings.ReplaceAll(wHandler.RoutePath, "//", "/")
 		httpServer.HandlerList = append(httpServer.HandlerList, wHandler)
 	}

@@ -31,8 +31,9 @@ type HandlerInfo struct {
 
 	ReceiverType     reflect.Type
 	ReceiverTypeElem reflect.Type
-	Method           reflect.Method
-	RouteTags        []string
+
+	Method    reflect.Method
+	RouteTags []string
 	/*
 		Master uri
 	*/
@@ -90,6 +91,7 @@ type HandlerInfo struct {
 			FormUploadFile=[10,13]
 
 	*/
+	
 	FormUploadFile []int
 	/*
 			If the handler has a request body argument and is neither wx.Handler nor inject or auth,

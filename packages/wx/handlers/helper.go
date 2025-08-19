@@ -11,6 +11,7 @@ type helperType struct {
 	IgnoreDetectTypes   map[reflect.Type]bool
 	PrefixGenericDepen  string
 	ErrorType           reflect.Type
+	ReqExec             *RequestExecutor
 }
 
 func (h *helperType) Iscontains(slice []int, value int) bool {
@@ -68,4 +69,5 @@ var Helper = &helperType{
 		reflect.TypeOf(http.Server{}):   true,
 	},
 	ErrorType: reflect.TypeOf((*error)(nil)).Elem(),
+	ReqExec:   &RequestExecutor{},
 }

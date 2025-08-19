@@ -14,11 +14,11 @@ type TestStructWithGlobal struct {
 	Cfg *TestConfig
 }
 
-func (ts *TestStructWithGlobal) New(Cfg Global[TestConfig], Cfg2 Depend[TestConfig, TestStructWithGlobal]) error {
+func (ts *TestStructWithGlobal) New(Cfg Global[TestConfig], Cfg2 Depend[TestConfig]) error {
 	Cfg.Init(func() (*TestConfig, error) {
 		return &TestConfig{}, nil
 	})
-	Cfg2.Init(func(app *TestStructWithGlobal) (*TestConfig, error) {
+	Cfg2.Init(func() (*TestConfig, error) {
 
 		return &TestConfig{}, nil
 	})

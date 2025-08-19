@@ -13,11 +13,11 @@ type Test001 struct {
 type Test002 struct {
 }
 type Test003 struct {
-	T1 *wx.Depend[Test001, Test003]
-	T2 *wx.Depend[Test002, Test003]
+	T1 *wx.Depend[Test001]
+	T2 *wx.Depend[Test002]
 }
 type Args1 struct {
-	T3 wx.Depend[Test003, Args1]
+	T3 wx.Depend[Test003]
 }
 
 func (t *Test001) New() error {
@@ -26,7 +26,7 @@ func (t *Test001) New() error {
 func (t *Test002) New() error {
 	return nil
 }
-func (t *Test003) New(arg *wx.Depend[Args1, Test003], args2 *wx.Global[Args1]) error {
+func (t *Test003) New(arg *wx.Depend[Args1], args2 *wx.Global[Args1]) error {
 	//_, err := t.T1.Ins()
 	// if err != nil {
 	// 	return err

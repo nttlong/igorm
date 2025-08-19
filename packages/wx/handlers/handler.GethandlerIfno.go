@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"sync"
 	"wx/internal"
 	"wx/services"
 )
@@ -84,7 +85,26 @@ func (h *helperType) calculateUrl(ret *HandlerInfo) {
 		}
 	}
 }
+
+type initGetHandlerInfo struct {
+	val  *HandlerInfo
+	err  error
+	once sync.Once
+}
+
+var cacheGetHandlerInfo sync.Map
+
 func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error) {
+	key := method
+	ret, _ := cacheGetHandlerInfo.LoadOrStore(key, &initGetHandlerInfo{})
+	init := ret.(*initGetHandlerInfo)
+	init.once.Do(func() {
+		init.val, init.err = h.getHandlerInfo(method)
+	})
+	return init.val, init.err
+
+}
+func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error) {
 
 	ret := &HandlerInfo{
 		IndexOfRequestBody: -1,

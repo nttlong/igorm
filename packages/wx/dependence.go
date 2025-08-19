@@ -8,18 +8,15 @@ import (
 	"wx/handlers"
 )
 
-type Depend[TInstance any, TOwner any] struct {
+type Depend[TInstance any] struct {
 	ins    *TInstance
 	err    error
 	Owner  interface{}
-	fnInit func(Owner *TOwner) (*TInstance, error)
+	fnInit func() (*TInstance, error)
 	once   sync.Once
 }
 
-func (d *Depend[TInstance, TOwner]) GetOwner() *TOwner {
-	return d.Owner.(*TOwner)
-}
-func (d *Depend[TInstance, TOwner]) Ins() (*TInstance, error) {
+func (d *Depend[TInstance]) Ins() (*TInstance, error) {
 	d.once.Do(func() {
 		if d.fnInit == nil {
 			ret, err := handlers.Helper.DependNew(reflect.TypeFor[TInstance]())
@@ -27,11 +24,11 @@ func (d *Depend[TInstance, TOwner]) Ins() (*TInstance, error) {
 			d.ins = (*ret).Interface().(*TInstance)
 			return
 		}
-		d.ins, d.err = d.fnInit(d.Owner.(*TOwner))
+		d.ins, d.err = d.fnInit()
 	})
 	return d.ins, d.err
 }
-func (d *Depend[TInstance, TOwner]) Init(fn func(apOwnerp *TOwner) (*TInstance, error)) {
+func (d *Depend[TInstance]) Init(fn func() (*TInstance, error)) {
 
 	d.fnInit = fn
 }
@@ -43,7 +40,7 @@ func isStructDepenType(t reflect.Type) bool {
 	if t.Kind() != reflect.Struct {
 		return false
 	}
-	checkIsDepend := t.Kind() == reflect.Struct && t.PkgPath() == reflect.TypeOf(Depend[any, any]{}).PkgPath() && strings.HasPrefix(t.Name(), "Depend[")
+	checkIsDepend := t.Kind() == reflect.Struct && t.PkgPath() == reflect.TypeOf(Depend[any]{}).PkgPath() && strings.HasPrefix(t.Name(), "Depend[")
 	checkIsGlobal := t.Kind() == reflect.Struct && t.PkgPath() == reflect.TypeOf(Global[any]{}).PkgPath() && strings.HasPrefix(t.Name(), "Global[")
 	return checkIsDepend || checkIsGlobal
 }

@@ -118,3 +118,35 @@ func NewRequireError(fields []string, message string) error {
 		Message: message,
 	}
 }
+
+type BodyParseError struct {
+	Message    string
+	InnerError error
+}
+
+func NewBodyParseError(message string, InnerError error) error {
+	return &BodyParseError{
+		Message:    message,
+		InnerError: InnerError,
+	}
+}
+
+func (e *BodyParseError) Error() string {
+	return e.Message
+
+}
+
+type FileParseError struct {
+	Message    string
+	InnerError error
+}
+
+func (e *FileParseError) Error() string {
+	return e.Message
+}
+func NewFileParseError(message string, InnerError error) error {
+	return &FileParseError{
+		Message:    message,
+		InnerError: InnerError,
+	}
+}

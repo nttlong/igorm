@@ -21,15 +21,15 @@ func (dp *DependTest) DoRun(s *ServerMock) {
 }
 
 type AppTest struct {
-	DependTest *Depend[DependTest, AppTest]
-	Server     *Depend[ServerMock, AppTest]
+	DependTest *Depend[DependTest]
+	Server     *Depend[ServerMock]
 }
 
 func (app *AppTest) New() error {
-	app.DependTest.Init(func(app *AppTest) (*DependTest, error) {
+	app.DependTest.Init(func() (*DependTest, error) {
 		return &DependTest{}, nil
 	})
-	app.Server.Init(func(app *AppTest) (*ServerMock, error) {
+	app.Server.Init(func() (*ServerMock, error) {
 		return &ServerMock{}, nil
 	})
 	return nil

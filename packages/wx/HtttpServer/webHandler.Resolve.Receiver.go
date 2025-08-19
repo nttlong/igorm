@@ -15,10 +15,15 @@ var ResolveNewMethodWithReceiver func(retVale reflect.Value, nm reflect.Method) 
 func (web *webHandlerRunnerType) ResolveReceiverValue(handler WebHandler, r *http.Request) (reflect.Value, error) {
 	key := handler.ApiInfo.ReceiverType.String() + "/webHandlerRunnerType/ResolveReceiverValue"
 	ret, err := internal.OnceCall(key, func() (*reflect.Value, error) {
-
-		result := handler.InitFunc.Call([]reflect.Value{})
-		if result[1].IsValid() && !result[1].IsNil() {
-			return nil, result[1].Interface().(error)
+		var result []reflect.Value
+		if handler.InitFunc.IsValid() {
+			result := handler.InitFunc.Call([]reflect.Value{})
+			if result[1].IsValid() && !result[1].IsNil() {
+				return nil, result[1].Interface().(error)
+			}
+		} else {
+			result = make([]reflect.Value, 1)
+			result[0] = reflect.New(handler.ApiInfo.ReceiverType)
 		}
 		instanceType := handler.ApiInfo.ReceiverType
 		if instanceType.Kind() == reflect.Ptr {
