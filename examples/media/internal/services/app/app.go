@@ -6,7 +6,7 @@ import (
 )
 
 type App struct {
-	Server wx.Depend[services.Server, App]
+	Server wx.Depend[services.Server]
 }
 
 func (app *App) New() error {
@@ -14,7 +14,7 @@ func (app *App) New() error {
 
 	// }
 
-	app.Server.Init(func(app *App) (*services.Server, error) {
+	app.Server.Init(func() (*services.Server, error) {
 		return &services.Server{}, nil
 	})
 	return nil

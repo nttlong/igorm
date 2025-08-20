@@ -13,9 +13,9 @@ type Media struct {
 }
 
 func (m *Media) New(
-	fs *wx.Depend[services.FileService, Media],
+	fs *wx.Depend[services.FileService],
 	ds *wx.Global[services.DirectoryService],
-	urlSvc *wx.Depend[services.UrlResolverService, Media],
+	urlSvc *wx.Depend[services.UrlResolverService],
 ) error {
 	fmt.Println("Media.New")
 	ds.Init(func() (*services.DirectoryService, error) {
@@ -28,12 +28,12 @@ func (m *Media) New(
 			DirUploadName: "uploads",
 		}, nil
 	})
-	urlSvc.Init(func(app *Media) (*services.UrlResolverService, error) {
+	urlSvc.Init(func() (*services.UrlResolverService, error) {
 		return &services.UrlResolverService{
 			BaseUrl: m.BaseUrl,
 		}, nil
 	})
-	fs.Init(func(app *Media) (*services.FileService, error) {
+	fs.Init(func() (*services.FileService, error) {
 		dirSvc, err := ds.Ins()
 		if err != nil {
 			return nil, err

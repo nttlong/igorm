@@ -90,6 +90,20 @@ func (builder *MockRequestBuilder) PostJson(url string, data interface{}) *MockR
 	return builder
 
 }
+func (builder *MockRequestBuilder) Get(url string) *MockRequestBuilder {
+	if builder.body == nil {
+		builder.body = new(bytes.Buffer)
+	}
+	builder.method = "GET"
+	builder.url = "http://localhost" + url
+	if builder.header == nil {
+		builder.header = make(map[string]string)
+	}
+	builder.header["Content-Type"] = "application/json"
+
+	return builder
+
+}
 func (builder *MockRequestBuilder) NewResponse() http.ResponseWriter {
 	ret := newMockResponseWriter()
 	return ret

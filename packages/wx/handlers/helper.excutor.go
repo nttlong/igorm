@@ -32,19 +32,24 @@ func NewMockRequest(method, urlStr string, body io.Reader, query url.Values, hea
 type RequestExecutor struct {
 }
 type initCreateControllerValue struct {
-	Controller reflect.Value
+	Controller *reflect.Value
+	Err        error
 	once       sync.Once
 }
 
 var cacheCreateControllerValue sync.Map
 
-func (reqExec *RequestExecutor) CreateControllerValueOnce(handlerInfo HandlerInfo) reflect.Value {
+func (reqExec *RequestExecutor) CreateControllerValue(handlerInfo HandlerInfo) (*reflect.Value, error) {
+	return reqExec.CreateControllerValueOnce(handlerInfo)
+}
+func (reqExec *RequestExecutor) CreateControllerValueOnce(handlerInfo HandlerInfo) (*reflect.Value, error) {
 	actual, _ := cacheCreateControllerValue.LoadOrStore(handlerInfo.ReceiverTypeElem, &initCreateControllerValue{})
 	item := actual.(*initCreateControllerValue)
 	item.once.Do(func() {
-		item.Controller = reflect.New(handlerInfo.ReceiverTypeElem)
+		item.Controller, item.Err = reqExec.createControllerValueInternal(handlerInfo)
+
 	})
-	return item.Controller
+	return item.Controller, item.Err
 
 }
 func (reqExec *RequestExecutor) ResovleNewMethod(instanceVale reflect.Value, method reflect.Method) error {
@@ -92,7 +97,7 @@ func (reqExec *RequestExecutor) CreateControllerInitAllDepenFields(instanceValue
 	}
 	return nil
 }
-func (reqExec *RequestExecutor) CreateControllerValue(handlerInfo HandlerInfo) (*reflect.Value, error) {
+func (reqExec *RequestExecutor) createControllerValueInternal(handlerInfo HandlerInfo) (*reflect.Value, error) {
 
 	ret := reflect.New(handlerInfo.ReceiverTypeElem)
 	err := reqExec.CreateControllerInitAllDepenFields(ret, handlerInfo)

@@ -11,7 +11,9 @@ func (reqExec *RequestExecutor) Invoke(info HandlerInfo, r *http.Request, w http
 	if r.Method != info.HttpMethod {
 		return nil, wxErr.NewMethodNotAllowError("method not allowed")
 	}
-
+	if r.Method == "GET" {
+		return reqExec.DoGet(info, r, w)
+	}
 	if r.Header.Get("Content-Type") == "application/json" {
 
 		return reqExec.DoJsonPost(info, r, w)

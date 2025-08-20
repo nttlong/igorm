@@ -15,7 +15,7 @@ type Helper struct {
 
 func (media *Media) Upload(ctx *wx.Handler, data struct {
 	File *multipart.FileHeader
-}, helper *wx.Depend[Helper, Media]) (*UploadResult, error) {
+}, helper *wx.Depend[Helper]) (*UploadResult, error) {
 	// if data.File == nil {
 	// 	return nil, wx.Errors.RequireErr("file")
 	// }
