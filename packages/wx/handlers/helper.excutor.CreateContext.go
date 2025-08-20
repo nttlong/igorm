@@ -27,6 +27,19 @@ func (reqExec *RequestExecutor) GetParamFieldOfHandlerContext(typ reflect.Type, 
 func (reqExec *RequestExecutor) CreateHandlerContext(info HandlerInfo, r *http.Request, w http.ResponseWriter) (*reflect.Value, error) {
 
 	ret := reflect.New(info.TypeOfArgsElem)
+	ctx := Handler{
+		Req: r,
+		Res: w,
+	}
+	ctxField := ret.Elem().FieldByIndex(info.FieldIndex)
+	if ctxField.IsValid() {
+		if ctxField.Kind() == reflect.Ptr {
+			ctxField.Set(reflect.ValueOf(&ctx))
+		} else {
+			ctxField.Set(reflect.ValueOf(ctx))
+		}
+	}
+
 	if info.IsRegexHandler {
 		placeHolders := info.RegexUriFind.FindAllStringSubmatch(r.URL.Path, -1)
 		if len(placeHolders) == 1 {

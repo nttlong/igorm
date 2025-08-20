@@ -76,3 +76,6 @@ func TestControllerPostQuery(t *testing.T) {
 	})
 
 }
+//wsl --import Ubuntu-22.04 D:\wsl\Ubuntu22 D:\ubuntu-jammy-wsl-amd64-ubuntu22.04lts.rootfs.tar.gz --version 2
+
+//D:\

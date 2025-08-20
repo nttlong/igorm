@@ -76,13 +76,6 @@
             "program": "${workspaceFolder}/packages/wx/example/example1"
         },
         {
-            "name": "example1",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}/packages/vapiv2/example/example1"
-        },
-        {
             //packages\vpai_cmp\main.go
             "name": "fasthttp",
             "type": "go",
