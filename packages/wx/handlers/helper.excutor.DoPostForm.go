@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"mime/multipart"
 	"net/http"
 	"reflect"
@@ -89,9 +90,18 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 			eleType := fileFieldSet.Type().Elem()
 			if eleType.Kind() == reflect.Slice {
 				fileFieldSet.Set(reflect.ValueOf(values))
-			} else {
+			} else if eleType.Kind() == reflect.String {
 				fileFieldSet.Set(reflect.ValueOf(values).Elem())
+			} else if eleType.Kind() == reflect.Struct {
+				value := reflect.New(eleType)
+				data := value.Interface()
+				err := json.Unmarshal([]byte(values[0]), data)
+				if err != nil {
+					return nil, err
+				}
+				fileFieldSet.Set(value)
 			}
+
 			continue
 		}
 		if fileFieldSet.Kind() == reflect.Slice {
@@ -107,8 +117,17 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 			fileFieldSet.Set(reflect.ValueOf(values[0]))
 			continue
 		}
-		panic("not implete at file packages\\wx\\handlers\\helper.excutor.DoPostForm.go")
-
+		if fileFieldSet.Kind() == reflect.Struct {
+			value := reflect.New(fileFieldSet.Type())
+			data := value.Interface()
+			err := json.Unmarshal([]byte(values[0]), data)
+			if err != nil {
+				return nil, err
+			}
+			fileFieldSet.Set(value.Elem())
+			continue
+		}
+		//panic("not implete at file packages\\wx\\handlers\\helper.excutor.DoPostForm.go")
 	}
 
 	return &bodyDataRet, nil

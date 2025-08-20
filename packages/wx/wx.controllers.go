@@ -48,3 +48,6 @@ func LoadController[T any](init func() (*T, error)) error {
 	}
 	return nil
 }
+func Routes(baseUri string, ins ...any) {
+	handlers.Helper.Routes.Add(baseUri, ins...)
+}

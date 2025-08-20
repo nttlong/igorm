@@ -1,0 +1,29 @@
+docker run -d --name sonarqube -p 9000:9000  sonarqube:lts-community LV-Files Analyze "LV-Files"
+sqp_05f4769ebd304ac56e65ac36001c48410f43d7d6Analyze "LV-Files":
+sqp_05f4769ebd304ac56e65ac36001c48410f43d7d6
+
+
+Analyze "LV-Files":
+sqp_05f4769ebd304ac56e65ac36001c48410f43d7d6
+Provide a token
+
+docker run --rm -e SONAR_HOST_URL="http://host.docker.internal:9000" -e SONAR_LOGIN="sqp_05f4769ebd304ac56e65ac36001c48410f43d7d6" -v "D:\code\go\news2\igorm\packages\wx:/usr/src" sonarsource/sonar-scanner-cli
+
+docker run \
+--rm \
+-e SONAR_HOST_URL="http://host.docker.internal:9000" \
+-e SONAR_LOGIN="sqp_05f4769ebd304ac56e65ac36001c48410f43d7d6" \
+-e SONAR_SCANNER_OPTS="-Dsonar.projectKey=LV-Files" \
+-v "D:\code\go\news2\igorm\packages\wx:/usr/src" \
+sonarsource/sonar-scanner-cli
+
+//ABC: sqp_66c07498b9bf0908748bfe2378d80a322fdbd138
+//Analyze "wx": sqp_40bb1f9e0a5034a9b92990631d0bf7140231448f
+
+docker run `
+--rm `
+-e SONAR_HOST_URL="http://172.21.128.1:9000" `
+-e SONAR_LOGIN="sqp_40bb1f9e0a5034a9b92990631d0bf7140231448f" `
+-e SONAR_SCANNER_OPTS="-Dsonar.projectKey=wx" `
+-v D:\code\go\news2\igorm\packages\wx:/usr/src `
+sonarsource/sonar-scanner-cli -X

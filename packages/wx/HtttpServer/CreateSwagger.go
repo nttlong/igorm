@@ -72,7 +72,8 @@ func (sb *SwaggerBuild) Build() error {
 	useSwagger = true
 	mux := server.mux
 	uri := sb.BaseUri
-	sb.swagger3GetPaths()
+	//sb.swagger3GetPaths()
+	sb.LoadFromRoutes()
 	data, err := json.Marshal(sb.swagger)
 	if err != nil {
 		sb.err = err

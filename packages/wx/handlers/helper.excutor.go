@@ -120,6 +120,7 @@ func (reqExec *RequestExecutor) GetBodyValue(handlerInfo HandlerInfo, r *http.Re
 			return nil, err
 		}
 	} else if handlerInfo.TypeOfRequestBody.Kind() == reflect.Struct {
+
 		return nil, wxErrors.NewBadRequestError("request body is required")
 	}
 

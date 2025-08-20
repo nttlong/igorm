@@ -37,11 +37,20 @@ Nhu bay trong truong hop cu the nay uri cua api la example/media/list-of-file
 Luu y:"example/media/list-of-file" chua phai la Url cuoi cung de handler tai http server
 */
 func (m *Media) ListOfFiles(ctx *wx.Handler, // <-- nhung method nao cua
-// Media co mot tham so kieu vapi.Handler hoac *vapi.Handler, thi duoc xem nhu la 1 handler
-// Nhu vay la o day ta da co 1 api liet ke danh sach cac file
-
-) ([]string, error) {
+	// Media co mot tham so kieu vapi.Handler hoac *vapi.Handler, thi duoc xem nhu la 1 handler
+	// Nhu vay la o day ta da co 1 api liet ke danh sach cac file
+	data struct {
+		Page int `json:"page"`
+		Size int `json:"size"`
+	}) ([]string, error) {
 	folder := "./uploads"
+	//create folder if not exists
+	if _, err := os.Stat(folder); os.IsNotExist(err) {
+		err = os.Mkdir(folder, 0755)
+		if err != nil {
+			return nil, err
+		}
+	}
 	files, err := os.ReadDir(folder)
 	if err != nil {
 		return nil, err

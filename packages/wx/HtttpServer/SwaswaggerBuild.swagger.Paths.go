@@ -65,7 +65,8 @@ func (sb *SwaggerBuild) createOperation(handler WebHandler) *swaggers3.Operation
 	}
 
 	ret := &swaggers3.Operation{
-		Tags:       []string{handler.ApiInfo.ReceiverTypeElem.String()},
+		Tags: []string{handler.ApiInfo.ReceiverTypeElem.String()},
+
 		Parameters: sb.createParamtersFromUriParams(handler),
 		Responses: map[string]swaggers3.Response{
 			"200": {
@@ -105,13 +106,27 @@ func (sb *SwaggerBuild) createOperation(handler WebHandler) *swaggers3.Operation
 
 	}
 	if handler.ApiInfo.IndexOfRequestBody > 0 {
-
-		ret.Parameters = append(ret.Parameters, sb.createBodyParameters(handler))
+		ret.RequestBody = sb.createRequestBody(handler)
+		//ret.Parameters = append(ret.Parameters, sb.createBodyParameters(handler))
 
 	}
 	sb.applySecurity(handler, ret)
 	return ret
 }
+func (sb *SwaggerBuild) createRequestBody(handler WebHandler) *swaggers3.RequestBody {
+	ret := &swaggers3.RequestBody{
+		Required: handler.ApiInfo.Method.Type.In(handler.ApiInfo.IndexOfRequestBody).Kind() == reflect.Ptr,
+		Content: map[string]swaggers3.MediaType{
+			"application/json": {
+				Schema: &swaggers3.Schema{
+					Type: "object",
+				},
+			},
+		},
+	}
+	return ret
+}
+
 func (sb *SwaggerBuild) createRequestBodyForUploadFile(handler WebHandler) *swaggers3.RequestBody {
 	if len(handler.ApiInfo.FormUploadFile) > 0 {
 		props := make(map[string]*swaggers3.Schema)

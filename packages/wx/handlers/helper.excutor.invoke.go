@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
 	wxErr "wx/errors"
@@ -11,7 +12,7 @@ func (reqExec *RequestExecutor) Invoke(info HandlerInfo, r *http.Request, w http
 		return nil, wxErr.NewMethodNotAllowError("method not allowed")
 	}
 
-	if r.Header.Get("Content-Type") != "application/json" {
+	if r.Header.Get("Content-Type") == "application/json" {
 
 		return reqExec.DoJsonPost(info, r, w)
 	}
@@ -19,9 +20,24 @@ func (reqExec *RequestExecutor) Invoke(info HandlerInfo, r *http.Request, w http
 
 		return reqExec.DoFormPost(info, r, w)
 	}
-	if strings.HasPrefix(r.Header.Get("Content-Type"), "multipart/form-data") {
+	if strings.HasPrefix(r.Header.Get("Content-Type"), "multipart/form-data; boundary=") {
 		return reqExec.DoFormPost(info, r, w)
 	}
 	return reqExec.DoJsonPost(info, r, w)
 
+}
+func (reqExec *RequestExecutor) ProcesHttp(info HandlerInfo, data interface{}, previousErr error, r *http.Request, w http.ResponseWriter) {
+	if previousErr != nil {
+		http.Error(w, previousErr.Error(), http.StatusInternalServerError)
+		return
+	}
+	if data != nil {
+		w.Header().Set("Content-Type", "application/json")
+		err := json.NewEncoder(w).Encode(data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		return
+	}
 }

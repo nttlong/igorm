@@ -5,6 +5,7 @@ import (
 	"net/http"
 	_ "net/http/pprof" // import để tự đăng ký pprof handlers
 	"os"
+	"reflect"
 	"runtime/pprof"
 	"wx"
 	"wx/example"
@@ -23,12 +24,7 @@ func main() {
 		log.Println("pprof listening on :6060")
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
-	wx.LoadController(func() (*example.Media, error) {
-		return &example.Media{}, nil
-	})
-	// vapi.Controller(func() (*example.Auth, error) {
-	// 	return &example.Auth{}, nil
-	// })
+	wx.Routes("/api/v1", reflect.TypeFor[example.Media]())
 
 	server := wx.NewHtttpServer("/api/v1", 8080, "localhost")
 	uri, err := wx.GetUriOfHandler[example.Auth](server, "Oauth")
