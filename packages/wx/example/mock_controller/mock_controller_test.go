@@ -160,3 +160,68 @@ func BenchmarkTestCallHandlerPostWithBody(b *testing.B) {
 
 	})
 }
+func (c *Controller1) PostWithRequireBody(ctx *wx.Handler, body struct {
+	Name string
+	Age  int
+}) (interface{}, error) {
+	return body, nil
+}
+func TestCallHandlerPostWithRequireBody(t *testing.T) {
+	mt := wx.GetMethodByName[Controller1]("PostWithRequireBody")
+
+	mtInfo, err := handlers.Helper.GetHandlerInfo(*mt)
+	assert.NoError(t, err)
+	requestBuild := wx.Helper.ReqExec.CreateMockRequestBuilder()
+	requestBuild.PostJson("/api/"+mtInfo.UriHandler, nil)
+	req, res := requestBuild.Build()
+
+	ret, err := wx.Helper.ReqExec.DoJsonPost(*mtInfo, req, res)
+	assert.Error(t, err)
+	assert.Empty(t, ret)
+	requestBuild.PostJson("/api/"+mtInfo.UriHandler, &struct {
+		Name string
+		Age  int
+	}{
+		Name: "John",
+		Age:  30,
+	})
+	req, res = requestBuild.Build()
+	ret2, err := wx.Helper.ReqExec.DoJsonPost(*mtInfo, req, res)
+
+	assert.NotEmpty(t, ret2)
+}
+func BenchmarkPostWithRequireBody(b *testing.B) {
+	mt := wx.GetMethodByName[Controller1]("PostWithRequireBody")
+
+	mtInfo, _ := handlers.Helper.GetHandlerInfo(*mt)
+
+	requestBuild := wx.Helper.ReqExec.CreateMockRequestBuilder()
+	requestBuild.PostJson("/api/"+mtInfo.UriHandler, nil)
+
+	b.Run("PtrToStruct", func(b *testing.B) {
+
+		req, res := requestBuild.Build()
+		requestBuild.PostJson("/api/"+mtInfo.UriHandler, &struct {
+			Name string
+			Age  int
+		}{
+			Name: "John",
+			Age:  30,
+		})
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+
+			wx.Helper.ReqExec.DoJsonPost(*mtInfo, req, res)
+		}
+	})
+	b.Run("PtrToNil", func(b *testing.B) {
+		req, res := requestBuild.Build()
+		requestBuild.PostJson("/api/"+mtInfo.UriHandler, nil)
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+			wx.Helper.ReqExec.DoJsonPost(*mtInfo, req, res)
+		}
+
+	})
+
+}

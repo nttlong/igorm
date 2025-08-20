@@ -277,6 +277,10 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	// 	ret.Uri = strings.TrimSuffix(ret.Uri, "/")
 	// 	ret.UriHandler = strings.TrimSuffix(ret.UriHandler, "/")
 	// }
+	if ret.RegexUriFind.String() == "" {
+		//controller\-uri\-params\/([^\/]+)\/([^\/]+)$
+		ret.RegexUriFind = *regexp.MustCompile(strings.ReplaceAll(strings.TrimPrefix(ret.RegexUri, "^"), "/", "\\/"))
+	}
 
 	return ret, nil
 }

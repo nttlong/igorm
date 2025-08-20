@@ -15,13 +15,21 @@ func (reqExec *RequestExecutor) DoJsonPost(handlerInfo HandlerInfo, r *http.Requ
 
 	args := make([]reflect.Value, handlerInfo.Method.Func.Type().NumIn())
 	args[0] = controllerValue
-	args[handlerInfo.IndexOfArg] = reflect.New(handlerInfo.TypeOfArgsElem)
+	ctxHandler, err := reqExec.CreateHandlerContext(handlerInfo, r, w)
+	if err != nil {
+		return nil, err
+	}
+	args[handlerInfo.IndexOfArg] = *ctxHandler
 	if handlerInfo.IndexOfRequestBody != -1 {
 		bodyValue, err := reqExec.GetBodyValue(handlerInfo, r)
 		if err != nil {
 			return nil, err
 		}
-		args[handlerInfo.IndexOfRequestBody] = *bodyValue
+		if args[handlerInfo.IndexOfRequestBody].Kind() == reflect.Ptr {
+			args[handlerInfo.IndexOfRequestBody] = *bodyValue
+		} else {
+			args[handlerInfo.IndexOfRequestBody] = (*bodyValue).Elem()
+		}
 
 	}
 

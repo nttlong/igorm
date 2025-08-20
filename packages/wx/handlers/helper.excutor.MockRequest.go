@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -16,24 +15,31 @@ import (
 type MockRequestBuilder struct {
 	method string
 	url    string
-	body   io.Reader
+	body   *bytes.Buffer
 	header map[string]string
 	forms  map[string]string
+	writer *multipart.Writer
 }
 
 func (builder *MockRequestBuilder) Build() (*http.Request, http.ResponseWriter) {
+
+	if builder.writer != nil {
+		builder.writer.Close()
+	}
 	ret, err := http.NewRequest(builder.method, builder.url, builder.body)
 	if err != nil {
 		panic(err)
 	}
-	if builder.header != nil {
-		for k, v := range builder.header {
-			ret.Header.Add(k, v)
+	if builder.writer == nil {
+		if builder.header != nil {
+			for k, v := range builder.header {
+				ret.Header.Add(k, v)
+			}
 		}
-	}
-	if builder.forms != nil {
-		for k, v := range builder.forms {
-			ret.Form.Add(k, v)
+		if builder.forms != nil {
+			for k, v := range builder.forms {
+				ret.Form.Add(k, v)
+			}
 		}
 	}
 
@@ -45,11 +51,27 @@ func (builder *MockRequestBuilder) Build() (*http.Request, http.ResponseWriter) 
 		Path:    "/" + strings.Split(builder.url, "://")[1],
 		RawPath: builder.url,
 	}
+	if builder.writer != nil {
+		ret.Header.Set("Content-Type", builder.writer.FormDataContentType())
+	}
+	// // if builder.body != nil {
+	// // 	ret.ContentLength = int64(builder.body.Len())
+	// // 	ret.Body.Close()
+	// // 	//ret.Body = io.NopCloser(builder.body)
+	// // }
+	for k, v := range builder.header {
+		if k == "Content-Type" {
+			continue
+		}
+		ret.Header.Set(k, v)
+	}
 	return ret, builder.NewResponse()
 
 }
 func (builder *MockRequestBuilder) PostJson(url string, data interface{}) *MockRequestBuilder {
-
+	if builder.body == nil {
+		builder.body = new(bytes.Buffer)
+	}
 	builder.method = "POST"
 	builder.url = "http://localhost" + url
 	if builder.header == nil {
@@ -61,8 +83,9 @@ func (builder *MockRequestBuilder) PostJson(url string, data interface{}) *MockR
 		if err != nil {
 			panic(err)
 		}
-		bodyData := strings.NewReader(string(jsonData))
-		builder.body = bodyData
+
+		builder.body.Write(jsonData)
+
 	}
 	return builder
 
@@ -75,33 +98,6 @@ func (builder *MockRequestBuilder) NewResponse() http.ResponseWriter {
 func (reqExec *RequestExecutor) CreateMockRequestBuilder() *MockRequestBuilder {
 	return &MockRequestBuilder{}
 
-}
-func CreateMockUploadRequest(fieldName, fileName string, fileContent []byte) (*bytes.Buffer, string, error) {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	// Thêm file giả lập
-	part, err := writer.CreateFormFile(fieldName, fileName)
-	if err != nil {
-		return nil, "", err
-	}
-	_, err = part.Write(fileContent)
-	if err != nil {
-		return nil, "", err
-	}
-
-	// Nếu cần, thêm các field khác
-	_ = writer.WriteField("description", "test file upload")
-
-	// Close writer để finalize body
-	err = writer.Close()
-	if err != nil {
-		return nil, "", err
-	}
-
-	// Thiết lập header
-	//req.Header.Set("Content-Type", writer.FormDataContentType())
-	return body, writer.FormDataContentType(), nil
 }
 
 func (builder *MockRequestBuilder) PostForm(url string, data interface{}) *MockRequestBuilder {
@@ -149,6 +145,38 @@ func (builder *MockRequestBuilder) PostForm(url string, data interface{}) *MockR
 				continue
 
 			}
+			if field.Type == reflect.TypeOf([]multipart.FileHeader{}) {
+				valOfField := valData.Field(i)
+				for j := 0; j < valOfField.Len(); j++ {
+					builder.AddFile(strings.ToLower(field.Name))
+				}
+				continue
+
+			}
+			if field.Type.Kind() == reflect.Ptr && field.Type.Elem() == reflect.TypeOf([]multipart.FileHeader{}) {
+				valOfField := valData.Field(i).Elem()
+				for j := 0; j < valOfField.Len(); j++ {
+					builder.AddFile(strings.ToLower(field.Name))
+				}
+				continue
+
+			}
+			if field.Type.Kind() == reflect.Ptr && field.Type.Elem() == reflect.TypeOf([]*multipart.FileHeader{}) {
+				valOfField := valData.Field(i).Elem()
+				for j := 0; j < valOfField.Len(); j++ {
+					builder.AddFile(strings.ToLower(field.Name))
+				}
+				continue
+
+			}
+			if field.Type.Kind() == reflect.Slice && field.Type.Elem() == reflect.TypeOf(&multipart.FileHeader{}) {
+				valOfField := valData.Field(i)
+				for j := 0; j < valOfField.Len(); j++ {
+					builder.AddFile(strings.ToLower(field.Name))
+				}
+				continue
+			}
+
 			fieldVal := valData.Field(i)
 			if fieldVal.Kind() == reflect.Ptr {
 				{
@@ -164,21 +192,18 @@ func (builder *MockRequestBuilder) PostForm(url string, data interface{}) *MockR
 				if err != nil {
 					panic(err)
 				}
-				builder.forms[field.Name] = string(bff)
+				builder.AddJsonField(field.Name, bff)
 				continue
 			}
+
 			if fieldVal.Kind() == reflect.String {
-				builder.forms[field.Name] = val.(string)
+
+				builder.AddField(field.Name, val.(string))
 				continue
 			}
 
 		}
-		// jsonData, err := json.Marshal(data)
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// bodyData := strings.NewReader(string(jsonData))
-		// builder.body = bodyData
+
 	}
 	return builder
 

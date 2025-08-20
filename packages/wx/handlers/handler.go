@@ -23,11 +23,24 @@ type QueryParam struct {
 }
 type HandlerInfo struct {
 	//BaseUrl        string
-	IndexOfArg     int
-	TypeOfArgs     reflect.Type
+	/*
+		index of arg is wx.Hanlder or any has embedded wx.Hanlder
+	*/
+	IndexOfArg int
+	/*
+		Type of arg is wx.Handler or any has embedded wx.Handler
+	*/
+	TypeOfArgs reflect.Type
+	/*
+		Element type of arg is wx.Handler or any has embedded wx.Handler
+	*/
 	TypeOfArgsElem reflect.Type
-	FieldIndex     []int
-	ReceiverIndex  int
+	/*
+	  The FieldIndex corresponds to a Field that is wx.Handler or contains an embedded wx.Handler in TypeOfArgsElem
+	*/
+	FieldIndex []int
+
+	ReceiverIndex int
 
 	ReceiverType     reflect.Type
 	ReceiverTypeElem reflect.Type
@@ -91,7 +104,7 @@ type HandlerInfo struct {
 			FormUploadFile=[10,13]
 
 	*/
-	
+
 	FormUploadFile []int
 	/*
 			If the handler has a request body argument and is neither wx.Handler nor inject or auth,

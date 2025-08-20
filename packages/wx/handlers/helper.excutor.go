@@ -111,14 +111,10 @@ func (reqExec *RequestExecutor) CreateControllerValue(handlerInfo HandlerInfo) (
 	return &ret, nil
 
 }
-func (reqExec *RequestExecutor) CreateHandler(handlerInfo HandlerInfo) reflect.Value {
 
-	return reflect.New(handlerInfo.TypeOfArgsElem)
-}
 func (reqExec *RequestExecutor) GetBodyValue(handlerInfo HandlerInfo, r *http.Request) (*reflect.Value, error) {
 	bodyData := reflect.New(handlerInfo.TypeOfRequestBodyElem)
-	if r.Body != nil {
-
+	if r.Body != nil && r.Body != http.NoBody {
 		if err := json.NewDecoder(r.Body).Decode(bodyData.Interface()); err != nil {
 
 			return nil, err
@@ -130,4 +126,3 @@ func (reqExec *RequestExecutor) GetBodyValue(handlerInfo HandlerInfo, r *http.Re
 	return &bodyData, nil
 
 }
-

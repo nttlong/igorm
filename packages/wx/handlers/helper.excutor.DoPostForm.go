@@ -47,19 +47,24 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 					for i, v := range values {
 						files[i] = *v
 					}
-					fileFieldSet.Set(reflect.ValueOf(files))
+					fileFieldSet := reflect.New(fileFieldSet.Type().Elem())
+					fileFieldSet.Elem().Set(reflect.ValueOf(files))
+
+					//fileFieldSet.Set(vPtr)
+
 				}
 			}
 			if field.Type.Kind() == reflect.Slice {
 				eleType := field.Type.Elem()
 				if eleType == reflect.TypeOf(&multipart.FileHeader{}) { //<--[]*multipart.FileHeader
-					fileFieldSet.Set(reflect.ValueOf(values).Elem())
+
+					fileFieldSet.Set(reflect.ValueOf(values))
 				} else if eleType == reflect.TypeOf(multipart.FileHeader{}) { //<--[]multipart.File
 					files := make([]multipart.FileHeader, len(values))
 					for i, v := range values {
 						files[i] = *v
 					}
-					fileFieldSet.Set(reflect.ValueOf(files).Elem())
+					fileFieldSet.Set(reflect.ValueOf(files))
 				}
 
 			}
@@ -87,6 +92,7 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 			} else {
 				fileFieldSet.Set(reflect.ValueOf(values).Elem())
 			}
+			continue
 		}
 		if fileFieldSet.Kind() == reflect.Slice {
 			eleType := fileFieldSet.Type().Elem()
@@ -95,9 +101,11 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 			} else {
 				fileFieldSet.Set(reflect.ValueOf(values).Elem())
 			}
+			continue
 		}
 		if fileFieldSet.Kind() == reflect.String {
 			fileFieldSet.Set(reflect.ValueOf(values[0]))
+			continue
 		}
 		panic("not implete at file packages\\wx\\handlers\\helper.excutor.DoPostForm.go")
 

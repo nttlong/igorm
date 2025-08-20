@@ -12,6 +12,7 @@ type helperType struct {
 	PrefixGenericDepen  string
 	ErrorType           reflect.Type
 	ReqExec             *RequestExecutor
+	Routes              *RouteTypes
 }
 
 func (h *helperType) Iscontains(slice []int, value int) bool {
@@ -70,4 +71,8 @@ var Helper = &helperType{
 	},
 	ErrorType: reflect.TypeOf((*error)(nil)).Elem(),
 	ReqExec:   &RequestExecutor{},
+	Routes: &RouteTypes{
+		Data:    map[string]RouteItem{},
+		UriList: []string{},
+	},
 }

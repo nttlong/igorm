@@ -104,3 +104,59 @@ func BenchmarkHalderFileControllerPost(t *testing.B) {
 	// })
 
 }
+
+type MultiFilePostBody struct {
+	File []multipart.FileHeader
+}
+
+func (fc *FileController) PostFiles(c *wx.Handler, body MultiFilePostBody) (interface{}, error) {
+	return nil, nil
+}
+
+func TestHalderFileControllerPostFiles(t *testing.T) {
+	mt := wx.GetMethodByName[FileController]("PostFiles")
+	mtInfo, err := handlers.Helper.GetHandlerInfo(*mt)
+	assert.NoError(t, err)
+	requestBuild := wx.Helper.ReqExec.CreateMockRequestBuilder()
+
+	requestBuild.PostForm("/api/"+mtInfo.UriHandler, MultiFilePostBody{
+		File: make([]multipart.FileHeader, 2),
+	})
+
+	requestBuild.Handler(func(w http.ResponseWriter, r *http.Request) {
+		ret, err := wx.Helper.ReqExec.DoFormPost(*mtInfo, r, w)
+		assert.NoError(t, err)
+		t.Log(ret)
+
+	})
+
+}
+
+type MultiFilePostBodyPtr struct {
+	File       *[]multipart.FileHeader
+	Files      []*multipart.FileHeader
+	FolderName string
+}
+
+func (fc *FileController) PostFilesPtr(c *wx.Handler, body MultiFilePostBodyPtr) (any, error) {
+	return nil, nil
+}
+func TestHalderFileControllerPostFilesPtr(t *testing.T) {
+	mt := wx.GetMethodByName[FileController]("PostFilesPtr")
+	mtInfo, err := handlers.Helper.GetHandlerInfo(*mt)
+	assert.NoError(t, err)
+	requestBuild := wx.Helper.ReqExec.CreateMockRequestBuilder()
+	files := make([]multipart.FileHeader, 2)
+	requestBuild.PostForm("/api/"+mtInfo.UriHandler, MultiFilePostBodyPtr{
+		File:  &files,
+		Files: make([]*multipart.FileHeader, 2),
+	})
+
+	requestBuild.Handler(func(w http.ResponseWriter, r *http.Request) {
+		ret, err := wx.Helper.ReqExec.DoFormPost(*mtInfo, r, w)
+		assert.NoError(t, err)
+		t.Log(ret)
+
+	})
+
+}

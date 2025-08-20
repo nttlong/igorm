@@ -150,3 +150,17 @@ func NewFileParseError(message string, InnerError error) error {
 		InnerError: InnerError,
 	}
 }
+
+type MethodNotAllowError struct {
+	Message string
+}
+
+func (e *MethodNotAllowError) Error() string {
+	return e.Message
+}
+func NewMethodNotAllowError(message string) error {
+	return &MethodNotAllowError{
+		Message: message,
+	}
+
+}
