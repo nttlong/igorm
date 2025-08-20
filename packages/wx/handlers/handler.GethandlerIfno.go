@@ -7,7 +7,6 @@ import (
 	"strings"
 	"sync"
 	"wx/internal"
-	"wx/services"
 )
 
 func (h *helperType) FindControllerName(reiverType reflect.Type) string {
@@ -119,11 +118,14 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 		if typ.Kind() != reflect.Struct {
 			continue
 		}
-		if services.ServiceUtils.IsInjector(typ) {
+		if Helper.IsGenericDepen(typ) {
 			ret.IndexOfInjectors = append(ret.IndexOfInjectors, i)
-			ret.HasInjector = true
-			break
 		}
+		// if services.ServiceUtils.IsInjector(typ) {
+		// 	ret.IndexOfInjectors = append(ret.IndexOfInjectors, i)
+		// 	ret.HasInjector = true
+		// 	break
+		// }
 	}
 	/*
 		find an arg handler

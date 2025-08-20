@@ -6,6 +6,8 @@ import (
 	"wx"
 	"wx/libs"
 	_ "wx/libs"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type ControllerInject struct {
@@ -78,9 +80,13 @@ func BenchmarkCreateUser(b *testing.B) {
 	})
 
 }
+
+type DbService struct {
+}
+
 func (c *ControllerInject) GetUser(ctx *struct {
 	wx.Handler `route:"@/get-user;method:get"`
-}) (interface{}, error) {
+}, db *wx.Depend[DbService]) (interface{}, error) {
 	return nil, nil
 
 }
@@ -90,6 +96,7 @@ func TestGetUser(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	assert.Equal(t, 1, len(mtInfo.IndexOfInjectors))
 	requestBuilder := wx.Helper.ReqExec.CreateMockRequestBuilder()
 	requestBuilder.Get("/api/" + mtInfo.UriHandler)
 	for i := 0; i < 5; i++ {

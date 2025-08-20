@@ -9,9 +9,14 @@ import (
 
 const rootPath = `D:\code\go\news2\igorm\examples\media\cmd\uploads`
 
+type DirectoryReader struct {
+	Files []string
+	Dirs  []string
+}
+
 func (media *Media) ListFiles(ctx *struct {
 	wx.Handler `route:"method:get"`
-}) (*[]string, error) {
+}, dr *wx.Depend[DirectoryReader]) (*[]string, error) {
 
 	// 1. Kiểm tra thư mục gốc
 	if _, err := os.Stat(rootPath); os.IsNotExist(err) {

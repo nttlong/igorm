@@ -6,6 +6,35 @@ import (
 	wxErrors "wx/errors"
 )
 
+func (reqExec *RequestExecutor) LoadInjectors(handlerInfo HandlerInfo, r *http.Request, w http.ResponseWriter) ([]reflect.Value, error) {
+	injectors := make([]reflect.Value, len(handlerInfo.IndexOfInjectors))
+	for i, x := range handlerInfo.IndexOfInjectors {
+		r, err := Helper.DependNew(handlerInfo.Method.Type.In(x))
+		if err != nil {
+			return nil, err
+		}
+		injectors[i] = *r
+	}
+	return injectors, nil
+}
+func (reqExec *RequestExecutor) LoadInjectorsToArgs(handlerInfo HandlerInfo, r *http.Request, w http.ResponseWriter, args []reflect.Value) error {
+	if len(handlerInfo.IndexOfInjectors) > 0 {
+		injectors, err := reqExec.LoadInjectors(handlerInfo, r, w)
+		if err != nil {
+			return err
+		}
+		for i, x := range handlerInfo.IndexOfInjectors {
+			if args[x].Kind() == reflect.Ptr {
+				args[x] = injectors[i]
+			} else {
+				args[x] = injectors[i]
+			}
+
+		}
+
+	}
+	return nil
+}
 func (reqExec *RequestExecutor) DoGet(handlerInfo HandlerInfo, r *http.Request, w http.ResponseWriter) (interface{}, error) {
 	ctlValue, err := reqExec.CreateControllerValue(handlerInfo)
 	if err != nil {
@@ -20,6 +49,10 @@ func (reqExec *RequestExecutor) DoGet(handlerInfo HandlerInfo, r *http.Request, 
 		return nil, err
 	}
 	args[handlerInfo.IndexOfArg] = *ctxHandler
+	err = reqExec.LoadInjectorsToArgs(handlerInfo, r, w, args)
+	if err != nil {
+		return nil, err
+	}
 
 	//reqExec.CreateHandler(handlerInfo)
 	rets := handlerInfo.Method.Func.Call(args)
