@@ -1,6 +1,7 @@
 package wx
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 	"sync"
@@ -20,7 +21,14 @@ func (d *Depend[TInstance]) Ins() (*TInstance, error) {
 	d.once.Do(func() {
 		if d.fnInit == nil {
 			ret, err := handlers.Helper.DependNew(reflect.TypeFor[TInstance]())
-			d.err = err
+			if err != nil {
+				d.err = err
+			} else {
+				if ret == nil {
+					d.err = fmt.Errorf("cannot create instance of type %s, method New was not found", reflect.TypeFor[TInstance]().String())
+					return
+				}
+			}
 			d.ins = (*ret).Interface().(*TInstance)
 			return
 		}

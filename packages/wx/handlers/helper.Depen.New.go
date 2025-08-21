@@ -60,7 +60,9 @@ func (h *helperType) LoadAllFieldsInternal(insVal reflect.Value) error {
 	return h.depenLoadAllFieldsInternal(insVal, map[reflect.Type]bool{})
 }
 func (h *helperType) depenLoadAllFieldsInternal(insVal reflect.Value, visited map[reflect.Type]bool) error {
-
+	if insVal.Kind() != reflect.Struct {
+		return nil
+	}
 	for i := 0; i < insVal.Elem().NumField(); i++ {
 		field := insVal.Elem().Field(i)
 		fieldType := field.Type()

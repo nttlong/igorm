@@ -2,12 +2,24 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"runtime"
 	"strings"
 	wxErr "wx/errors"
 )
 
 func (reqExec *RequestExecutor) Invoke(info HandlerInfo, r *http.Request, w http.ResponseWriter) (interface{}, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			// In ra thông báo panic
+			// In ra stack trace
+			buf := make([]byte, 1<<16)
+			runtime.Stack(buf, true) // Lấy toàn bộ stack trace
+			fmt.Printf("Stack trace:\n%s\n", buf)
+		}
+	}()
+
 	if r.Method != info.HttpMethod {
 		return nil, wxErr.NewMethodNotAllowError("method not allowed")
 	}

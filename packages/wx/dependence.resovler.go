@@ -135,8 +135,6 @@ func (de *depenResolvers) findNewMethodWithVisited(typ reflect.Type, visited map
 			return nil, fmt.Errorf("args %d of %s.%s is not struct", j, typ.String(), m.Name)
 		}
 		if isTypeDepen(typIn, visited) {
-			fmt.Println(typIn.String())
-
 			continue
 		}
 		nextNewhMethod, err := de.findNewMethodWithVisited(typIn, visited)

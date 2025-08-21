@@ -1,13 +1,12 @@
 package handlers
 
 import (
-	"fmt"
 	"mime/multipart"
 	"reflect"
 )
 
 func (h *helperType) IsFieldFileUpload(field reflect.StructField) bool {
-	fmt.Println(field.Name)
+
 	fieldType := field.Type
 	if fieldType.Kind() == reflect.Ptr {
 		fieldType = fieldType.Elem()

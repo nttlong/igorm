@@ -107,3 +107,52 @@ func TestGetUser(t *testing.T) {
 	}
 
 }
+
+type IService interface {
+	GetName() string
+}
+type Resovler[T any, TImplement any] struct {
+	Implementation TImplement
+}
+
+func (r *Resovler[T, TImplement]) Resolve() (T, error) {
+	var t T
+	return t, nil
+}
+
+type Service struct {
+}
+
+func (s *Service) GetName() string {
+	return "Service"
+}
+func (c *ControllerInject) GetUser2(ctx *struct {
+	wx.Handler `route:"@/get-user;method:get"`
+}, db *wx.Depend[func()]) (interface{}, error) {
+
+	fn, err := db.Ins()
+	if err != nil {
+		return nil, err
+	}
+	(*fn)()
+
+	return nil, nil
+
+}
+func TestGetUser2(t *testing.T) {
+	mt := wx.GetMethodByName[ControllerInject]("GetUser2")
+	mtInfo, err := wx.Helper.GetHandlerInfo(*mt)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 1, len(mtInfo.IndexOfInjectors))
+	requestBuilder := wx.Helper.ReqExec.CreateMockRequestBuilder()
+	requestBuilder.Get("/api/" + mtInfo.UriHandler)
+	for i := 0; i < 5; i++ {
+		requestBuilder.Handler(func(w http.ResponseWriter, r *http.Request) {
+			wx.Helper.ReqExec.Invoke(*mtInfo, r, w)
+
+		})
+	}
+
+}

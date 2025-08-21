@@ -271,67 +271,14 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 		ret.IsAbsUri = true
 	}
 
-	// // Thay thế tất cả "/handlers/" thành "/"
-	// ret.UriHandler = h.trimHandlers(ret.UriHandler)
-	// ret.Uri = h.trimHandlers(ret.Uri)
-	// ret.RegexUri = h.trimHandlersRegex(ret.RegexUri)
-	// if !ret.IsRegexHandler {
-	// 	ret.Uri = strings.TrimSuffix(ret.Uri, "/")
-	// 	ret.UriHandler = strings.TrimSuffix(ret.UriHandler, "/")
-	// }
 	if ret.RegexUriFind.String() == "" {
-		//controller\-uri\-params\/([^\/]+)\/([^\/]+)$
+
 		ret.RegexUriFind = *regexp.MustCompile(strings.ReplaceAll(strings.TrimPrefix(ret.RegexUri, "^"), "/", "\\/"))
 	}
 
 	return ret, nil
 }
-func (h *helperType) delete_trimHandlers(s string) string {
-	// isAbs := false
-	// if s != "" && s[0] == '/' {
-	// 	isAbs = true
-	// }
-	re := regexp.MustCompile(`/handlers/`)
-	s = re.ReplaceAllString("/"+s, "/")
-	// s = strings.ReplaceAll(s, "//", "/")
-	// if isAbs {
-	// 	if s == "" {
-	// 		s = "/"
-	// 	} else {
-	// 		s = "/" + s
-	// 	}
-	// }
-	// if s[len(s)-1] != '/' {
-	// 	s = s + "/"
-	// }
-	return s
 
-}
-func (h *helperType) delete_trimHandlersRegex(s string) string {
-	isAbs := false
-	if s != "" && s[0] == '/' {
-		isAbs = true
-	}
-	re := regexp.MustCompile(`\/\^handlers\/`)
-	s = re.ReplaceAllString("/"+s, "/")
-	re2 := regexp.MustCompile(`\/handlers\/`)
-	s = re2.ReplaceAllString("/"+s, "/")
-	if !isAbs {
-		for strings.HasPrefix(s, "/") {
-			s = strings.TrimPrefix(s, "/")
-		}
-	}
-	// s = strings.ReplaceAll(s, "//", "\\/")
-	// if isAbs {
-	// 	if s == "" {
-	// 		s = "\\/"
-	// 	} else {
-	// 		s = "\\/" + s
-	// 	}
-	// }
-	return s
-
-}
 func (h *helperType) GetReceiverTypeFromMethod(method reflect.Method) (*reflect.Type, error) {
 	ret := method.Type.In(0)
 	if ret.Kind() == reflect.Ptr {
