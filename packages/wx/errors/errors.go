@@ -164,3 +164,16 @@ func NewMethodNotAllowError(message string) error {
 	}
 
 }
+
+type NewMethodOfAuthNotFoundError struct {
+	Message string
+}
+
+func (e *NewMethodOfAuthNotFoundError) Error() string {
+	return e.Message
+}
+func NewNewMethodOfAuthNotFoundError(message string) error {
+	return &NewMethodOfAuthNotFoundError{
+		Message: message,
+	}
+}

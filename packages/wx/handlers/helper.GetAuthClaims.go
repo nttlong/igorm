@@ -6,7 +6,7 @@ import (
 	"wx/internal"
 )
 
-func (h *helperType) skipTypeWhenGetAuthClaims(fieldType reflect.Type) bool {
+func (h *helperType) skipTypeWhenGetAuthClaims_delete(fieldType reflect.Type) bool {
 	key := fieldType.String() + "/helperType/skipTyoeWhenGetAuthClaims"
 	ret, _ := internal.OnceCall(key, func() (*bool, error) {
 		ret := false
@@ -100,7 +100,7 @@ func (h *helperType) getAuthClaimsInternal(typ reflect.Type, visited map[reflect
 		field := typ.Field(i)
 		fieldType := field.Type
 
-		if h.skipTypeWhenGetAuthClaims(fieldType) {
+		if h.skipTypeWhenGetAuthClaims_delete(fieldType) {
 			continue
 		}
 

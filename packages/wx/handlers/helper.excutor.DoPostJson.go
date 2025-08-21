@@ -25,10 +25,25 @@ func (reqExec *RequestExecutor) DoJsonPost(handlerInfo HandlerInfo, r *http.Requ
 		if err != nil {
 			return nil, err
 		}
-		if args[handlerInfo.IndexOfRequestBody].Kind() == reflect.Ptr {
+		if handlerInfo.TypeOfRequestBody.Kind() == reflect.Ptr {
+			// vBody := reflect.New(handlerInfo.TypeOfRequestBody.Elem()).Elem()
+			// vBody.Set(*bodyValue)
 			args[handlerInfo.IndexOfRequestBody] = *bodyValue
 		} else {
 			args[handlerInfo.IndexOfRequestBody] = (*bodyValue).Elem()
+		}
+
+	}
+	if handlerInfo.IndexOfAuthClaimsArg != -1 {
+		AuthClaimsType := handlerInfo.Method.Type.In(handlerInfo.IndexOfAuthClaimsArg)
+		AuthClaimsValue, err := Helper.DepenAuthCreate(AuthClaimsType, r, w)
+		if err != nil {
+			return nil, err
+		}
+		if AuthClaimsType.Kind() == reflect.Ptr {
+			args[handlerInfo.IndexOfAuthClaimsArg] = *AuthClaimsValue
+		} else {
+			args[handlerInfo.IndexOfAuthClaimsArg] = (*AuthClaimsValue).Elem()
 		}
 
 	}

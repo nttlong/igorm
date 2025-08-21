@@ -121,11 +121,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 		if Helper.IsGenericDepen(typ) {
 			ret.IndexOfInjectors = append(ret.IndexOfInjectors, i)
 		}
-		// if services.ServiceUtils.IsInjector(typ) {
-		// 	ret.IndexOfInjectors = append(ret.IndexOfInjectors, i)
-		// 	ret.HasInjector = true
-		// 	break
-		// }
+
 	}
 	/*
 		find an arg handler
@@ -153,16 +149,17 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	ret.IndexOfAuthClaimsArg = -1
 	ret.IndexOfAuthClaims = nil
 
-	for i := 0; i < method.Type.NumIn(); i++ {
-		if h.Iscontains(ret.IndexOfAuthClaims, i) {
-			continue
+	for i := 1; i < method.Type.NumIn(); i++ {
+		indexOfFieldAuth, err := Helper.DepenAuthFind(method.Type.In(i))
+		if err != nil {
+			return nil, err
 		}
-		indexOfAuthClaimsField := h.GetAuthClaims(method.Type.In(i))
-		if indexOfAuthClaimsField != nil {
+		if indexOfFieldAuth != nil {
 			ret.IndexOfAuthClaimsArg = i
-			ret.IndexOfAuthClaims = indexOfAuthClaimsField
+			ret.IndexOfAuthClaims = indexOfFieldAuth
 			break
 		}
+
 	}
 
 	ret.ReceiverIndex = 0
