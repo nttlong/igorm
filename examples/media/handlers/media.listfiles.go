@@ -13,10 +13,19 @@ type DirectoryReader struct {
 	Files []string
 	Dirs  []string
 }
+type UserInfo struct {
+	Username string `json:"username"`
+	UserId   string `json:"userId"`
+}
+
+func (user *UserInfo) New(ctx *wx.AuthContext) error {
+	// Initialize user info if needed
+	return nil
+}
 
 func (media *Media) ListFiles(ctx *struct {
 	wx.Handler `route:"method:get"`
-}, dr *wx.Depend[DirectoryReader]) (*[]string, error) {
+}, dr *wx.Depend[DirectoryReader], userSvc *wx.Auth[UserInfo]) (*[]string, error) {
 
 	// 1. Kiểm tra thư mục gốc
 	if _, err := os.Stat(rootPath); os.IsNotExist(err) {

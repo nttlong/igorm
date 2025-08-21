@@ -155,6 +155,19 @@ func (reqExec *RequestExecutor) DoFormPost(handlerInfo HandlerInfo, r *http.Requ
 		}
 
 	}
+	if handlerInfo.IndexOfAuthClaimsArg != -1 {
+		AuthClaimsType := handlerInfo.Method.Type.In(handlerInfo.IndexOfAuthClaimsArg)
+		AuthClaimsValue, err := Helper.DepenAuthCreate(AuthClaimsType, r, w)
+		if err != nil {
+			return nil, err
+		}
+		if AuthClaimsType.Kind() == reflect.Ptr {
+			args[handlerInfo.IndexOfAuthClaimsArg] = *AuthClaimsValue
+		} else {
+			args[handlerInfo.IndexOfAuthClaimsArg] = (*AuthClaimsValue).Elem()
+		}
+
+	}
 
 	//reqExec.CreateHandler(handlerInfo)
 	rets := handlerInfo.Method.Func.Call(args)

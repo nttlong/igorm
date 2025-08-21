@@ -26,8 +26,7 @@ func (reqExec *RequestExecutor) DoJsonPost(handlerInfo HandlerInfo, r *http.Requ
 			return nil, err
 		}
 		if handlerInfo.TypeOfRequestBody.Kind() == reflect.Ptr {
-			// vBody := reflect.New(handlerInfo.TypeOfRequestBody.Elem()).Elem()
-			// vBody.Set(*bodyValue)
+
 			args[handlerInfo.IndexOfRequestBody] = *bodyValue
 		} else {
 			args[handlerInfo.IndexOfRequestBody] = (*bodyValue).Elem()

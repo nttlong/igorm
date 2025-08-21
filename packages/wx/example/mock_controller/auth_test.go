@@ -1,7 +1,6 @@
 package mockcontroller
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"wx"
@@ -28,15 +27,15 @@ type AuthTest struct {
 }
 
 func (a *AuthTest) New() {
-	fmt.Println("New method called")
+	// fmt.Println("New method called")
 
 }
 func (a *AuthTest) Post(ctx *wx.Handler, data *UserInfo, user *wx.Auth[UserInfo]) (interface{}, error) {
-	userSvc, err := user.Get()
+	_, err := user.Get()
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("User service:", userSvc)
+	// fmt.Println("User service:", userSvc)
 
 	return nil, nil
 }
@@ -61,28 +60,24 @@ func TestAuthTestPost(t *testing.T) {
 
 	requestBuilder := wx.Helper.ReqExec.CreateMockRequestBuilder()
 	requestBuilder.PostJson("/api/"+mtInfo.UriHandler, nil)
-	// req, res := requestBuilder.Build()
-	// newMt := wx.GetMethodByName[UserInfo]("New")
-	// valOfCtx := reflect.ValueOf(&wx.AuthContext{
-	// 	Req: req,
-	// 	Res: res,
-	// })
-	// v, err := wx.Helper.DepenAuthCreateInstance(*newMt, valOfCtx)
-	// assert.NoError(t, err)
-	// assert.NotNil(t, v)
-	// ele := v.Interface().(*UserInfo)
-
-	// assert.NotNil(t, ele)
-	// authVal, err := wx.Helper.DepenAuthCreate(reflect.TypeOf(&wx.Auth[UserInfo]{}))
-	// assert.NoError(t, err)
-	// assert.NotNil(t, authVal)
-	// auth := authVal.Interface().(*wx.Auth[UserInfo])
-	// val, err := auth.Get()
-	// assert.NoError(t, err)
-	// assert.NotNil(t, val)
 
 	requestBuilder.Handler(func(w http.ResponseWriter, r *http.Request) {
 		wx.Helper.ReqExec.Invoke(*mtInfo, r, w)
 	})
+
+}
+func BenchmarkAuthTestPost(b *testing.B) {
+	mt := wx.GetMethodByName[AuthTest]("Post")
+
+	mtInfo, _ := wx.Helper.GetHandlerInfo(*mt)
+
+	requestBuilder := wx.Helper.ReqExec.CreateMockRequestBuilder()
+	requestBuilder.PostJson("/api/"+mtInfo.UriHandler, nil)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		requestBuilder.Handler(func(w http.ResponseWriter, r *http.Request) {
+			wx.Helper.ReqExec.Invoke(*mtInfo, r, w)
+		})
+	}
 
 }
