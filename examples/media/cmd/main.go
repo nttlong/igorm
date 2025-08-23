@@ -12,7 +12,8 @@ import (
 	"wx"
 )
 
-var rootPath = `D:\code\go\news2\igorm\examples\media\cmd\uploads`
+// var rootPath = `D:\code\go\news2\igorm\examples\media\cmd\uploads`
+var rootPath = `C:\Users\MSI CYBORG\Desktop\uploads`
 
 func ListFiles(w http.ResponseWriter, r *http.Request) {
 	// 1. Kiểm tra thư mục gốc

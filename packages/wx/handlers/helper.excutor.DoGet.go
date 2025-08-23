@@ -35,7 +35,7 @@ func (reqExec *RequestExecutor) LoadInjectorsToArgs(handlerInfo HandlerInfo, r *
 	}
 	return nil
 }
-func (reqExec *RequestExecutor) DoGet(handlerInfo HandlerInfo, r *http.Request, w http.ResponseWriter) (interface{}, error) {
+func (reqExec *RequestExecutor) DoGet(handlerInfo HandlerInfo, r *http.Request, w http.ResponseWriter) (any, error) {
 	ctlValue, err := reqExec.CreateControllerValue(handlerInfo)
 	if err != nil {
 		return nil, wxErrors.NewServiceInitError(err.Error())

@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	wxErr "wx/errors"
 )
 
-func (reqExec *RequestExecutor) Invoke(info HandlerInfo, r *http.Request, w http.ResponseWriter) (interface{}, error) {
+func (reqExec *RequestExecutor) Invoke(info HandlerInfo, r *http.Request, w http.ResponseWriter) (any, error) {
 	// defer func() {
 	// 	if r := recover(); r != nil {
 	// 		// In ra thông báo panic
@@ -21,6 +22,7 @@ func (reqExec *RequestExecutor) Invoke(info HandlerInfo, r *http.Request, w http
 	if r.Method != info.HttpMethod {
 		return nil, wxErr.NewMethodNotAllowError("method not allowed")
 	}
+
 	if r.Method == "GET" {
 		return reqExec.DoGet(info, r, w)
 	}
@@ -38,9 +40,44 @@ func (reqExec *RequestExecutor) Invoke(info HandlerInfo, r *http.Request, w http
 	return reqExec.DoJsonPost(info, r, w)
 
 }
+func (reqExec *RequestExecutor) handlerError(err error, r *http.Request, w http.ResponseWriter) {
+
+	isShowError := false
+	switch err.(type) {
+	case *wxErr.UriParamParseError:
+		isShowError = true
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+	case *wxErr.RegexUriNotMatchError:
+		if r.URL.Path[len(r.URL.Path)-1] == '/' {
+			newPath := strings.TrimSuffix(r.URL.Path, "/")
+			http.Redirect(w, r, newPath, http.StatusMovedPermanently) // 301
+		} else {
+			isShowError = true
+			http.Error(w, "not found", http.StatusNotFound)
+		}
+	case *wxErr.UriParamConvertError:
+		isShowError = true
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+	case *wxErr.MethodNotAllowError:
+		isShowError = true
+		http.Error(w, "Not Allowed", http.StatusMethodNotAllowed)
+	case *wxErr.ServiceInitError:
+		isShowError = true
+		http.Error(w, "Server error", http.StatusInternalServerError)
+
+	default:
+		isShowError = true
+		http.Error(w, "Server error", http.StatusInternalServerError)
+	}
+	if isShowError {
+		fmt.Printf("Error: %s\n", r.URL.RequestURI())
+		fmt.Printf("Error: %v\n", err)
+	}
+}
+
 func (reqExec *RequestExecutor) ProcesHttp(info HandlerInfo, data interface{}, previousErr error, r *http.Request, w http.ResponseWriter) {
 	if previousErr != nil {
-		http.Error(w, previousErr.Error(), http.StatusInternalServerError)
+		reqExec.handlerError(previousErr, r, w)
 		return
 	}
 	if data != nil {

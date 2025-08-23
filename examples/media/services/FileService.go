@@ -152,7 +152,9 @@ type DirectoryService struct {
 
 func (ds *DirectoryService) New() error {
 	fmt.Println("DirectoryService.New")
+	//var rootPath = `C:\Users\MSI CYBORG\Desktop\uploads`
 	ds.DirUpload = "./uploads"
+	ds.DirUpload = `C:\Users\MSI CYBORG\Desktop\uploads`
 
 	fullPathOfDir, err := filepath.Abs(ds.DirUpload)
 	if err != nil {

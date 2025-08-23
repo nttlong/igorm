@@ -177,3 +177,17 @@ func NewNewMethodOfAuthNotFoundError(message string) error {
 		Message: message,
 	}
 }
+
+type RegexUriNotMatchError struct {
+	Message string
+}
+
+func (e *RegexUriNotMatchError) Error() string {
+	return e.Message
+}
+func NewRegexUriNotMatchError(message string) error {
+	return &RegexUriNotMatchError{
+		Message: message,
+	}
+
+}

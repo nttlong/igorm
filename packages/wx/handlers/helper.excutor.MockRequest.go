@@ -19,6 +19,8 @@ type MockRequestBuilder struct {
 	header map[string]string
 	forms  map[string]string
 	writer *multipart.Writer
+	Req    *http.Request
+	Res    httptest.ResponseRecorder
 }
 
 func (builder *MockRequestBuilder) Build() (*http.Request, http.ResponseWriter) {
@@ -224,10 +226,44 @@ func (builder *MockRequestBuilder) PostForm(url string, data interface{}) *MockR
 	return builder
 
 }
-func (builder *MockRequestBuilder) Handler(handler http.HandlerFunc) {
+func (builder *MockRequestBuilder) Handler(handler http.HandlerFunc) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	req, _ := builder.Build()
 	// gọi handler
 
+	handler.ServeHTTP(rr, req)
+	return rr
+
+}
+
+func (builder *MockRequestBuilder) ServerHandler(fn func() (any, error)) {
+	rr := httptest.NewRecorder()
+	req, _ := builder.Build()
+
+	// var handler http.HandlerFunc
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		builder.Res = *w.(*httptest.ResponseRecorder)
+		builder.Req = r
+		data, err := fn()
+
+		if err != nil {
+			Helper.ReqExec.handlerError(err, r, w)
+
+			// print("Error: ", err.Error(), "\n")
+			builder.Res = *w.(*httptest.ResponseRecorder)
+
+			return
+		}
+		if data != nil {
+			w.Header().Set("Content-Type", "application/json")
+			err := json.NewEncoder(w).Encode(data)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			return
+		}
+		builder.Res = *w.(*httptest.ResponseRecorder)
+	})
 	handler.ServeHTTP(rr, req)
 }
