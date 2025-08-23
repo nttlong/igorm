@@ -1,6 +1,6 @@
 module media
 
-go 1.24.5
+go 1.25.0
 
 replace wx => ./../../packages/wx
 
