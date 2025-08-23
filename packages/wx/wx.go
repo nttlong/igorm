@@ -3,13 +3,10 @@ package wx
 import (
 	"fmt"
 	"reflect"
-	"strings"
 	"sync"
 	httpServer "wx/HtttpServer"
 	handler "wx/handlers"
 	"wx/internal"
-
-	"wx/services"
 )
 
 type AuthClaims struct {
@@ -129,15 +126,16 @@ func GetUriOfHandler[T any](server *httpServer.HtttpServer, methodName string) (
 	return server.BaseUrl + "/" + mtInfo.Uri, nil
 
 }
-func init() {
-	services.GetCheckScopeTypeName = func() string {
-		return strings.Split(reflect.TypeOf(Scoped[any]{}).String(), "[")[0] + "["
-	}
-	services.GetCheckSingletonTypeName = func() string {
-		return strings.Split(reflect.TypeOf(Singleton[any]{}).String(), "[")[0] + "["
 
-	}
-}
+// func init() {
+// 	services.GetCheckScopeTypeName = func() string {
+// 		return strings.Split(reflect.TypeOf(Scoped[any]{}).String(), "[")[0] + "["
+// 	}
+// 	services.GetCheckSingletonTypeName = func() string {
+// 		return strings.Split(reflect.TypeOf(Singleton[any]{}).String(), "[")[0] + "["
+
+// 	}
+// }
 
 var Helper = handler.Helper
 var HandlerList = httpServer.HandlerList

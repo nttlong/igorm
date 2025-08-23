@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 	"wx/handlers"
-	_ "wx/handlers"
+	//_ "wx/handlers"
 )
 
 type AuthContext struct {

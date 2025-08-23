@@ -94,6 +94,7 @@ func ToArrayUnsafeFast(rows *sql.Rows, dest interface{}) error {
 
 	for rows.Next() {
 		obj := reflect.New(elemType).Elem()
+		// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 		base := unsafe.Pointer(obj.UnsafeAddr())
 
 		for i := 0; i < numCols; i++ {
@@ -104,6 +105,7 @@ func ToArrayUnsafeFast(rows *sql.Rows, dest interface{}) error {
 			}
 
 			fi := entity.fields[i]
+			// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 			fieldPtr := unsafe.Pointer(uintptr(base) + fi.offset)
 			scanArgs[i] = reflect.NewAt(fi.typ, fieldPtr).Interface()
 		}

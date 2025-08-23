@@ -86,7 +86,10 @@ func (sb *SwaggerBuild) Build() error {
 	mux.HandleFunc(uri+"/", func(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write(indexHtml)
+		if _, err := w.Write(indexHtml); err != nil {
+			http.Error(w, "failed to write response", http.StatusInternalServerError)
+			return
+		}
 	})
 
 	/*
@@ -103,7 +106,11 @@ func (sb *SwaggerBuild) Build() error {
 
 		// Thiết lập header để trình duyệt hiểu đây là file JSON
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(data)
+
+		if _, err := w.Write(data); err != nil {
+			http.Error(w, "failed to write response", http.StatusInternalServerError)
+			return
+		}
 	})
 	/*
 
@@ -113,12 +120,19 @@ func (sb *SwaggerBuild) Build() error {
 	mux.HandleFunc(uri+"/swagger-ui.css", func(w http.ResponseWriter, r *http.Request) {
 		// Đọc file swagger.json từ thư mục hiện tại
 		w.Header().Set("Content-Type", "text/css")
-		w.Write(css)
+
+		if _, err := w.Write(css); err != nil {
+			http.Error(w, "failed to write response", http.StatusInternalServerError)
+			return
+		}
 	})
 	mux.HandleFunc(uri+"/swagger-ui-bundle.js", func(w http.ResponseWriter, r *http.Request) {
 		// Đọc file swagger.json từ thư mục hiện tại
 		w.Header().Set("Content-Type", "application/javascript")
-		w.Write(js)
+		if _, err := w.Write(js); err != nil {
+			http.Error(w, "failed to write response", http.StatusInternalServerError)
+			return
+		}
 	})
 	// 2. Phục vụ giao diện Swagger UI trên đường dẫn /swagger/
 	// Thư viện httpSwagger.WrapHandler tự động tạo giao diện HTML.

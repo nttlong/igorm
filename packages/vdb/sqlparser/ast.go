@@ -631,13 +631,19 @@ type DBDDL struct {
 func (node *DBDDL) Format(buf *TrackedBuffer) {
 	switch node.Action {
 	case CreateStr:
-		buf.WriteString(fmt.Sprintf("%s database %s", node.Action, node.DBName))
+		_, err := buf.WriteString(fmt.Sprintf("%s database %s", node.Action, node.DBName))
+		if err != nil {
+			panic(err)
+		}
 	case DropStr:
 		exists := ""
 		if node.IfExists {
 			exists = " if exists"
 		}
-		buf.WriteString(fmt.Sprintf("%s database%s %v", node.Action, exists, node.DBName))
+		_, err := buf.WriteString(fmt.Sprintf("%s database%s %v", node.Action, exists, node.DBName))
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -1372,7 +1378,9 @@ type Begin struct{}
 
 // Format formats the node.
 func (node *Begin) Format(buf *TrackedBuffer) {
-	buf.WriteString("begin")
+	if _, err := buf.WriteString("begin"); err != nil {
+		panic(err)
+	}
 }
 
 func (node *Begin) walkSubtree(visit Visit) error {
@@ -1384,7 +1392,9 @@ type Commit struct{}
 
 // Format formats the node.
 func (node *Commit) Format(buf *TrackedBuffer) {
-	buf.WriteString("commit")
+	if _, err := buf.WriteString("commit"); err != nil {
+		panic(err)
+	}
 }
 
 func (node *Commit) walkSubtree(visit Visit) error {
@@ -1396,7 +1406,9 @@ type Rollback struct{}
 
 // Format formats the node.
 func (node *Rollback) Format(buf *TrackedBuffer) {
-	buf.WriteString("rollback")
+	if _, err := buf.WriteString("rollback"); err != nil {
+		panic(err)
+	}
 }
 
 func (node *Rollback) walkSubtree(visit Visit) error {
@@ -1410,7 +1422,9 @@ type OtherRead struct{}
 
 // Format formats the node.
 func (node *OtherRead) Format(buf *TrackedBuffer) {
-	buf.WriteString("otherread")
+	if _, err := buf.WriteString("otherread"); err != nil {
+		panic(err)
+	}
 }
 
 func (node *OtherRead) walkSubtree(visit Visit) error {
@@ -1425,7 +1439,9 @@ type OtherAdmin struct{}
 
 // Format formats the node.
 func (node *OtherAdmin) Format(buf *TrackedBuffer) {
-	buf.WriteString("otheradmin")
+	if _, err := buf.WriteString("otheradmin"); err != nil {
+		panic(err)
+	}
 }
 
 func (node *OtherAdmin) walkSubtree(visit Visit) error {
@@ -1552,7 +1568,9 @@ func (node Columns) Format(buf *TrackedBuffer) {
 		buf.Myprintf("%s%v", prefix, n)
 		prefix = ", "
 	}
-	buf.WriteString(")")
+	if _, err := buf.WriteString(")"); err != nil {
+		panic(err)
+	}
 }
 
 func (node Columns) walkSubtree(visit Visit) error {
@@ -1588,7 +1606,9 @@ func (node Partitions) Format(buf *TrackedBuffer) {
 		buf.Myprintf("%s%v", prefix, n)
 		prefix = ", "
 	}
-	buf.WriteString(")")
+	if _, err := buf.WriteString(")"); err != nil {
+		panic(err)
+	}
 }
 
 func (node Partitions) walkSubtree(visit Visit) error {
@@ -3395,14 +3415,22 @@ func (node *TableIdent) UnmarshalJSON(b []byte) error {
 // Backtick produces a backticked literal given an input string.
 func Backtick(in string) string {
 	var buf bytes.Buffer
-	buf.WriteByte('`')
+	if err := buf.WriteByte('`'); err != nil {
+		panic(err)
+	}
 	for _, c := range in {
-		buf.WriteRune(c)
+		if _, err := buf.WriteRune(c); err != nil {
+			panic(err)
+		}
 		if c == '`' {
-			buf.WriteByte('`')
+			if err := buf.WriteByte('`'); err != nil {
+				panic(err)
+			}
 		}
 	}
-	buf.WriteByte('`')
+	if err := buf.WriteByte('`'); err != nil {
+		panic(err)
+	}
 	return buf.String()
 }
 
@@ -3426,14 +3454,22 @@ func formatID(buf *TrackedBuffer, original, lowered string) {
 	return
 
 mustEscape:
-	buf.WriteByte('`')
+	if err := buf.WriteByte('`'); err != nil {
+		panic(err)
+	}
 	for _, c := range original {
-		buf.WriteRune(c)
+		if _, err := buf.WriteRune(c); err != nil {
+			panic(err)
+		}
 		if c == '`' {
-			buf.WriteByte('`')
+			if err := buf.WriteByte('`'); err != nil {
+				panic(err)
+			}
 		}
 	}
-	buf.WriteByte('`')
+	if err := buf.WriteByte('`'); err != nil {
+		panic(err)
+	}
 }
 
 func compliantName(in string) string {
@@ -3441,11 +3477,15 @@ func compliantName(in string) string {
 	for i, c := range in {
 		if !isLetter(uint16(c)) {
 			if i == 0 || !isDigit(uint16(c)) {
-				buf.WriteByte('_')
+				if err := buf.WriteByte('_'); err != nil {
+					panic(err)
+				}
 				continue
 			}
 		}
-		buf.WriteRune(c)
+		if _, err := buf.WriteRune(c); err != nil {
+			panic(err)
+		}
 	}
 	return buf.String()
 }

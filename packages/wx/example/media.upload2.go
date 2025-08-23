@@ -14,11 +14,11 @@ func (fs *FileUtils) SaveFile() {
 }
 
 type FileUtilsService struct {
-	FileUtil *wx.Scoped[FileUtils]
+	FileUtil *wx.Depend[FileUtils]
 }
 
 func (f *FileUtilsService) New() error {
-	f.FileUtil.Init(func(ctx *wx.ServiceContext) (*FileUtils, error) {
+	f.FileUtil.Init(func() (*FileUtils, error) {
 		return &FileUtils{}, nil
 	})
 
@@ -31,7 +31,7 @@ func (m *Media) Upload2(ctx *struct {
 }, data struct {
 	File multipart.FileHeader
 }, fileUtils *FileUtilsService) (UploadResult, error) {
-	files, err := fileUtils.FileUtil.GetInstance()
+	files, err := fileUtils.FileUtil.Ins()
 	if err != nil {
 		return UploadResult{}, err
 	}

@@ -139,7 +139,8 @@ func (u *scanner) doScan(rows *sql.Rows, typ reflect.Type) (interface{}, error) 
 	for rows.Next() {
 		// Tạo một instance mới của struct và lấy con trỏ base
 		// new(T) nhanh hơn reflect.New(typ).Elem()
-		instancePtr := reflect.New(typ).Interface()                   // new(T)
+		instancePtr := reflect.New(typ).Interface() // new(T)
+		// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 		mem := unsafe.Pointer(reflect.ValueOf(instancePtr).Pointer()) // base pointer của T
 
 		scanArgs := make([]interface{}, len(cols)) // Vẫn cần làm lại mỗi lần nếu dùng scanArgs []interface{}
@@ -162,6 +163,7 @@ func (u *scanner) doScan(rows *sql.Rows, typ reflect.Type) (interface{}, error) 
 				scanArgs[i] = &dummy
 				// Bạn cần một cơ chế ánh xạ phức tạp hơn ở đây cho kiểu con trỏ
 			} else {
+				// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 				fieldPtr := unsafe.Pointer(uintptr(mem) + meta.Offset)
 				switch meta.Kind {
 				case reflect.String:

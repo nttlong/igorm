@@ -121,6 +121,7 @@ func (sb *SwaggerBuild) createRequestBody(handler WebHandler) *swaggers3.Request
 				Schema: &swaggers3.Schema{
 					Type: "object",
 				},
+				Example: reflect.New(handler.ApiInfo.TypeOfRequestBodyElem).Interface(),
 			},
 		},
 	}

@@ -57,6 +57,8 @@ func getScanPlan(t reflect.Type, cols []string) *scanPlan {
 			args := make([]any, len(cols))
 			for i, off := range offsets {
 				if off.typ != nil {
+					// #nosec G103 -- using unsafe.Pointer for performance optimization,
+					// we ensure off.offset is validated elsewhere.
 					fieldPtr := unsafe.Pointer(uintptr(ptr) + off.offset)
 					args[i] = reflect.NewAt(off.typ, fieldPtr).Interface()
 				} else {
@@ -84,6 +86,7 @@ func ScanToStructUnsafeCached[T any](rows *sql.Rows, out *[]T) error {
 
 	for rows.Next() {
 		elem := reflect.New(t).Elem()
+		// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 		ptr := unsafe.Pointer(elem.UnsafeAddr())
 		args := plan.setters(ptr)
 
@@ -160,6 +163,7 @@ func ScanToStructValueCached[T any](rows *sql.Rows) ([]T, error) {
 
 	for rows.Next() {
 		item := reflect.New(tType).Elem() // Struct value (not pointer)
+		// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 		ptr := unsafe.Pointer(item.UnsafeAddr())
 
 		for i, fi := range fieldInfos {
@@ -274,6 +278,7 @@ func ScanToStructValueCachedFix[T any](rows *sql.Rows) ([]T, error) {
 
 	for rows.Next() {
 		item := reflect.New(tType).Elem()
+		// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 		basePtr := unsafe.Pointer(item.UnsafeAddr())
 
 		for i, fi := range fieldInfos {
@@ -300,26 +305,26 @@ func ScanToStructValueCachedFix[T any](rows *sql.Rows) ([]T, error) {
 	return results, nil
 }
 
-// unsafeSetField: đặt giá trị bằng unsafe
-func unsafeSetField(ptr unsafe.Pointer, offset uintptr, val interface{}) {
-	fieldPtr := unsafe.Pointer(uintptr(ptr) + offset)
+// // unsafeSetField: đặt giá trị bằng unsafe
+// func unsafeSetField(ptr unsafe.Pointer, offset uintptr, val interface{}) {
+// 	fieldPtr := unsafe.Pointer(uintptr(ptr) + offset)
 
-	switch v := val.(type) {
-	case *int64:
-		*(*int64)(fieldPtr) = *v
-	case *int:
-		*(*int)(fieldPtr) = *v
-	case *string:
-		*(*string)(fieldPtr) = *v
-	case *float64:
-		*(*float64)(fieldPtr) = *v
-	case *[]byte:
-		*(*[]byte)(fieldPtr) = *v
-	default:
-		// fallback qua reflect cho các kiểu chưa xử lý
-		reflect.NewAt(reflect.TypeOf(val).Elem(), fieldPtr).Elem().Set(reflect.ValueOf(val).Elem())
-	}
-}
+//		switch v := val.(type) {
+//		case *int64:
+//			*(*int64)(fieldPtr) = *v
+//		case *int:
+//			*(*int)(fieldPtr) = *v
+//		case *string:
+//			*(*string)(fieldPtr) = *v
+//		case *float64:
+//			*(*float64)(fieldPtr) = *v
+//		case *[]byte:
+//			*(*[]byte)(fieldPtr) = *v
+//		default:
+//			// fallback qua reflect cho các kiểu chưa xử lý
+//			reflect.NewAt(reflect.TypeOf(val).Elem(), fieldPtr).Elem().Set(reflect.ValueOf(val).Elem())
+//		}
+//	}
 func ScanToStructUnsafeCachedImproveV2[T any](rows *sql.Rows) ([]T, error) {
 	defer rows.Close()
 
@@ -348,6 +353,7 @@ func ScanToStructUnsafeCachedImproveV2[T any](rows *sql.Rows) ([]T, error) {
 
 		for i, col := range cols {
 			if offset, ok := plan.columnToOffset[col]; ok {
+				// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 				field := reflect.NewAt(tType.FieldByIndex([]int{0}).Type, unsafe.Pointer(uintptr(tPtr.UnsafeAddr())+offset)).Interface()
 				ptrs[i] = field
 			} else {

@@ -1,9 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "DSiaDLCSR8k=",
+  "dgSpecHash": "YaRopuogkTw=",
   "success": true,
   "projectFilePath": "D:\\code\\go\\news2\\igorm\\examples\\dotnet\\TestApi\\TestApi.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\MSI CYBORG\\.nuget\\packages\\isopoh.cryptography.argon2\\2.0.0\\isopoh.cryptography.argon2.2.0.0.nupkg.sha512",
+    "C:\\Users\\MSI CYBORG\\.nuget\\packages\\isopoh.cryptography.blake2b\\2.0.0\\isopoh.cryptography.blake2b.2.0.0.nupkg.sha512",
+    "C:\\Users\\MSI CYBORG\\.nuget\\packages\\isopoh.cryptography.securearray\\2.0.0\\isopoh.cryptography.securearray.2.0.0.nupkg.sha512",
     "C:\\Users\\MSI CYBORG\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.18\\microsoft.aspnetcore.openapi.8.0.18.nupkg.sha512",
     "C:\\Users\\MSI CYBORG\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\MSI CYBORG\\.nuget\\packages\\microsoft.openapi\\1.6.14\\microsoft.openapi.1.6.14.nupkg.sha512",

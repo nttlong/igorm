@@ -20,6 +20,21 @@ type Depend[TInstance any] struct {
 func (d *Depend[TInstance]) Ins() (*TInstance, error) {
 	d.once.Do(func() {
 		if d.fnInit == nil {
+			// detect if TInstance is function type
+			if reflect.TypeFor[TInstance]().Kind() == reflect.Func {
+				fnPtrType := reflect.TypeFor[*TInstance]()
+				mt, ok := fnPtrType.MethodByName("New")
+				if !ok {
+					d.err = fmt.Errorf("cannot find New method for function type %s", reflect.TypeFor[TInstance]().String())
+					return
+				}
+				ret := reflect.New(fnPtrType.Elem())
+				mt.Func.Call([]reflect.Value{ret})
+				d.ins = ret.Interface().(*TInstance)
+				return
+
+			}
+
 			ret, err := handlers.Helper.DependNew(reflect.TypeFor[TInstance]())
 			if err != nil {
 				d.err = err

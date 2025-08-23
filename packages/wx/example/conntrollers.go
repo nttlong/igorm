@@ -46,7 +46,7 @@ func (m *Media) ListOfFiles(ctx *wx.Handler, // <-- nhung method nao cua
 	folder := "./uploads"
 	//create folder if not exists
 	if _, err := os.Stat(folder); os.IsNotExist(err) {
-		err = os.Mkdir(folder, 0755)
+		err = os.Mkdir(folder, 0750)
 		if err != nil {
 			return nil, err
 		}
@@ -144,7 +144,7 @@ func (m *Media) Upload(ctx *AuthHandler, //<-- Van su dung cach 2 la gian tipe d
 		uploadDir := "./uploads/"
 
 		// Tạo thư mục nếu chưa tồn tại
-		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+		if err := os.MkdirAll(filepath.Clean(uploadDir), 0750); err != nil {
 			return nil, fmt.Errorf("không tạo được thư mục upload: %w", err)
 		}
 

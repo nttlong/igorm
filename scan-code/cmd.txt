@@ -27,3 +27,13 @@ docker run `
 -e SONAR_SCANNER_OPTS="-Dsonar.projectKey=wx" `
 -v D:\code\go\news2\igorm\packages\wx:/usr/src `
 sonarsource/sonar-scanner-cli -X
+
+# cài
+go install github.com/securego/gosec/v2/cmd/gosec@latest
+
+# chạy toàn module (bỏ qua thư mục vendor, testdata)
+gosec -severity medium -confidence medium -fmt sarif -out gosec.sarif ./...
+# hoặc basic
+gosec D:\\code\\go\\news2\\igorm\\packages\\wx
+
+

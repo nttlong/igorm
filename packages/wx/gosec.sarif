@@ -1,0 +1,424 @@
+{
+	"runs": [
+		{
+			"results": [
+				{
+					"level": "error",
+					"locations": [
+						{
+							"physicalLocation": {
+								"artifactLocation": {
+									"uri": "D:\\code\\go\\news2\\igorm\\packages\\wx\\example\\example1\\main.go"
+								},
+								"region": {
+									"endColumn": 2,
+									"endLine": 6,
+									"snippet": {
+										"text": "_ \"net/http/pprof\" // import để tự đăng ký pprof handlers"
+									},
+									"sourceLanguage": "go",
+									"startColumn": 2,
+									"startLine": 6
+								}
+							}
+						}
+					],
+					"message": {
+						"text": "Profiling endpoint is automatically exposed on /debug/pprof"
+					},
+					"ruleId": "G108"
+				},
+				{
+					"level": "error",
+					"locations": [
+						{
+							"physicalLocation": {
+								"artifactLocation": {
+									"uri": "D:\\code\\go\\news2\\igorm\\packages\\wx\\example\\example1\\main.go"
+								},
+								"region": {
+									"endColumn": 15,
+									"endLine": 25,
+									"snippet": {
+										"text": "log.Println(http.ListenAndServe(\"localhost:6060\", nil))"
+									},
+									"sourceLanguage": "go",
+									"startColumn": 15,
+									"startLine": 25
+								}
+							}
+						}
+					],
+					"message": {
+						"text": "Use of net/http serve function that has no support for setting timeouts"
+					},
+					"ruleId": "G114"
+				},
+				{
+					"level": "error",
+					"locations": [
+						{
+							"physicalLocation": {
+								"artifactLocation": {
+									"uri": "D:\\code\\go\\news2\\igorm\\packages\\wx\\HtttpServer\\server.start.go"
+								},
+								"region": {
+									"endColumn": 9,
+									"endLine": 32,
+									"snippet": {
+										"text": "return http.ListenAndServe(addr, s.handler)"
+									},
+									"sourceLanguage": "go",
+									"startColumn": 9,
+									"startLine": 32
+								}
+							}
+						}
+					],
+					"message": {
+						"text": "Use of net/http serve function that has no support for setting timeouts"
+					},
+					"ruleId": "G114"
+				},
+				{
+					"level": "error",
+					"locations": [
+						{
+							"physicalLocation": {
+								"artifactLocation": {
+									"uri": "D:\\code\\go\\news2\\igorm\\packages\\wx\\handlers\\handler.streamming.go"
+								},
+								"region": {
+									"endColumn": 15,
+									"endLine": 223,
+									"snippet": {
+										"text": "file, err := os.Open(fileName)"
+									},
+									"sourceLanguage": "go",
+									"startColumn": 15,
+									"startLine": 223
+								}
+							}
+						}
+					],
+					"message": {
+						"text": "Potential file inclusion via variable"
+					},
+					"ruleId": "G304"
+				},
+				{
+					"level": "error",
+					"locations": [
+						{
+							"physicalLocation": {
+								"artifactLocation": {
+									"uri": "D:\\code\\go\\news2\\igorm\\packages\\wx\\handlers\\handler.streamming.go"
+								},
+								"region": {
+									"endColumn": 15,
+									"endLine": 35,
+									"snippet": {
+										"text": "file, err := os.Open(fileName)"
+									},
+									"sourceLanguage": "go",
+									"startColumn": 15,
+									"startLine": 35
+								}
+							}
+						}
+					],
+					"message": {
+						"text": "Potential file inclusion via variable"
+					},
+					"ruleId": "G304"
+				},
+				{
+					"level": "error",
+					"locations": [
+						{
+							"physicalLocation": {
+								"artifactLocation": {
+									"uri": "D:\\code\\go\\news2\\igorm\\packages\\wx\\example\\conntrollers.go"
+								},
+								"region": {
+									"endColumn": 13,
+									"endLine": 147,
+									"snippet": {
+										"text": "if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {"
+									},
+									"sourceLanguage": "go",
+									"startColumn": 13,
+									"startLine": 147
+								}
+							}
+						}
+					],
+					"message": {
+						"text": "Expect directory permissions to be 0750 or less"
+					},
+					"ruleId": "G301"
+				},
+				{
+					"level": "error",
+					"locations": [
+						{
+							"physicalLocation": {
+								"artifactLocation": {
+									"uri": "D:\\code\\go\\news2\\igorm\\packages\\wx\\example\\conntrollers.go"
+								},
+								"region": {
+									"endColumn": 9,
+									"endLine": 49,
+									"snippet": {
+										"text": "err = os.Mkdir(folder, 0755)"
+									},
+									"sourceLanguage": "go",
+									"startColumn": 9,
+									"startLine": 49
+								}
+							}
+						}
+					],
+					"message": {
+						"text": "Expect directory permissions to be 0750 or less"
+					},
+					"ruleId": "G301"
+				}
+			],
+			"taxonomies": [
+				{
+					"downloadUri": "https://cwe.mitre.org/data/xml/cwec_v4.4.xml.zip",
+					"guid": "f2856fc0-85b7-373f-83e7-6f8582243547",
+					"informationUri": "https://cwe.mitre.org/data/published/cwe_v4.4.pdf/",
+					"isComprehensive": true,
+					"language": "en",
+					"minimumRequiredLocalizedDataSemanticVersion": "4.4",
+					"name": "CWE",
+					"organization": "MITRE",
+					"releaseDateUtc": "2021-03-15",
+					"shortDescription": {
+						"text": "The MITRE Common Weakness Enumeration"
+					},
+					"taxa": [
+						{
+							"fullDescription": {
+								"text": "The product exposes sensitive information to an actor that is not explicitly authorized to have access to that information."
+							},
+							"guid": "89ce426b-e6d8-38b2-ac7f-8ad85b74d551",
+							"helpUri": "https://cwe.mitre.org/data/definitions/200.html",
+							"id": "200",
+							"shortDescription": {
+								"text": "Exposure of Sensitive Information to an Unauthorized Actor"
+							}
+						},
+						{
+							"fullDescription": {
+								"text": "The software uses external input to construct a pathname that is intended to identify a file or directory that is located underneath a restricted parent directory, but the software does not properly neutralize special elements within the pathname that can cause the pathname to resolve to a location that is outside of the restricted directory."
+							},
+							"guid": "3e718404-88bc-3f17-883e-e85e74078a76",
+							"helpUri": "https://cwe.mitre.org/data/definitions/22.html",
+							"id": "22",
+							"shortDescription": {
+								"text": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+							}
+						},
+						{
+							"fullDescription": {
+								"text": "During installation, installed file permissions are set to allow anyone to modify those files."
+							},
+							"guid": "fca8970d-b44c-3162-a385-cc09266d12a4",
+							"helpUri": "https://cwe.mitre.org/data/definitions/276.html",
+							"id": "276",
+							"shortDescription": {
+								"text": "Incorrect Default Permissions"
+							}
+						},
+						{
+							"fullDescription": {
+								"text": "The program invokes a potentially dangerous function that could introduce a vulnerability if it is used incorrectly, but the function can also be used safely."
+							},
+							"guid": "f97fef5f-b85b-3d63-9932-7053f298803d",
+							"helpUri": "https://cwe.mitre.org/data/definitions/676.html",
+							"id": "676",
+							"shortDescription": {
+								"text": "Use of Potentially Dangerous Function"
+							}
+						}
+					],
+					"version": "4.4"
+				}
+			],
+			"tool": {
+				"driver": {
+					"guid": "8b518d5f-906d-39f9-894b-d327b1a421c5",
+					"informationUri": "https://github.com/securego/gosec/",
+					"name": "gosec",
+					"rules": [
+						{
+							"defaultConfiguration": {
+								"level": "error"
+							},
+							"fullDescription": {
+								"text": "Expect directory permissions to be 0750 or less"
+							},
+							"help": {
+								"text": "Expect directory permissions to be 0750 or less\nSeverity: MEDIUM\nConfidence: HIGH\n"
+							},
+							"id": "G301",
+							"name": "Incorrect Default Permissions",
+							"properties": {
+								"precision": "high",
+								"tags": [
+									"security",
+									"MEDIUM"
+								]
+							},
+							"relationships": [
+								{
+									"kinds": [
+										"superset"
+									],
+									"target": {
+										"guid": "fca8970d-b44c-3162-a385-cc09266d12a4",
+										"id": "276",
+										"toolComponent": {
+											"guid": "f2856fc0-85b7-373f-83e7-6f8582243547",
+											"name": "CWE"
+										}
+									}
+								}
+							],
+							"shortDescription": {
+								"text": "Expect directory permissions to be 0750 or less"
+							}
+						},
+						{
+							"defaultConfiguration": {
+								"level": "error"
+							},
+							"fullDescription": {
+								"text": "Potential file inclusion via variable"
+							},
+							"help": {
+								"text": "Potential file inclusion via variable\nSeverity: MEDIUM\nConfidence: HIGH\n"
+							},
+							"id": "G304",
+							"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+							"properties": {
+								"precision": "high",
+								"tags": [
+									"security",
+									"MEDIUM"
+								]
+							},
+							"relationships": [
+								{
+									"kinds": [
+										"superset"
+									],
+									"target": {
+										"guid": "3e718404-88bc-3f17-883e-e85e74078a76",
+										"id": "22",
+										"toolComponent": {
+											"guid": "f2856fc0-85b7-373f-83e7-6f8582243547",
+											"name": "CWE"
+										}
+									}
+								}
+							],
+							"shortDescription": {
+								"text": "Potential file inclusion via variable"
+							}
+						},
+						{
+							"defaultConfiguration": {
+								"level": "error"
+							},
+							"fullDescription": {
+								"text": "Use of net/http serve function that has no support for setting timeouts"
+							},
+							"help": {
+								"text": "Use of net/http serve function that has no support for setting timeouts\nSeverity: MEDIUM\nConfidence: HIGH\n"
+							},
+							"id": "G114",
+							"name": "Use of Potentially Dangerous Function",
+							"properties": {
+								"precision": "high",
+								"tags": [
+									"security",
+									"MEDIUM"
+								]
+							},
+							"relationships": [
+								{
+									"kinds": [
+										"superset"
+									],
+									"target": {
+										"guid": "f97fef5f-b85b-3d63-9932-7053f298803d",
+										"id": "676",
+										"toolComponent": {
+											"guid": "f2856fc0-85b7-373f-83e7-6f8582243547",
+											"name": "CWE"
+										}
+									}
+								}
+							],
+							"shortDescription": {
+								"text": "Use of net/http serve function that has no support for setting timeouts"
+							}
+						},
+						{
+							"defaultConfiguration": {
+								"level": "error"
+							},
+							"fullDescription": {
+								"text": "Profiling endpoint is automatically exposed on /debug/pprof"
+							},
+							"help": {
+								"text": "Profiling endpoint is automatically exposed on /debug/pprof\nSeverity: HIGH\nConfidence: HIGH\n"
+							},
+							"id": "G108",
+							"name": "Exposure of Sensitive Information to an Unauthorized Actor",
+							"properties": {
+								"precision": "high",
+								"tags": [
+									"security",
+									"HIGH"
+								]
+							},
+							"relationships": [
+								{
+									"kinds": [
+										"superset"
+									],
+									"target": {
+										"guid": "89ce426b-e6d8-38b2-ac7f-8ad85b74d551",
+										"id": "200",
+										"toolComponent": {
+											"guid": "f2856fc0-85b7-373f-83e7-6f8582243547",
+											"name": "CWE"
+										}
+									}
+								}
+							],
+							"shortDescription": {
+								"text": "Profiling endpoint is automatically exposed on /debug/pprof"
+							}
+						}
+					],
+					"semanticVersion": "dev",
+					"supportedTaxonomies": [
+						{
+							"guid": "f2856fc0-85b7-373f-83e7-6f8582243547",
+							"name": "CWE"
+						}
+					],
+					"version": "dev"
+				}
+			}
+		}
+	],
+	"$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+	"version": "2.1.0"
+}

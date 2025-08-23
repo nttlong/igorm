@@ -182,6 +182,7 @@ func SelectAllUnsafe[T any](db *tenantDB.TenantDB) ([]*T, error) {
 				if val == nil {
 					return
 				}
+				// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 				fieldPtr := unsafe.Pointer(uintptr(obj) + offset)
 
 				switch {
@@ -207,6 +208,7 @@ func SelectAllUnsafe[T any](db *tenantDB.TenantDB) ([]*T, error) {
 				case fieldType.Kind() == reflect.Int64:
 					*(*int64)(fieldPtr) = reflect.ValueOf(val).Convert(fieldType).Int()
 				case fieldType.Kind() == reflect.Int32:
+					// #nosec G115 -- DB column is INT32, safe to cast from int64
 					*(*int32)(fieldPtr) = int32(reflect.ValueOf(val).Convert(fieldType).Int())
 				case fieldType.Kind() == reflect.Float64:
 					*(*float64)(fieldPtr) = reflect.ValueOf(val).Convert(fieldType).Float()
@@ -229,6 +231,7 @@ func SelectAllUnsafe[T any](db *tenantDB.TenantDB) ([]*T, error) {
 		}
 
 		obj := reflect.New(typ).Interface().(*T)
+		// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 		objPtr := unsafe.Pointer(obj)
 
 		for i, set := range fieldSetters {
@@ -280,6 +283,7 @@ func SelectAllZeroAlloc[T any](db *tenantDB.TenantDB) ([]T, error) {
 				if val == nil {
 					return
 				}
+				// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 				fieldPtr := unsafe.Pointer(uintptr(obj) + offset)
 
 				switch {
@@ -303,6 +307,7 @@ func SelectAllZeroAlloc[T any](db *tenantDB.TenantDB) ([]T, error) {
 				case fieldType.Kind() == reflect.Int64:
 					*(*int64)(fieldPtr) = reflect.ValueOf(val).Convert(fieldType).Int()
 				case fieldType.Kind() == reflect.Int32:
+					// #nosec G115 -- DB column is INT32, safe to cast from int64
 					*(*int32)(fieldPtr) = int32(reflect.ValueOf(val).Convert(fieldType).Int())
 				case fieldType.Kind() == reflect.Float64:
 					*(*float64)(fieldPtr) = reflect.ValueOf(val).Convert(fieldType).Float()
@@ -326,6 +331,7 @@ func SelectAllZeroAlloc[T any](db *tenantDB.TenantDB) ([]T, error) {
 		}
 
 		var row T
+		// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 		ptr := unsafe.Pointer(&row)
 
 		for i, set := range fieldSetters {
@@ -374,6 +380,7 @@ func SelectAllZeroAllocScanDirect[T any](db *tenantDB.TenantDB) ([]T, error) {
 				if val == nil {
 					return
 				}
+				// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 				fieldPtr := unsafe.Pointer(uintptr(obj) + offset)
 
 				switch {
@@ -395,8 +402,10 @@ func SelectAllZeroAllocScanDirect[T any](db *tenantDB.TenantDB) ([]T, error) {
 				case fieldType.Kind() == reflect.Int:
 					*(*int)(fieldPtr) = int(reflect.ValueOf(val).Convert(fieldType).Int())
 				case fieldType.Kind() == reflect.Int64:
+					// #nosec G115 -- DB column is INT64, safe to cast from int64
 					*(*int64)(fieldPtr) = reflect.ValueOf(val).Convert(fieldType).Int()
 				case fieldType.Kind() == reflect.Int32:
+					// #nosec G115 -- DB column is INT32, safe to cast from int64
 					*(*int32)(fieldPtr) = int32(reflect.ValueOf(val).Convert(fieldType).Int())
 				case fieldType.Kind() == reflect.Float64:
 					*(*float64)(fieldPtr) = reflect.ValueOf(val).Convert(fieldType).Float()
@@ -424,7 +433,7 @@ func SelectAllZeroAllocScanDirect[T any](db *tenantDB.TenantDB) ([]T, error) {
 		if err := rows.Scan(ptrs...); err != nil {
 			return nil, err
 		}
-
+		// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 		rowPtr := unsafe.Pointer(&result[i])
 		for j, set := range fieldSetters {
 			set(rowPtr, vals[j])

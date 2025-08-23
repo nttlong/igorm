@@ -15,7 +15,9 @@ func (de *depenResolvers) ResolveDependsType(typ reflect.Type) (*reflect.Value, 
 		typ = typ.Elem()
 	}
 	instanceVal := reflect.New(typ)
-	de.resoleDepenceFiels(instanceVal, map[reflect.Type]bool{})
+	if _, err := de.resoleDepenceFiels(instanceVal, map[reflect.Type]bool{}); err != nil {
+		return nil, err
+	}
 
 	return &instanceVal, nil
 }
@@ -254,7 +256,9 @@ func (de *depenResolvers) RunNewMethodWithReceiver(retVale reflect.Value, nm ref
 	// if retVale.Kind() == reflect.Ptr {
 	// 	retVale = retVale.Elem()
 	// }
-	de.resoleDepenceFiels(retVale, map[reflect.Type]bool{})
+	if _, err := de.resoleDepenceFiels(retVale, map[reflect.Type]bool{}); err != nil {
+		return nil, err
+	}
 	args := make([]reflect.Value, nm.Type.NumIn())
 	args[0] = retVale
 
@@ -320,7 +324,9 @@ func (de *depenResolvers) RunNewMethodWithReceiver(retVale reflect.Value, nm ref
 }
 func (de *depenResolvers) RunNewMethod(nm reflect.Method) (*reflect.Value, error) {
 	retVale := reflect.New(nm.Type.In(0).Elem())
-	de.resoleDepenceFiels(retVale, map[reflect.Type]bool{})
+	if _, err := de.resoleDepenceFiels(retVale, map[reflect.Type]bool{}); err != nil {
+		return nil, err
+	}
 	args := make([]reflect.Value, nm.Type.NumIn())
 	args[0] = retVale
 

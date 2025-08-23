@@ -129,7 +129,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	isHandlerMethod := false
 	for i := 1; i < method.Type.NumIn(); i++ {
 		if !h.Iscontains(ret.IndexOfInjectors, i) {
-			fieldIndex, err := h.FindHandlerFieldIndexFormType(method.Func.Type().In(i))
+			fieldIndex, err := h.HandlerFindInMethod(method)
 			if err != nil {
 				return nil, err
 			}
@@ -161,7 +161,15 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 		}
 
 	}
-
+	// scan inject service (HttpService)
+	for i := 1; i < method.Type.NumIn(); i++ {
+		if Helper.DependIsHttpService(method.Type.In(i)) {
+			if ret.IndexOfInjectorService == nil {
+				ret.IndexOfInjectorService = []int{}
+			}
+			ret.IndexOfInjectorService = append(ret.IndexOfInjectorService, i)
+		}
+	}
 	ret.ReceiverIndex = 0
 	ret.ReceiverType = method.Type.In(0)
 	ret.ReceiverTypeElem = ret.ReceiverType
@@ -233,7 +241,10 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	}
 	if ret.IndexOfRequestBody == -1 {
 		for i := 1; i < method.Type.NumIn(); i++ {
-			if !h.Iscontains(ret.IndexOfInjectors, i) && i != ret.IndexOfArg && i != ret.IndexOfAuthClaimsArg {
+			if !h.Iscontains(ret.IndexOfInjectors, i) &&
+				i != ret.IndexOfArg &&
+				i != ret.IndexOfAuthClaimsArg &&
+				!h.Iscontains(ret.IndexOfInjectorService, i) {
 				typ := method.Type.In(i)
 				ret.TypeOfRequestBody = typ
 				if typ.Kind() == reflect.Ptr {

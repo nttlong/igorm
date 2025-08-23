@@ -41,6 +41,7 @@ var cacheCreateControllerValue sync.Map
 
 func (reqExec *RequestExecutor) CreateControllerValue(handlerInfo HandlerInfo) (*reflect.Value, error) {
 	return reqExec.CreateControllerValueOnce(handlerInfo)
+	//return reqExec.createControllerValueInternal(handlerInfo)
 }
 func (reqExec *RequestExecutor) CreateControllerValueOnce(handlerInfo HandlerInfo) (*reflect.Value, error) {
 	actual, _ := cacheCreateControllerValue.LoadOrStore(handlerInfo.ReceiverTypeElem, &initCreateControllerValue{})

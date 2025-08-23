@@ -73,7 +73,8 @@ type HandlerInfo struct {
 		Exmaple:
 			<controller name>/<handler name>/{param1}/.../{param2}/{*slug}
 	*/
-	UriParams []uriParam
+	UriParams              []uriParam
+	IndexOfInjectorService []int
 	/*
 		 index of arg in handler is injector
 		 Example:

@@ -33,7 +33,9 @@ type StringArena struct {
 // NewStringArena creates an arena of the specified size.
 func NewStringArena(size int) *StringArena {
 	sa := &StringArena{buf: make([]byte, 0, size)}
+	// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 	pbytes := (*reflect.SliceHeader)(unsafe.Pointer(&sa.buf))
+	// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 	pstring := (*reflect.StringHeader)(unsafe.Pointer(&sa.str))
 	pstring.Data = pbytes.Data
 	pstring.Len = pbytes.Cap
@@ -65,7 +67,9 @@ func String(b []byte) (s string) {
 	if len(b) == 0 {
 		return ""
 	}
+	// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 	pbytes := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 	pstring := (*reflect.StringHeader)(unsafe.Pointer(&s))
 	pstring.Data = pbytes.Data
 	pstring.Len = pbytes.Len
@@ -74,6 +78,8 @@ func String(b []byte) (s string) {
 
 // StringPointer returns &s[0], which is not allowed in go
 func StringPointer(s string) unsafe.Pointer {
+	// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 	pstring := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	// #nosec G103 -- using unsafe.Pointer with reflect.UnsafeAddr for zero-copy field mapping
 	return unsafe.Pointer(pstring.Data)
 }

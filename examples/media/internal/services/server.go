@@ -3,13 +3,14 @@ package services
 import (
 	"media/handlers"
 	"wx"
+	"wx/mw"
 )
 
 type Server struct {
 }
 
 func (s *Server) Start() error {
-	wx.Routes("/api", handlers.Media{})
+	wx.Routes("/api", handlers.Media{}, handlers.Users{})
 
 	server := wx.NewHtttpServer("/api", 8080, "0.0.0.0")
 	swagger := wx.CreateSwagger(server, "swagger")
@@ -21,6 +22,7 @@ func (s *Server) Start() error {
 	})
 	swagger.Build()
 	//server.Middleware(mw.Zip)
+	server.Middleware(mw.Cors)
 	err := server.Start()
 	if err != nil {
 		return err

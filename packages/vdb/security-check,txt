@@ -1,0 +1,3 @@
+ go install golang.org/x/vuln/cmd/govulncheck@latest^C
+go install github.com/securego/gosec/v2/cmd/gosec@latest  
+gosec ./...

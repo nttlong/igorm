@@ -215,11 +215,15 @@ func (v Value) String() string {
 func (v Value) EncodeSQL(b BinWriter) {
 	switch {
 	case v.typ == Null:
-		b.Write(nullstr)
+		if _, err := b.Write(nullstr); err != nil {
+			panic(err)
+		}
 	case v.IsQuoted():
 		encodeBytesSQL(v.val, b)
 	default:
-		b.Write(v.val)
+		if _, err := b.Write(v.val); err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -227,11 +231,15 @@ func (v Value) EncodeSQL(b BinWriter) {
 func (v Value) EncodeASCII(b BinWriter) {
 	switch {
 	case v.typ == Null:
-		b.Write(nullstr)
+		if _, err := b.Write(nullstr); err != nil {
+			panic(err)
+		}
 	case v.IsQuoted():
 		encodeBytesASCII(v.val, b)
 	default:
-		b.Write(v.val)
+		if _, err := b.Write(v.val); err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -320,27 +328,49 @@ func (v *Value) UnmarshalJSON(b []byte) error {
 
 func encodeBytesSQL(val []byte, b BinWriter) {
 	buf := &bytes2.Buffer{}
-	buf.WriteByte('\'')
+	if err := buf.WriteByte('\''); err != nil {
+		panic(err)
+	}
 	for _, ch := range val {
 		if encodedChar := SQLEncodeMap[ch]; encodedChar == DontEscape {
-			buf.WriteByte(ch)
+			if err := buf.WriteByte(ch); err != nil {
+				panic(err)
+			}
 		} else {
-			buf.WriteByte('\\')
-			buf.WriteByte(encodedChar)
+			if err := buf.WriteByte('\\'); err != nil {
+				panic(err)
+			}
+			if err := buf.WriteByte(encodedChar); err != nil {
+				panic(err)
+			}
 		}
 	}
-	buf.WriteByte('\'')
-	b.Write(buf.Bytes())
+	if err := buf.WriteByte('\''); err != nil {
+		panic(err)
+	}
+	if _, err := b.Write(buf.Bytes()); err != nil {
+		panic(err)
+	}
 }
 
 func encodeBytesASCII(val []byte, b BinWriter) {
 	buf := &bytes2.Buffer{}
-	buf.WriteByte('\'')
+	if err := buf.WriteByte('\''); err != nil {
+		panic(err)
+	}
 	encoder := base64.NewEncoder(base64.StdEncoding, buf)
-	encoder.Write(val)
-	encoder.Close()
-	buf.WriteByte('\'')
-	b.Write(buf.Bytes())
+	if _, err := encoder.Write(val); err != nil {
+		panic(err)
+	}
+	if err := encoder.Close(); err != nil {
+		panic(err)
+	}
+	if err := buf.WriteByte('\''); err != nil {
+		panic(err)
+	}
+	if _, err := b.Write(buf.Bytes()); err != nil {
+		panic(err)
+	}
 }
 
 // SQLEncodeMap specifies how to escape binary data with '\'.

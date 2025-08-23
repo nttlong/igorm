@@ -53,6 +53,10 @@ func (reqExec *RequestExecutor) DoGet(handlerInfo HandlerInfo, r *http.Request, 
 	if err != nil {
 		return nil, err
 	}
+	err = reqExec.LoadInjectorInjectServiceToArgs(handlerInfo, r, w, args)
+	if err != nil {
+		return nil, err
+	}
 	if handlerInfo.IndexOfAuthClaimsArg != -1 {
 		AuthClaimsType := handlerInfo.Method.Type.In(handlerInfo.IndexOfAuthClaimsArg)
 		AuthClaimsValue, err := Helper.DepenAuthCreate(AuthClaimsType, r, w)
@@ -79,4 +83,30 @@ func (reqExec *RequestExecutor) DoGet(handlerInfo HandlerInfo, r *http.Request, 
 	}
 	return rets[0].Interface(), nil
 
+}
+func (reqExec *RequestExecutor) LoadInjectorInjectServiceToArgs(handlerInfo HandlerInfo, r *http.Request, w http.ResponseWriter, args []reflect.Value) error {
+	if len(handlerInfo.IndexOfInjectorService) > 0 {
+		httpContextService := CreateServiceContext(r, w)
+		for _, x := range handlerInfo.IndexOfInjectorService {
+			injectServiceType := handlerInfo.Method.Type.In(x)
+
+			if injectServiceType.Kind() == reflect.Ptr {
+				injectServiceType = injectServiceType.Elem()
+			}
+			injectServiceValue := reflect.New(injectServiceType)
+			httpContextField := injectServiceValue.Elem().FieldByName("HttpContext")
+			if httpContextField.IsValid() && httpContextField.CanSet() {
+				httpContextField.Set(httpContextService)
+			}
+
+			if handlerInfo.Method.Type.In(x).Kind() == reflect.Ptr {
+				args[x] = injectServiceValue
+			} else {
+				args[x] = injectServiceValue.Elem()
+			}
+
+		}
+	}
+
+	return nil
 }

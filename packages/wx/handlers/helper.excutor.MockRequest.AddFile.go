@@ -42,7 +42,11 @@ func (builder *MockRequestBuilder) AddFile(fileName string) {
 
 	part, _ := builder.writer.CreateFormFile(fileName, fileName)
 
-	part.Write([]byte("Mock content of file"))
+	if _, err := part.Write([]byte("Mock content of file")); err != nil {
+		// Handle error if needed
+		panic(err)
+		return
+	}
 
 }
 func (builder *MockRequestBuilder) AddField(fieldName string, value string) {
@@ -55,7 +59,11 @@ func (builder *MockRequestBuilder) AddField(fieldName string, value string) {
 
 	part, _ := builder.writer.CreateFormField(fieldName)
 
-	part.Write([]byte(value))
+	if _, err := part.Write([]byte(value)); err != nil {
+		// Handle error if needed
+		panic(err)
+		return
+	}
 
 }
 func (builder *MockRequestBuilder) AddJsonField(fieldName string, value []byte) {
@@ -68,6 +76,9 @@ func (builder *MockRequestBuilder) AddJsonField(fieldName string, value []byte) 
 
 	part, _ := builder.writer.CreateFormField(fieldName)
 
-	part.Write(value)
+	if _, err := part.Write(value); err != nil {
+		panic(err)
+	}
+	// part.Write(value)
 
 }

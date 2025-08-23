@@ -3,6 +3,7 @@ package htttpserver
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
 var baseUrlOfServer string
@@ -10,7 +11,11 @@ var baseUrlOfServer string
 func (s *HtttpServer) Start() error {
 	baseUrlOfServer = s.BaseUrl
 	// Đăng ký các handler vào mux
-	s.loadController()
+	err := s.loadController()
+	if err != nil {
+		return err
+	}
+
 	// handler cuối cùng gọi mux
 	final := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.mux.ServeHTTP(w, r)
@@ -28,6 +33,16 @@ func (s *HtttpServer) Start() error {
 	s.handler = final
 
 	addr := fmt.Sprintf("%s:%d", s.Bind, s.Port)
+	// fmt.Println("Server listening at", addr)
+	// return http.ListenAndServe(addr, s.handler)
+	s.server = &http.Server{
+		Addr:         addr,
+		Handler:      s.handler,
+		ReadTimeout:  10 * time.Second, // Giới hạn đọc request
+		WriteTimeout: 10 * time.Second, // Giới hạn ghi response
+		IdleTimeout:  60 * time.Second, // Cho keep-alive
+	}
+
 	fmt.Println("Server listening at", addr)
-	return http.ListenAndServe(addr, s.handler)
+	return s.server.ListenAndServe()
 }

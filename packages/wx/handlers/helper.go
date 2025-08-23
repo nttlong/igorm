@@ -67,7 +67,7 @@ var Helper = &helperType{
 		reflect.TypeOf(http.Cookie{}):   true,
 		reflect.TypeOf(http.Cookie{}):   true,
 		reflect.TypeOf(http.Client{}):   true,
-		reflect.TypeOf(http.Server{}):   true,
+		//		reflect.TypeOf(http.Server{}):   true,
 	},
 	ErrorType: reflect.TypeOf((*error)(nil)).Elem(),
 	ReqExec:   &RequestExecutor{},

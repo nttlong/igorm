@@ -42,7 +42,9 @@ func (tx *TenantTx) GetDbType() DB_DRIVER_TYPE {
 	return tx.info.DbType
 }
 func (db *TenantDB) Begin() (*TenantTx, error) {
-	db.Detect()
+	if err := db.Detect(); err != nil {
+		return nil, err
+	}
 	tx, err := db.DB.Begin()
 	if err != nil {
 		return nil, err
@@ -56,7 +58,9 @@ func (db *TenantDB) Begin() (*TenantTx, error) {
 
 }
 func (db *TenantDB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*TenantTx, error) {
-	db.Detect()
+	if err := db.Detect(); err != nil {
+		return nil, err
+	}
 	tx, err := db.DB.BeginTx(ctx, opts)
 	if err != nil {
 		return nil, err

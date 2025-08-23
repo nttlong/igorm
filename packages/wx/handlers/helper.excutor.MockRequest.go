@@ -24,7 +24,9 @@ type MockRequestBuilder struct {
 func (builder *MockRequestBuilder) Build() (*http.Request, http.ResponseWriter) {
 
 	if builder.writer != nil {
-		builder.writer.Close()
+		if err := builder.writer.Close(); err != nil {
+			panic(err)
+		}
 	}
 	ret, err := http.NewRequest(builder.method, builder.url, builder.body)
 	if err != nil {

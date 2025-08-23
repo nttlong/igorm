@@ -33,3 +33,6 @@ D:\code\go\news2\igorm\examples\dotnet\TestApi\obj\Debug\net8.0\TestApi.pdb
 D:\code\go\news2\igorm\examples\dotnet\TestApi\obj\Debug\net8.0\TestApi.genruntimeconfig.cache
 D:\code\go\news2\igorm\examples\dotnet\TestApi\obj\Debug\net8.0\ref\TestApi.dll
 D:\code\go\news2\igorm\examples\dotnet\TestApi\bin\Debug\net8.0\global.json
+D:\code\go\news2\igorm\examples\dotnet\TestApi\bin\Debug\net8.0\Isopoh.Cryptography.Argon2.dll
+D:\code\go\news2\igorm\examples\dotnet\TestApi\bin\Debug\net8.0\Isopoh.Cryptography.Blake2b.dll
+D:\code\go\news2\igorm\examples\dotnet\TestApi\bin\Debug\net8.0\Isopoh.Cryptography.SecureArray.dll

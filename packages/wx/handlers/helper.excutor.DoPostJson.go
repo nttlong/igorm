@@ -19,6 +19,14 @@ func (reqExec *RequestExecutor) DoJsonPost(handlerInfo HandlerInfo, r *http.Requ
 	if err != nil {
 		return nil, err
 	}
+	err = reqExec.LoadInjectorInjectServiceToArgs(handlerInfo, r, w, args)
+	if err != nil {
+		return nil, err
+	}
+	err = reqExec.LoadInjectorsToArgs(handlerInfo, r, w, args)
+	if err != nil {
+		return nil, err
+	}
 	args[handlerInfo.IndexOfArg] = *ctxHandler
 	if handlerInfo.IndexOfRequestBody != -1 {
 		bodyValue, err := reqExec.GetBodyValue(handlerInfo, r)

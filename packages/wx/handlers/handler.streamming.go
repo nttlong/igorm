@@ -32,7 +32,7 @@ It performs the following:
 This function enables efficient serving of large files and supports resumable downloads.
 */
 func (ctx *Handler) StreamingFile(fileName string) error {
-	file, err := os.Open(fileName)
+	file, err := os.Open(filepath.Clean(fileName))
 	if err != nil {
 		http.Error(ctx.Res, "File not found", http.StatusNotFound)
 		return err
@@ -220,7 +220,7 @@ Returns:
 */
 func (ctx *Handler) DownloadFile(fileName string) error {
 	// Open the file for reading
-	file, err := os.Open(fileName)
+	file, err := os.Open(filepath.Clean(fileName))
 	if err != nil {
 		http.Error(ctx.Res, "File not found", http.StatusNotFound)
 		return err

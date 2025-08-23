@@ -3,13 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	apps "media/internal/services/app"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
 	"path/filepath"
-	"runtime/pprof"
 	"strings"
 	"wx"
 )
@@ -70,13 +68,13 @@ func main1() {
 func main() {
 
 	err := wx.Start(func(app *apps.App) error {
-		go func() {
-			f, _ := os.Create("mem.pprof")
-			pprof.WriteHeapProfile(f)
-			f.Close()
-			log.Println("pprof listening on :6060")
-			log.Println(http.ListenAndServe("localhost:6060", nil))
-		}()
+		// go func() {
+		// 	f, _ := os.Create("mem.pprof")
+		// 	pprof.WriteHeapProfile(f)
+		// 	f.Close()
+		// 	log.Println("pprof listening on :6060")
+		// 	log.Println(http.ListenAndServe("localhost:6060", nil))
+		// }()
 		server, err := app.Server.Ins()
 		if err != nil {
 			return err

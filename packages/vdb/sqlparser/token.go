@@ -624,9 +624,13 @@ func (tkn *Tokenizer) skipBlank() {
 
 func (tkn *Tokenizer) scanIdentifier(firstByte byte, isDbSystemVariable bool) (int, []byte) {
 	buffer := &bytes2.Buffer{}
-	buffer.WriteByte(firstByte)
+	if err := buffer.WriteByte(firstByte); err != nil {
+		panic(err)
+	}
 	for isLetter(tkn.lastChar) || isDigit(tkn.lastChar) || (isDbSystemVariable && isCarat(tkn.lastChar)) {
-		buffer.WriteByte(byte(tkn.lastChar))
+		if err := buffer.WriteByte(byte(tkn.lastChar)); err != nil {
+			panic(err)
+		}
 		tkn.next()
 	}
 	lowered := bytes.ToLower(buffer.Bytes())
@@ -673,7 +677,9 @@ func (tkn *Tokenizer) scanLiteralIdentifier() (int, []byte) {
 				break
 			}
 			backTickSeen = false
-			buffer.WriteByte('`')
+			if err := buffer.WriteByte('`'); err != nil {
+				panic(err)
+			}
 			tkn.next()
 			continue
 		}
@@ -685,7 +691,9 @@ func (tkn *Tokenizer) scanLiteralIdentifier() (int, []byte) {
 			// Premature EOF.
 			return LEX_ERROR, buffer.Bytes()
 		default:
-			buffer.WriteByte(byte(tkn.lastChar))
+			if err := buffer.WriteByte(byte(tkn.lastChar)); err != nil {
+				panic(err)
+			}
 		}
 		tkn.next()
 	}
@@ -697,19 +705,25 @@ func (tkn *Tokenizer) scanLiteralIdentifier() (int, []byte) {
 
 func (tkn *Tokenizer) scanBindVar() (int, []byte) {
 	buffer := &bytes2.Buffer{}
-	buffer.WriteByte(byte(tkn.lastChar))
+	if err := buffer.WriteByte(byte(tkn.lastChar)); err != nil {
+		panic(err)
+	}
 	token := VALUE_ARG
 	tkn.next()
 	if tkn.lastChar == ':' {
 		token = LIST_ARG
-		buffer.WriteByte(byte(tkn.lastChar))
+		if err := buffer.WriteByte(byte(tkn.lastChar)); err != nil {
+			panic(err)
+		}
 		tkn.next()
 	}
 	if !isLetter(tkn.lastChar) {
 		return LEX_ERROR, buffer.Bytes()
 	}
 	for isLetter(tkn.lastChar) || isDigit(tkn.lastChar) || tkn.lastChar == '.' {
-		buffer.WriteByte(byte(tkn.lastChar))
+		if err := buffer.WriteByte(byte(tkn.lastChar)); err != nil {
+			panic(err)
+		}
 		tkn.next()
 	}
 	return token, buffer.Bytes()
@@ -726,7 +740,10 @@ func (tkn *Tokenizer) scanNumber(seenDecimalPoint bool) (int, []byte) {
 	buffer := &bytes2.Buffer{}
 	if seenDecimalPoint {
 		token = FLOAT
-		buffer.WriteByte('.')
+		if err := buffer.WriteByte('.'); err != nil {
+			panic(err)
+		}
+
 		tkn.scanMantissa(10, buffer)
 		goto exponent
 	}
@@ -779,7 +796,9 @@ func (tkn *Tokenizer) scanString(delim uint16, typ int) (int, []byte) {
 		}
 
 		if ch != delim && ch != '\\' {
-			buffer.WriteByte(byte(ch))
+			if err := buffer.WriteByte(byte(ch)); err != nil {
+				panic(err)
+			}
 
 			// Scan ahead to the next interesting character.
 			start := tkn.bufPos
@@ -790,7 +809,9 @@ func (tkn *Tokenizer) scanString(delim uint16, typ int) (int, []byte) {
 				}
 			}
 
-			buffer.Write(tkn.buf[start:tkn.bufPos])
+			if _, err := buffer.Write(tkn.buf[start:tkn.bufPos]); err != nil {
+				panic(err)
+			}
 			tkn.Position += (tkn.bufPos - start)
 
 			if tkn.bufPos >= tkn.bufSize {
@@ -821,7 +842,10 @@ func (tkn *Tokenizer) scanString(delim uint16, typ int) (int, []byte) {
 			break
 		}
 
-		buffer.WriteByte(byte(ch))
+		if err := buffer.WriteByte(byte(ch)); err != nil {
+			panic(err)
+		}
+
 		tkn.next()
 	}
 
@@ -830,7 +854,9 @@ func (tkn *Tokenizer) scanString(delim uint16, typ int) (int, []byte) {
 
 func (tkn *Tokenizer) scanCommentType1(prefix string) (int, []byte) {
 	buffer := &bytes2.Buffer{}
-	buffer.WriteString(prefix)
+	if _, err := buffer.WriteString(prefix); err != nil {
+		panic(err)
+	}
 	for tkn.lastChar != eofChar {
 		if tkn.lastChar == '\n' {
 			tkn.consumeNext(buffer)
@@ -843,7 +869,9 @@ func (tkn *Tokenizer) scanCommentType1(prefix string) (int, []byte) {
 
 func (tkn *Tokenizer) scanCommentType2() (int, []byte) {
 	buffer := &bytes2.Buffer{}
-	buffer.WriteString("/*")
+	if _, err := buffer.WriteString("/*"); err != nil {
+		panic(err)
+	}
 	for {
 		if tkn.lastChar == '*' {
 			tkn.consumeNext(buffer)
@@ -863,7 +891,9 @@ func (tkn *Tokenizer) scanCommentType2() (int, []byte) {
 
 func (tkn *Tokenizer) scanMySQLSpecificComment() (int, []byte) {
 	buffer := &bytes2.Buffer{}
-	buffer.WriteString("/*!")
+	if _, err := buffer.WriteString("/*!"); err != nil {
+		panic(err)
+	}
 	tkn.next()
 	for {
 		if tkn.lastChar == '*' {
@@ -889,7 +919,9 @@ func (tkn *Tokenizer) consumeNext(buffer *bytes2.Buffer) {
 		// This should never happen.
 		panic("unexpected EOF")
 	}
-	buffer.WriteByte(byte(tkn.lastChar))
+	if err := buffer.WriteByte(byte(tkn.lastChar)); err != nil {
+		panic(err)
+	}
 	tkn.next()
 }
 

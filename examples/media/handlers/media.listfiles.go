@@ -23,9 +23,16 @@ func (user *UserInfo) New(ctx *wx.AuthContext) error {
 	return nil
 }
 
+type RoleChecker struct {
+}
+
+func (role *RoleChecker) New(ctx *wx.AuthContext) error {
+	// Implement role checking logic here
+	return nil
+}
 func (media *Media) ListFiles(ctx *struct {
 	wx.Handler `route:"method:get"`
-}, dr *wx.Depend[DirectoryReader], userSvc *wx.Auth[UserInfo]) (*[]string, error) {
+}, dr *wx.Depend[DirectoryReader], userSvc *wx.Auth[UserInfo], roleCck *wx.HttpService[RoleChecker]) (*[]string, error) {
 
 	// 1. Kiểm tra thư mục gốc
 	if _, err := os.Stat(rootPath); os.IsNotExist(err) {

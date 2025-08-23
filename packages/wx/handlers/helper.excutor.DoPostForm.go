@@ -168,7 +168,14 @@ func (reqExec *RequestExecutor) DoFormPost(handlerInfo HandlerInfo, r *http.Requ
 		}
 
 	}
-
+	err = reqExec.LoadInjectorInjectServiceToArgs(handlerInfo, r, w, args)
+	if err != nil {
+		return nil, err
+	}
+	err = reqExec.LoadInjectorsToArgs(handlerInfo, r, w, args)
+	if err != nil {
+		return nil, err
+	}
 	//reqExec.CreateHandler(handlerInfo)
 	rets := handlerInfo.Method.Func.Call(args)
 	if len(rets) > 0 {
