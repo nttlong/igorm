@@ -23,15 +23,15 @@ func (userService *UserService) New(
 }
 func (userService *UserService) CreateUser(db *vdb.TenantDB, user *dbModels.Users, password string) error {
 	var err error
-	// if password != "" {
-	// 	user.HashedPassword, err = userService.authService.HashPassword(user.Username + "@" + password)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
-	// if err != nil {
-	// 	return err
-	// }
+	if password != "" {
+		user.HashedPassword, err = userService.authService.HashPassword(user.Username + "@" + password)
+		if err != nil {
+			return err
+		}
+	}
+	if err != nil {
+		return err
+	}
 	err = db.Create(user)
 	return err
 

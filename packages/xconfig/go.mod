@@ -2,7 +2,7 @@ module xconfig
 
 go 1.25.0
 
-replace vdb => ../vdb
+replace vdb => ./../vdb
 
 require (
 	github.com/stretchr/testify v1.10.0

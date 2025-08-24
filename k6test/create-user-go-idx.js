@@ -1,4 +1,4 @@
-//k6 run create-user-go.js
+//k6 run create-user-go-idx.js
 import { check, sleep } from "k6";
 import http from "k6/http";
 
@@ -23,10 +23,10 @@ export let options = {
     // },
 };
 export default function () {
-    const url = "http://localhost:8080/api/auth/login";
+    const url = "https://9000-firebase-bmtest-1756045545938.cluster-fdkw7vjj7bgguspe3fbbc25tra.cloudworkstations.dev/api/auth/login";
     //let url = "http://localhost:8080/api/media/hello"
     let payload = JSON.stringify({
-        "user_name": "admin",
+        "username": "admin",
         "password": "12344566"
     });
     let res = http.post(url, payload, {
@@ -34,7 +34,7 @@ export default function () {
             "Content-Type": "application/json",
         },
     })
-
+    console.log(`STATUS: ${res.status}, BODY: ${res.body}`);
     check(res, {
         "status is 200": (r) => r.status === 200,
 

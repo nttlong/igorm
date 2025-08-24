@@ -2,11 +2,11 @@ module xauth
 
 go 1.25.0
 
-replace wx => ../wx
+replace wx => ./../wx
 
-replace vdb => ../vdb
+replace vdb => ./../vdb
 
-replace xconfig => ../xconfig
+replace xconfig => ./../xconfig
 
 require (
 	github.com/stretchr/testify v1.10.0
@@ -29,7 +29,6 @@ require (
 	github.com/microsoft/go-mssqldb v1.9.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2 // indirect
-	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
