@@ -211,7 +211,13 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 		var insertedID int64
 
 		err = sqlStmt.QueryRow(args...).Scan(&insertedID)
+		if err == nil {
+			return err
+		}
 		err = fetchAfterInsertForQueryRow(repoType.entity, dataValue, insertedID)
+		if err != nil {
+			return err
+		}
 
 	} else {
 		// start := time.Now()
