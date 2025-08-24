@@ -165,11 +165,18 @@ func init() {
 	}
 
 }
-func NewDepen[T any]() (*T, error) {
+func NewDepend[T any]() (*T, error) {
 	ret, err := handlers.Helper.DependNew(reflect.TypeFor[T]())
 	if err != nil {
 		return nil, err
 	}
 	return ret.Interface().(*T), nil
 
+}
+func NewGlobal[T any]() (*T, error) {
+	ret, err := Helper.DependNewOnce(reflect.TypeFor[*T]())
+	if err != nil {
+		return nil, err
+	}
+	return ret.Interface().(*T), nil
 }

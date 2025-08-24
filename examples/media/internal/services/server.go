@@ -3,7 +3,6 @@ package services
 import (
 	"media/handlers"
 	"os"
-	"strconv"
 	"wx"
 	"wx/mw"
 )
@@ -17,11 +16,8 @@ func (s *Server) Start() error {
 	if port == "" {
 		port = "8080"
 	}
-	portNumber, err := strconv.Atoi(port)
-	if err != nil {
-		return err
-	}
-	server := wx.NewHtttpServer("/api", portNumber, "127.0.0.1")
+
+	server := wx.NewHtttpServer("/api", port, "127.0.0.1")
 	swagger := wx.CreateSwagger(server, "swagger")
 	swagger.OAuth2Password(server.BaseUrl + "oauth/token")
 	swagger.Info(wx.SwaggerInfo{
@@ -32,7 +28,7 @@ func (s *Server) Start() error {
 	swagger.Build()
 	//server.Middleware(mw.Zip)
 	server.Middleware(mw.Cors)
-	err = server.Start()
+	err := server.Start()
 	if err != nil {
 		return err
 	}

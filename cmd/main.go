@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"wx"
 	_ "wx"
 	"wx/mw"
+	authController "xauth/controllers"
 )
 
 func main() {
@@ -16,11 +16,8 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	portNumber, err := strconv.Atoi(port)
-	if err != nil {
-		panic(err)
-	}
-	server := wx.NewHtttpServer("/api", portNumber, "127.0.0.1")
+	wx.Routes("/api", &authController.Auth{})
+	server := wx.NewHtttpServer("/api", port, "127.0.0.1")
 	swagger := wx.CreateSwagger(server, "swagger")
 	swagger.OAuth2Password(server.BaseUrl + "oauth/token")
 	swagger.Info(wx.SwaggerInfo{
@@ -31,7 +28,7 @@ func main() {
 	swagger.Build()
 	//server.Middleware(mw.Zip)
 	server.Middleware(mw.Cors)
-	err = server.Start()
+	err := server.Start()
 	if err != nil {
 		panic(err)
 	}

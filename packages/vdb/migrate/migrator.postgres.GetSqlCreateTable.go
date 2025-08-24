@@ -91,9 +91,10 @@ func (m *migratorPostgres) GetSqlCreateTable(typ reflect.Type) (string, error) {
 
 		strCols = append(strCols, colDef)
 	}
-
+	
 	// Xử lý khóa chính
 	for _, cols := range entityItem.entity.primaryConstraints {
+		
 		var pkCols []string
 		var pkColNames []string
 

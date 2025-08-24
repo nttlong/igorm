@@ -23,3 +23,4 @@ vapi/internal/cache/tmp/badger
 /packages/wx/example/example1/uploads
 .mp4
 **/uploads/
+/config.yaml

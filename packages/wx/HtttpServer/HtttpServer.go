@@ -9,7 +9,7 @@ var useSwagger bool = false
 type HtttpServer struct {
 
 	// Port is the port the server will listen on.
-	Port int
+	Port string
 	// BaseUrl is the base URL of the server.
 	BaseUrl string
 	// Host is the host the server will listen on.
@@ -25,7 +25,7 @@ type HtttpServer struct {
 
 var HandlerList []WebHandler = []WebHandler{}
 
-func NewHtttpServer(baseUrl string, port int, bind string) *HtttpServer {
+func NewHtttpServer(baseUrl string, port string, bind string) *HtttpServer {
 	mux := http.NewServeMux()
 	return &HtttpServer{
 		Port:    port,

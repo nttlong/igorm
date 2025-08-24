@@ -93,7 +93,7 @@ func (reg *modelRegister) RegisterType(typ reflect.Type) {
 		entity:    entity,
 	}
 
-	reg.cacheModelRegistry.Store(typ, cacheItem)
+	reg.cacheModelRegistry.Store(typ, &cacheItem)
 }
 
 func (reg *modelRegister) Add(m ...interface{}) {
@@ -106,10 +106,12 @@ func (reg *modelRegister) Add(m ...interface{}) {
 		reg.RegisterType(typ)
 	}
 }
-func (reg *modelRegister) GetAllModels() []modelRegistryInfo {
-	ret := make([]modelRegistryInfo, 0)
+func (reg *modelRegister) GetAllModels() []*modelRegistryInfo {
+	ret := make([]*modelRegistryInfo, 0)
 	reg.cacheModelRegistry.Range(func(key, value interface{}) bool {
-		ret = append(ret, value.(modelRegistryInfo))
+		if v, ok := value.(*modelRegistryInfo); ok {
+			ret = append(ret, v)
+		}
 		return true
 	})
 	return ret
@@ -135,10 +137,10 @@ func (reg *modelRegister) getModelByType(typ reflect.Type) *modelRegistryInfo {
 
 	var ret *modelRegistryInfo
 	reg.cacheModelRegistry.Range(func(key, value interface{}) bool {
-		m := value.(modelRegistryInfo)
+		m := value.(*modelRegistryInfo)
 
 		if m.modelType == typ {
-			ret = &m
+			ret = m
 			return false // <-- dừng duyệt nếu tìm thấy (RETURN FALSE mới là dừng)
 		}
 		return true // tiếp tục duyệt

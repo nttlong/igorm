@@ -68,6 +68,9 @@ func (db *TenantDB) createDBNoCache(dbName string) (string, *TenantDB, error) {
 
 }
 
+/*
+Create new tenant db if not exist
+*/
 func (db *TenantDB) CreateDB(dbName string) (*TenantDB, error) {
 	_, tenantDb, err := db.createDBNoCache(dbName)
 	if err != nil {
@@ -108,8 +111,17 @@ type tenantDbManager struct {
 	mapManagerDb map[string]bool
 }
 
-func (t *tenantDbManager) SetManagerDb(driver string, dbName string) {
-	t.mapManagerDb[dbName+"://"+driver] = true
+func (t *tenantDbManager) SetManagerDb(driver string, dbName string) error {
+	if driver == "" || dbName == "" {
+		return fmt.Errorf("driver and dbName cannot be empty")
+	}
+	if driver == "postgres" || driver == "mysql" || driver == "sqlite3" || driver == "mssql" {
+		t.mapManagerDb[dbName+"://"+driver] = true
+	} else {
+		return fmt.Errorf("driver %s is not supported for manager db", driver)
+
+	}
+	return nil
 }
 func (t *tenantDbManager) isManagerDb(driver string, dbName string) bool {
 	if _, ok := t.mapManagerDb[dbName+"://"+driver]; ok {
@@ -117,8 +129,8 @@ func (t *tenantDbManager) isManagerDb(driver string, dbName string) bool {
 	}
 	return false
 }
-func SetManagerDb(driver string, dbName string) {
-	tenantDbManagerInstance.SetManagerDb(driver, dbName)
+func SetManagerDb(driver string, dbName string) error {
+	return tenantDbManagerInstance.SetManagerDb(driver, dbName)
 }
 
 type dbFunCall struct {

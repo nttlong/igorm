@@ -21,6 +21,7 @@ func (m *migratorPostgres) GetFullScript() ([]string, error) {
 	return init.ret, err
 }
 func (m *migratorPostgres) getFullScript() ([]string, error) {
+
 	sqlInstall, err := m.GetSqlInstallDb()
 	if err != nil {
 		return nil, err
@@ -37,7 +38,28 @@ func (m *migratorPostgres) getFullScript() ([]string, error) {
 
 	}
 	for _, entity := range ModelRegistry.GetAllModels() {
+
 		script, err := m.GetSqlAddColumn(entity.entity.entityType)
+		if err != nil {
+			return nil, err
+		}
+		if script != "" {
+			scripts = append(scripts, script)
+		}
+	}
+	for _, entity := range ModelRegistry.GetAllModels() {
+		//m.GetSqlAddUniqueIndex()
+		script, err := m.GetSqlAddUniqueIndex(entity.entity.entityType)
+		if err != nil {
+			return nil, err
+		}
+		if script != "" {
+			scripts = append(scripts, script)
+		}
+	}
+	for _, entity := range ModelRegistry.GetAllModels() {
+		//m.GetSqlAddUniqueIndex()
+		script, err := m.GetSqlAddIndex(entity.entity.entityType)
 		if err != nil {
 			return nil, err
 		}

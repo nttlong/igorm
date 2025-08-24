@@ -62,7 +62,7 @@ func BenchmarkTestNewDependTest003Once(t *testing.B) {
 
 }
 func TestNewDepend(t *testing.T) {
-	val, err := wx.NewDepen[Test003]()
+	val, err := wx.NewDepend[Test003]()
 	assert.NoError(t, err)
 	assert.NotEmpty(t, val)
 	t1 := val.T1
@@ -73,7 +73,7 @@ func TestNewDepend(t *testing.T) {
 func BenchmarkTestNewDepend(t *testing.B) {
 	for i := 0; i < t.N; i++ {
 
-		val, err := wx.NewDepen[Test003]()
+		val, err := wx.NewDepend[Test003]()
 		assert.NoError(t, err)
 		assert.NotEmpty(t, val)
 		t1 := val.T1

@@ -32,7 +32,7 @@ func (s *HtttpServer) Start() error {
 
 	s.handler = final
 
-	addr := fmt.Sprintf("%s:%d", s.Bind, s.Port)
+	addr := fmt.Sprintf("%s:%s", s.Bind, s.Port)
 	// fmt.Println("Server listening at", addr)
 	// return http.ListenAndServe(addr, s.handler)
 	s.server = &http.Server{
