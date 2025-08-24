@@ -59,8 +59,8 @@ func (fs *FileService) findNextFileNumber(dirPath string) (int, error) {
 	// Số tiếp theo sẽ là số lớn nhất + 1
 	return maxNumber + 1, nil
 }
-func (fs *FileService) GetFilePath(filePath string) (string, error) {
-	ret := fs.DirectorySvc.DirUpload + "/" + filePath
+func (fs *FileService) GetFilePath(fileDirectory, filePath string) (string, error) {
+	ret := fileDirectory + "/" + filePath
 	asbFilepath, err := filepath.Abs(ret)
 	if err != nil {
 		return "", err

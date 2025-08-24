@@ -38,6 +38,7 @@ func (d *Depend[TInstance]) Ins() (*TInstance, error) {
 			ret, err := handlers.Helper.DependNew(reflect.TypeFor[TInstance]())
 			if err != nil {
 				d.err = err
+				return
 			} else {
 				if ret == nil {
 					d.err = fmt.Errorf("cannot create instance of type %s, method New was not found", reflect.TypeFor[TInstance]().String())

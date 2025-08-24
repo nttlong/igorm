@@ -7,6 +7,7 @@ import (
 )
 
 type Media struct {
+	FileDirectory string
 	wx.ControllerContext
 	File        *services.FileService
 	Directories *services.DirectoryService
@@ -18,6 +19,7 @@ func (m *Media) New(
 	urlSvc *wx.Depend[services.UrlResolverService],
 ) error {
 	fmt.Println("Media.New")
+	m.FileDirectory = "./uploads"
 	ds.Init(func() (*services.DirectoryService, error) {
 		return &services.DirectoryService{}, nil
 	})

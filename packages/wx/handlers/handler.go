@@ -7,9 +7,8 @@ import (
 )
 
 type Handler struct {
-	Res     http.ResponseWriter
-	Req     *http.Request
-	BaseUrl string
+	Res http.ResponseWriter
+	Req *http.Request
 }
 type uriParam struct {
 	Position   int

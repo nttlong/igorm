@@ -3,6 +3,7 @@ package wx
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"sync"
 	httpServer "wx/HtttpServer"
 	handler "wx/handlers"
@@ -18,6 +19,8 @@ type UserClaims struct {
 
 type Handler struct {
 	handler.Handler
+	schema     string
+	rootAbsUrl string
 }
 
 type ControllerContext struct {
@@ -108,22 +111,42 @@ func getMethodByName[T any](name string) *reflect.Method {
 	})
 	return ret
 }
-func GetUriOfHandler[T any](server *httpServer.HtttpServer, methodName string) (string, error) {
-	mt := GetMethodByName[T](methodName)
-	if mt == nil {
-		return "", fmt.Errorf("%s of %T was not found", methodName, *new(T))
-	}
-	mtInfo, err := handler.Helper.GetHandlerInfo(*mt)
-	if err != nil {
-		return "", fmt.Errorf("%s of %T cause  error %s", methodName, *new(T), err.Error())
-	}
-	if mtInfo == nil {
-		return "", fmt.Errorf("%s of %T is not HttpMethod", methodName, *new(T))
-	}
-	if mtInfo.Uri != "" && mtInfo.Uri[0] == '/' {
-		return mtInfo.Uri, nil
-	}
-	return server.BaseUrl + "/" + mtInfo.Uri, nil
+
+type initGetUriOfHandler struct {
+	val  string
+	err  error
+	once sync.Once
+}
+
+var cacheGetUriOfHandler sync.Map
+
+func GetUriOfHandler[T any](methodName string) (string, error) {
+	key := methodName + "@" + reflect.TypeFor[T]().String() + "@"
+	actual, _ := cacheGetUriOfHandler.LoadOrStore(key, &initGetUriOfHandler{})
+	init := actual.(*initGetUriOfHandler)
+	init.once.Do(func() {
+
+		mt := GetMethodByName[T](methodName)
+		if mt == nil {
+			init.err = fmt.Errorf("%s of %T was not found", methodName, *new(T))
+			return
+		}
+		mtInfo, err := handler.Helper.GetHandlerInfo(*mt)
+		if err != nil {
+			init.err = fmt.Errorf("%s of %T cause  error %s", methodName, *new(T), err.Error())
+			return
+		}
+		if mtInfo == nil {
+			init.err = fmt.Errorf("%s of %T is not HttpMethod", methodName, *new(T))
+			return
+		}
+		if mtInfo.UriHandler != "" && mtInfo.IsAbsUri {
+			init.val = strings.TrimSuffix(mtInfo.UriHandler, "/")
+			return
+		}
+		init.val = "/" + strings.TrimSuffix(mtInfo.UriHandler, "/")
+	})
+	return init.val, init.err
 
 }
 

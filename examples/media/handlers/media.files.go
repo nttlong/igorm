@@ -9,7 +9,7 @@ func (media *Media) Files(ctx *struct {
 	wx.Handler `route:"uri:@/{*FilePath};method:get"`
 	FilePath   string
 }) error {
-	fullFIlePath, err := media.File.GetFilePath(ctx.FilePath)
+	fullFIlePath, err := media.File.GetFilePath(media.FileDirectory, ctx.FilePath)
 	if err != nil {
 		return err
 	}

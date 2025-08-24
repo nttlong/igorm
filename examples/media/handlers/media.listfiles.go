@@ -7,7 +7,7 @@ import (
 	"wx"
 )
 
-const rootPath = `D:\code\go\news2\igorm\examples\media\cmd\uploads`
+//const rootPath = `D:\code\go\news2\igorm\examples\media\cmd\uploads`
 
 type DirectoryReader struct {
 	Files []string
@@ -35,29 +35,32 @@ func (media *Media) ListFiles(ctx *struct {
 }, dr *wx.Depend[DirectoryReader], userSvc *wx.Auth[UserInfo], roleCck *wx.HttpService[RoleChecker]) (*[]string, error) {
 
 	// 1. Kiểm tra thư mục gốc
-	if _, err := os.Stat(rootPath); os.IsNotExist(err) {
+	if _, err := os.Stat(media.FileDirectory); os.IsNotExist(err) {
 		// http.Error(ctx.Res, "Directory not found.", http.StatusNotFound)
 		return nil, err
 	}
-
+	uriOfFile, err := wx.GetUriOfHandler[Media]("Files")
+	if err != nil {
+		return nil, err
+	}
 	// 2. Base URL
-	baseUrl := "http://" + ctx.Req.Host + ctx.Req.URL.Path
+	baseUrl := ctx.GetAbsRootUri() + "/api" + uriOfFile + "/"
 	results := make([]string, 0, 1024) // pre-allocate
 
 	// 3. WalkDir thay vì Walk
-	err := filepath.WalkDir(rootPath, func(path string, d os.DirEntry, err error) error {
+	err = filepath.WalkDir(media.FileDirectory, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		if path == rootPath {
+		if path == media.FileDirectory {
 			return nil
 		}
 
 		// relative path
-		rel, _ := filepath.Rel(rootPath, path)
+		rel, _ := filepath.Rel(media.FileDirectory, path)
 		urlPath := strings.ReplaceAll(rel, "\\", "/")
 
-		results = append(results, baseUrl+"/"+urlPath)
+		results = append(results, baseUrl+urlPath)
 		return nil
 	})
 

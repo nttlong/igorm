@@ -44,6 +44,10 @@ func (m *Media) ListOfFiles(ctx *wx.Handler, // <-- nhung method nao cua
 		Size int `json:"size"`
 	}) ([]string, error) {
 	folder := "./uploads"
+	streamFileUri, err := wx.GetUriOfHandler[Media]("ListOfFiles")
+	if err != nil {
+		return nil, err
+	}
 	//create folder if not exists
 	if _, err := os.Stat(folder); os.IsNotExist(err) {
 		err = os.Mkdir(folder, 0750)
@@ -56,8 +60,9 @@ func (m *Media) ListOfFiles(ctx *wx.Handler, // <-- nhung method nao cua
 		return nil, err
 	}
 	ret := []string{}
+
 	for _, file := range files {
-		ret = append(ret, m.BaseUrl+ctx.BaseUrl+"/example/media/file/"+file.Name())
+		ret = append(ret, ctx.GetAbsRootUri()+streamFileUri+"/example/media/file/"+file.Name())
 	}
 	return ret, nil
 }

@@ -2,9 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 //dotnet-counters monitor --process-id 10476 --counters System.Runtime
 //dotnet-counters collect --process-id 10476 --counters System.Runtime --output myapp_cpu_trace.nettrace
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 namespace MyApi.Controllers
 {
-
+    public class UserLoginModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
     public class CreateUserRequest
     {
         [Required]
@@ -19,7 +24,8 @@ namespace MyApi.Controllers
     public class MediaController : ControllerBase
     {
         //var rootPath = @"D:\code\go\news2\igorm\examples\media\cmd\uploads";
-        private readonly string rootPath = @"D:\code\go\news2\igorm\examples\media\cmd\uploads";
+        //C:\Users\MSI CYBORG\Desktop\uploads
+        private readonly string rootPath = @"C:\Users\MSI CYBORG\Desktop\uploads";
         [HttpGet("Hello")]
         public IActionResult Hello()
         {
@@ -98,5 +104,21 @@ namespace MyApi.Controllers
                 return StatusCode(500, new { message = "Error creating user", error = ex.Message });
             }
         }
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] UserLoginModel login)
+        {
+            // Giả sử bạn check login thành công và tạo user
+            var user = new
+            {
+                username = login.Username,
+                password = login.Password
+            };
+
+            string secret = "mysupersecretkeythatismorethan32chars!";
+            string token = JwtHelper.GenerateJwt(user, secret, TimeSpan.FromHours(1));
+
+            return Ok(new { access_token = token });
+        }
+
     }
 }

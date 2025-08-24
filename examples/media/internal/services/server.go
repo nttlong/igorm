@@ -10,7 +10,7 @@ type Server struct {
 }
 
 func (s *Server) Start() error {
-	wx.Routes("/api", handlers.Media{}, handlers.Users{})
+	wx.Routes("/api", handlers.Media{}, handlers.Users{}, handlers.Logins{})
 
 	server := wx.NewHtttpServer("/api", 8080, "0.0.0.0")
 	swagger := wx.CreateSwagger(server, "swagger")
