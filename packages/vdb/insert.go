@@ -45,7 +45,7 @@ func (r inserter) fetchAfterInsert(dialect Dialect, res sql.Result, entity *migr
 			[parent_id], ...) OUTPUT INSERTED.[id] VALUES (@p1, @p2, @p3, ...)"
 	*/
 	if err != nil {
-		return dialect.ParseError(err)
+		return err
 	}
 
 	for _, col := range autoCols {
@@ -138,7 +138,15 @@ func (r *inserter) InsertWithTx(tx *tenantDB.TenantTx, data interface{}) error {
 	}
 	sqlResult, err := sqlStmt.Exec(args...)
 	if err != nil {
-		errParse := dialect.ParseError(err)
+		m, err1 := migrate.NewMigrator(tx.Db)
+		if err1 != nil {
+			return err
+		}
+		shema, err1 := m.GetLoader().LoadFullSchema(tx.Db)
+		if err1 != nil {
+			return err
+		}
+		errParse := dialect.ParseError(shema, err)
 		if errParse, ok := errParse.(*DialectError); ok {
 			if errParse.ConstraintName != "" && errParse.ErrorType == DIALECT_DB_ERROR_TYPE_DUPLICATE {
 				uk := migrate.FindUKConstraint(errParse.ConstraintName)
@@ -192,72 +200,65 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 		dataValue = dataValue.Elem()
 	}
 	repoType := r.getEntityInfo(typ)
-	var err error
-	sql, args := dialect.MakeSqlInsert(repoType.tableName, repoType.entity.GetColumns(), data)
-	sqlStmt, err := db.Prepare(sql)
+
+	sqlText, args := dialect.MakeSqlInsert(repoType.tableName, repoType.entity.GetColumns(), data)
+	sqlStmt, err := db.Prepare(sqlText)
 	if err != nil {
 		return err
 	}
 	defer sqlStmt.Close()
-	if dialect.Name() == "mssql" {
-		var insertedID int64
 
+	switch dialect.Name() {
+	case "mssql", "postgres":
+		var insertedID int64
 		err = sqlStmt.QueryRow(args...).Scan(&insertedID)
 		if err == nil {
 			err = fetchAfterInsertForQueryRow(repoType.entity, dataValue, insertedID)
-
 		}
-	} else if dialect.Name() == "postgres" {
-		var insertedID int64
 
-		err = sqlStmt.QueryRow(args...).Scan(&insertedID)
+	default:
+		var res sql.Result
+		res, err = sqlStmt.Exec(args...) // ✅ chỗ này đã hợp lệ
 		if err == nil {
-			return err
-		}
-		err = fetchAfterInsertForQueryRow(repoType.entity, dataValue, insertedID)
-		if err != nil {
-			return err
-		}
-
-	} else {
-		// start := time.Now()
-		sqlResult, errExec := sqlStmt.Exec(args...)
-		if errExec == nil {
-			errExec = r.fetchAfterInsert(dialect, sqlResult, repoType.entity, dataValue)
-			// n := time.Since(start).Milliseconds()
-			// fmt.Println("time elapsed:", n)
-			if errExec != nil {
-				err = errExec
-			}
-		} else {
-			err = errExec
+			err = r.fetchAfterInsert(dialect, res, repoType.entity, dataValue)
 		}
 	}
 
 	if err != nil {
-		errParse := dialect.ParseError(err)
-		if errParse, ok := errParse.(*DialectError); ok {
-			if errParse.ConstraintName != "" {
-				uk := migrate.FindUKConstraint(errParse.ConstraintName)
-				if uk != nil {
-
-					errParse.Table = repoType.tableName
-					errParse.StructName = repoType.entity.GetType().String()
-					errParse.Fields = uk.Fields
-					errParse.DbCols = uk.DbCols
-					return errParse
-				}
-
-			} else {
-				errParse.Table = repoType.tableName
-				errParse.StructName = repoType.entity.GetType().String()
-				errParse.Fields = []string{repoType.entity.GetFieldByColumnName(errParse.DbCols[0])}
-			}
-
+		m, err1 := migrate.NewMigrator(db)
+		if err1 != nil {
+			return err
 		}
-		return errParse
+		schema, err1 := m.GetLoader().LoadFullSchema(db)
+		if err1 != nil {
+			return err
+		}
+
+		return r.parseDialectError(schema, dialect, err, repoType)
 	}
+
 	return nil
+}
+
+func (r *inserter) parseDialectError(schema *migrate.DbSchema, dialect Dialect, err error, repoType *entityInfo) error {
+
+	errParse := dialect.ParseError(schema, err)
+	if derr, ok := errParse.(*DialectError); ok {
+		if derr.ConstraintName != "" {
+			if uk := migrate.FindUKConstraint(derr.ConstraintName); uk != nil {
+				derr.Table = repoType.tableName
+				derr.StructName = repoType.entity.GetType().String()
+				derr.Fields = uk.Fields
+				derr.DbCols = uk.DbCols
+				return derr
+			}
+		}
+		derr.Table = repoType.tableName
+		derr.StructName = repoType.entity.GetType().String()
+		derr.Fields = []string{repoType.entity.GetFieldByColumnName(derr.DbCols[0])}
+		return derr
+	}
+	return errParse
 }
 
 var inserterObj = &inserter{}
@@ -317,91 +318,91 @@ func InsertWithTx(tx *tenantDB.TenantTx, data interface{}) error {
 
 type encoderFunc func(v reflect.Value, args *[]interface{})
 
-func InsertBatchOld[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
-	if len(data) == 0 {
-		return 0, nil
-	}
+// func InsertBatchOld[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
+// 	if len(data) == 0 {
+// 		return 0, nil
+// 	}
 
-	const maxBatchSize = 200 // nên chọn nhỏ để tránh lỗi "too many placeholders"
+// 	const maxBatchSize = 200 // nên chọn nhỏ để tránh lỗi "too many placeholders"
 
-	m, err := NewMigrator(db)
-	if err != nil {
-		return 0, err
-	}
-	if err = m.DoMigrates(); err != nil {
-		return 0, err
-	}
+// 	m, err := NewMigrator(db)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	if err = m.DoMigrates(); err != nil {
+// 		return 0, err
+// 	}
 
-	dialect := dialectFactory.Create(db.GetDriverName())
-	repoType := inserterObj.getEntityInfo(reflect.TypeOf(data[0]))
-	tableName := repoType.tableName
-	columns := []string{}
-	colDefs := []migrate.ColumnDef{}
+// 	dialect := dialectFactory.Create(db.GetDriverName())
+// 	repoType := inserterObj.getEntityInfo(reflect.TypeOf(data[0]))
+// 	tableName := repoType.tableName
+// 	columns := []string{}
+// 	colDefs := []migrate.ColumnDef{}
 
-	// Chỉ lấy các cột không phải Auto
-	for _, col := range repoType.entity.GetColumns() {
-		if !col.IsAuto {
-			columns = append(columns, dialect.Quote(col.Name))
-			colDefs = append(colDefs, col)
-		}
-	}
+// 	// Chỉ lấy các cột không phải Auto
+// 	for _, col := range repoType.entity.GetColumns() {
+// 		if !col.IsAuto {
+// 			columns = append(columns, dialect.Quote(col.Name))
+// 			colDefs = append(colDefs, col)
+// 		}
+// 	}
 
-	placeholdersPerRow := "(" + strings.Repeat("?, ", len(colDefs)-1) + "?" + ")"
-	var totalRows int64
+// 	placeholdersPerRow := "(" + strings.Repeat("?, ", len(colDefs)-1) + "?" + ")"
+// 	var totalRows int64
 
-	for i := 0; i < len(data); i += maxBatchSize {
-		end := i + maxBatchSize
-		if end > len(data) {
-			end = len(data)
-		}
+// 	for i := 0; i < len(data); i += maxBatchSize {
+// 		end := i + maxBatchSize
+// 		if end > len(data) {
+// 			end = len(data)
+// 		}
 
-		batch := data[i:end]
-		placeholderList := []string{}
-		args := []interface{}{}
+// 		batch := data[i:end]
+// 		placeholderList := []string{}
+// 		args := []interface{}{}
 
-		for _, row := range batch {
-			val := reflect.ValueOf(row)
-			if val.Kind() == reflect.Ptr {
-				val = val.Elem()
-			}
-			placeholderList = append(placeholderList, placeholdersPerRow)
+// 		for _, row := range batch {
+// 			val := reflect.ValueOf(row)
+// 			if val.Kind() == reflect.Ptr {
+// 				val = val.Elem()
+// 			}
+// 			placeholderList = append(placeholderList, placeholdersPerRow)
 
-			for _, col := range colDefs {
-				fieldVal := val.FieldByName(col.Field.Name)
-				if fieldVal.CanInterface() {
-					args = append(args, fieldVal.Interface())
-				} else {
-					args = append(args, nil)
-				}
-			}
-		}
+// 			for _, col := range colDefs {
+// 				fieldVal := val.FieldByName(col.Field.Name)
+// 				if fieldVal.CanInterface() {
+// 					args = append(args, fieldVal.Interface())
+// 				} else {
+// 					args = append(args, nil)
+// 				}
+// 			}
+// 		}
 
-		sql := "INSERT INTO " + dialect.Quote(tableName) + " (" +
-			strings.Join(columns, ", ") + ") VALUES " +
-			strings.Join(placeholderList, ", ")
+// 		sql := "INSERT INTO " + dialect.Quote(tableName) + " (" +
+// 			strings.Join(columns, ", ") + ") VALUES " +
+// 			strings.Join(placeholderList, ", ")
 
-		sqlResult, err := db.Exec(sql, args...)
-		if err != nil {
-			errParse := dialect.ParseError(err)
-			if derr, ok := errParse.(*DialectError); ok {
-				derr.Table = tableName
-				derr.StructName = repoType.entity.GetType().String()
-				if len(derr.DbCols) > 0 {
-					derr.Fields = []string{repoType.entity.GetFieldByColumnName(derr.DbCols[0])}
-				}
-			}
-			return totalRows, errParse
-		}
+// 		sqlResult, err := db.Exec(sql, args...)
+// 		if err != nil {
+// 			errParse := dialect.ParseError(err)
+// 			if derr, ok := errParse.(*DialectError); ok {
+// 				derr.Table = tableName
+// 				derr.StructName = repoType.entity.GetType().String()
+// 				if len(derr.DbCols) > 0 {
+// 					derr.Fields = []string{repoType.entity.GetFieldByColumnName(derr.DbCols[0])}
+// 				}
+// 			}
+// 			return totalRows, errParse
+// 		}
 
-		affected, err := sqlResult.RowsAffected()
-		if err != nil {
-			return totalRows, err
-		}
-		totalRows += affected
-	}
+// 		affected, err := sqlResult.RowsAffected()
+// 		if err != nil {
+// 			return totalRows, err
+// 		}
+// 		totalRows += affected
+// 	}
 
-	return totalRows, nil
-}
+// 	return totalRows, nil
+// }
 
 var encoderCache sync.Map // map[reflect.Type]func(reflect.Value, *[]interface{})
 
@@ -486,7 +487,12 @@ func InsertBatch[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
 		sql := sb.String()
 		sqlResult, err := db.Exec(sql, args...)
 		if err != nil {
-			errParse := dialect.ParseError(err)
+			shema, err1 := m.GetLoader().LoadFullSchema(db)
+			if err1 != nil {
+				return totalRows, err
+			}
+
+			errParse := dialect.ParseError(shema, err)
 			if derr, ok := errParse.(*DialectError); ok {
 				derr.Table = repoType.tableName
 				derr.StructName = repoType.entity.GetType().String()

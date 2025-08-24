@@ -42,7 +42,3 @@ func (d *postgresDialect) SqlFunction(delegator *DialectDelegateFunction) (strin
 		return "", nil
 	}
 }
-
-func (d *postgresDialect) ParseError(err error) error {
-	panic(fmt.Errorf("not implemented, see file eorm/dialect.msPostgressql.go"))
-}

@@ -2,11 +2,12 @@ package vdb
 
 import (
 	"fmt"
+	"vdb/migrate"
 
 	"github.com/go-sql-driver/mysql"
 )
 
-func (d *mySqlDialect) ParseError(err error) error {
+func (d *mySqlDialect) ParseError(dbSchame *migrate.DbSchema, err error) error {
 	if mysqlErr, ok := err.(*mysql.MySQLError); ok {
 		if mysqlErr.Number == 1048 { //1452
 			return d.ParseError1048(mysqlErr)

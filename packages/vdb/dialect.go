@@ -69,7 +69,7 @@ func (e *DialectError) Reload() {
 type Dialect interface {
 	LikeValue(val string) string
 
-	ParseError(err error) error
+	ParseError(dbSchame *migrate.DbSchema, err error) error
 	Name() string
 	Quote(str ...string) string
 	GetTableAndColumnsDictionary(db *sql.DB) (map[string]string, error)

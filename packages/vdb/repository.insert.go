@@ -28,7 +28,7 @@ func (r *Repository[T]) fetchAfterInsert(dialect Dialect, sqlRow *sql.Row, entit
 	err := sqlRow.Scan(scanReData...)
 	if err != nil {
 
-		return entity, dialect.ParseError(err)
+		return entity, err
 	}
 
 	return entity, nil

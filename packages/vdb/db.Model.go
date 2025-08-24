@@ -323,7 +323,19 @@ func (m *dbModel) updateFieldAndValue(field string, value interface{}) (sql.Resu
 			defer cancel()
 			r, err := m.db.ExecContext(ctx, sql, args...)
 			if err != nil {
-				return nil, "", err
+				dialect := dialectFactory.create(m.db.GetDriverName())
+				migrator, errLoad := migrate.NewMigrator(m.db.TenantDB)
+				if errLoad != nil {
+					return nil, "", err
+				}
+				schema, errLoad := migrator.GetLoader().LoadFullSchema(m.db.TenantDB)
+				if errLoad != nil {
+					return nil, "", err
+				}
+
+				dError := dialect.ParseError(schema, err)
+
+				return nil, "", dError
 			}
 			return r, sql, nil
 		} else {
@@ -355,40 +367,9 @@ func (m *dbModel) updateFieldAndValue(field string, value interface{}) (sql.Resu
 }
 func (m *dbModel) parseUPdateError(result sql.Result, sql string, err error) UpdateResult {
 	if err != nil {
-		dialect := dialectFactory.create(m.db.GetDriverName())
-		dError := dialect.ParseError(err)
-		if dialectError, ok := dError.(*DialectError); ok {
-			if dialectError.ConstraintName != "" {
-				loader, errLoader := migrate.MigratorLoader(m.db.TenantDB)
-				if errLoader == nil {
-					schema, errLoader := loader.LoadFullSchema(m.db.TenantDB)
-					if errLoader == nil {
-						cols := schema.UniqueKeys[dialectError.ConstraintName]
-						dialectError.Table = m.tableName
-
-						for _, col := range cols.Columns {
-							dialectError.DbCols = append(dialectError.Fields, col.Name)
-							for _, col2 := range *m.cols {
-								if col.Name == col2.Name {
-									dialectError.Fields = append(dialectError.Fields, col2.Field.Name)
-								}
-							}
-
-						}
-
-						return UpdateResult{
-							Error: dialectError,
-							Sql:   sql,
-						}
-					}
-
-				}
-
-			}
-		}
 
 		return UpdateResult{
-			Error: dError,
+			Error: err,
 			Sql:   sql,
 		}
 	}
@@ -412,6 +393,7 @@ func (m *dbModel) parseUPdateError(result sql.Result, sql string, err error) Upd
 func (m *dbModel) Update(args ...interface{}) UpdateResult {
 	if len(args) == 2 {
 		if field, ok := args[0].(string); ok {
+
 			r, sql, err := m.updateFieldAndValue(field, args[1])
 			return m.parseUPdateError(r, sql, err)
 

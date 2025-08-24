@@ -7,7 +7,6 @@ import (
 	"vdb/tenantDB"
 
 	_ "github.com/lib/pq"
-	"golang.org/x/sync/singleflight"
 )
 
 type IMigrator interface {
@@ -66,10 +65,13 @@ func NewMigrator2(db *tenantDB.TenantDB) (IMigrator, error) {
 	return mi.val, mi.err
 }
 
-var (
-	cacheNewMigrator sync.Map
-	migratorGroup    singleflight.Group
-)
+type initNewMigrator struct {
+	once sync.Once
+	val  IMigrator
+	err  error
+}
+
+var cacheNewMigrator sync.Map
 
 func NewMigrator(db *tenantDB.TenantDB) (IMigrator, error) {
 	err := db.Detect()
@@ -77,51 +79,34 @@ func NewMigrator(db *tenantDB.TenantDB) (IMigrator, error) {
 		return nil, err
 	}
 	key := fmt.Sprintf("%s:%s", db.GetDBName(), db.GetDbType())
+	actual, _ := cacheNewMigrator.LoadOrStore(key, &initNewMigrator{})
+	mi := actual.(*initNewMigrator)
+	mi.once.Do(func() {
 
-	// 1. Check cache trước
-	if v, ok := cacheNewMigrator.Load(key); ok {
-		return v.(IMigrator), nil
-	}
-
-	// 2. Dùng singleflight để tránh gọi trùng
-	v, err, _ := migratorGroup.Do(key, func() (interface{}, error) {
-		// Check cache lần nữa trong group (để tránh race)
-		if v, ok := cacheNewMigrator.Load(key); ok {
-			return v, nil
-		}
-
-		var ret IMigrator
 		loader, err := MigratorLoader(db)
 		if err != nil {
-			return nil, err
+			mi.err = err
 		}
 		switch db.GetDbType() {
 		case tenantDB.DB_DRIVER_MSSQL:
-			ret = &migratorMssql{
+
+			mi.val = &migratorMssql{
 				db:     db,
 				loader: loader,
 			}
 		case tenantDB.DB_DRIVER_Postgres:
-			ret = &migratorPostgres{
+			mi.val = &migratorPostgres{
 				db:     db,
 				loader: loader,
 			}
 		case tenantDB.DB_DRIVER_MySQL:
-			ret = &migratorMySql{
+			mi.val = &migratorMySql{
 				db:     db,
 				loader: loader,
 			}
 		default:
-			return nil, fmt.Errorf("unsupported database type: %s", db.GetDbType())
+			mi.err = fmt.Errorf("unsupported database type: %s", db.GetDbType())
 		}
-
-		cacheNewMigrator.Store(key, ret)
-		return ret, nil
 	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return v.(IMigrator), nil
+	return mi.val, mi.err
 }
