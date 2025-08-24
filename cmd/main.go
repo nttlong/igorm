@@ -1,25 +1,24 @@
-package services
+package main
 
 import (
-	"media/handlers"
+	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"wx"
+	_ "wx"
 	"wx/mw"
 )
 
-type Server struct {
-}
-
-func (s *Server) Start() error {
-	wx.Routes("/api", handlers.Media{}, handlers.Users{}, handlers.Logins{})
+func main() {
+	log.Print("starting server...")
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 	portNumber, err := strconv.Atoi(port)
 	if err != nil {
-		return err
+		panic(err)
 	}
 	server := wx.NewHtttpServer("/api", portNumber, "127.0.0.1")
 	swagger := wx.CreateSwagger(server, "swagger")
@@ -34,8 +33,12 @@ func (s *Server) Start() error {
 	server.Middleware(mw.Cors)
 	err = server.Start()
 	if err != nil {
-		return err
+		panic(err)
 	}
-	return nil
 
+	// Start HTTP server.
+	log.Printf("listening on port %s", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal(err)
+	}
 }
