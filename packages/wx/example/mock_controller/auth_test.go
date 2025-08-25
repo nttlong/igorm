@@ -30,9 +30,14 @@ func (a *AuthTest) New() {
 	// fmt.Println("New method called")
 
 }
+
+var handlerEror error
+
 func (a *AuthTest) Post(ctx *wx.Handler, data *UserInfo, user *wx.Auth[UserInfo]) (interface{}, error) {
+	// var db DbService
 	_, err := user.Get()
 	if err != nil {
+		handlerEror = err
 		return nil, err
 	}
 	// fmt.Println("User service:", userSvc)

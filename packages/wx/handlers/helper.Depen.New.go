@@ -34,13 +34,13 @@ func (h *helperType) dependFIndNewMethod(typ reflect.Type) (*reflect.Method, err
 	for i := 0; i < typ.NumMethod(); i++ {
 		if typ.Method(i).Name == "New" {
 			mt := typ.Method(i)
-			if mt.Type.NumOut() != 1 {
-				msgErr := fmt.Sprintf("%s.New must return error", typ.String())
+			if mt.Type.NumOut() > 2 {
+				msgErr := fmt.Sprintf("%s.New must return error , return interface,error or return instance,error", typ.String())
 				return nil, errors.New(msgErr)
 			}
 
-			if mt.Type.Out(0) != h.ErrorType {
-				msgErr := fmt.Sprintf("%s.New return %s, expected %s.New to return error", typ.String(), mt.Type.Out(0).String(), typ.String())
+			if mt.Type.Out(mt.Type.NumOut()-1) != h.ErrorType {
+				msgErr := fmt.Sprintf("%s.New must return error , return interface,error or return instance,error", typ.String())
 				return nil, errors.New(msgErr)
 			}
 			for j := 1; j < mt.Type.NumIn(); j++ {
@@ -170,6 +170,19 @@ func (h *helperType) dependNewInternal(typ reflect.Type, visited map[reflect.Typ
 			args[i] = *depenVal
 		}
 		retCall := newMethod.Func.Call(args)
+		if len(retCall) == 0 {
+			return &ret, nil
+		}
+		if len(retCall) > 1 {
+			if !retCall[1].IsNil() {
+				return nil, retCall[1].Interface().(error)
+			}
+			if retCall[0].IsNil() {
+				return nil, nil
+			}
+
+			return &retCall[0], nil
+		}
 		if !retCall[0].IsNil() {
 			return nil, retCall[0].Interface().(error)
 		}

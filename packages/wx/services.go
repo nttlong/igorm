@@ -15,7 +15,7 @@ type HttpContext struct {
 	Response http.ResponseWriter
 }
 type HttpService[TService any] struct {
-	Instance    *TService
+	instance    *TService
 	Err         error
 	newMethod   *reflect.Method // The method to create a new instance of the service
 	HttpContext *HttpContext
@@ -63,7 +63,7 @@ func findNewMethodOfHttpService(serviceType reflect.Type) (*reflect.Method, erro
 }
 
 func (hs *HttpService[TService]) Ins() (*TService, error) {
-	if hs.Instance == nil {
+	if hs.instance == nil {
 		if hs.newMethod == nil {
 			newMethod, err := findNewMethodOfHttpService(reflect.TypeFor[TService]())
 
@@ -113,7 +113,7 @@ func (hs *HttpService[TService]) Ins() (*TService, error) {
 		return args[0].Interface().(*TService), nil
 
 	}
-	return hs.Instance, hs.Err
+	return hs.instance, hs.Err
 }
 
 var httpServiceName = strings.Split(reflect.TypeFor[HttpService[any]]().Name(), "[")[0] + "["
@@ -129,4 +129,5 @@ func createServiceContext(req *http.Request, res http.ResponseWriter) reflect.Va
 func init() {
 	handlers.DependIsHttpService = ServiceUtil.isInjectHttpService
 	handlers.CreateServiceContext = createServiceContext
+	handlers.DependIsHttpServiceMethodHasContext = dependIsHttpServiceMethodHasContext
 }

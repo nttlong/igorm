@@ -171,6 +171,20 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	// scan inject service (HttpService)
 	for i := 1; i < method.Type.NumIn(); i++ {
 		if Helper.DependIsHttpService(method.Type.In(i)) {
+			typArg := method.Type.In(i)
+			if typArg.Kind() == reflect.Ptr {
+				typArg = typArg.Elem()
+			}
+			fieldInstance, ok := typArg.FieldByName("instance")
+			if !ok {
+				return nil, fmt.Errorf("can not find field Obj in %s", typArg.String())
+			}
+
+			fmt.Println(fieldInstance.Type.String())
+			err := Helper.DependIsHttpServiceMethodHasContext(fieldInstance.Type)
+			if err != nil {
+				return nil, err
+			}
 			if ret.IndexOfInjectorService == nil {
 				ret.IndexOfInjectorService = []int{}
 			}

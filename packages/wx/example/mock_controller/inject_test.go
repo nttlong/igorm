@@ -1,6 +1,7 @@
 package mockcontroller
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 	"wx"
@@ -81,12 +82,29 @@ func BenchmarkCreateUser(b *testing.B) {
 
 }
 
+type IDbService interface {
+	GetName() string
+}
 type DbService struct {
+}
+
+func (d *DbService) New(ctx *wx.HttpContext) (IDbService, error) {
+	return d, nil
+}
+func (d *DbService) GetName() string {
+	return "DbService"
 }
 
 func (c *ControllerInject) GetUser(ctx *struct {
 	wx.Handler `route:"@/get-user;method:get"`
-}, db *wx.Depend[DbService]) (interface{}, error) {
+}, db *wx.HttpService[DbService]) (interface{}, error) {
+	dbSvc, err := db.Ins()
+	if err != nil {
+		handlerEror = err
+		return nil, err
+	}
+	fmt.Println(dbSvc)
+
 	return nil, nil
 
 }
@@ -96,7 +114,8 @@ func TestGetUser(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	assert.Equal(t, 1, len(mtInfo.IndexOfInjectors))
+	assert.Equal(t, 0, len(mtInfo.IndexOfInjectors))
+	assert.Equal(t, 2, mtInfo.IndexOfInjectorService)
 	requestBuilder := wx.Helper.ReqExec.CreateMockRequestBuilder()
 	requestBuilder.Get("/api/" + mtInfo.UriHandler)
 	for i := 0; i < 5; i++ {
@@ -104,6 +123,7 @@ func TestGetUser(t *testing.T) {
 			wx.Helper.ReqExec.Invoke(*mtInfo, r, w)
 
 		})
+		assert.NoError(t, handlerEror)
 	}
 
 }

@@ -83,7 +83,7 @@ func (s *serviceUtilType) extractInfo(method reflect.Method) (*newMthodInfoOfSer
 		IndexOfInjectords:  []int{},
 	}
 	unknownArgs := []int{}
-	unknownArgsType := []reflect.Type{}
+	//unknownArgsType := []reflect.Type{}
 	for i := 1; i < method.Type.NumIn(); i++ {
 		typ := method.Type.In(i)
 		if typ.Kind() == reflect.Ptr {
@@ -96,6 +96,7 @@ func (s *serviceUtilType) extractInfo(method reflect.Method) (*newMthodInfoOfSer
 		if s.isHttpService(typ) {
 			if ret.IndexOfHttpContext == -1 {
 				ret.IndexOfHttpContext = i
+
 			} else {
 				return nil, fmt.Errorf("%s.%s has more than one HttpService argument", method.Type.In(0).String(), method.Name)
 			}
@@ -110,11 +111,11 @@ func (s *serviceUtilType) extractInfo(method reflect.Method) (*newMthodInfoOfSer
 			continue
 		}
 		unknownArgs = append(unknownArgs, i)
-		unknownArgsType = append(unknownArgsType, typ)
+		//unknownArgsType = append(unknownArgsType, typ)
 
 	}
 	if ret.IndexOfHttpContext == -1 {
-		return nil, fmt.Errorf("%s.%s has no HttpService argument", method.Type.In(0).String(), method.Name)
+		return nil, fmt.Errorf("%s.%s has no %s argument", method.Type.In(0).String(), method.Name, reflect.TypeOf(&HttpContext{}).String())
 	}
 	if len(unknownArgs) > 0 {
 		reciverType := method.Type.In(0)
@@ -131,6 +132,18 @@ func (s *serviceUtilType) extractInfo(method reflect.Method) (*newMthodInfoOfSer
 		return nil, errors.New(msg)
 	}
 	return ret, nil
+}
+func dependIsHttpServiceMethodHasContext(typ reflect.Type) error {
+	newMethod, err := findNewMethodOfHttpService(typ)
+	if err != nil {
+		return err
+	}
+	_, err = ServiceUtil.ExtractInfo(*newMethod)
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
 
 var ServiceUtil = &serviceUtilType{
