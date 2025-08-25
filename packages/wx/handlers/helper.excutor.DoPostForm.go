@@ -44,15 +44,26 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 		bodyType = handlerInfo.TypeOfRequestBodyElem
 	}
 	bodyData := bodyDataRet.Elem()
-	err := r.ParseMultipartForm(32 << 20)
-	if err != nil {
-		return nil, wxErrors.NewFileParseError("error parsing multipart form", err)
+	var formData map[string][]string
+	if strings.HasPrefix(r.Header.Get("Content-Type"), "multipart/form-data; boundary=") {
+		err := r.ParseMultipartForm(32 << 20)
+		if err != nil {
+			return nil, wxErrors.NewFileParseError("error parsing multipart form", err)
+		}
+		formData = r.MultipartForm.Value
+	} else {
+		err := r.ParseForm()
+		if err != nil {
+			return nil, wxErrors.NewFileParseError("error parsing form", err)
+		}
+		formData = r.Form
 	}
 
 	//scan all post files
 	if r.MultipartForm != nil && len(r.MultipartForm.File) > 0 {
 		err := r.ParseMultipartForm(32 << 20)
 		if err != nil {
+
 			return nil, wxErrors.NewFileParseError("error parsing multipart form", err)
 		}
 
@@ -103,7 +114,7 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 
 		}
 	}
-	for key, values := range r.PostForm {
+	for key, values := range formData {
 
 		field := reqExec.GetFieldByName(bodyType, key)
 		if field == nil {
