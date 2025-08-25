@@ -7,7 +7,7 @@ import (
 )
 
 type Form[T any] struct {
-	Data T
+	Data *T
 }
 
 func isGenericForm(typ reflect.Type) bool {

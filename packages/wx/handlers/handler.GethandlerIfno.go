@@ -263,7 +263,18 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 
 				ret.TypeOfRequestBodyElem = typ
 				ret.IndexOfRequestBody = i
-				ret.IsFormUpload = h.isGenericForm(typ)
+				ret.IsFormPost = h.isGenericForm(typ)
+				if ret.IsFormPost {
+					dataField, ok := ret.TypeOfRequestBodyElem.FieldByName("Data")
+					if ok {
+						ret.FormPostType = dataField.Type
+
+						if dataField.Type.Kind() == reflect.Ptr {
+							ret.FormPostTypeEle = dataField.Type.Elem()
+						}
+					}
+				}
+
 				break
 			}
 		}

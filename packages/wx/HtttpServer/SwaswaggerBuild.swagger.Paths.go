@@ -115,11 +115,12 @@ func (sb *SwaggerBuild) createOperation(handler WebHandler) *swaggers3.Operation
 	return ret
 }
 func (sb *SwaggerBuild) createRequestBody(handler WebHandler) *swaggers3.RequestBody {
-	if handler.ApiInfo.IsFormUpload {
+	if handler.ApiInfo.IsFormPost {
 		props := make(map[string]*swaggers3.Schema)
-		for i := 0; i < handler.ApiInfo.TypeOfRequestBodyElem.NumField(); i++ {
+		bodyType := handler.ApiInfo.FormPostTypeEle
+		for i := 0; i < bodyType.NumField(); i++ {
 			if !internal.Contains(handler.ApiInfo.FormUploadFile, i) {
-				field := handler.ApiInfo.TypeOfRequestBodyElem.Field(i)
+				field := bodyType.Field(i)
 				fieldType := field.Type
 				if fieldType.Kind() == reflect.Ptr {
 					fieldType = fieldType.Elem()

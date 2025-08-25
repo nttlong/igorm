@@ -104,7 +104,10 @@ type HandlerInfo struct {
 			FormUploadFile=[10,13]
 
 	*/
-	IsFormUpload   bool
+	IsFormPost      bool
+	FormPostType    reflect.Type
+	FormPostTypeEle reflect.Type
+
 	FormUploadFile []int
 	/*
 			If the handler has a request body argument and is neither wx.Handler nor inject or auth,

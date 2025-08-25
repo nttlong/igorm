@@ -25,6 +25,6 @@ func TestFormPost(t *testing.T) {
 	assert.NoError(t, err, "Error should be nil")
 	assert.NotNil(t, info)
 	assert.Equal(t, 2, info.IndexOfRequestBody)
-	assert.Equal(t, true, info.IsFormUpload)
+	assert.Equal(t, true, info.IsFormPost)
 
 }

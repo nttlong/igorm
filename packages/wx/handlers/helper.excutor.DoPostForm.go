@@ -7,7 +7,25 @@ import (
 	"reflect"
 	"strings"
 	wxErrors "wx/errors"
+	"wx/internal"
 )
+
+func (reqExec *RequestExecutor) GetFieldByName(typ reflect.Type, fieldName string) *reflect.StructField {
+	key := typ.String() + "/RequestExecutor/GetFieldByName/" + fieldName
+	ret, err := internal.OnceCall(key, func() (*reflect.StructField, error) {
+		ret, ok := typ.FieldByNameFunc(func(s string) bool {
+			return strings.EqualFold(s, fieldName)
+		})
+		if !ok {
+			return nil, nil
+		}
+		return &ret, nil
+	})
+	if err != nil {
+		return nil
+	}
+	return ret
+}
 
 // type formBodyItem struct {
 // 	IndexFields [][]int
@@ -16,7 +34,15 @@ import (
 // }
 
 func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Request) (*reflect.Value, error) {
-	bodyDataRet := reflect.New(handlerInfo.TypeOfRequestBodyElem)
+	var bodyDataRet reflect.Value
+	var bodyType reflect.Type
+	if handlerInfo.IsFormPost {
+		bodyDataRet = reflect.New(handlerInfo.FormPostTypeEle)
+		bodyType = handlerInfo.FormPostTypeEle
+	} else {
+		bodyDataRet = reflect.New(handlerInfo.TypeOfRequestBodyElem)
+		bodyType = handlerInfo.TypeOfRequestBodyElem
+	}
 	bodyData := bodyDataRet.Elem()
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
@@ -31,10 +57,9 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 		}
 
 		for key, values := range r.MultipartForm.File {
-			field, ok := handlerInfo.TypeOfRequestBodyElem.FieldByNameFunc(func(s string) bool {
-				return strings.EqualFold(s, key)
-			})
-			if !ok {
+			field := reqExec.GetFieldByName(handlerInfo.TypeOfRequestBodyElem, key)
+
+			if field == nil {
 				continue
 			}
 
@@ -79,12 +104,12 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 		}
 	}
 	for key, values := range r.PostForm {
-		field, ok := handlerInfo.TypeOfRequestBodyElem.FieldByNameFunc(func(s string) bool {
-			return strings.EqualFold(s, key)
-		})
-		if !ok {
+
+		field := reqExec.GetFieldByName(bodyType, key)
+		if field == nil {
 			continue
 		}
+
 		fileFieldSet := bodyData.FieldByIndex(field.Index)
 		if fileFieldSet.Kind() == reflect.Ptr {
 			eleType := fileFieldSet.Type().Elem()
@@ -128,6 +153,12 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 			continue
 		}
 		//panic("not implete at file packages\\wx\\handlers\\helper.excutor.DoPostForm.go")
+	}
+	if handlerInfo.IsFormPost {
+		retVal := reflect.New(handlerInfo.TypeOfRequestBodyElem)
+		retVal.Elem().FieldByName("Data").Set(bodyDataRet)
+		return &retVal, nil
+
 	}
 
 	return &bodyDataRet, nil
