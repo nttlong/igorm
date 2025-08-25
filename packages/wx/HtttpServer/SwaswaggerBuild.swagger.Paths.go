@@ -107,6 +107,7 @@ func (sb *SwaggerBuild) createOperation(handler WebHandler) *swaggers3.Operation
 	}
 	if handler.ApiInfo.IndexOfRequestBody > 0 {
 		ret.RequestBody = sb.createRequestBody(handler)
+
 		//ret.Parameters = append(ret.Parameters, sb.createBodyParameters(handler))
 
 	}
@@ -114,18 +115,74 @@ func (sb *SwaggerBuild) createOperation(handler WebHandler) *swaggers3.Operation
 	return ret
 }
 func (sb *SwaggerBuild) createRequestBody(handler WebHandler) *swaggers3.RequestBody {
-	ret := &swaggers3.RequestBody{
-		Required: handler.ApiInfo.Method.Type.In(handler.ApiInfo.IndexOfRequestBody).Kind() == reflect.Ptr,
-		Content: map[string]swaggers3.MediaType{
-			"application/json": {
-				Schema: &swaggers3.Schema{
-					Type: "object",
+	if handler.ApiInfo.IsFormUpload {
+		props := make(map[string]*swaggers3.Schema)
+		for i := 0; i < handler.ApiInfo.TypeOfRequestBodyElem.NumField(); i++ {
+			if !internal.Contains(handler.ApiInfo.FormUploadFile, i) {
+				field := handler.ApiInfo.TypeOfRequestBodyElem.Field(i)
+				fieldType := field.Type
+				if fieldType.Kind() == reflect.Ptr {
+					fieldType = fieldType.Elem()
+				}
+				strType := "string"
+				if fieldType.Kind() == reflect.Slice {
+					strType = "array"
+					eleType := fieldType.Elem()
+					if eleType.Kind() == reflect.Ptr {
+						eleType = eleType.Elem()
+					}
+					if eleType.Kind() == reflect.Struct {
+						strType = "object"
+					}
+					example := reflect.New(eleType).Interface()
+					props[field.Name] = &swaggers3.Schema{
+						Type: "array",
+						Items: &swaggers3.Schema{
+							Type:    strType,
+							Example: example,
+						},
+					}
+					continue
+				}
+				if fieldType.Kind() == reflect.Struct {
+					strType = "object"
+				}
+				example := reflect.New(fieldType).Interface()
+				props[field.Name] = &swaggers3.Schema{
+					Type:    strType,
+					Example: example,
+				}
+
+			}
+		}
+
+		ret := &swaggers3.RequestBody{
+			Required: handler.ApiInfo.Method.Type.In(handler.ApiInfo.IndexOfRequestBody).Kind() == reflect.Ptr,
+			Content: map[string]swaggers3.MediaType{
+				"multipart/form-data": {
+					Schema: &swaggers3.Schema{
+						Type:       "object",
+						Properties: props,
+					},
 				},
-				Example: reflect.New(handler.ApiInfo.TypeOfRequestBodyElem).Interface(),
 			},
-		},
+		}
+		return ret
+	} else {
+		ret := &swaggers3.RequestBody{
+			Required: handler.ApiInfo.Method.Type.In(handler.ApiInfo.IndexOfRequestBody).Kind() == reflect.Ptr,
+			Content: map[string]swaggers3.MediaType{
+				"application/json": {
+					Schema: &swaggers3.Schema{
+						Type: "object",
+					},
+					Example: reflect.New(handler.ApiInfo.TypeOfRequestBodyElem).Interface(),
+				},
+			},
+		}
+		return ret
 	}
-	return ret
+
 }
 
 func (sb *SwaggerBuild) createRequestBodyForUploadFile(handler WebHandler) *swaggers3.RequestBody {

@@ -103,6 +103,13 @@ func (h *helperType) GetHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	return init.val, init.err
 
 }
+
+var IsGenericForm func(typ reflect.Type) bool
+
+func (h *helperType) isGenericForm(typ reflect.Type) bool {
+	return IsGenericForm(typ)
+}
+
 func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error) {
 
 	ret := &HandlerInfo{
@@ -256,6 +263,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 
 				ret.TypeOfRequestBodyElem = typ
 				ret.IndexOfRequestBody = i
+				ret.IsFormUpload = h.isGenericForm(typ)
 				break
 			}
 		}

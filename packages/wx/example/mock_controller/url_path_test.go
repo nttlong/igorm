@@ -10,7 +10,8 @@ import (
 type UrlPathTest struct {
 }
 
-func (*UrlPathTest) New() error {
+func (u *UrlPathTest) New() error {
+
 	// Initialize if needed
 	return nil
 }

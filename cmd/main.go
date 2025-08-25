@@ -19,7 +19,7 @@ func main() {
 	wx.Routes("/api", &authController.Auth{})
 	server := wx.NewHtttpServer("/api", port, "127.0.0.1")
 	swagger := wx.CreateSwagger(server, "swagger")
-	swagger.OAuth2Password(server.BaseUrl + "oauth/token")
+	swagger.OAuth2Password(server.BaseUrl + "/auth/login")
 	swagger.Info(wx.SwaggerInfo{
 		Title:       "Exmaple Media API",
 		Description: "This is a sample server Petstore server.",

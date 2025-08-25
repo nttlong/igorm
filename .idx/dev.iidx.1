@@ -2,48 +2,37 @@
 # see: https://developers.google.com/idx/guides/customize-idx-env
 { pkgs, ... }: {
   # Which nixpkgs channel to use.
-  channel = "stable-24.05"; # or "unstable"
+  channel = "stable-23.11"; # or "unstable"
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    pkgs.go
-    pkgs.air
+    
   ];
-  # Sets environment variables in the workspace
+
   # Sets environment variables in the workspace
   env = {
     # You can get a Gemini API key through the IDX Integrations panel to the left!
     POSTGRESQL_CONN_STRING = "postgresql://user:mypassword@localhost:5432/youtube?sslmode=disable";
   };
+
   services.postgres = {
     enable = true;
   };
+
   idx = {
-    previews = {
-      enable = true;
-      previews = {
-        web = {
-          #dir = "/home/user/test/igorm/examples/media"; # set working directory
-          # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
-          # and show it in IDX's web preview panel
-          
-          
-          command = [ "sh" "-c" "go run cmd/main.go" ];
-          manager = "web";
-          env = {
-            # Environment variables to set for your server
-            PORT = "$PORT";
-          };
-        };
-      };
-    };
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
-      "golang.go"
+      "mtxr.sqltools-driver-pg"
+      "mtxr.sqltools"
     ];
+
+    # Workspace lifecycle hooks
     workspace = {
+      # Runs when a workspace is first created
       onCreate = {
-        # Open editors for the following files by default, if they exist:
-        #default.openFiles = ["main.go"];
+        default.openFiles = [
+          "README.md" "create.sql" "example.sql"
+        ];
+        # Example: install JS dependencies from NPM
         setup = ''
           initdb -D local
           psql --dbname=postgres -c "ALTER USER \"user\" PASSWORD 'mypassword';"
@@ -52,12 +41,27 @@
           psql --dbname=youtube -f example.sql
         '';
       };
-      # Runs when a workspace is (re)started
-      onStart= {
-        #run-server = "air";
-         # typescript-build = "tsc";
+      # Runs when the workspace is (re)started
+      onStart = {
+        # typescript-build = "tsc";
       };
-      # To run something each time the workspace is first created, use the `onStart` hook
+    };
+
+    # Enable previews
+    previews = {
+      enable = true;
+      previews = {
+        # web = {
+        #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
+        #   # and show it in IDX's web preview panel
+        #   command = ["npm" "run" "dev"];
+        #   manager = "web";
+        #   env = {
+        #     # Environment variables to set for your server
+        #     PORT = "$PORT";
+        #   };
+        # };
+      };
     };
   };
 }
