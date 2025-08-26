@@ -11,7 +11,10 @@ type Server struct {
 }
 
 func (s *Server) Start() error {
-	wx.Routes("/api", handlers.Media{}, handlers.Users{}, handlers.Logins{})
+	err := wx.Routes("/api", handlers.Media{}, handlers.Users{}, handlers.Logins{})
+	if err != nil {
+		return err
+	}
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -28,7 +31,7 @@ func (s *Server) Start() error {
 	swagger.Build()
 	//server.Middleware(mw.Zip)
 	server.Middleware(mw.Cors)
-	err := server.Start()
+	err = server.Start()
 	if err != nil {
 		return err
 	}

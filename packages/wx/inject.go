@@ -21,7 +21,7 @@ type initConatinerRegister struct {
 
 var cacheInjectRegister sync.Map
 
-func (c *Inject[TContainer]) Register(fn func(svc *TContainer) (*TContainer, error)) {
+func (c *Inject[TContainer]) Register(fn func(injector *TContainer) error) {
 	actually, _ := cacheInjectRegister.LoadOrStore(reflect.TypeFor[TContainer](), &initConatinerRegister{})
 	actually.(*initConatinerRegister).once.Do(func() {
 		cachInjectNew[reflect.TypeFor[TContainer]()] = reflect.ValueOf(fn)
@@ -111,10 +111,16 @@ func NewInjectByType(typ reflect.Type, r *http.Request, w http.ResponseWriter) (
 		}))
 	}
 	ret := entry.Call([]reflect.Value{arg})
-	if ret[1].IsNil() {
-		return ret[0], nil
+	if len(ret) == 1 && ret[0].IsNil() {
+		if ret[0].IsNil() {
+			return arg, nil
+		} else if err, ok := ret[0].Interface().(error); ok {
+			return arg, err
+		}
+
 	}
-	return reflect.New(typ), ret[1].Interface().(error)
+	return arg, nil
+
 }
 func init() {
 	handlers.IsInjectType = isInjectType

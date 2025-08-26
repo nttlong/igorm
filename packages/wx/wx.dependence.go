@@ -151,7 +151,7 @@ func Start[TApp any](fn func(app *TApp) error) error {
 		return err
 	}
 	err = fn(ret)
-	return nil
+	return err
 
 }
 func init() {

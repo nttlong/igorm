@@ -25,7 +25,7 @@ namespace MyApi.Controllers
     {
         //var rootPath = @"D:\code\go\news2\igorm\examples\media\cmd\uploads";
         //C:\Users\MSI CYBORG\Desktop\uploads
-        private readonly string rootPath = @"C:\Users\MSI CYBORG\Desktop\uploads";
+        private readonly string rootPath = @"D:\code\go\news2\igorm\examples\media\cmd\uploads";// @"C:\Users\MSI CYBORG\Desktop\uploads";
         [HttpGet("Hello")]
         public IActionResult Hello()
         {

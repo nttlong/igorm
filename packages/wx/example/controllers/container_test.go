@@ -36,9 +36,9 @@ func TestTestController(t *testing.T) {
 
 }
 func TestHalderWithInject(t *testing.T) {
-	(&ConatainerTest{}).Register(func(svc *ConatainerTest) (*ConatainerTest, error) {
+	(&ConatainerTest{}).Register(func(svc *ConatainerTest) error {
 		fmt.Println("call register")
-		return svc, nil
+		return nil
 	})
 	mt := wx.GetMethodByName[ConatainerTest]("Post")
 	assert.NotEmpty(t, *mt)
@@ -54,9 +54,9 @@ func TestHalderWithInject(t *testing.T) {
 
 }
 func BenchmarkHalderWithInject(b *testing.B) {
-	(&ConatainerTest{}).Register(func(svc *ConatainerTest) (*ConatainerTest, error) {
+	(&ConatainerTest{}).Register(func(svc *ConatainerTest) error {
 		// fmt.Println("call register")
-		return svc, nil
+		return nil
 	})
 	mt := wx.GetMethodByName[ConatainerTest]("Post")
 	assert.NotEmpty(b, *mt)

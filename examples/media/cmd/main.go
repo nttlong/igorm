@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	apps "media/internal/services/app"
 	"net/http"
 	_ "net/http/pprof"
@@ -80,10 +81,15 @@ func main() {
 		if err != nil {
 			return err
 		}
-		server.Start()
+		err = server.Start()
+		if err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		log.Fatal(err)
+
 	}
 }

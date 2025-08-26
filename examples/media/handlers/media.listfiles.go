@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"media/services"
 	"os"
 	"path/filepath"
 	"strings"
@@ -32,7 +33,7 @@ func (role *RoleChecker) New(ctx *wx.AuthContext) error {
 }
 func (media *Media) ListFiles(ctx *struct {
 	wx.Handler `route:"method:get"`
-}, dr *wx.Depend[DirectoryReader], userSvc *wx.Auth[UserInfo], roleCck *wx.HttpService[RoleChecker]) (*[]string, error) {
+}, dr *wx.Depend[DirectoryReader], userSvc *wx.Auth[UserInfo]) (*[]string, error) {
 
 	// 1. Kiểm tra thư mục gốc
 	if _, err := os.Stat(media.FileDirectory); os.IsNotExist(err) {
@@ -72,10 +73,31 @@ func (media *Media) ListFiles(ctx *struct {
 	return &results, nil
 
 }
-func (media *Media) Hello(ctx *struct {
+
+type InjectFileManager struct {
+	wx.Inject[InjectFileManager]
+	FileManager services.FileManager
+}
+
+func (media *Media) ListFiles2(ctx *struct {
 	wx.Handler `route:"method:get"`
-}) (string, error) {
+}, fileManager *InjectFileManager) ([]string, error) {
+	uriOfFile, err := wx.GetUriOfHandler[Media]("Files")
+	if err != nil {
+		return nil, err
+	}
+	// 2. Base URL
+	baseUrl := ctx.GetAbsRootUri() + "/api" + uriOfFile + "/"
+	lst, err := fileManager.FileManager.GetFileList()
+	for i := 0; i < len(lst); i++ {
+		lst[i] = baseUrl + lst[i]
+	}
+	return lst, err
 
-	return "Hello World", nil
-
+}
+func init() {
+	(&InjectFileManager{}).Register(func(injector *InjectFileManager) error {
+		injector.FileManager = services.NewFileManagerLocal()
+		return nil
+	})
 }

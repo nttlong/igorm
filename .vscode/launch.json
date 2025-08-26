@@ -11,5 +11,13 @@
             "mode": "auto",
             "program": "${workspaceFolder}/cmd"
         },
+        {
+            "name": "examples media",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/examples/media/cmd"
+        },
+        //examples\media\cmd\main.go
     ]
 }

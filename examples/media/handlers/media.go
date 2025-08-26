@@ -46,7 +46,7 @@ func (m *Media) New(
 		}
 
 		return &services.FileService{
-			DirectorySvc: dirSvc,
+			DirectorySvc: &dirSvc,
 			UrlSvc:       urlSvc,
 		}, nil
 
