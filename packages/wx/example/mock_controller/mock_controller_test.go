@@ -29,7 +29,7 @@ func (c *Controller1) Post(ctx *wx.Handler) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	c.fx = *t
+	c.fx = t
 
 	return &struct {
 		Name string

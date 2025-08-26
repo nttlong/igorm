@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 	"wx"
+	"xauth/config"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -21,19 +22,19 @@ type JWTService struct {
 	refreshTTL time.Duration
 }
 
-func (jwt *JWTService) New(configService *wx.Global[ConfigService]) error {
+func (jwt *JWTService) New(configService *wx.Global[config.ConfigService]) error {
 	var err error
 	cfg, err := configService.Ins()
 	if err != nil {
 		return err
 	}
-	jwt.secret = []byte(cfg.Data.JwtToken.Secret)
+	jwt.secret = []byte(cfg.Get().JwtToken.Secret)
 
-	jwt.accessTTL, err = cfg.Data.JwtToken.TTL.GetAccess()
+	jwt.accessTTL, err = cfg.Get().JwtToken.TTL.GetAccess()
 	if err != nil {
 		return err
 	}
-	jwt.refreshTTL, err = cfg.Data.JwtToken.TTL.GetRefresh()
+	jwt.refreshTTL, err = cfg.Get().JwtToken.TTL.GetRefresh()
 	if err != nil {
 		return err
 	}

@@ -7,12 +7,16 @@ import (
 )
 
 type Auth struct {
-	AuthService *services.AuthService
+	AuthService services.AuthService
 }
 
-func (auth *Auth) New(authSvc *wx.Global[services.AuthService]) error {
+func (auth *Auth) New(authSvc *wx.Global[services.AuthServiceArgon]) error {
 	var err error
-	auth.AuthService, err = authSvc.Ins()
+	AuthService, err := authSvc.Ins()
+	if err != nil {
+		return err
+	}
+	auth.AuthService = &AuthService
 	if err != nil {
 		return err
 	}

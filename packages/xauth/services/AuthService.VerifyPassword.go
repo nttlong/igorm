@@ -10,7 +10,7 @@ import (
 )
 
 // VerifyPassword kiểm tra password với hash đã lưu
-func (authService *AuthService) VerifyPassword(encodedHash, password string) (bool, error) {
+func (authService *AuthServiceArgon) VerifyPassword(encodedHash, password string) (bool, error) {
 	parts := strings.Split(encodedHash, "$")
 	if len(parts) != 6 || parts[1] != "argon2id" {
 		return false, errors.New("invalid hash format")
@@ -44,7 +44,7 @@ func (authService *AuthService) VerifyPassword(encodedHash, password string) (bo
 }
 
 // subtleCompare so sánh hằng thời gian
-func (authService *AuthService) subtleCompare(a, b []byte) bool {
+func (authService *AuthServiceArgon) subtleCompare(a, b []byte) bool {
 	if len(a) != len(b) {
 		return false
 	}

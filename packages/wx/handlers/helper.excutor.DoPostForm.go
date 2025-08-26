@@ -218,6 +218,10 @@ func (reqExec *RequestExecutor) DoFormPost(handlerInfo HandlerInfo, r *http.Requ
 	if err != nil {
 		return nil, err
 	}
+	err = Helper.Inject.LoadInject(handlerInfo, r, w, args)
+	if err != nil {
+		return nil, err
+	}
 	//reqExec.CreateHandler(handlerInfo)
 	rets := handlerInfo.Method.Func.Call(args)
 	if len(rets) > 0 {

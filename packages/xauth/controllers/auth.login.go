@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"wx"
+	"xauth/services"
 )
 
 type LoginData struct {
@@ -17,7 +18,9 @@ func (Auth *Auth) Login(ctx *wx.Handler, data LoginData) (any, error) {
 	data.Password = ret
 	return data, nil
 }
-func (Auth *Auth) Auth(ctx *wx.Handler, formData wx.Form[LoginData]) (any, error) {
+func (Auth *Auth) Auth(ctx *wx.Handler, formData wx.Form[LoginData],
+	auth *wx.Depend[services.AuthServiceArgon]) (any, error) {
+	auth.Ins()
 	data := formData.Data
 	ret, err := Auth.AuthService.HashPassword(data.Password + "@" + data.Username)
 	if err != nil {

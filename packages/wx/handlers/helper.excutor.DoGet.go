@@ -57,6 +57,10 @@ func (reqExec *RequestExecutor) DoGet(handlerInfo HandlerInfo, r *http.Request, 
 	if err != nil {
 		return nil, err
 	}
+	err = Helper.Inject.LoadInject(handlerInfo, r, w, args)
+	if err != nil {
+		return nil, err
+	}
 	if handlerInfo.IndexOfAuthClaimsArg != -1 {
 		AuthClaimsType := handlerInfo.Method.Type.In(handlerInfo.IndexOfAuthClaimsArg)
 		AuthClaimsValue, err := Helper.DepenAuthCreate(AuthClaimsType, r, w)

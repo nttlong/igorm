@@ -6,11 +6,13 @@ import (
 	"wx"
 	dbmodels "xauth/dbModels"
 
+	"xauth/repo"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUserserviceCreateUser(t *testing.T) {
-	db, err := wx.NewGlobal[DbService]()
+	db, err := wx.NewGlobal[repo.DbContext]()
 	assert.NoError(t, err)
 	assert.NotNil(t, db)
 
@@ -33,7 +35,7 @@ func TestUserserviceCreateUser(t *testing.T) {
 
 }
 func BenchmarkUserserviceCreateUser(b *testing.B) {
-	db, err := wx.NewGlobal[DbService]()
+	db, err := wx.NewGlobal[repo.DbContext]()
 	assert.NoError(b, err)
 	assert.NotNil(b, db)
 	assert.NoError(b, err)

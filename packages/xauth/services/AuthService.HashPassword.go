@@ -11,7 +11,7 @@ import (
 
 // HashPassword tạo hash theo format:
 // $argon2id$v=19$m=<mem>,t=<time>,p=<threads>$<b64(salt)>$<b64(hash)>
-func (authService *AuthService) HashPassword(password string) (string, error) {
+func (authService *AuthServiceArgon) HashPassword(password string) (string, error) {
 	if password == "" {
 		return "", errors.New("empty password")
 	}

@@ -21,6 +21,7 @@ type QueryParam struct {
 	FieldIndex []int
 }
 type HandlerInfo struct {
+	IndexOfArgIsInject []int
 	//BaseUrl        string
 	/*
 		index of arg is wx.Hanlder or any has embedded wx.Hanlder

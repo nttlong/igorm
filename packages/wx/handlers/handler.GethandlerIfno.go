@@ -117,6 +117,16 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	}
 
 	ret.IndexOfInjectors = []int{}
+	ret.IndexOfArgIsInject = []int{}
+	for i := 1; i < method.Type.NumIn(); i++ {
+		if Helper.Inject.IsInjectType(method.Type.In(i)) {
+			if !Helper.Inject.IsReadyRegister(method.Type.In(i)) {
+				return nil, fmt.Errorf("%s not register, call %s.Register() first", method.Type.In(i).String(), method.Type.In(i).String())
+			}
+			ret.IndexOfArgIsInject = append(ret.IndexOfArgIsInject, i)
+		}
+	}
+
 	for i := 1; i < method.Type.NumIn(); i++ {
 		typ := method.Type.In(i)
 		if typ.Kind() == reflect.Ptr {
@@ -135,7 +145,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	*/
 	isHandlerMethod := false
 	for i := 1; i < method.Type.NumIn(); i++ {
-		if !h.Iscontains(ret.IndexOfInjectors, i) {
+		if (!h.Iscontains(ret.IndexOfInjectors, i)) && (!h.Iscontains(ret.IndexOfArgIsInject, i)) {
 			fieldIndex, err := h.HandlerFindInMethod(method)
 			if err != nil {
 				return nil, err
@@ -170,7 +180,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	}
 	// scan inject service (HttpService)
 	for i := 1; i < method.Type.NumIn(); i++ {
-		if Helper.DependIsHttpService(method.Type.In(i)) {
+		if Helper.DependIsHttpService(method.Type.In(i)) && !h.Iscontains(ret.IndexOfArgIsInject, i) {
 			typArg := method.Type.In(i)
 			if typArg.Kind() == reflect.Ptr {
 				typArg = typArg.Elem()
@@ -217,10 +227,6 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 			if ret.Uri != "" && ret.Uri[0] == '/' {
 				ret.Uri = strings.Replace(ret.Uri, "@", h.ToKebabCase(method.Name), 1)
 			} else {
-				typ := method.Type.In(0)
-				if typ.Kind() == reflect.Ptr {
-					typ = typ.Elem()
-				}
 
 				ret.Uri = strings.Replace(ret.Uri, "@", controllerName+"/"+h.ToKebabCase(method.Name), 1)
 
@@ -262,7 +268,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	}
 	if ret.IndexOfRequestBody == -1 {
 		for i := 1; i < method.Type.NumIn(); i++ {
-			if !h.Iscontains(ret.IndexOfInjectors, i) &&
+			if !h.Iscontains(ret.IndexOfInjectors, i) && !h.Iscontains(ret.IndexOfArgIsInject, i) &&
 				i != ret.IndexOfArg &&
 				i != ret.IndexOfAuthClaimsArg &&
 				!h.Iscontains(ret.IndexOfInjectorService, i) {

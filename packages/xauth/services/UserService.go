@@ -7,7 +7,7 @@ import (
 )
 
 type UserService struct {
-	authService *AuthService
+	authService AuthService
 }
 
 func (userService *UserService) New(

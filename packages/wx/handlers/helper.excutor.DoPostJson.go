@@ -27,6 +27,10 @@ func (reqExec *RequestExecutor) DoJsonPost(handlerInfo HandlerInfo, r *http.Requ
 	if err != nil {
 		return nil, err
 	}
+	err = Helper.Inject.LoadInject(handlerInfo, r, w, args)
+	if err != nil {
+		return nil, err
+	}
 	args[handlerInfo.IndexOfArg] = *ctxHandler
 	if handlerInfo.IndexOfRequestBody != -1 {
 		bodyValue, err := reqExec.GetBodyValue(handlerInfo, r)
@@ -61,7 +65,10 @@ func (reqExec *RequestExecutor) DoJsonPost(handlerInfo HandlerInfo, r *http.Requ
 		if err, ok := rets[len(rets)-1].Interface().(error); ok {
 			return nil, err
 		}
+		if len(rets) == 2 {
+			return rets[0].Interface(), nil
+		}
 	}
-	return rets[0].Interface(), nil
+	return nil, nil
 
 }

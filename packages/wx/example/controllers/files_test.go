@@ -34,7 +34,7 @@ func (fs *Files) New(fileSvc wx.Global[FileService]) error {
 		return err
 	}
 	fmt.Println(fService)
-	fs.fileSvc = *fService
+	fs.fileSvc = fService
 	return nil
 }
 

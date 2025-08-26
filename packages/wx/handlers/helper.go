@@ -13,6 +13,7 @@ type helperType struct {
 	ErrorType           reflect.Type
 	ReqExec             *RequestExecutor
 	Routes              *RouteTypes
+	Inject              *InjectType
 }
 
 func (h *helperType) Iscontains(slice []int, value int) bool {
@@ -75,4 +76,5 @@ var Helper = &helperType{
 		Data:    map[string]RouteItem{},
 		UriList: []string{},
 	},
+	Inject: &InjectType{},
 }
