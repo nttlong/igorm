@@ -9,7 +9,7 @@ import (
 
 type UserRepo interface {
 	GetUser() (*models.User, error)
-	CreateDefautUser() error
+	CreateDefautUser(hashPassword string) error
 	CreateUser(user *models.User) error
 	UpdateUser(user *models.User)
 }
@@ -29,12 +29,12 @@ func (u *UserRepoSql) GetUser() (*models.User, error) {
 
 var createDefautUserOnce sync.Once
 
-func (u *UserRepoSql) CreateDefautUser() error {
+func (u *UserRepoSql) CreateDefautUser(hasnPassword string) error {
 	var err error
 	createDefautUserOnce.Do(func() {
 		err = u.CreateUser(&models.User{
 			Username: "admin",
-			Password: "admin",
+			Password: hasnPassword,
 		})
 		var dbErr *vdb.DialectError
 		if err != nil && errors.As(err, &dbErr) {

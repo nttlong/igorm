@@ -4,11 +4,14 @@ import (
 	"testing"
 	"vdb"
 	"xauth/config"
+	"xauth/services"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateDefautUser(t *testing.T) {
+	var authSvc services.PasswordService
+	authSvc = services.NewAuthServiceArgon()
 	cfg, err := config.NewConfig("./../config/config.yaml")
 	assert.NoError(t, err)
 	assert.NotNil(t, cfg)
@@ -18,12 +21,19 @@ func TestCreateDefautUser(t *testing.T) {
 	userRepo := NewUserRepoSql(db)
 
 	assert.NotNil(t, userRepo)
-	err = userRepo.CreateDefautUser()
+	hashPassword, err := authSvc.HashPassword("admin@123456")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = userRepo.CreateDefautUser(hashPassword)
 	assert.NoError(t, err)
 
 }
 func BenchmarkCreateDefautUser(b *testing.B) {
 	for i := 0; i < b.N; i++ {
+		var authSvc services.PasswordService
+		authSvc = services.NewAuthServiceBcrypt(0)
+
 		cfg, err := config.NewConfig("./../config/config.yaml")
 		assert.NoError(b, err)
 		if err != nil {
@@ -40,7 +50,11 @@ func BenchmarkCreateDefautUser(b *testing.B) {
 		userRepo := NewUserRepoSql(db)
 
 		assert.NotNil(b, userRepo)
-		err = userRepo.CreateDefautUser()
+		hashPassword, err := authSvc.HashPassword("admin@123456")
+		if err != nil {
+			b.Fatal(err)
+		}
+		err = userRepo.CreateDefautUser(hashPassword)
 		assert.NoError(b, err)
 	}
 }
