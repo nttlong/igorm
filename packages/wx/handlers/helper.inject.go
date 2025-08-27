@@ -5,37 +5,37 @@ import (
 	"reflect"
 )
 
-type InjectType struct {
+type ServiceType struct {
 }
 
-var IsInjectType func(typ reflect.Type) bool
+var IsServiceContext func(typ reflect.Type) bool
 
-func (inject *InjectType) IsInjectType(typ reflect.Type) bool {
-	return IsInjectType(typ)
-
-}
-
-var IsReadyRegister func(typ reflect.Type) bool
-
-func (inject *InjectType) IsReadyRegister(typ reflect.Type) bool {
-	return IsReadyRegister(typ)
+func (inject *ServiceType) IsServiceContext(typ reflect.Type) bool {
+	return IsServiceContext(typ)
 
 }
 
-var NewInjectByType func(typ reflect.Type, r *http.Request, w http.ResponseWriter) (reflect.Value, error)
+var GetNewMethodOfServiceContext func(typ reflect.Type) (*reflect.Method, error)
 
-func (inject *InjectType) NewInjectByType(typ reflect.Type, r *http.Request, w http.ResponseWriter) (reflect.Value, error) {
-	return NewInjectByType(typ, r, w)
+func (inject *ServiceType) GetNewMethod(typ reflect.Type) (*reflect.Method, error) {
+	return GetNewMethodOfServiceContext(typ)
 
 }
-func (inject *InjectType) LoadInject(handlerInfo HandlerInfo, r *http.Request, w http.ResponseWriter, args []reflect.Value) error {
-	for _, x := range handlerInfo.IndexOfArgIsInject {
+
+var NewInjectByType func(typ reflect.Type, newMethod reflect.Method, r *http.Request, w http.ResponseWriter) (*reflect.Value, error)
+
+func (inject *ServiceType) NewInjectByType(typ reflect.Type, newMethod reflect.Method, r *http.Request, w http.ResponseWriter) (*reflect.Value, error) {
+	return NewInjectByType(typ, newMethod, r, w)
+
+}
+func (inject *ServiceType) LoadService(handlerInfo HandlerInfo, r *http.Request, w http.ResponseWriter, args []reflect.Value) error {
+	for i, x := range handlerInfo.ServiceContextArgs {
 		injectType := handlerInfo.Method.Type.In(x)
-		injectValue, err := inject.NewInjectByType(injectType, r, w)
+		injectValue, err := inject.NewInjectByType(injectType, handlerInfo.ServiceContextNewMethods[i], r, w)
 		if err != nil {
 			return err
 		}
-		args[x] = injectValue
+		args[x] = *injectValue
 
 	}
 	return nil

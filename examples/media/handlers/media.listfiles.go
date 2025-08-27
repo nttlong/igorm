@@ -74,14 +74,19 @@ func (media *Media) ListFiles(ctx *struct {
 
 }
 
-type InjectFileManager struct {
-	wx.Inject[InjectFileManager]
+type FileManagerService struct {
+	wx.Service
 	FileManager services.FileManager
+}
+
+func (fm *FileManagerService) New() error {
+	fm.FileManager = services.NewFileManagerLocal()
+	return nil
 }
 
 func (media *Media) ListFiles2(ctx *struct {
 	wx.Handler `route:"method:get"`
-}, fileManager *InjectFileManager) ([]string, error) {
+}, fileManager *FileManagerService) ([]string, error) {
 	uriOfFile, err := wx.GetUriOfHandler[Media]("Files")
 	if err != nil {
 		return nil, err
@@ -94,10 +99,4 @@ func (media *Media) ListFiles2(ctx *struct {
 	}
 	return lst, err
 
-}
-func init() {
-	(&InjectFileManager{}).Register(func(injector *InjectFileManager) error {
-		injector.FileManager = services.NewFileManagerLocal()
-		return nil
-	})
 }

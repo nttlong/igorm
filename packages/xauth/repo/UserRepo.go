@@ -1,17 +1,13 @@
 package repo
 
-import (
-	"fmt"
-	"wx"
-)
-
 type UserRepo interface {
 }
 type UserRepoSQL struct {
+	db *DbContext
 }
 
-func (userRepo *UserRepoSQL) New(ctx *wx.HttpContext, dbContext *wx.HttpService[DbContext]) (UserRepo, error) {
-	fmt.Println(dbContext)
-	return &UserRepoSQL{}, nil
-
+func NewUserRepoSQL(db *DbContext) *UserRepoSQL {
+	return &UserRepoSQL{
+		db: db,
+	}
 }

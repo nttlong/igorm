@@ -11,7 +11,8 @@ type YamlConfigService struct {
 	data *xconfig.Config
 }
 
-func (configService *YamlConfigService) New() (ConfigService, error) {
+func NewYamlConfigService() (*YamlConfigService, error) {
+	configService := &YamlConfigService{}
 	cfg, err := xconfig.NewConfig("./../config.yaml")
 	if err != nil {
 		return nil, err

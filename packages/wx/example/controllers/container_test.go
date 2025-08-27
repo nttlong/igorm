@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 	"wx"
 
@@ -14,33 +13,32 @@ type TestController struct {
 type Service struct {
 }
 type ConatainerTest struct {
-	wx.Inject[ConatainerTest]
+	wx.Service
 }
 
-func (c *ConatainerTest) Post(ctx *wx.Handler, container *ConatainerTest) {
+func (c *ConatainerTest) New() error {
+	return nil
+}
+
+type HanderService struct {
+	wx.Handler
+}
+
+//	func (lst *HanderService) New() error {
+//		return nil
+//	}
+func (c *TestController) Post(ctx *struct {
+	HanderService `route:"method:post"`
+}, container *ConatainerTest) {
 
 }
 
-func TestTestController(t *testing.T) {
-	ok := wx.Helper.Inject.IsInjectType(reflect.TypeOf(ConatainerTest{}))
-	assert.True(t, ok)
-	ok = wx.Helper.Inject.IsInjectType(reflect.TypeOf(Service{}))
-	assert.False(t, ok)
-	mt := wx.GetMethodByName[ConatainerTest]("Post")
-	assert.NotEmpty(t, *mt)
-	mtInfo, err := wx.Helper.GetHandlerInfo(*mt)
-	assert.NoError(t, err)
-	assert.NotNil(t, mtInfo)
-	assert.Equal(t, -1, mtInfo.IndexOfRequestBody, "POST")
-	assert.Equal(t, []int{2}, mtInfo.IndexOfArgIsInject, "POST")
-
-}
 func TestHalderWithInject(t *testing.T) {
-	(&ConatainerTest{}).Register(func(svc *ConatainerTest) error {
-		fmt.Println("call register")
-		return nil
-	})
-	mt := wx.GetMethodByName[ConatainerTest]("Post")
+	// (&ConatainerTest{}).Register(func(svc *ConatainerTest) error {
+	// 	fmt.Println("call register")
+	// 	return nil
+	// })
+	mt := wx.GetMethodByName[TestController]("Post")
 	assert.NotEmpty(t, *mt)
 	handler, err := wx.Helper.GetHandlerInfo(*mt)
 	assert.NoError(t, err)
@@ -54,11 +52,11 @@ func TestHalderWithInject(t *testing.T) {
 
 }
 func BenchmarkHalderWithInject(b *testing.B) {
-	(&ConatainerTest{}).Register(func(svc *ConatainerTest) error {
-		// fmt.Println("call register")
-		return nil
-	})
-	mt := wx.GetMethodByName[ConatainerTest]("Post")
+	// (&ConatainerTest{}).Register(func(svc *ConatainerTest) error {
+	// 	// fmt.Println("call register")
+	// 	return nil
+	// })
+	mt := wx.GetMethodByName[TestController]("Post")
 	assert.NotEmpty(b, *mt)
 	handler, err := wx.Helper.GetHandlerInfo(*mt)
 	assert.NoError(b, err)

@@ -34,6 +34,15 @@ func (reqExec *RequestExecutor) CreateHandlerContext(info HandlerInfo, r *http.R
 		}
 	}
 	ret := reflect.New(info.TypeOfArgsElem)
+	if info.NewMethodOfHandler != nil {
+		retErr := info.NewMethodOfHandler.Func.Call([]reflect.Value{ret})
+		if len(retErr) > 0 {
+			if err, ok := retErr[len(retErr)-1].Interface().(error); ok {
+				return nil, err
+			}
+		}
+	}
+
 	ctx := Handler{
 		Req: r,
 		Res: w,

@@ -21,12 +21,20 @@ type QueryParam struct {
 	FieldIndex []int
 }
 type HandlerInfo struct {
-	IndexOfArgIsInject []int
-	//BaseUrl        string
+	ServiceContextArgs       []int
+	ServiceContextNewMethods []reflect.Method
+	ServiceContextTypes      []reflect.Type
+	ServiceContextTypeElems  []reflect.Type
 	/*
-		index of arg is wx.Hanlder or any has embedded wx.Hanlder
+		//BaseUrl        string
+		/*
+			index of arg is wx.Hanlder or any has embedded wx.Hanlder
 	*/
 	IndexOfArg int
+	/*
+		New method of TypeOfArgs
+	*/
+	NewMethodOfHandler *reflect.Method
 	/*
 		Type of arg is wx.Handler or any has embedded wx.Handler
 	*/

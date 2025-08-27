@@ -27,7 +27,7 @@ func (reqExec *RequestExecutor) DoJsonPost(handlerInfo HandlerInfo, r *http.Requ
 	if err != nil {
 		return nil, err
 	}
-	err = Helper.Inject.LoadInject(handlerInfo, r, w, args)
+	err = Helper.Services.LoadService(handlerInfo, r, w, args)
 	if err != nil {
 		return nil, err
 	}

@@ -57,7 +57,7 @@ func (reqExec *RequestExecutor) DoGet(handlerInfo HandlerInfo, r *http.Request, 
 	if err != nil {
 		return nil, err
 	}
-	err = Helper.Inject.LoadInject(handlerInfo, r, w, args)
+	err = Helper.Services.LoadService(handlerInfo, r, w, args)
 	if err != nil {
 		return nil, err
 	}

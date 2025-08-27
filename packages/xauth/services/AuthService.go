@@ -1,7 +1,6 @@
 package services
 
 import (
-	"wx"
 	"xauth/repo"
 )
 
@@ -18,17 +17,12 @@ type AuthServiceArgon struct {
 	userRepo     repo.UserRepo
 }
 
-func (authService *AuthServiceArgon) New(dbService *wx.Depend[repo.UserRepoSQL]) (AuthService, error) {
-	var err error
-	authService.userRepo, err = dbService.Ins()
-	if err != nil {
-		return nil, err
+func NewAuthServiceArgon() *AuthServiceArgon {
+	return &AuthServiceArgon{
+		argonTime:    3,
+		argonMemory:  64 * 1024,
+		argonThreads: 2,
+		saltLen:      16,
+		keyLen:       32,
 	}
-	authService.argonTime = 3           // số vòng (t)
-	authService.argonTime = 3           // số vòng (t)
-	authService.argonMemory = 64 * 1024 // KiB (m): 64MB
-	authService.argonThreads = 2        // số luồng (p)
-	authService.saltLen = 16            // bytes
-	authService.keyLen = 32
-	return authService, nil
 }

@@ -116,14 +116,27 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 		IndexOfRequestBody: -1,
 	}
 
-	ret.IndexOfInjectors = []int{}
-	ret.IndexOfArgIsInject = []int{}
+	ret.ServiceContextArgs = []int{}
+
+	ret.ServiceContextTypeElems = []reflect.Type{}
+	ret.ServiceContextTypes = []reflect.Type{}
+	ret.ServiceContextNewMethods = []reflect.Method{}
+
 	for i := 1; i < method.Type.NumIn(); i++ {
-		if Helper.Inject.IsInjectType(method.Type.In(i)) {
-			if !Helper.Inject.IsReadyRegister(method.Type.In(i)) {
-				return nil, fmt.Errorf("%s not register, call %s.Register() first", method.Type.In(i).String(), method.Type.In(i).String())
+		if Helper.Services.IsServiceContext(method.Type.In(i)) {
+			typ := method.Type.In(i)
+			ret.ServiceContextTypes = append(ret.ServiceContextTypes, typ)
+			if typ.Kind() == reflect.Ptr {
+				typ = typ.Elem()
 			}
-			ret.IndexOfArgIsInject = append(ret.IndexOfArgIsInject, i)
+			ret.ServiceContextTypeElems = append(ret.ServiceContextTypeElems, typ)
+			ret.ServiceContextArgs = append(ret.ServiceContextArgs, i)
+			method, err := Helper.Services.GetNewMethod(typ)
+			if err != nil {
+				return nil, err
+			}
+			ret.ServiceContextNewMethods = append(ret.ServiceContextNewMethods, *method)
+
 		}
 	}
 
@@ -145,7 +158,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	*/
 	isHandlerMethod := false
 	for i := 1; i < method.Type.NumIn(); i++ {
-		if (!h.Iscontains(ret.IndexOfInjectors, i)) && (!h.Iscontains(ret.IndexOfArgIsInject, i)) {
+		if (!h.Iscontains(ret.IndexOfInjectors, i)) && (!h.Iscontains(ret.ServiceContextArgs, i)) {
 			fieldIndex, err := h.HandlerFindInMethod(method)
 			if err != nil {
 				return nil, err
@@ -180,7 +193,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	}
 	// scan inject service (HttpService)
 	for i := 1; i < method.Type.NumIn(); i++ {
-		if Helper.DependIsHttpService(method.Type.In(i)) && !h.Iscontains(ret.IndexOfArgIsInject, i) {
+		if Helper.DependIsHttpService(method.Type.In(i)) && !h.Iscontains(ret.ServiceContextArgs, i) {
 			typArg := method.Type.In(i)
 			if typArg.Kind() == reflect.Ptr {
 				typArg = typArg.Elem()
@@ -268,7 +281,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	}
 	if ret.IndexOfRequestBody == -1 {
 		for i := 1; i < method.Type.NumIn(); i++ {
-			if !h.Iscontains(ret.IndexOfInjectors, i) && !h.Iscontains(ret.IndexOfArgIsInject, i) &&
+			if !h.Iscontains(ret.IndexOfInjectors, i) && !h.Iscontains(ret.ServiceContextArgs, i) &&
 				i != ret.IndexOfArg &&
 				i != ret.IndexOfAuthClaimsArg &&
 				!h.Iscontains(ret.IndexOfInjectorService, i) {
@@ -322,7 +335,10 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 
 		ret.RegexUriFind = *regexp.MustCompile(strings.ReplaceAll(strings.TrimPrefix(ret.RegexUri, "^"), "/", "\\/"))
 	}
-
+	err := h.FindNewMehodOfHandler(ret)
+	if err != nil {
+		return nil, err
+	}
 	return ret, nil
 }
 
