@@ -32,6 +32,10 @@ func (Auth *AuthService) New() error {
 	return nil
 }
 
+//git filter-repo --path packages/wx --path-rename packages/wx/:
+//git remote remove origin   # xóa remote cũ (monorepo)
+//git remote add origin https://github.com/nttlong/wx.git
+
 type LoginData struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
