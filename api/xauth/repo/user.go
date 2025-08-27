@@ -12,7 +12,7 @@ type UserRepo interface {
 	GetUser() (*models.User, error)
 	CreateDefautUser(hashPassword string) error
 	CreateUser(user *models.User) error
-	UpdateUser(user *models.User)
+	UpdateUser(user *models.User) error
 }
 type UserRepoSql struct {
 	db *vdb.TenantDB
@@ -58,10 +58,12 @@ func (u *UserRepoSql) CreateDefautUser(hasnPassword string) error {
 func (u *UserRepoSql) CreateUser(user *models.User) error {
 	user.Active = true
 	user.CreatedOn = time.Now().UTC()
-	error := u.db.Create(user)
-	return error
+	err := u.db.Create(user)
+	return err
 
 }
-func (u *UserRepoSql) UpdateUser(user *models.User) {
-	panic("Not imeplemented")
+func (u *UserRepoSql) UpdateUser(user *models.User) error {
+	ret := u.db.Update(user)
+	return ret.Error
+
 }
