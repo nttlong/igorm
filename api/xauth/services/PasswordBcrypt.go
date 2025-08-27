@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"sync"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -10,12 +11,15 @@ type PasswordBcrypt struct {
 	cost int // bcrypt cost
 }
 
+var newAuthServiceBcryptOnce sync.Once
+var authServiceBcrypt *PasswordBcrypt
+
 // Constructor
 func NewAuthServiceBcrypt(cost int) *PasswordBcrypt {
-	if cost == 0 {
-		cost = bcrypt.DefaultCost // default = 10
-	}
-	return &PasswordBcrypt{cost: cost}
+	newAuthServiceBcryptOnce.Do(func() {
+		authServiceBcrypt = &PasswordBcrypt{cost: cost}
+	})
+	return authServiceBcrypt
 }
 
 // HashPassword tạo hash bcrypt

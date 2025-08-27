@@ -32,7 +32,7 @@ func TestCreateDefautUser(t *testing.T) {
 func BenchmarkCreateDefautUser(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var authSvc services.PasswordService
-		authSvc = services.NewAuthServiceBcrypt(0)
+		authSvc = services.NewAuthServiceArgon()
 
 		cfg, err := config.NewConfig("./../config/config.yaml")
 		assert.NoError(b, err)

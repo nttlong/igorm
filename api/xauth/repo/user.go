@@ -3,6 +3,7 @@ package repo
 import (
 	"errors"
 	"sync"
+	"time"
 	"vdb"
 	"xauth/models"
 )
@@ -33,8 +34,12 @@ func (u *UserRepoSql) CreateDefautUser(hasnPassword string) error {
 	var err error
 	createDefautUserOnce.Do(func() {
 		err = u.CreateUser(&models.User{
-			Username: "admin",
-			Password: hasnPassword,
+			Username:  "admin",
+			Password:  hasnPassword,
+			Active:    true,
+			Email:     nil,
+			Phone:     nil,
+			CreatedOn: time.Now().UTC(),
 		})
 		var dbErr *vdb.DialectError
 		if err != nil && errors.As(err, &dbErr) {
@@ -51,6 +56,8 @@ func (u *UserRepoSql) CreateDefautUser(hasnPassword string) error {
 
 }
 func (u *UserRepoSql) CreateUser(user *models.User) error {
+	user.Active = true
+	user.CreatedOn = time.Now().UTC()
 	error := u.db.Create(user)
 	return error
 

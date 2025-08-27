@@ -1,5 +1,7 @@
 package services
 
+import "sync"
+
 type PasswordService interface {
 	HashPassword(password string) (string, error)
 	VerifyPassword(encodedHash, password string) (bool, error)
@@ -13,12 +15,19 @@ type PasswordArgon struct {
 
 }
 
+var newAuthServiceArgonOnce sync.Once
+var authServiceArgon *PasswordArgon
+
 func NewAuthServiceArgon() *PasswordArgon {
-	return &PasswordArgon{
-		argonTime:    3,
-		argonMemory:  64 * 1024,
-		argonThreads: 2,
-		saltLen:      16,
-		keyLen:       32,
-	}
+	newAuthServiceArgonOnce.Do(func() {
+		authServiceArgon = &PasswordArgon{
+			argonTime:    3,
+			argonMemory:  64 * 1024,
+			argonThreads: 2,
+			saltLen:      16,
+			keyLen:       32,
+		}
+	})
+	return authServiceArgon
+
 }
