@@ -10,6 +10,9 @@ import (
 func buildDeleteSql(db *TenantDB, typ reflect.Type, filter string) (string, error) {
 
 	model := db.getModelFromCache(typ)
+	if model.err != nil {
+		return "", model.err
+	}
 	source := model.dialect.Quote(model.tableName)
 	if filter != "" {
 		compiler, err := NewExprCompiler(db.TenantDB)

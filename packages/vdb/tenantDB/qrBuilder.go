@@ -27,6 +27,10 @@ func (db *TenantDB) Lit(str string) interface{} {
 }
 
 type onGetTableName func(typ reflect.Type) (string, error)
+type AliasResult struct {
+	Alias string
+	Err   error
+}
 
 var OnGetTableName onGetTableName
 
@@ -38,8 +42,13 @@ func (db *TenantDB) From(table interface{}) *query {
 	}
 	var err error
 	tableName := ""
-	if strTableName, ok := table.(string); ok {
-		tableName = strTableName
+	if alais, ok := table.(AliasResult); ok {
+		if alais.Err != nil {
+			return &query{
+				Err: alais.Err,
+			}
+		}
+		tableName = alais.Alias
 	} else {
 		typ := reflect.TypeOf(table)
 		if typ.Kind() == reflect.Ptr {

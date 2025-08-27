@@ -6,6 +6,8 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"regexp"
+	"strconv"
 	"sync"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -239,4 +241,30 @@ func (db *TenantDB) Detect() error {
 	}
 	db.info = info
 	return nil
+}
+func (db *TenantDB) GetDbVersion() string {
+	if !db.info.hasDetected {
+		err := db.Detect()
+		if err != nil {
+			return "error: can not detect database version"
+		}
+	}
+	if db.info.driverName == "postgres" {
+		re := regexp.MustCompile(`PostgreSQL\s+(\d+)`)
+		match := re.FindStringSubmatch(db.info.Version)
+		if len(match) > 1 {
+			db.info.Version = match[1]
+
+		}
+	}
+
+	return db.info.Version
+}
+func (db *TenantDB) GetMajorVersion() (int, error) {
+	ret, err := strconv.Atoi(db.GetDbVersion())
+	if err != nil {
+		return 0, fmt.Errorf("can not convert %s to int", db.GetDbVersion())
+	}
+	return ret, nil
+
 }

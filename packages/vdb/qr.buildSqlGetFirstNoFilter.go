@@ -10,7 +10,10 @@ import (
 func buildBasicSqlFirstItemNoFilterNoCache(typ reflect.Type, db *tenantDB.TenantDB) (string, string, [][]int, error) {
 	dialect := dialectFactory.create(db.GetDriverName())
 
-	repoType := inserterObj.getEntityInfo(typ)
+	repoType, err := inserterObj.getEntityInfo(typ)
+	if err != nil {
+		return "", "", nil, err
+	}
 	tableName := repoType.tableName
 	compiler, err := CompileJoin(tableName, db)
 	if err != nil {

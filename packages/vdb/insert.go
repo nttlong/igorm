@@ -17,14 +17,20 @@ type entityInfo struct {
 type inserter struct {
 }
 
-func (r inserter) getEntityInfo(typ reflect.Type) *entityInfo {
+func (r inserter) getEntityInfo(typ reflect.Type) (*entityInfo, error) {
 	model := ModelRegistry.GetModelByType(typ)
+	if model == nil {
+		if typ.Kind() == reflect.Ptr {
+			typ = typ.Elem()
+		}
+		return nil, fmt.Errorf("%s is not recognized as a model or has not been registered,Please embed vdb.Model[%s] in %s struct and call vdb.ModelRegistry.Add(%s)", typ.String(), typ.Name(), typ.Name(), typ.Name())
+	}
 	tableName := model.GetTableName()
 	entity := model.GetEntity()
 	return &entityInfo{
 		tableName: tableName,
 		entity:    &entity,
-	}
+	}, nil
 }
 
 func (r inserter) fetchAfterInsert(dialect Dialect, res sql.Result, entity *migrate.Entity, dataValue reflect.Value) error {
@@ -117,7 +123,10 @@ func (r *inserter) InsertWithTx(tx *tenantDB.TenantTx, data interface{}) error {
 		typ = typ.Elem()
 		dataValue = dataValue.Elem()
 	}
-	repoType := r.getEntityInfo(typ)
+	repoType, err := r.getEntityInfo(typ)
+	if err != nil {
+		return err
+	}
 	sql, args := dialect.MakeSqlInsert(repoType.tableName, repoType.entity.GetColumns(), data)
 
 	sqlStmt, err := tx.Prepare(sql)
@@ -199,7 +208,10 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 		typ = typ.Elem()
 		dataValue = dataValue.Elem()
 	}
-	repoType := r.getEntityInfo(typ)
+	repoType, err := r.getEntityInfo(typ)
+	if err != nil {
+		return err
+	}
 
 	sqlText, args := dialect.MakeSqlInsert(repoType.tableName, repoType.entity.GetColumns(), data)
 	sqlStmt, err := db.Prepare(sqlText)
@@ -444,7 +456,10 @@ func InsertBatch[T any](db *tenantDB.TenantDB, data []T) (int64, error) {
 	}
 
 	dialect := dialectFactory.Create(db.GetDriverName())
-	repoType := inserterObj.getEntityInfo(reflect.TypeOf(data[0]))
+	repoType, err := inserterObj.getEntityInfo(reflect.TypeOf(data[0]))
+	if err != nil {
+		return 0, err
+	}
 	tableName := dialect.Quote(repoType.tableName)
 
 	columns := []string{}

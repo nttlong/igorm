@@ -9,27 +9,29 @@ import (
 
 type initMakeUpdateSqlFromType struct {
 	once sync.Once
-	val  initMakeUpdateSqlFromTypeItem
+	val  *initMakeUpdateSqlFromTypeItem
+	err  error
 }
 type initMakeUpdateSqlFromTypeItem struct {
 	sql           string
 	fieldIndex    [][]int
 	keyFieldIndex [][]int
+	err           error
 }
 
 var makeUpdateSqlFromTypeWithCacheData = sync.Map{}
 
-func makeUpdateSqlFromTypeWithCache(db *TenantDB, typ reflect.Type) initMakeUpdateSqlFromTypeItem {
+func makeUpdateSqlFromTypeWithCache(db *TenantDB, typ reflect.Type) (*initMakeUpdateSqlFromTypeItem, error) {
 	key := db.GetDriverName() + ":" + typ.String()
 	actual, _ := makeUpdateSqlFromTypeWithCacheData.LoadOrStore(key, &initMakeUpdateSqlFromType{})
 	init := actual.(*initMakeUpdateSqlFromType)
 	init.once.Do(func() {
-		init.val = makeUpdateSqlFromType(db, typ)
+		init.val, init.err = makeUpdateSqlFromType(db, typ)
 	})
-	return init.val
+	return init.val, init.err
 
 }
-func makeUpdateSqlFromType(db *TenantDB, typ reflect.Type) initMakeUpdateSqlFromTypeItem {
+func makeUpdateSqlFromType(db *TenantDB, typ reflect.Type) (*initMakeUpdateSqlFromTypeItem, error) {
 	ret := initMakeUpdateSqlFromTypeItem{
 		sql:           "",
 		fieldIndex:    nil,
@@ -37,6 +39,9 @@ func makeUpdateSqlFromType(db *TenantDB, typ reflect.Type) initMakeUpdateSqlFrom
 	}
 
 	model := db.getModelFromCache(typ)
+	if model.err != nil {
+		return nil, model.err
+	}
 	dialect := model.dialect
 
 	sql := "UPDATE " + dialect.Quote(model.tableName) + " SET "
@@ -63,7 +68,7 @@ func makeUpdateSqlFromType(db *TenantDB, typ reflect.Type) initMakeUpdateSqlFrom
 		sql += " WHERE " + strings.Join(conditional, " AND ")
 	}
 	ret.sql = sql
-	return ret
+	return &ret, nil
 }
 func (db *TenantDB) UpdateWithContext(context context.Context, item interface{}) UpdateResult {
 	typ := reflect.TypeOf(item)
@@ -72,7 +77,10 @@ func (db *TenantDB) UpdateWithContext(context context.Context, item interface{})
 		typ = typ.Elem()
 
 	}
-	info := makeUpdateSqlFromTypeWithCache(db, typ)
+	info, err := makeUpdateSqlFromTypeWithCache(db, typ)
+	if err != nil {
+		return UpdateResult{RowsAffected: 0, Sql: "", Error: err}
+	}
 	val := reflect.ValueOf(item).Elem()
 	args := make([]interface{}, 0)
 	for _, index := range info.fieldIndex {

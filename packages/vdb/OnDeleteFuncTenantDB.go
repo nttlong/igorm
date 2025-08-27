@@ -8,7 +8,10 @@ import (
 
 func onDeleteFuncTenantDBNoCache(db *tenantDB.TenantDB, typ reflect.Type, filter string, args ...interface{}) (string, error) {
 	dialect := dialectFactory.Create(db.GetDriverName())
-	repoType := inserterObj.getEntityInfo(typ)
+	repoType, err := inserterObj.getEntityInfo(typ)
+	if err != nil {
+		return "", err
+	}
 	tableName := dialect.Quote(repoType.tableName)
 	compiler, err := NewExprCompiler(db)
 	if err != nil {

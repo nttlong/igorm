@@ -345,7 +345,10 @@ func Qr() *QueryParts {
 }
 func buildBasicSqlNoCache(typ reflect.Type, db *tenantDB.TenantDB, filter string) (string, error) {
 
-	repoType := inserterObj.getEntityInfo(typ)
+	repoType, err := inserterObj.getEntityInfo(typ)
+	if err != nil {
+		return "", err
+	}
 	tableName := repoType.tableName
 	compiler, err := CompileJoin(tableName, db)
 	if err != nil {
@@ -407,7 +410,10 @@ type initBuildBasicSqlFirstItem struct {
 func buildBasicSqlFirstItemNoCache(typ reflect.Type, db *tenantDB.TenantDB, filter string) (string, error) {
 	dialect := dialectFactory.create(db.GetDriverName())
 
-	repoType := inserterObj.getEntityInfo(typ)
+	repoType, err := inserterObj.getEntityInfo(typ)
+	if err != nil {
+		return "", err
+	}
 	tableName := repoType.tableName
 	compiler, err := CompileJoin(tableName, db)
 	if err != nil {
@@ -486,7 +492,10 @@ func (e *ErrRecordNotFound) Error() string {
 	return e.Err.Error()
 }
 func onTenantDbNeedGetMapIndexNoCache(typ reflect.Type) map[string][]int {
-	repoType := inserterObj.getEntityInfo(typ)
+	repoType, err := inserterObj.getEntityInfo(typ)
+	if err != nil {
+		return nil
+	}
 	ret := map[string][]int{}
 	for _, col := range repoType.entity.GetColumns() {
 		ret[col.Field.Name] = col.IndexOfField

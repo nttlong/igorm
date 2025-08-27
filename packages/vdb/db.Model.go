@@ -22,6 +22,7 @@ type dbModel struct {
 	whereArgs   []interface{}
 	fieldUpdate string
 	valueUpdate interface{}
+	err         error
 }
 type UpdateResult struct {
 	RowsAffected int64
@@ -47,6 +48,7 @@ type initTenantDBModelCacheItem struct {
 	keyCols   []migrate.ColumnDef
 	mapCols   map[string]migrate.ColumnDef
 	dialect   Dialect
+	err       error
 }
 
 var initTenantDBModelCache sync.Map
@@ -56,7 +58,11 @@ func (db *TenantDB) getModelFromCache(modelType reflect.Type) initTenantDBModelC
 	actual, _ := initTenantDBModelCache.LoadOrStore(key, &initTenantDBModel{})
 	init := actual.(*initTenantDBModel)
 	init.once.Do(func() {
-		repoType := inserterObj.getEntityInfo(modelType)
+		repoType, err := inserterObj.getEntityInfo(modelType)
+		if err != nil {
+			init.val.err = err
+			return
+		}
 		tableName := repoType.tableName
 		columns := repoType.entity.GetColumns()
 		mapCols := make(map[string]migrate.ColumnDef)
@@ -91,6 +97,7 @@ func (db *TenantDB) Model(model interface{}) *dbModel {
 		tableName: modelInfo.tableName,
 		cols:      modelInfo.cols,
 		mapCols:   &modelInfo.mapCols,
+		err:       modelInfo.err,
 	}
 
 }

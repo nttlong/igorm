@@ -41,14 +41,15 @@ func (m *migratorPostgres) DoMigrates() error {
 	mi := actual.(*postgresInitDoMigrates)
 	var err error
 	mi.once.Do(func() {
-
-		scripts, err := m.GetFullScript()
+		var scripts []string
+		scripts, err = m.GetFullScript()
 		if err != nil {
 			return
 		}
 		for _, script := range scripts {
-			_, err := m.db.Exec(script)
+			_, err = m.db.Exec(script)
 			if err != nil {
+				err = fmt.Errorf("sql-error:\n%s\n%s", script, err.Error())
 				break
 			}
 		}

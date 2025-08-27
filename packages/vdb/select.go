@@ -59,7 +59,10 @@ func getSelectorDecoder[T any](typ reflect.Type, cols []migrate.ColumnDef) func(
 func SelectAllOriginalVersion[T any](db *tenantDB.TenantDB) ([]*T, error) {
 	// 1. Khởi tạo thông tin entity
 	dialect := dialectFactory.Create(db.GetDriverName())
-	repoType := inserterObj.getEntityInfo(reflect.TypeFor[T]())
+	repoType, err := inserterObj.getEntityInfo(reflect.TypeFor[T]())
+	if err != nil {
+		return nil, err
+	}
 	tableName := repoType.tableName
 	columns := repoType.entity.GetColumns()
 
@@ -145,7 +148,10 @@ var __timeType = reflect.TypeOf(time.Time{})
 
 func SelectAllUnsafe[T any](db *tenantDB.TenantDB) ([]*T, error) {
 	dialect := dialectFactory.Create(db.GetDriverName())
-	repoType := inserterObj.getEntityInfo(reflect.TypeFor[T]())
+	repoType, err := inserterObj.getEntityInfo(reflect.TypeFor[T]())
+	if err != nil {
+		return nil, err
+	}
 	tableName := repoType.tableName
 	columns := repoType.entity.GetColumns()
 
@@ -248,7 +254,10 @@ func SelectAllUnsafe[T any](db *tenantDB.TenantDB) ([]*T, error) {
 }
 func SelectAllZeroAlloc[T any](db *tenantDB.TenantDB) ([]T, error) {
 	dialect := dialectFactory.Create(db.GetDriverName())
-	repoType := inserterObj.getEntityInfo(reflect.TypeFor[T]())
+	repoType, err := inserterObj.getEntityInfo(reflect.TypeFor[T]())
+	if err != nil {
+		return nil, err
+	}
 	tableName := repoType.tableName
 	columns := repoType.entity.GetColumns()
 
@@ -348,7 +357,10 @@ func SelectAllZeroAlloc[T any](db *tenantDB.TenantDB) ([]T, error) {
 }
 func SelectAllZeroAllocScanDirect[T any](db *tenantDB.TenantDB) ([]T, error) {
 	dialect := dialectFactory.Create(db.GetDriverName())
-	repoType := inserterObj.getEntityInfo(reflect.TypeFor[T]())
+	repoType, err := inserterObj.getEntityInfo(reflect.TypeFor[T]())
+	if err != nil {
+		return nil, err
+	}
 	tableName := repoType.tableName
 	columns := repoType.entity.GetColumns()
 

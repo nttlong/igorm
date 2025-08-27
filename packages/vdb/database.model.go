@@ -14,24 +14,29 @@ type Model[T any] struct {
 type initModelMakeAlias struct {
 	once sync.Once
 	val  string
+	err  error
 }
 
 var cacheModelMakeAlias = sync.Map{}
 
-func modelMakeAlias(typ reflect.Type, alias string) string {
+func modelMakeAlias(typ reflect.Type, alias string) (string, error) {
+
 	key := fmt.Sprintf("%s:%s", typ.String(), alias)
 	actual, _ := cacheModelMakeAlias.LoadOrStore(key, &initModelMakeAlias{})
 	init := actual.(*initModelMakeAlias)
 	init.once.Do(func() {
-		repoType := inserterObj.getEntityInfo(typ)
+		repoType, err := inserterObj.getEntityInfo(typ)
 		init.val = repoType.tableName + " AS " + alias
+		init.err = err
 	})
-	return init.val
+	return init.val, init.err
 }
 
-func (m *Model[T]) As(alias string) string {
+func (m *Model[T]) As(alias string) tenantDB.AliasResult {
 
-	return modelMakeAlias(reflect.TypeFor[T](), alias)
+	str, err := modelMakeAlias(reflect.TypeFor[T](), alias)
+	return tenantDB.AliasResult{Alias: str, Err: err}
+
 }
 func (m *Model[T]) Insert(db *tenantDB.TenantDB) error {
 

@@ -9,13 +9,17 @@ import (
 type initGetSqlDeleteItem struct {
 	once sync.Once
 	val  string
+	err  error
 }
 
 var getSqlDeleteItemCache sync.Map
 
-func getSqlDeleteItem(db *TenantDB, typ reflect.Type) string {
+func getSqlDeleteItem(db *TenantDB, typ reflect.Type) (string, error) {
 
 	model := db.getModelFromCache(typ)
+	if model.err != nil {
+		return "", model.err
+	}
 
 	sql := "DELETE FROM " + model.dialect.Quote(model.tableName) + " WHERE "
 	for i, col := range model.keyCols {
@@ -24,17 +28,17 @@ func getSqlDeleteItem(db *TenantDB, typ reflect.Type) string {
 		}
 		sql += col.Name + " = " + model.dialect.ToParam(i+1)
 	}
-	return sql
+	return sql, nil
 
 }
-func getSqlDeleteItemCached(db *TenantDB, typ reflect.Type) string {
+func getSqlDeleteItemCached(db *TenantDB, typ reflect.Type) (string, error) {
 	key := db.GetDriverName() + "://" + db.GetDBName() + "://" + typ.String()
 	actual, _ := getSqlDeleteItemCache.LoadOrStore(key, &initGetSqlDeleteItem{})
 	init := actual.(*initGetSqlDeleteItem)
 	init.once.Do(func() {
-		init.val = getSqlDeleteItem(db, typ)
+		init.val, init.err = getSqlDeleteItem(db, typ)
 	})
-	return init.val
+	return init.val, init.err
 }
 func (db *TenantDB) Delete(item interface{}, filter string, args ...interface{}) DeleteResult {
 	typ := reflect.TypeOf(item)
@@ -84,7 +88,10 @@ func (db *TenantDB) deleteByKey(item interface{}) DeleteResult {
 	for _, col := range model.keyCols {
 		argsKey = append(argsKey, val.FieldByIndex(col.IndexOfField).Interface())
 	}
-	sql := getSqlDeleteItemCached(db, typ)
+	sql, err := getSqlDeleteItemCached(db, typ)
+	if err != nil {
+		return DeleteResult{Error: err}
+	}
 
 	result, err := db.Exec(sql, argsKey...)
 	if err != nil {

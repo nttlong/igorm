@@ -66,10 +66,21 @@ func (m *migratorPostgres) GetSqlCreateTable(typ reflect.Type) (string, error) {
 
 		// Xử lý trường tự động tăng (PostgreSQL)
 		if col.IsAuto {
+
 			if fieldType.Kind() == reflect.Int || fieldType.Kind() == reflect.Int64 {
 				colDef += " BIGSERIAL"
 			} else {
-				colDef += " GENERATED ALWAYS AS IDENTITY"
+				version, err := m.db.GetMajorVersion()
+				if err != nil {
+					colDef += " SERIAL"
+				} else {
+					if version > 10 {
+						colDef += sqlType + " GENERATED ALWAYS AS IDENTITY"
+					} else {
+						colDef += " SERIAL"
+					}
+				}
+
 			}
 		} else {
 			colDef += " " + sqlType
@@ -91,10 +102,10 @@ func (m *migratorPostgres) GetSqlCreateTable(typ reflect.Type) (string, error) {
 
 		strCols = append(strCols, colDef)
 	}
-	
+
 	// Xử lý khóa chính
 	for _, cols := range entityItem.entity.primaryConstraints {
-		
+
 		var pkCols []string
 		var pkColNames []string
 

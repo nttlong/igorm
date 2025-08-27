@@ -1,0 +1,16 @@
+storage:
+  type: local
+  location: ./uploads
+server:
+  port: "8080"
+  bind: "0.0.0.0"
+  mode: "debug"
+database:
+  
+  dsn: "postgres://postgres:123456@localhost:5432/a001?sslmode=disable"
+  driver: postgres
+jwt:
+  secret: "dadada.dasd.das.ada.dad.sada.dadad.dad"
+  ttl:
+    access: 30m
+    refresh: 168h
