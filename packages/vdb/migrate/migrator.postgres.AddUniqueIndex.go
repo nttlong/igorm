@@ -18,7 +18,7 @@ func (m *migratorPostgres) GetSqlAddUniqueIndex(typ reflect.Type) (string, error
 	// Get registered entity
 	entityItem := ModelRegistry.GetModelByType(typ)
 	if entityItem == nil {
-		return "", fmt.Errorf("model %s not found, please register model first by call ModelRegistry.Add(%s)", typ.String(), typ.String())
+		return "", NewModelError(typ)
 	}
 
 	// Duyệt các unique constraint

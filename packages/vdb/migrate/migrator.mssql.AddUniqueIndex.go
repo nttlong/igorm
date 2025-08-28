@@ -17,6 +17,9 @@ func (m *migratorMssql) GetSqlAddUniqueIndex(typ reflect.Type) (string, error) {
 
 	// Lấy entity đã đăng ký
 	entityItem := ModelRegistry.GetModelByType(typ)
+	if entityItem == nil {
+		return "", NewModelError(typ)
+	}
 	uk := entityItem.entity.getUniqueConstraints()
 	for _, cols := range uk {
 		var colNames []string

@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var NewModelError func(typ reflect.Type) error
+
 func (m *migratorMssql) GetSqlAddIndex(typ reflect.Type) (string, error) {
 	scripts := []string{}
 
@@ -18,7 +20,7 @@ func (m *migratorMssql) GetSqlAddIndex(typ reflect.Type) (string, error) {
 	// Lấy entity đã đăng ký
 	entityItem := ModelRegistry.GetModelByType(typ)
 	if entityItem == nil {
-		return "", fmt.Errorf("model %s not found, please register model first by call ModelRegistry.Add(%s)", typ.String(), typ.String())
+		return "", NewModelError(typ)
 	}
 	for _, cols := range entityItem.entity.getIndexConstraints() {
 		var colNames []string

@@ -30,7 +30,7 @@ func (m *migratorPostgres) GetSqlCreateTable(typ reflect.Type) (string, error) {
 
 	entityItem := ModelRegistry.GetModelByType(typ)
 	if entityItem == nil {
-		return "", fmt.Errorf("model %s not found, please register model first by call ModelRegistry.Add(%s)", typ.String(), typ.String())
+		return "",  NewModelError(typ)
 	}
 
 	tableName := entityItem.tableName

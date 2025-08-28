@@ -1,13 +1,18 @@
 package vdb
 
-import "reflect"
+import (
+	"reflect"
+)
 
 type modelFacoryType struct {
 }
 
 func (m *modelFacoryType) CreateFromType(typ reflect.Type) (interface{}, error) {
-	if typ.Kind() == reflect.Ptr {
-		typ = typ.Elem()
+
+	model := ModelRegistry.GetModelByType(typ)
+	if model == nil {
+
+		return nil, NewModelError(typ)
 	}
 	return reflect.New(typ).Elem().Interface(), nil
 }

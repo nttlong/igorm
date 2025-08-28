@@ -21,9 +21,14 @@ func getRepoInfoByType(typ reflect.Type) *getRepoInfoByTypeInfo {
 	actual, _ := cacheGetRepoInfoByType.LoadOrStore(typ, &getRepoInfoByTypeInit{})
 	init := actual.(*getRepoInfoByTypeInit)
 	init.once.Do(func() {
+		model := migrate.GetModelByType(typ)
+		if model == nil {
+			init.val = nil
+			return
+		}
 		init.val = &getRepoInfoByTypeInfo{
-			tableName: migrate.GetModelByType(typ).GetTableName(),
-			entity:    migrate.GetModelByType(typ).GetEntity(),
+			tableName: model.GetTableName(),
+			entity:    model.GetEntity(),
 		}
 	})
 
@@ -31,6 +36,9 @@ func getRepoInfoByType(typ reflect.Type) *getRepoInfoByTypeInfo {
 }
 func Repo[T any]() *Repository[T] {
 	repoType := getRepoInfoByType(reflect.TypeFor[T]())
+	if repoType == nil {
+		panic(NewModelError(reflect.TypeFor[T]()))
+	}
 
 	return &Repository[T]{
 		tableName: repoType.tableName,

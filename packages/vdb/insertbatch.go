@@ -40,6 +40,9 @@ func doInsertBatchV1(db *tenantDB.TenantDB, data interface{}) error {
 	}
 
 	modelReg := ModelRegistry.GetModelByType(typ)
+	if modelReg == nil {
+		return NewModelError(typ)
+	}
 	tableName := dialect.Quote(modelReg.GetTableName())
 
 	// Lấy danh sách cột (bỏ qua auto-increment)
@@ -108,7 +111,7 @@ func doInsertBatchV1(db *tenantDB.TenantDB, data interface{}) error {
 		)
 		fmt.Println(len(args)) //<-- cho nay dung la 2100, vi luc test da dng den 1000 user moi user co 12 cot
 		if _, err := db.Exec(sql, args...); err != nil {
-			fmt.Println(sql[len(sql)-100 : len(sql)])
+			fmt.Println(sql[len(sql)-100 : 
 			return fmt.Errorf("insert batch failed: %w", err)
 		}
 	}
@@ -142,6 +145,9 @@ func doInsertBatch(db *tenantDB.TenantDB, data interface{}) error {
 	}
 
 	modelReg := ModelRegistry.GetModelByType(typ)
+	if modelReg == nil {
+		return NewModelError(typ)
+	}
 	tableName := dialect.Quote(modelReg.GetTableName())
 
 	colNames := []string{}
@@ -235,6 +241,10 @@ func InsertBatchOptimized(db *tenantDB.TenantDB, data interface{}) error {
 	}
 
 	model := ModelRegistry.GetModelByType(elemType)
+	if model == nil {
+		return NewModelError(elemType)
+	}
+
 	dialect := dialectFactory.Create(db.GetDriverName())
 	tableName := dialect.Quote(model.GetTableName())
 
@@ -337,6 +347,9 @@ func InsertBatchTVP(db *sql.DB, data interface{}, typeName string, procName stri
 
 	// Ánh xạ schema
 	model := ModelRegistry.GetModelByType(elemType)
+	if model == nil {
+		return NewModelError(elemType)
+	}
 	columns := model.GetColumns()
 
 	// Chuẩn bị dữ liệu dạng [][]interface{}

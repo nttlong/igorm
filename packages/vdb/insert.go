@@ -23,7 +23,7 @@ func (r inserter) getEntityInfo(typ reflect.Type) (*entityInfo, error) {
 		if typ.Kind() == reflect.Ptr {
 			typ = typ.Elem()
 		}
-		return nil, fmt.Errorf("%s is not recognized as a model or has not been registered,Please embed vdb.Model[%s] in %s struct and call vdb.ModelRegistry.Add(%s)", typ.String(), typ.Name(), typ.Name(), typ.Name())
+		return nil, NewModelError(typ)
 	}
 	tableName := model.GetTableName()
 	entity := model.GetEntity()

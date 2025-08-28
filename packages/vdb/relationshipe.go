@@ -16,6 +16,9 @@ func (r *Relationship) BelongsTo(model interface{}, foreignKey string) *Relation
 }
 func (m *Model[T]) getPrimaryKeys() []migrate.ColumnDef {
 	info := ModelRegistry.GetModelByType(reflect.TypeFor[T]())
+	if info == nil {
+		panic(NewModelError(reflect.TypeFor[T]()))
+	}
 	for _, pk := range info.GetPrimaryConstraints() {
 		return pk
 	}
@@ -43,7 +46,13 @@ func (m *Model[T]) AddForeignKey(foreignKey string, FkEntity interface{}, keys s
 	ModelRegistry.RegisterType(FkEntityType)
 
 	ownerInfo := ModelRegistry.GetModelByType(ownerType)
+	if ownerInfo == nil {
+		panic(NewModelError(ownerType))
+	}
 	fkInfo := ModelRegistry.GetModelByType(FkEntityType)
+	if fkInfo == nil {
+		panic(NewModelError(FkEntityType))
+	}
 	if FkEntityType.Kind() == reflect.Ptr {
 		FkEntityType = FkEntityType.Elem()
 	}
