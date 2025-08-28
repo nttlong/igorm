@@ -33,7 +33,7 @@ func (r inserter) getEntityInfo(typ reflect.Type) (*entityInfo, error) {
 	}, nil
 }
 
-func (r inserter) fetchAfterInsert(dialect Dialect, res sql.Result, entity *migrate.Entity, dataValue reflect.Value) error {
+func (r inserter) fetchAfterInsert(res sql.Result, entity *migrate.Entity, dataValue reflect.Value) error {
 	// Nếu không có cột tự tăng thì bỏ qua
 	autoCols := entity.GetAutoValueColumns()
 	if len(autoCols) == 0 {
@@ -56,13 +56,10 @@ func (r inserter) fetchAfterInsert(dialect Dialect, res sql.Result, entity *migr
 
 	for _, col := range autoCols {
 		valField := dataValue.FieldByName(col.Field.Name)
-		if valField.CanSet() {
-			switch valField.Kind() {
-			case reflect.Int, reflect.Int64, reflect.Uint, reflect.Uint64:
-				valField.SetInt(lastID)
-			default:
-				return fmt.Errorf("unsupported auto-increment type: %s", valField.Kind())
-			}
+
+		if valField.CanConvert(col.Field.Type) {
+			valField.Set(reflect.ValueOf(lastID).Convert(col.Field.Type))
+
 		}
 	}
 
@@ -189,7 +186,7 @@ func (r *inserter) InsertWithTx(tx *tenantDB.TenantTx, data interface{}) error {
 		return errParse
 	}
 
-	err = r.fetchAfterInsert(dialect, sqlResult, repoType.entity, dataValue)
+	err = r.fetchAfterInsert(sqlResult, repoType.entity, dataValue)
 	if err != nil {
 		if dialectError, ok := err.(*DialectError); ok {
 			dialectError.Table = repoType.tableName
@@ -232,7 +229,7 @@ func (r *inserter) Insert(db *tenantDB.TenantDB, data interface{}) error {
 		var res sql.Result
 		res, err = sqlStmt.Exec(args...) // ✅ chỗ này đã hợp lệ
 		if err == nil {
-			err = r.fetchAfterInsert(dialect, res, repoType.entity, dataValue)
+			err = r.fetchAfterInsert(res, repoType.entity, dataValue)
 		}
 	}
 

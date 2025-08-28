@@ -16,6 +16,9 @@ func TestCreateDefautUser(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, cfg)
 	db, err := vdb.Open(cfg.Database.Driver, cfg.Database.Dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
 	assert.NoError(t, err)
 	assert.NotNil(t, db)
 	userRepo := NewUserRepoSql(db)
@@ -25,7 +28,7 @@ func TestCreateDefautUser(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = userRepo.CreateDefautUser(hashPassword)
+	err = userRepo.CreateDefaultlUser(hashPassword)
 	assert.NoError(t, err)
 
 }
@@ -54,7 +57,25 @@ func BenchmarkCreateDefautUser(b *testing.B) {
 		if err != nil {
 			b.Fatal(err)
 		}
-		err = userRepo.CreateDefautUser(hashPassword)
+		err = userRepo.CreateDefaultlUser(hashPassword)
 		assert.NoError(b, err)
 	}
+}
+func TestGetUser(t *testing.T) {
+	cfg, err := config.NewConfig("./../config/config.yaml")
+	assert.NoError(t, err)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.NotNil(t, cfg)
+	db, err := vdb.Open(cfg.Database.Driver, cfg.Database.Dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	userRepo := NewUserRepoSql(db)
+	user, err := userRepo.GetUserById("00000000-0000-0000-0000-000000000000")
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+	assert.Equal(t, "admin", user.Username)
 }

@@ -9,6 +9,7 @@ func (m *migratorPostgres) GetSqlInstallDb() ([]string, error) {
 
 		/*-- Enable case-insensitive text (citext)*/
 		"CREATE EXTENSION IF NOT EXISTS citext;",
+		"CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";",
 	}, nil
 
 }

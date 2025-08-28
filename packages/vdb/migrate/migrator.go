@@ -73,6 +73,8 @@ type initNewMigrator struct {
 
 var cacheNewMigrator sync.Map
 
+const skipDefaulValue = "vdb::skip"
+
 func NewMigrator(db *tenantDB.TenantDB) (IMigrator, error) {
 	err := db.Detect()
 	if err != nil {

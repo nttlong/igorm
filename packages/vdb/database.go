@@ -2,6 +2,7 @@ package vdb
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"vdb/migrate"
 	"vdb/tenantDB"
@@ -15,6 +16,18 @@ type TenantDB struct {
 }
 
 func Open(driverName, dns string) (*TenantDB, error) {
+	if driverName == "mysql" { // fix mysql dsn do not have multiStatements=true
+		if !strings.Contains(dns, "?") {
+			dns += "?multiStatements=true&parseTime=true"
+		} else {
+			if !strings.Contains(dns, "multiStatements=true") {
+				dns += "&multiStatements=true"
+			}
+			if !strings.Contains(dns, "parseTime=true") {
+				dns += "&parseTime=true"
+			}
+		}
+	}
 	ret, err := tenantDB.Open(driverName, dns)
 	if err != nil {
 		return nil, err

@@ -56,6 +56,7 @@ func (m *migratorPostgres) GetSqlCreateTable(typ reflect.Type) (string, error) {
 		}
 
 		if col.Length != nil {
+			
 			/*ADD CONSTRAINT chk_email_length CHECK (char_length(email) <= 255);*/
 			scriptSqlCheckLength = append(scriptSqlCheckLength, m.createCheckLenConstraint(tableName, col))
 

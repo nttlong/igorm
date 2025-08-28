@@ -3,13 +3,16 @@ package models
 import (
 	"time"
 	"vdb"
+
+	"github.com/google/uuid"
 )
 
 type User struct {
 	vdb.Model[User]
-	ID        uint32 `db:"primaryKey;auto"`
-	Username  string `db:"unique;size:50;"`
-	Password  string
+	ID        uint32    `db:"primaryKey;auto"`
+	UserId    uuid.UUID `db:"unique;size:36;default:uuid_generate_v4()"`
+	Username  string    `db:"unique;size:50;"`
+	Password  string    `db:"size:300;"`
 	Email     *string   `db:"unique;size:50;"`
 	Phone     *string   `db:"unique;size:50;"`
 	Active    bool      `db:"default:true"`

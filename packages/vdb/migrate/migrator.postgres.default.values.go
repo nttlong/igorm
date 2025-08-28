@@ -9,7 +9,9 @@ import (
 
 func (m *migratorPostgres) GetGetDefaultValueByFromDbTag() map[string]string {
 	return map[string]string{
-		"now()": "CURRENT_TIMESTAMP", // hoặc "now()" đều hợp lệ với Postgres
+		"now()":              "CURRENT_TIMESTAMP", // hoặc "now()" đều hợp lệ với Postgres
+		"uuid_generate_v4()": "uuid_generate_v4()",
+		"uuid":               "uuid_generate_v4()",
 	}
 }
 func (m *migratorPostgres) GetColumnDataTypeMapping() map[reflect.Type]string {

@@ -9,8 +9,8 @@ import (
 )
 
 type UserRepo interface {
-	GetUser() (*models.User, error)
-	CreateDefautUser(hashPassword string) error
+	GetUserById(userId string) (*models.User, error)
+	CreateDefaultlUser(hashPassword string) error
 	CreateUser(user *models.User) error
 	UpdateUser(user *models.User) error
 }
@@ -23,14 +23,20 @@ func NewUserRepoSql(db *vdb.TenantDB) UserRepo {
 		db: db,
 	}
 }
-func (u *UserRepoSql) GetUser() (*models.User, error) {
+func (u *UserRepoSql) GetUserById(userId string) (*models.User, error) {
+	var user models.User
 
-	panic("Not imeplemented")
+	err := u.db.First(&user, "UserId=?", userId)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+
 }
 
 var createDefautUserOnce sync.Once
 
-func (u *UserRepoSql) CreateDefautUser(hasnPassword string) error {
+func (u *UserRepoSql) CreateDefaultlUser(hasnPassword string) error {
 	var err error
 	createDefautUserOnce.Do(func() {
 		err = u.CreateUser(&models.User{

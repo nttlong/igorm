@@ -7,8 +7,10 @@ server:
   mode: "debug"
 database:
   
-  dsn: "postgres://postgres:123456@localhost:5432/a001?sslmode=disable"
-  driver: postgres
+  dsn1: "postgres://postgres:123456@localhost:5432/a001?sslmode=disable"
+  driver1: postgres
+  dsn: "root:123456@tcp(localhost:3306)/a001"
+  driver: mysql
 jwt:
   secret: "dadada.dasd.das.ada.dad.sada.dadad.dad"
   ttl:

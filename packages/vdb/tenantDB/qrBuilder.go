@@ -234,6 +234,15 @@ type onBuildSQLFirstItem func(typ reflect.Type, db *TenantDB, filter string) (st
 
 var OnBuildSQLFirstItem onBuildSQLFirstItem
 
+/*
+Get first item by filter
+@entity
+@fiter
+@args
+
+	Example:
+			db.First(&model,"id={1}",1)
+*/
 func (db *TenantDB) First(entity interface{}, args ...interface{}) error {
 	if len(args) == 0 {
 		return db.firstWithNoFilter(entity)

@@ -86,9 +86,8 @@ func (e *exprReceiver) ColName(context *exprCompileContext, expr sqlparser.ColNa
 		if alias, ok := context.alias[tableName]; ok {
 			tableName = alias
 
-			fieldName = utils.ToSnakeCase(fieldName)
-
 		}
+		fieldName = utils.ToSnakeCase(fieldName)
 		return context.dialect.Quote(tableName, fieldName), nil
 	}
 

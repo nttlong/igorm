@@ -43,7 +43,7 @@ func (m *migratorMySql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 			panic(fmt.Sprintf("not support field type %s, review GetColumnDataTypeMapping() function in %s", fieldType.String(), reflect.TypeOf(m).Elem()))
 		}
 
-		if col.Length != nil {
+		if col.Length != nil && (col.Field.Type == reflect.TypeFor[string]() || col.Field.Type == reflect.TypeFor[*string]()) {
 			sqlType = fmt.Sprintf("%s(%d)", sqlType, *col.Length)
 		}
 
@@ -61,11 +61,14 @@ func (m *migratorMySql) GetSqlCreateTable(typ reflect.Type) (string, error) {
 
 		if col.Default != "" {
 			defaultVal, err := typeUtils.GetDefaultValue(col.Default, defaultValueByFromDbTag)
+
 			if err != nil {
 				err = fmt.Errorf("not support default value from %s, review GetGetDefaultValueByFromDbTag() function in %s ", col.Default, "vdb/migrate/migrator.mysql.CreateTable.go")
 				panic(err)
 			}
-			colDef += fmt.Sprintf(" DEFAULT %s", defaultVal)
+			if defaultVal != skipDefaulValue {
+				colDef += fmt.Sprintf(" DEFAULT %s", defaultVal)
+			}
 
 		}
 

@@ -39,7 +39,11 @@ func (m *migratorPostgres) GetSqlAddColumn(typ reflect.Type) (string, error) {
 			}
 
 			if col.Length != nil {
-				checkLengthScripts = append(checkLengthScripts, m.createCheckLenConstraint(entityItem.tableName, col))
+				strCheck := m.createCheckLenConstraint(entityItem.tableName, col)
+				if strCheck != "" {
+					checkLengthScripts = append(checkLengthScripts, strCheck)
+				}
+
 			}
 
 			colDef := m.Quote(col.Name)
