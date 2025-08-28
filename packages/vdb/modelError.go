@@ -24,3 +24,28 @@ func init() {
 	migrate.NewModelError = NewModelError
 
 }
+
+type UnSupportError struct {
+	msg string
+}
+
+func (e *UnSupportError) Error() string {
+	return e.msg
+}
+func NewUnSupportError(msg string) error {
+	return &UnSupportError{msg: msg}
+
+}
+
+type InvalidDefaultValue struct {
+	field        reflect.StructField
+	eleType      reflect.Type
+	defaultValue string
+}
+
+func (e *InvalidDefaultValue) Error() string {
+	return fmt.Sprintf("type of %s.%s is %s does not fix %s", e.eleType.String(), e.field.Name, e.field.Type.String(), e.defaultValue)
+}
+func NewInvalidDefaultValue(field reflect.StructField, eleType reflect.Type, defaultValue string) error {
+	return &InvalidDefaultValue{field: field, eleType: eleType, defaultValue: defaultValue}
+}
