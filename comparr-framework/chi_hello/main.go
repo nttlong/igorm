@@ -3,10 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"log"
 	"net/http"
-	"os"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -41,39 +38,20 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Giới hạn dung lượng tối đa 10MB
-	err := r.ParseMultipartForm(10 << 20)
+	err := r.ParseMultipartForm(20 << 20)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error parsing form: %v", err), http.StatusBadRequest)
 		return
 	}
 
 	// Lấy file từ form field "file"
-	file, handler, err := r.FormFile("file")
+	file, _, err := r.FormFile("File") // bein r nay la CHI no wrapp lai hau dung nguyen goc cua http/net
+
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error retrieving file: %v", err), http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
-
-	// Lưu file lên ổ cứng tạm
-	dst, err := os.Create("./uploads/" + handler.Filename)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Cannot create file: %v", err), http.StatusInternalServerError)
-		return
-	}
-	defer dst.Close()
-
-	_, err = io.Copy(dst, file)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Cannot save file: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	log.Printf("Uploaded File: %s, Size: %d bytes, MIME: %s",
-		handler.Filename, handler.Size, handler.Header.Get("Content-Type"))
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("File %s uploaded successfully!", handler.Filename)))
 }
 
 type TestApi struct{}
@@ -118,5 +96,7 @@ func main() {
 
 	r.Get("/hello/{name}/{langCode}", api.Hello)
 	r.Post("/users", CreateUser)
+	r.Post("/upload", UploadHandler)
+
 	http.ListenAndServe(":8082", r)
 }

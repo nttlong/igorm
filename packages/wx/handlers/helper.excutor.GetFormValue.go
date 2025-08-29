@@ -172,7 +172,8 @@ func (reqExec *RequestExecutor) GetFormValue(handlerInfo HandlerInfo, r *http.Re
 
 	contentType := r.Header.Get("Content-Type")
 	if strings.HasPrefix(contentType, "multipart/form-data") {
-		if err := r.ParseMultipartForm(32 << 20); err != nil {
+		// r.ParseMultipartForm(10 << 20)
+		if err := r.ParseMultipartForm(20 << 20); err != nil {
 			return nil, wxErrors.NewFileParseError("error parsing multipart form", err)
 		}
 		formData = r.MultipartForm.Value

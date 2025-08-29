@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -14,6 +15,7 @@ import (
 	"wx"
 
 	"github.com/go-chi/chi"
+	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -187,7 +189,7 @@ func BenchmarkWxUpload(b *testing.B) {
 }
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Giới hạn dung lượng tối đa 10MB
-	err := r.ParseMultipartForm(10 << 20) 
+	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error parsing form: %v", err), http.StatusBadRequest)
 		return
@@ -228,4 +230,81 @@ func BenchmarkChiUploadFile(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		router.ServeHTTP(rr, req)
 	}
+}
+func FiberUploadHandler(c *fiber.Ctx) error {
+	// Lấy file từ form field "File"
+	fileHeader, err := c.FormFile("File") // "File" là tên field
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(fmt.Sprintf("Error retrieving file: %v", err))
+	}
+
+	// Mở file
+	file, err := fileHeader.Open()
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(fmt.Sprintf("Error opening file: %v", err))
+	}
+	defer file.Close()
+
+	// TODO: xử lý file ở đây (ví dụ lưu vào disk hoặc đọc nội dung)
+	// ví dụ: fileHeader.Save("./uploads/" + fileHeader.Filename)
+
+	return c.SendString("File uploaded successfully")
+}
+func TestFiberUploadHandler(t *testing.T) {
+	app := fiber.New()
+	app.Post("/upload", FiberUploadHandler)
+
+	// Tạo buffer để chứa form file
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	// Tạo field "File" với nội dung fake
+	part, err := writer.CreateFormFile("File", `D:\code\go\news2\igorm\comparr-framework\wx_hello\bm_test.go`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	part.Write([]byte("Hello World")) // nội dung file
+
+	writer.Close()
+
+	// Tạo request HTTP fake
+	req := httptest.NewRequest("POST", "/upload", body)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	// Gọi Fiber app
+	resp, err := app.Test(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.StatusCode != fiber.StatusOK {
+		t.Fatalf("Expected status 200, got %d", resp.StatusCode)
+	}
+}
+func BenchmarkFiberUploadHandler(b *testing.B) {
+	app := fiber.New()
+	app.Post("/upload", FiberUploadHandler)
+
+	// Tạo buffer để chứa form file
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	// Tạo field "File" với nội dung fake
+	part, _ := writer.CreateFormFile("File", `D:\code\go\news2\igorm\comparr-framework\wx_hello\bm_test.go`)
+
+	part.Write([]byte("Hello World")) // nội dung file
+
+	writer.Close()
+
+	// Tạo request HTTP fake
+	req := httptest.NewRequest("POST", "/upload", body)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	// Gọi Fiber app
+	for i := 0; i < b.N; i++ {
+		app.Test(req)
+	}
+
 }
