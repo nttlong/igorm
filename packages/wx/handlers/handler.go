@@ -6,10 +6,10 @@ import (
 	"regexp"
 )
 
-type Handler struct {
-	Res http.ResponseWriter
-	Req *http.Request
-}
+//	type Handler struct {
+//		Res http.ResponseWriter
+//		Req *http.Request
+//	}
 type uriParam struct {
 	Position   int
 	Name       string
@@ -20,6 +20,8 @@ type QueryParam struct {
 	Name       string
 	FieldIndex []int
 }
+type fieldContextSetter func(obj reflect.Value, r *http.Request, w http.ResponseWriter)
+
 type HandlerInfo struct {
 	ServiceContextArgs       []int
 	ServiceContextNewMethods []reflect.Method
@@ -30,7 +32,10 @@ type HandlerInfo struct {
 		/*
 			index of arg is wx.Hanlder or any has embedded wx.Hanlder
 	*/
-	IndexOfArg int
+	IndexOfArg               int
+	IndexOfReqFieldInHandler []int
+	IndexOfResFieldInHandler []int
+	FieldContextSetter       fieldContextSetter
 	/*
 		New method of TypeOfArgs
 	*/

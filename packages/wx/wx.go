@@ -17,12 +17,6 @@ type UserClaims struct {
 	handler.UserClaims
 }
 
-type Handler struct {
-	handler.Handler
-	schema     string
-	rootAbsUrl string
-}
-
 type ControllerContext struct {
 	httpServer.ContetxService
 }
@@ -162,5 +156,3 @@ func GetUriOfHandler[T any](methodName string) (string, error) {
 
 var Helper = handler.Helper
 var HandlerList = httpServer.HandlerList
-
-

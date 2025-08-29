@@ -14,6 +14,7 @@ type helperType struct {
 	ReqExec             *RequestExecutor
 	Routes              *RouteTypes
 	Services            *ServiceType
+	Mock                *mockType
 }
 
 func (h *helperType) Iscontains(slice []int, value int) bool {
@@ -77,4 +78,5 @@ var Helper = &helperType{
 		UriList: []string{},
 	},
 	Services: &ServiceType{},
+	Mock:     &mockType{},
 }

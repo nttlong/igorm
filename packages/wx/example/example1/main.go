@@ -47,8 +47,8 @@ func main() {
 		panic(err)
 	}
 
-	server := wx.NewHtttpServer("/api/v1", 8080, "localhost")
-	uri, err := wx.GetUriOfHandler[example.Auth](server, "Oauth")
+	server := wx.NewHtttpServer("/api/v1", "8080", "localhost")
+	uri, err := wx.GetUriOfHandler[example.Auth]("Oauth")
 	if err != nil {
 		panic(err)
 	}

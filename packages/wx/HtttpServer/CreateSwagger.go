@@ -3,6 +3,7 @@ package htttpserver
 import (
 	_ "embed"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	swaggers3 "wx/swagger3"
 	//httpSwagger "github.com/swaggo/http-swagger"
@@ -77,12 +78,13 @@ func (sb *SwaggerBuild) Build() error {
 	data, err := json.Marshal(sb.swagger)
 	if err != nil {
 		sb.err = err
+		return err
 
 	}
 
 	// info := sb.info
 	// 1. Phục vụ file swagger.json từ đường dẫn /swagger.json
-
+	fmt.Println("swagger access at \n" + uri)
 	mux.HandleFunc(uri+"/", func(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

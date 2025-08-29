@@ -121,6 +121,7 @@ func (reqExec *RequestExecutor) createControllerValueInternal(handlerInfo Handle
 func (reqExec *RequestExecutor) GetBodyValue(handlerInfo HandlerInfo, r *http.Request) (*reflect.Value, error) {
 	bodyData := reflect.New(handlerInfo.TypeOfRequestBodyElem)
 	if r.Body != nil && r.Body != http.NoBody {
+		defer r.Body.Close() // <-- auto close after read body of request
 		if err := json.NewDecoder(r.Body).Decode(bodyData.Interface()); err != nil {
 
 			return nil, err

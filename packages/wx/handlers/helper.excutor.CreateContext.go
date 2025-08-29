@@ -25,6 +25,9 @@ func (reqExec *RequestExecutor) GetParamFieldOfHandlerContext(typ reflect.Type, 
 	return *ret, true
 
 }
+
+var CreateHandlerContext func(typ reflect.Type, reqIndex []int, resIndex []int, r *http.Request, w http.ResponseWriter) reflect.Value
+
 func (reqExec *RequestExecutor) CreateHandlerContext(info HandlerInfo, r *http.Request, w http.ResponseWriter) (*reflect.Value, error) {
 	var placeHolders [][]string
 	if info.IsRegexHandler {
@@ -33,7 +36,11 @@ func (reqExec *RequestExecutor) CreateHandlerContext(info HandlerInfo, r *http.R
 			return nil, wxErr.NewRegexUriNotMatchError("regex uri not match")
 		}
 	}
-	ret := reflect.New(info.TypeOfArgsElem)
+	ret := CreateHandlerContext(info.TypeOfArgsElem, info.IndexOfReqFieldInHandler, info.IndexOfResFieldInHandler, r, w)
+	// ret := reflect.New(info.TypeOfArgsElem)
+	// if info.FieldContextSetter != nil {
+	// 	info.FieldContextSetter(ret.Elem(), r, w)
+	// }
 	if info.NewMethodOfHandler != nil {
 		retErr := info.NewMethodOfHandler.Func.Call([]reflect.Value{ret})
 		if len(retErr) > 0 {
@@ -43,18 +50,6 @@ func (reqExec *RequestExecutor) CreateHandlerContext(info HandlerInfo, r *http.R
 		}
 	}
 
-	ctx := Handler{
-		Req: r,
-		Res: w,
-	}
-	ctxField := ret.Elem().FieldByIndex(info.FieldIndex)
-	if ctxField.IsValid() {
-		if ctxField.Kind() == reflect.Ptr {
-			ctxField.Set(reflect.ValueOf(&ctx))
-		} else {
-			ctxField.Set(reflect.ValueOf(ctx))
-		}
-	}
 	if len(placeHolders) == 1 {
 
 		for i, x := range info.UriParams {

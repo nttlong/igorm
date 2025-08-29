@@ -191,3 +191,16 @@ func NewRegexUriNotMatchError(message string) error {
 	}
 
 }
+
+type UnSupportError struct {
+	Message string `json:"message"`
+}
+
+func (e *UnSupportError) Error() string {
+	return e.Message
+}
+func NewUnSupportError(message string) error {
+	return &UnSupportError{
+		Message: message,
+	}
+}

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strings"
@@ -159,7 +160,7 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 	isHandlerMethod := false
 	for i := 1; i < method.Type.NumIn(); i++ {
 		if (!h.Iscontains(ret.IndexOfInjectors, i)) && (!h.Iscontains(ret.ServiceContextArgs, i)) {
-			fieldIndex, err := h.HandlerFindInMethod(method)
+			fieldIndex, reqIndex, resIndex, err := h.HandlerFindInMethod(method)
 			if err != nil {
 				return nil, err
 			}
@@ -167,6 +168,17 @@ func (h *helperType) getHandlerInfo(method reflect.Method) (*HandlerInfo, error)
 				ret.IndexOfArg = i
 				ret.FieldIndex = fieldIndex
 				isHandlerMethod = true
+				ret.IndexOfReqFieldInHandler = reqIndex
+				ret.IndexOfResFieldInHandler = resIndex
+				ret.FieldContextSetter = func(obj reflect.Value, r *http.Request, w http.ResponseWriter) {
+					if len(reqIndex) > 0 {
+						obj.FieldByIndex(reqIndex).Set(reflect.ValueOf(r))
+					}
+					if len(resIndex) > 0 {
+						obj.FieldByIndex(resIndex).Set(reflect.ValueOf(w))
+					}
+				}
+
 				break
 
 			}

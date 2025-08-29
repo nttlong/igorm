@@ -235,6 +235,15 @@ func (builder *MockRequestBuilder) Handler(handler http.HandlerFunc) *httptest.R
 	return rr
 
 }
+func (builder *MockRequestBuilder) HandlerRequest(req *http.Request, handler http.HandlerFunc) *httptest.ResponseRecorder {
+	rr := httptest.NewRecorder()
+
+	// gọi handler
+
+	handler.ServeHTTP(rr, req)
+	return rr
+
+}
 
 func (builder *MockRequestBuilder) ServerHandler(fn func() (any, error)) {
 	rr := httptest.NewRecorder()

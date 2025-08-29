@@ -15,6 +15,12 @@ func (err *errorFactoty) RequireErr(field ...string) error {
 		Message: "required",
 	}
 }
+func (err *errorFactoty) UnSupportError(msg string) error {
+	return &errors.UnSupportError{
+		Message: msg,
+	}
+}
+
 func init() {
 	Errors = errorFactoty{}
 

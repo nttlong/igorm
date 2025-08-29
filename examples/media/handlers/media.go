@@ -59,3 +59,32 @@ func (m *Media) New(
 
 	return nil
 }
+
+type TestApi struct {
+}
+
+func (t *TestApi) DoSayHelloInVn(name string) string {
+	return "xin chao," + name
+}
+func (t *TestApi) DoSayHelloInEn(name string) string {
+	return "hello" + name
+}
+func (t *TestApi) Hello(h *struct {
+	wx.Handler `route:"/hello/{name}/{LangCode}"`
+	Name       string
+	LangCode   string
+}) (string, error) {
+	if h.Name == "" {
+		return "", wx.Errors.RequireErr("name")
+	}
+	if h.LangCode == "" {
+		return "", wx.Errors.RequireErr("langCode")
+	}
+	if h.LangCode == "vn" {
+		return t.DoSayHelloInVn(h.Name), nil
+	}
+	if h.LangCode == "en" {
+		return t.DoSayHelloInEn(h.Name), nil
+	}
+	return "", wx.Errors.UnSupportError(fmt.Sprintf("%s is not support", h.LangCode))
+}
