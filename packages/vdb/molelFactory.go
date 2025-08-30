@@ -265,3 +265,6 @@ func NewFromModel[T any]() (*T, error) {
 	return val.(*T), nil
 
 }
+func ModelNew[T any]() (*T, error) {
+	return NewFromModel[T]()
+}

@@ -13,6 +13,7 @@ type UserRepo interface {
 	CreateDefaultlUser(hashPassword string) error
 	CreateUser(user *models.User) error
 	UpdateUser(user *models.User) error
+	GetUserByUsername(username string) (*models.User, error)
 }
 type UserRepoSql struct {
 	db *vdb.TenantDB
@@ -36,12 +37,12 @@ func (u *UserRepoSql) GetUserById(userId string) (*models.User, error) {
 
 var createDefautUserOnce sync.Once
 
-func (u *UserRepoSql) CreateDefaultlUser(hasnPassword string) error {
+func (u *UserRepoSql) CreateDefaultlUser(hashPassword string) error {
 	var err error
 	createDefautUserOnce.Do(func() {
 		err = u.CreateUser(&models.User{
 			Username:  "admin",
-			Password:  hasnPassword,
+			Password:  hashPassword,
 			Active:    true,
 			Email:     nil,
 			Phone:     nil,
@@ -71,5 +72,14 @@ func (u *UserRepoSql) CreateUser(user *models.User) error {
 func (u *UserRepoSql) UpdateUser(user *models.User) error {
 	ret := u.db.Update(user)
 	return ret.Error
+
+}
+func (u *UserRepoSql) GetUserByUsername(username string) (*models.User, error) {
+	var user models.User
+	err := u.db.First(&user, "Username=?", username)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 
 }

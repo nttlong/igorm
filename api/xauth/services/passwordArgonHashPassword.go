@@ -36,5 +36,6 @@ func (authService *PasswordArgon) HashPassword(password string) (string, error) 
 		b64.EncodeToString(salt),
 		b64.EncodeToString(hash),
 	)
+
 	return encoded, nil
 }
